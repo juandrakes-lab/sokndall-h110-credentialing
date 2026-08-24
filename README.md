@@ -6,12 +6,18 @@ and small billing companies. No PHI, no scraping, no onboarding call.
 Stack: Next.js App Router (JSX, no TypeScript), Tailwind v4 (`@theme` in
 `app/globals.css`), Supabase (Postgres + Auth), Vercel.
 
-**Live:** https://sokndall-h110-credentialing.vercel.app
-(Vercel project `sokndall-h110-credentialing`, team `juandrakes-lab`, deploys
-automatically on push to `main`). No custom domain attached yet. Polar is
-still in sandbox mode (`POLAR_SERVER=sandbox` in Vercel's env vars) — no real
-card has been charged; switch that to `production` with a production Polar
-token once ready to take real payments.
+**Live:** https://sokndall.com (Vercel project `sokndall-h110-credentialing`,
+team `juandrakes-lab`, deploys automatically on push to `main`; also
+reachable at `sokndall-h110-credentialing.vercel.app`). The domain was
+reassigned 2026-08-24 from an older, unrelated Vercel project (`sokndall`,
+repo `sokndall-ecology`) that was previously occupying it — that project
+itself was left alone, only the `sokndall.com`/`www.sokndall.com` domain
+attachments were moved. DNS lives at Porkbun and already pointed at
+Vercel's shared edge, so no DNS record changes were needed, just
+reassigning the domain between projects. Polar is still in sandbox mode
+(`POLAR_SERVER=sandbox` in Vercel's env vars) — no real card has been
+charged; switch that to `production` with a production Polar token once
+ready to take real payments.
 
 ## What's built (Fase 1 + Fase 2)
 
@@ -129,7 +135,7 @@ the same server actions directly.
      settings consistent across all 3.
    - `POLAR_WEBHOOK_SECRET` can't be obtained until this app has a public
      URL. Already done for the live deployment above — endpoint id
-     `4bc494b0-d4df-466d-9598-8a0ed1dc819e`, registered via
+     `880c3615-6175-44b8-8dec-e65533fcb47b`, registered via
      `POLAR_ACCESS_TOKEN=... node scripts/register-webhook.mjs
      <site-url>` rather than by hand in the dashboard (prints the secret,
      which only Polar shows once — it's already saved in both `.env.local`
