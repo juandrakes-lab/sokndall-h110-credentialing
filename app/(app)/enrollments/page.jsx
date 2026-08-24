@@ -51,12 +51,21 @@ export default async function EnrollmentsPage({ searchParams }) {
             Click a status chip to update it. Every change is logged automatically.
           </p>
         </div>
-        <Link
-          href="/payers/new"
-          className="rounded-md border border-ink-200 px-4 py-2 text-sm font-medium text-ink-700 hover:bg-ink-50"
-        >
-          Add payer
-        </Link>
+        <div className="flex gap-3">
+          {/* eslint-disable-next-line @next/next/no-html-link-for-pages -- file download, not a page */}
+          <a
+            href="/enrollments/export"
+            className="rounded-md border border-ink-200 px-4 py-2 text-sm font-medium text-ink-700 hover:bg-ink-50"
+          >
+            Export CSV
+          </a>
+          <Link
+            href="/payers/new"
+            className="rounded-md border border-ink-200 px-4 py-2 text-sm font-medium text-ink-700 hover:bg-ink-50"
+          >
+            Add payer
+          </Link>
+        </div>
       </div>
 
       <MatrixFilters payers={allPayers} />

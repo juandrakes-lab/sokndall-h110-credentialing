@@ -19,12 +19,21 @@ export default async function PayersPage() {
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-semibold text-ink-900">Payers</h1>
-        <Link
-          href="/payers/new"
-          className="rounded-md bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700"
-        >
-          New payer
-        </Link>
+        <div className="flex gap-3">
+          {/* eslint-disable-next-line @next/next/no-html-link-for-pages -- file download, not a page */}
+          <a
+            href="/payers/export"
+            className="rounded-md border border-ink-200 px-4 py-2 text-sm font-medium text-ink-700 hover:bg-ink-50"
+          >
+            Export CSV
+          </a>
+          <Link
+            href="/payers/new"
+            className="rounded-md bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700"
+          >
+            New payer
+          </Link>
+        </div>
       </div>
 
       {payers.length === 0 ? (

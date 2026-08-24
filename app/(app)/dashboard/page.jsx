@@ -35,11 +35,28 @@ export default async function DashboardPage() {
 
   return (
     <div className="flex flex-col gap-8">
-      <div>
-        <h1 className="text-xl font-semibold text-ink-900">Upcoming expirations</h1>
-        <p className="mt-1 text-sm text-ink-500">
-          Credential status is derived automatically from expiration dates.
-        </p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-xl font-semibold text-ink-900">Upcoming expirations</h1>
+          <p className="mt-1 text-sm text-ink-500">
+            Credential status is derived automatically from expiration dates.
+          </p>
+        </div>
+        <div className="flex gap-3">
+          {/* eslint-disable-next-line @next/next/no-html-link-for-pages -- file download, not a page */}
+          <a
+            href="/credentials/export"
+            className="rounded-md border border-ink-200 px-4 py-2 text-sm font-medium text-ink-700 hover:bg-ink-50"
+          >
+            Export CSV
+          </a>
+          <Link
+            href="/credentials/import"
+            className="rounded-md border border-ink-200 px-4 py-2 text-sm font-medium text-ink-700 hover:bg-ink-50"
+          >
+            Import CSV
+          </Link>
+        </div>
       </div>
 
       {BUCKETS.map((bucket) => (

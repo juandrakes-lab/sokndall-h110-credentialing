@@ -17,12 +17,27 @@ export default async function ProvidersPage() {
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-semibold text-ink-900">Providers</h1>
-        <Link
-          href="/providers/new"
-          className="rounded-md bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700"
-        >
-          New provider
-        </Link>
+        <div className="flex gap-3">
+          {/* eslint-disable-next-line @next/next/no-html-link-for-pages -- file download, not a page */}
+          <a
+            href="/providers/export"
+            className="rounded-md border border-ink-200 px-4 py-2 text-sm font-medium text-ink-700 hover:bg-ink-50"
+          >
+            Export CSV
+          </a>
+          <Link
+            href="/providers/import"
+            className="rounded-md border border-ink-200 px-4 py-2 text-sm font-medium text-ink-700 hover:bg-ink-50"
+          >
+            Import CSV
+          </Link>
+          <Link
+            href="/providers/new"
+            className="rounded-md bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700"
+          >
+            New provider
+          </Link>
+        </div>
       </div>
 
       {providers.length === 0 ? (

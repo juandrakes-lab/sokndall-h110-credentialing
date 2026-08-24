@@ -89,3 +89,42 @@ export async function deleteCredential(providerId, credentialId) {
   revalidatePath(`/providers/${providerId}`);
   revalidatePath("/dashboard");
 }
+
+export async function importProviders(rows) {
+  const org = await getCurrentOrg();
+  if (!org) redirect("/onboarding");
+
+  const errors = [];
+  const valid = [];
+
+  rows.forEach((row, i) => {
+    if (!row.first_name || !row.last_name) {
+      errors.push(`Row ${i + 2}: missing first or last name.`);
+      return;
+    }
+    valid.push({
+      org_id: org.id,
+      first_name: row.first_name,
+      last_name: row.last_name,
+      npi: row.npi ?? null,
+      caqh_id: row.caqh_id ?? null,
+      specialty: row.specialty ?? null,
+      email: row.email ?? null,
+      notes: row.notes ?? null,
+    });
+  });
+
+  let inserted = 0;
+  if (valid.length > 0) {
+    const supabase = await createClient();
+    const { error, count } = await supabase
+      .from("providers")
+      .insert(valid, { count: "exact" });
+
+    if (error) throw new Error(error.message);
+    inserted = count ?? valid.length;
+  }
+
+  revalidatePath("/providers");
+  return { inserted, errors };
+}
