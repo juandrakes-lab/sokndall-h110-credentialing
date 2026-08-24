@@ -55,7 +55,7 @@ const product = {
   modified_at: null,
   trial_interval: "day",
   trial_interval_count: 14,
-  name: "H110 Solo",
+  name: "Sokndall Solo",
   description: "Up to 3 providers",
   visibility: "public",
   recurring_interval: "month",

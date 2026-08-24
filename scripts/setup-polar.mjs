@@ -1,4 +1,4 @@
-// One-off script: creates the 3 H110 products in Polar (sandbox or
+// One-off script: creates the 3 Sokndall products in Polar (sandbox or
 // production, per --server) with a 14-day trial and prints the product IDs
 // to paste into .env.local. Not part of the app runtime.
 //
@@ -19,9 +19,9 @@ if (!accessToken) {
 const polar = new Polar({ accessToken, server });
 
 const PLANS = [
-  { key: "SOLO", name: "H110 Solo", description: "Up to 3 providers", priceAmount: 4900 },
-  { key: "PRACTICE", name: "H110 Practice", description: "Up to 15 providers", priceAmount: 9900 },
-  { key: "BILLING_CO", name: "H110 Billing Co", description: "Up to 50 providers", priceAmount: 19900 },
+  { key: "SOLO", name: "Sokndall Solo", description: "Up to 3 providers", priceAmount: 4900 },
+  { key: "PRACTICE", name: "Sokndall Practice", description: "Up to 15 providers", priceAmount: 9900 },
+  { key: "BILLING_CO", name: "Sokndall Billing Co", description: "Up to 50 providers", priceAmount: 19900 },
 ];
 
 for (const plan of PLANS) {

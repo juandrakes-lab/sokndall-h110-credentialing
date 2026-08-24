@@ -20,7 +20,7 @@ export default async function AppLayout({ children }) {
       <header className="border-b border-ink-200 bg-white">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-3">
           <div className="flex items-center gap-6">
-            <span className="font-semibold text-ink-900">H110</span>
+            <span className="font-semibold text-ink-900">Sokndall</span>
             <nav className="flex gap-4 text-sm text-ink-500">
               <Link href="/dashboard" className="hover:text-ink-900">
                 Dashboard

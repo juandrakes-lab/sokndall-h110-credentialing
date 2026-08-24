@@ -5,7 +5,7 @@ import { PLANS, PLAN_ORDER } from "@/lib/plans";
 import { startCheckout, openBillingPortal } from "./actions";
 
 export const metadata = {
-  title: "Pricing — H110",
+  title: "Pricing — Sokndall",
 };
 
 export default async function PricingPage() {

@@ -51,7 +51,7 @@ export default function LoginPage() {
           {mode === "sign-in" ? "Sign in" : "Create your account"}
         </h1>
         <p className="mt-1 text-sm text-ink-500">
-          H110 — credentialing and enrollment tracking.
+          Sokndall — credentialing and enrollment tracking.
         </p>
       </div>
 

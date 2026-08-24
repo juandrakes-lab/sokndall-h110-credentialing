@@ -1,7 +1,7 @@
 import "./globals.css";
 
 export const metadata = {
-  title: "H110 — Credentialing & Enrollments",
+  title: "Sokndall — Credentialing & Enrollments",
   description: "Credential and payer enrollment tracking for small provider groups.",
 };
 
