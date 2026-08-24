@@ -6,7 +6,7 @@ and small billing companies. No PHI, no scraping, no onboarding call.
 Stack: Next.js App Router (JSX, no TypeScript), Tailwind v4 (`@theme` in
 `app/globals.css`), Supabase (Postgres + Auth), Vercel.
 
-**Live:** https://sokndall-h110-credentialing-juandrakes-labs-projects.vercel.app
+**Live:** https://sokndall-h110-credentialing.vercel.app
 (Vercel project `sokndall-h110-credentialing`, team `juandrakes-lab`, deploys
 automatically on push to `main`). No custom domain attached yet. Polar is
 still in sandbox mode (`POLAR_SERVER=sandbox` in Vercel's env vars) — no real
@@ -129,7 +129,7 @@ the same server actions directly.
      settings consistent across all 3.
    - `POLAR_WEBHOOK_SECRET` can't be obtained until this app has a public
      URL. Already done for the live deployment above — endpoint id
-     `a744e663-d99a-43f1-9b13-cbdad1a68f1d`, registered via
+     `4bc494b0-d4df-466d-9598-8a0ed1dc819e`, registered via
      `POLAR_ACCESS_TOKEN=... node scripts/register-webhook.mjs
      <site-url>` rather than by hand in the dashboard (prints the secret,
      which only Polar shows once — it's already saved in both `.env.local`
