@@ -1,4 +1,4 @@
-# H110 — Credentialing & Enrollments (MVP, Fase 1)
+# H110 — Credentialing & Enrollments (MVP, Fase 1-3)
 
 Provider credential and payer enrollment tracking for 1-10 provider practices
 and small billing companies. No PHI, no scraping, no onboarding call.
@@ -27,8 +27,19 @@ Fase 2:
   database trigger (who via `created_by`, when via `created_at`, from/to
   status) — the app never writes history rows itself
 - Filter the matrix by payer and/or by status via URL query params
-- Full data model + RLS for Fase 3+ tables (notification_log) so no
-  destructive migrations are needed later
+
+Fase 3:
+- CSV import for providers and credentials: upload → auto-guessed column
+  mapping (editable) → preview → import, with per-row errors reported
+  instead of failing the whole file (missing required fields, unrecognized
+  credential type, unmatched provider). Credential rows match an existing
+  provider by NPI first, then by first+last name.
+- CSV export for providers, credentials, payers, and the enrollments matrix
+- Weekly digest and 90/60/30/7-day expiration alert emails via Resend,
+  triggered by Vercel Cron (`vercel.json`) hitting `app/api/cron/*`. **Code
+  is written but unverified** — no Resend account was available yet, so the
+  send path itself has not been exercised. See "Setup" below before trusting
+  this works.
 
 Everything is server-rendered with Server Actions (no state management
 library, no API routes beyond the OAuth callback) so RLS is the only access
@@ -53,6 +64,15 @@ the same server actions directly.
    - Copy `.env.local.example` to `.env.local`.
    - Fill in `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY`
      from Supabase → Project Settings → API.
+   - For the email digest/alerts (optional for local dev, required in
+     production): `SUPABASE_SERVICE_ROLE_KEY` (Project Settings → API — keep
+     this out of the client, it bypasses RLS), `RESEND_API_KEY` and
+     `RESEND_FROM_EMAIL` from [resend.com](https://resend.com), and a random
+     `CRON_SECRET` (must match what you configure in Vercel's cron settings).
+   - To test the cron routes locally: `curl -H "Authorization: Bearer
+     $CRON_SECRET" http://localhost:3000/api/cron/weekly-digest` (and
+     `/api/cron/expiration-alerts`). In production, Vercel Cron calls these
+     automatically per `vercel.json`'s schedule and sends that header itself.
 
 3. **Install & run** (requires Node.js 18.18+)
 
@@ -66,10 +86,8 @@ the same server actions directly.
    show up on the dashboard. Add a payer and open `/enrollments` to see the
    matrix.
 
-## Deliberately not built yet (see spec, Fase 3+)
+## Deliberately not built yet (see spec, Fase 4+)
 
-- CSV import/export
-- Weekly digest / expiration alert emails
 - Pricing page, Polar checkout, plan limit enforcement
 - Free spreadsheet template funnel page
 
@@ -88,3 +106,7 @@ the same server actions directly.
   upsert. Every insert/update is logged to `enrollment_events` automatically
   by the `log_enrollment_event()` trigger, so the app code never writes
   history rows directly.
+- `SUPABASE_SERVICE_ROLE_KEY` is only ever read in `lib/supabase/admin.js`,
+  which only the two `app/api/cron/*` routes import. It bypasses RLS, so it
+  must never be imported from a page, layout, or Server Action that runs in
+  a logged-in user's request.
