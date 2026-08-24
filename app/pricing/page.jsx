@@ -2,7 +2,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentOrg } from "@/lib/org";
 import { PLANS, PLAN_ORDER } from "@/lib/plans";
-import { startCheckout } from "./actions";
+import { startCheckout, openBillingPortal } from "./actions";
 
 export const metadata = {
   title: "Pricing — H110",
@@ -72,6 +72,16 @@ export default async function PricingPage() {
         14-day trial, card required. You&apos;re billed automatically on day 15 unless you cancel —
         cancellation is self-serve from inside the app, no email required.
       </p>
+
+      {org?.polar_customer_id && (
+        <div className="text-center">
+          <form action={openBillingPortal}>
+            <button type="submit" className="text-sm text-brand-600 hover:underline">
+              Manage billing / cancel subscription
+            </button>
+          </form>
+        </div>
+      )}
     </main>
   );
 }

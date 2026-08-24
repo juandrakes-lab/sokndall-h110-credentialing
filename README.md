@@ -1,4 +1,4 @@
-# H110 — Credentialing & Enrollments (MVP, Fase 1-3)
+# H110 — Credentialing & Enrollments (MVP, Fase 1-4)
 
 Provider credential and payer enrollment tracking for 1-10 provider practices
 and small billing companies. No PHI, no scraping, no onboarding call.
@@ -45,6 +45,31 @@ Fase 3:
   a domain in Resend (or aiming a test org's owner at the account's own
   address) closes that gap. See "Setup" below.
 
+Fase 4:
+- Public pricing page (`/pricing`, no auth required, numbers visible, no
+  contact form) for the 3 plans from the spec: Solo ($49/mo, 3 providers),
+  Practice ($99/mo, 15), Billing Co ($199/mo, 50).
+- Polar checkout with a real 14-day trial (card required, auto-charged on
+  day 15) — configured on the product itself via `scripts/setup-polar.mjs`,
+  not hand-set in the Polar dashboard, so all 3 products stay consistent.
+  Verified against real Polar sandbox: checkout creation, redirect to
+  Polar's hosted page, and the trial terms Polar itself renders back
+  ("14 days free, then $49/month starting <date>") all confirmed correct.
+- Self-serve billing portal (`openBillingPortal` in `app/pricing/actions.js`,
+  via Polar's customer session API) for cancellation — no email required.
+- Webhook handler (`app/api/webhooks/polar/route.js`) syncs `plan` /
+  `provider_limit` / `subscription_status` on `subscription.created`,
+  `.updated`, and `.revoked`. Verified locally with a schema-correct,
+  correctly-signed test payload (`scripts/test-webhook.mjs`) — confirmed
+  the org's plan/limit update on create and revert to the floor plan on
+  revoke, and confirmed the signature check rejects bad/missing signatures.
+  **Not yet verified: a real webhook delivered by Polar itself** — that
+  needs a public URL to register the endpoint against, so it's untested
+  until this is deployed. See "Setup" below.
+- Provider-limit enforcement (`app/(app)/providers/actions.js`): blocks new
+  providers past `provider_limit`, both via the form and CSV import; never
+  blocks reads or exports.
+
 Everything is server-rendered with Server Actions (no state management
 library, no API routes beyond the OAuth callback) so RLS is the only access
 control layer — there is no service-role backdoor in the app code. The
@@ -57,8 +82,9 @@ the same server actions directly.
 1. **Supabase project**
    - Create a project at [supabase.com](https://supabase.com).
    - In the SQL editor, run every file under `supabase/migrations/` **in
-     filename order** (currently `20260823000000_init_schema.sql`, then
-     `20260823000001_fase2_enrollments_matrix.sql`).
+     filename order** (`20260823000000_init_schema.sql`,
+     `20260823000001_fase2_enrollments_matrix.sql`,
+     `20260824000000_fase4_billing.sql`).
    - Under Authentication → Providers, enable **Google** and set the redirect
      URL to `<your-app-url>/auth/callback` (and `http://localhost:3000/auth/callback`
      for local dev).
@@ -77,6 +103,23 @@ the same server actions directly.
      $CRON_SECRET" http://localhost:3000/api/cron/weekly-digest` (and
      `/api/cron/expiration-alerts`). In production, Vercel Cron calls these
      automatically per `vercel.json`'s schedule and sends that header itself.
+   - For billing: `POLAR_ACCESS_TOKEN` from polar.sh → Settings →
+     Developers (use a sandbox token while testing — set `POLAR_SERVER=sandbox`
+     to match). Then run `POLAR_ACCESS_TOKEN=... node scripts/setup-polar.mjs`
+     once to create the 3 products with their 14-day trial pre-configured,
+     and paste the printed IDs in as `POLAR_PRODUCT_SOLO` /
+     `POLAR_PRODUCT_PRACTICE` / `POLAR_PRODUCT_BILLING_CO`. Don't create the
+     products by hand in the dashboard — the script is what keeps the trial
+     settings consistent across all 3.
+   - `POLAR_WEBHOOK_SECRET` can't be obtained until this app has a public
+     URL: deploy first, then in Polar go to Settings → Webhooks → Add
+     Endpoint, URL = `<your-app-url>/api/webhooks/polar`, events
+     `subscription.created`, `subscription.updated`, `subscription.revoked`,
+     then copy the secret it gives you. `scripts/test-webhook.mjs
+     <org-id> [event-type]` sends a schema-correct, correctly-signed fake
+     event to the local route if you want to test the sync logic without a
+     live Polar call — it's not a substitute for the deploy-and-register
+     step, since that's the only way to prove the *real* delivery path.
 
 3. **Install & run** (requires Node.js 18.18+)
 
@@ -90,10 +133,10 @@ the same server actions directly.
    show up on the dashboard. Add a payer and open `/enrollments` to see the
    matrix.
 
-## Deliberately not built yet (see spec, Fase 4+)
+## Deliberately not built yet (see spec, Fase 5)
 
-- Pricing page, Polar checkout, plan limit enforcement
-- Free spreadsheet template funnel page
+- Free Google Sheet template + its landing page (acquisition asset, not
+  part of the product itself)
 
 ## Data model notes
 
@@ -114,3 +157,9 @@ the same server actions directly.
   which only the two `app/api/cron/*` routes import. It bypasses RLS, so it
   must never be imported from a page, layout, or Server Action that runs in
   a logged-in user's request.
+- `organizations.plan` (`solo`/`practice`/`billing_co`) and `provider_limit`
+  are the source of truth the app reads from — they're kept in sync with
+  Polar by the webhook, not read live from Polar on each request. The org
+  is linked to Polar via `customerExternalId = organizations.id` at
+  checkout time (see `lib/plans.js` for the plan → Polar product ID map),
+  so the webhook never needs a separate lookup table.
