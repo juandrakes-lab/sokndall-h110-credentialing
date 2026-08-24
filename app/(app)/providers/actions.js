@@ -3,7 +3,7 @@
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
-import { getCurrentOrg } from "@/lib/org";
+import { getCurrentOrg, remainingProviderSlots } from "@/lib/org";
 
 function fieldOrNull(formData, key) {
   const value = formData.get(key)?.toString().trim();
@@ -15,6 +15,14 @@ export async function createProvider(formData) {
   if (!org) redirect("/onboarding");
 
   const supabase = await createClient();
+
+  const remaining = await remainingProviderSlots(supabase, org);
+  if (remaining <= 0) {
+    throw new Error(
+      `You've reached your plan's limit of ${org.provider_limit} providers. Upgrade your plan to add more.`
+    );
+  }
+
   const { error } = await supabase.from("providers").insert({
     org_id: org.id,
     first_name: formData.get("first_name")?.toString().trim(),
@@ -114,15 +122,25 @@ export async function importProviders(rows) {
     });
   });
 
+  const supabase = await createClient();
+  const remaining = await remainingProviderSlots(supabase, org);
+  const overLimit = valid.slice(remaining);
+  const withinLimit = valid.slice(0, remaining);
+
+  if (overLimit.length > 0) {
+    errors.push(
+      `${overLimit.length} row(s) not imported: over your plan's limit of ${org.provider_limit} providers. Upgrade your plan to add more.`
+    );
+  }
+
   let inserted = 0;
-  if (valid.length > 0) {
-    const supabase = await createClient();
+  if (withinLimit.length > 0) {
     const { error, count } = await supabase
       .from("providers")
-      .insert(valid, { count: "exact" });
+      .insert(withinLimit, { count: "exact" });
 
     if (error) throw new Error(error.message);
-    inserted = count ?? valid.length;
+    inserted = count ?? withinLimit.length;
   }
 
   revalidatePath("/providers");

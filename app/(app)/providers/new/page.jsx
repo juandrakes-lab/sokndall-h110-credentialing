@@ -1,7 +1,32 @@
 import Link from "next/link";
+import { createClient } from "@/lib/supabase/server";
+import { getCurrentOrg, remainingProviderSlots } from "@/lib/org";
 import { createProvider } from "../actions";
 
-export default function NewProviderPage() {
+export default async function NewProviderPage() {
+  const supabase = await createClient();
+  const org = await getCurrentOrg();
+  const remaining = await remainingProviderSlots(supabase, org);
+
+  if (remaining <= 0) {
+    return (
+      <div className="mx-auto flex max-w-lg flex-col gap-4">
+        <h1 className="text-xl font-semibold text-ink-900">New provider</h1>
+        <div className="rounded-lg border border-ink-200 bg-white p-5">
+          <p className="text-sm text-ink-700">
+            You&apos;ve reached your plan&apos;s limit of {org.provider_limit} providers.
+          </p>
+          <Link
+            href="/pricing"
+            className="mt-3 inline-block rounded-md bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700"
+          >
+            Upgrade your plan
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="mx-auto flex max-w-lg flex-col gap-6">
       <h1 className="text-xl font-semibold text-ink-900">New provider</h1>

@@ -23,12 +23,20 @@ export default async function HomePage() {
         Track provider credentials and payer enrollments in one place. No PHI,
         no implementation project — just sign up and load your roster.
       </p>
-      <Link
-        href="/login"
-        className="rounded-md bg-brand-600 px-5 py-2.5 font-medium text-white hover:bg-brand-700"
-      >
-        Get started
-      </Link>
+      <div className="flex gap-3">
+        <Link
+          href="/login"
+          className="rounded-md bg-brand-600 px-5 py-2.5 font-medium text-white hover:bg-brand-700"
+        >
+          Get started
+        </Link>
+        <Link
+          href="/pricing"
+          className="rounded-md border border-ink-200 px-5 py-2.5 font-medium text-ink-700 hover:bg-ink-50"
+        >
+          See pricing
+        </Link>
+      </div>
     </main>
   );
 }

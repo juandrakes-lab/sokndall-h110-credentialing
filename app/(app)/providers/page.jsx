@@ -1,8 +1,10 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
+import { getCurrentOrg } from "@/lib/org";
 
 export default async function ProvidersPage() {
   const supabase = await createClient();
+  const org = await getCurrentOrg();
 
   const { data: providers, error } = await supabase
     .from("providers")
@@ -13,10 +15,17 @@ export default async function ProvidersPage() {
     return <p className="text-status-expired">Failed to load providers: {error.message}</p>;
   }
 
+  const atLimit = providers.length >= org.provider_limit;
+
   return (
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold text-ink-900">Providers</h1>
+        <div>
+          <h1 className="text-xl font-semibold text-ink-900">Providers</h1>
+          <p className="mt-1 text-sm text-ink-500">
+            {providers.length} of {org.provider_limit} providers used
+          </p>
+        </div>
         <div className="flex gap-3">
           {/* eslint-disable-next-line @next/next/no-html-link-for-pages -- file download, not a page */}
           <a
@@ -31,12 +40,21 @@ export default async function ProvidersPage() {
           >
             Import CSV
           </Link>
-          <Link
-            href="/providers/new"
-            className="rounded-md bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700"
-          >
-            New provider
-          </Link>
+          {atLimit ? (
+            <Link
+              href="/pricing"
+              className="rounded-md bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700"
+            >
+              Upgrade to add more
+            </Link>
+          ) : (
+            <Link
+              href="/providers/new"
+              className="rounded-md bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700"
+            >
+              New provider
+            </Link>
+          )}
         </div>
       </div>
 
