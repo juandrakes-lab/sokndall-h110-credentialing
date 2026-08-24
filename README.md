@@ -6,6 +6,13 @@ and small billing companies. No PHI, no scraping, no onboarding call.
 Stack: Next.js App Router (JSX, no TypeScript), Tailwind v4 (`@theme` in
 `app/globals.css`), Supabase (Postgres + Auth), Vercel.
 
+**Live:** https://sokndall-h110-credentialing-juandrakes-labs-projects.vercel.app
+(Vercel project `sokndall-h110-credentialing`, team `juandrakes-lab`, deploys
+automatically on push to `main`). No custom domain attached yet. Polar is
+still in sandbox mode (`POLAR_SERVER=sandbox` in Vercel's env vars) — no real
+card has been charged; switch that to `production` with a production Polar
+token once ready to take real payments.
+
 ## What's built (Fase 1 + Fase 2)
 
 Fase 1:
@@ -37,13 +44,14 @@ Fase 3:
 - CSV export for providers, credentials, payers, and the enrollments matrix
 - Weekly digest and 90/60/30/7-day expiration alert emails via Resend,
   triggered by Vercel Cron (`vercel.json`) hitting `app/api/cron/*`. The
-  whole pipeline is verified — cron auth, org iteration, data queries, and
-  the call into Resend's API all confirmed working — **except actually
-  seeing an email land in an inbox**. That last hop is blocked locally only
-  because the Resend account's test mode restricts delivery to its own
-  signup address, which doesn't match the test org's owner email; verifying
-  a domain in Resend (or aiming a test org's owner at the account's own
-  address) closes that gap. See "Setup" below.
+  whole pipeline is verified in production too (both routes return 200 with
+  correct data against the live deployment) — cron auth, org iteration,
+  data queries, and the call into Resend's API all confirmed working —
+  **except actually seeing an email land in an inbox**. That's a Resend
+  account limit, not a deployment gap: its test mode only delivers to its
+  own signup address, which doesn't match the test org's owner email.
+  Verifying a domain in Resend (or aiming a test org's owner at the
+  account's own address) is what actually closes it. See "Setup" below.
 
 Fase 4:
 - Public pricing page (`/pricing`, no auth required, numbers visible, no
@@ -63,9 +71,14 @@ Fase 4:
   correctly-signed test payload (`scripts/test-webhook.mjs`) — confirmed
   the org's plan/limit update on create and revert to the floor plan on
   revoke, and confirmed the signature check rejects bad/missing signatures.
-  **Not yet verified: a real webhook delivered by Polar itself** — that
-  needs a public URL to register the endpoint against, so it's untested
-  until this is deployed. See "Setup" below.
+  A webhook endpoint is now registered with Polar against the live
+  production URL (`scripts/register-webhook.mjs`), and the same
+  correctly-signed test payload was replayed against that real endpoint
+  with its real secret — 200, org updated correctly. The one thing that's
+  still technically unobserved is Polar *itself* firing the webhook (e.g.
+  from someone actually completing a checkout), since that requires a real
+  card to clear a real trial signup — but the delivery path, secret, and
+  handler logic are all proven against the real registered endpoint now.
 - Provider-limit enforcement (`app/(app)/providers/actions.js`): blocks new
   providers past `provider_limit`, both via the form and CSV import; never
   blocks reads or exports.
@@ -87,7 +100,10 @@ the same server actions directly.
      `20260824000000_fase4_billing.sql`).
    - Under Authentication → Providers, enable **Google** and set the redirect
      URL to `<your-app-url>/auth/callback` (and `http://localhost:3000/auth/callback`
-     for local dev).
+     for local dev). **Not done yet on the live project** — only
+     email/password has actually been exercised end-to-end so far, so the
+     "Continue with Google" button will error in production until this is
+     configured (needs a Google Cloud OAuth client, which nobody has set up).
    - Under Authentication → Providers, email/password is enabled by default.
 
 2. **Environment variables**
@@ -112,14 +128,19 @@ the same server actions directly.
      products by hand in the dashboard — the script is what keeps the trial
      settings consistent across all 3.
    - `POLAR_WEBHOOK_SECRET` can't be obtained until this app has a public
-     URL: deploy first, then in Polar go to Settings → Webhooks → Add
-     Endpoint, URL = `<your-app-url>/api/webhooks/polar`, events
-     `subscription.created`, `subscription.updated`, `subscription.revoked`,
-     then copy the secret it gives you. `scripts/test-webhook.mjs
-     <org-id> [event-type]` sends a schema-correct, correctly-signed fake
-     event to the local route if you want to test the sync logic without a
-     live Polar call — it's not a substitute for the deploy-and-register
-     step, since that's the only way to prove the *real* delivery path.
+     URL. Already done for the live deployment above — endpoint id
+     `a744e663-d99a-43f1-9b13-cbdad1a68f1d`, registered via
+     `POLAR_ACCESS_TOKEN=... node scripts/register-webhook.mjs
+     <site-url>` rather than by hand in the dashboard (prints the secret,
+     which only Polar shows once — it's already saved in both `.env.local`
+     and Vercel's env vars, so you shouldn't need to re-run this unless the
+     URL changes, e.g. attaching a custom domain). If you ever do need to:
+     the script registers `subscription.created`/`.updated`/`.revoked`
+     against `<site-url>/api/webhooks/polar`.
+   - `scripts/test-webhook.mjs <org-id> [event-type]` sends a schema-correct,
+     correctly-signed fake event to verify the sync logic —
+     `TEST_WEBHOOK_BASE_URL=<site-url>` targets a deployed route instead of
+     localhost.
 
 3. **Install & run** (requires Node.js 18.18+)
 

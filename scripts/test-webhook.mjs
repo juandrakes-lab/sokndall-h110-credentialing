@@ -126,7 +126,8 @@ const msgId = `msg_${Date.now()}`;
 const timestamp = new Date();
 const signature = wh.sign(msgId, timestamp, payload);
 
-const res = await fetch("http://localhost:3000/api/webhooks/polar", {
+const baseUrl = process.env.TEST_WEBHOOK_BASE_URL ?? "http://localhost:3000";
+const res = await fetch(`${baseUrl}/api/webhooks/polar`, {
   method: "POST",
   headers: {
     "Content-Type": "application/json",
