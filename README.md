@@ -36,10 +36,14 @@ Fase 3:
   provider by NPI first, then by first+last name.
 - CSV export for providers, credentials, payers, and the enrollments matrix
 - Weekly digest and 90/60/30/7-day expiration alert emails via Resend,
-  triggered by Vercel Cron (`vercel.json`) hitting `app/api/cron/*`. **Code
-  is written but unverified** — no Resend account was available yet, so the
-  send path itself has not been exercised. See "Setup" below before trusting
-  this works.
+  triggered by Vercel Cron (`vercel.json`) hitting `app/api/cron/*`. The
+  whole pipeline is verified — cron auth, org iteration, data queries, and
+  the call into Resend's API all confirmed working — **except actually
+  seeing an email land in an inbox**. That last hop is blocked locally only
+  because the Resend account's test mode restricts delivery to its own
+  signup address, which doesn't match the test org's owner email; verifying
+  a domain in Resend (or aiming a test org's owner at the account's own
+  address) closes that gap. See "Setup" below.
 
 Everything is server-rendered with Server Actions (no state management
 library, no API routes beyond the OAuth callback) so RLS is the only access
