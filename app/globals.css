@@ -19,6 +19,11 @@
   --color-status-expired: #dc2626;
   --color-status-expired-bg: #fef2f2;
 
+  --color-enroll-purple: #7c3aed;
+  --color-enroll-purple-bg: #f5f3ff;
+  --color-enroll-orange: #c2410c;
+  --color-enroll-orange-bg: #fff7ed;
+
   --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
 }
 

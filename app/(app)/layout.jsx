@@ -28,6 +28,12 @@ export default async function AppLayout({ children }) {
               <Link href="/providers" className="hover:text-ink-900">
                 Providers
               </Link>
+              <Link href="/payers" className="hover:text-ink-900">
+                Payers
+              </Link>
+              <Link href="/enrollments" className="hover:text-ink-900">
+                Enrollments
+              </Link>
             </nav>
           </div>
           <div className="flex items-center gap-4 text-sm text-ink-500">
