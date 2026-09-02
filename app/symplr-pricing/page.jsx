@@ -6,12 +6,15 @@ import SiteFooter from "@/components/site/SiteFooter";
 import Faq from "@/components/site/Faq";
 import CompetitorPricingTable from "@/components/site/CompetitorPricingTable";
 import { KNOWN, STRENGTHS, FIT, QUESTIONS, PRICE_INTRO, FAQ_ITEMS } from "./data";
+import { pageMeta } from "@/lib/seo";
 
-export const metadata = {
+export const metadata = pageMeta({
   title: "symplr pricing: what is public, what is not — Sokndall",
   description:
     "symplr does not publish prices. Here is what can be verified, what has to be estimated, and what a smaller alternative costs — which is $79 to $699 a month, published.",
-};
+  path: "/symplr-pricing",
+  type: "article",
+});
 
 export default function SymplrPricingPage() {
   return (

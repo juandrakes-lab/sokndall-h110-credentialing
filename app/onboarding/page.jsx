@@ -3,6 +3,10 @@ import { createClient } from "@/lib/supabase/server";
 import { getCurrentOrg } from "@/lib/org";
 import { createOrganization } from "./actions";
 
+export const metadata = {
+  robots: { index: false, follow: false },
+};
+
 export default async function OnboardingPage() {
   const supabase = await createClient();
   const {

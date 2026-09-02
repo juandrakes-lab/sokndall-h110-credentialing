@@ -4,6 +4,11 @@ import { createClient } from "@/lib/supabase/server";
 import { getCurrentOrg } from "@/lib/org";
 import { signOut } from "./actions";
 
+// The entire authenticated app is per-user and behind a redirect — never index it.
+export const metadata = {
+  robots: { index: false, follow: false },
+};
+
 export default async function AppLayout({ children }) {
   const supabase = await createClient();
   const {

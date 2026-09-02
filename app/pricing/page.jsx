@@ -5,50 +5,28 @@ import SiteNav from "@/components/site/SiteNav";
 import SiteFooter from "@/components/site/SiteFooter";
 import Faq from "@/components/site/Faq";
 import { TRIAL_HREF } from "@/components/site/siteData";
-import { createClient } from "@/lib/supabase/server";
-import { getCurrentOrg } from "@/lib/org";
-import { startCheckout, openBillingPortal } from "./actions";
+import { pageMeta } from "@/lib/seo";
 import { PLANS, CLIENTS, COST_BLOCKS, TRIAL_TERMS, FAQ_ITEMS } from "./data";
 
-export const metadata = {
+export const metadata = pageMeta({
   title: "Credentialing software pricing, published — Sokndall",
   description:
     "Three plans, three prices, no quote process. $79, $299 and $699 a month — $26, $20 and $14 per provider. 14-day trial, cancel self-serve from Settings.",
-};
+  path: "/pricing",
+});
 
-/** The plan CTA is the one part of this page that knows about the signed-in
- *  org: logged out it sends you to the trial, logged in it opens checkout. */
-function PlanCta({ plan, user, org }) {
-  if (!user) {
-    return (
-      <Link href={TRIAL_HREF} className="lp-btn">
-        Start 14-day trial
-      </Link>
-    );
-  }
-  if (org?.plan === plan.key) {
-    return (
-      <span className="lp-btn lp-btn--ghost" style={{ cursor: "default" }}>
-        Current plan
-      </span>
-    );
-  }
+/** Static CTA. Everyone gets the trial link; an already-signed-in user starts
+ *  or manages a subscription from inside the app (Settings), not from this
+ *  public marketing page, which stays fully static. */
+function PlanCta() {
   return (
-    <form action={startCheckout.bind(null, plan.key)}>
-      <button type="submit" className="lp-btn">
-        Start 14-day trial
-      </button>
-    </form>
+    <Link href={TRIAL_HREF} className="lp-btn">
+      Start 14-day trial
+    </Link>
   );
 }
 
-export default async function PricingPage() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  const org = user ? await getCurrentOrg() : null;
-
+export default function PricingPage() {
   return (
     <div className="sokndall-landing">
       <SiteNav />
@@ -89,20 +67,12 @@ export default async function PricingPage() {
                 ))}
               </ul>
               <div className="lp-plan-cta">
-                <PlanCta plan={plan} user={user} org={org} />
+                <PlanCta />
                 <p className="lp-note">Card required. Charged day 15.</p>
               </div>
             </div>
           ))}
         </div>
-
-        {org?.polar_customer_id && (
-          <form action={openBillingPortal} style={{ marginTop: 28 }}>
-            <button type="submit" className="lp-underline" style={{ background: "none", border: 0, cursor: "pointer" }}>
-              Manage billing / cancel subscription →
-            </button>
-          </form>
-        )}
       </section>
 
       {/* 3 — BILLING CO. The claim is structural, so the visual is the structure:

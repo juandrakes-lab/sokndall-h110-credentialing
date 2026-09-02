@@ -6,12 +6,14 @@ import SiteFooter from "@/components/site/SiteFooter";
 import StatusBadge from "@/components/site/StatusBadge";
 import { TRIAL_HREF } from "@/components/site/siteData";
 import { CADENCE, CYCLES, DERIVED_ROWS, LADDER, DIGEST_LINES, MULTI_STATE } from "./data";
+import { pageMeta } from "@/lib/seo";
 
-export const metadata = {
+export const metadata = pageMeta({
   title: "Credential expiration tracking — Sokndall",
   description:
     "Licenses, DEA, malpractice, board certification, CAQH attestation, Medicare and Medicaid revalidation in one place. Status calculates itself. Alerts at 90, 60, 30, 14 and 7 days. From $79 a month.",
-};
+  path: "/credential-expiration-tracking",
+});
 
 export default function CredentialExpirationTrackingPage() {
   return (

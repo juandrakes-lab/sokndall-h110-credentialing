@@ -9,12 +9,15 @@ import ExploreMore from "@/components/site/ExploreMore";
 import Observed from "@/components/site/Observed";
 import { CONTENTS, STEPS, ERRORS } from "./data";
 import { otherGuides } from "../clusterData";
+import { pageMeta } from "@/lib/seo";
 
-export const metadata = {
+export const metadata = pageMeta({
   title: "BCBS provider enrollment: it is not one payer — Sokndall",
   description:
     "Which Blue plan you are enrolling with, how the process differs by state, and why an approval in one state tells you nothing about the next.",
-};
+  path: "/payer-enrollment/blue-cross-blue-shield",
+  type: "article",
+});
 
 const RELATED = otherGuides("/payer-enrollment/blue-cross-blue-shield");
 

@@ -5,7 +5,7 @@ import Faq from "@/components/site/Faq";
 import ImgSlot from "@/components/site/ImgSlot";
 import EnrollmentMatrix, { MatrixLegend } from "@/components/site/EnrollmentMatrix";
 import { TRIAL_HREF } from "@/components/site/siteData";
-import { PROBLEMS, LAYERS, SCOPE_ITEMS, SCOPE_CLOSING, PLANS, FAQ_DATA } from "./data";
+import { PROBLEMS, LAYERS, SCOPE_ITEMS, SCOPE_CLOSING, PLANS, FAQ_DATA } from "./landingData";
 
 export default function Landing() {
   return (

@@ -5,12 +5,14 @@ import SiteNav from "@/components/site/SiteNav";
 import SiteFooter from "@/components/site/SiteFooter";
 import { TRIAL_HREF } from "@/components/site/siteData";
 import { CLIENTS, STRUCTURE, REPORT_LINES } from "./data";
+import { pageMeta } from "@/lib/seo";
 
-export const metadata = {
+export const metadata = pageMeta({
   title: "Credentialing for billing companies: six clients, one login — Sokndall",
   description:
     "Separate client organizations, isolated data, one login, one weekly view across all of them. $699 a month for up to 50 providers across your entire book.",
-};
+  path: "/for-billing-companies",
+});
 
 export default function ForBillingCompaniesPage() {
   return (

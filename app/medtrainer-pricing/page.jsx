@@ -6,12 +6,15 @@ import SiteFooter from "@/components/site/SiteFooter";
 import Faq from "@/components/site/Faq";
 import CompetitorPricingTable from "@/components/site/CompetitorPricingTable";
 import { KNOWN, STRENGTHS, WHERE_IT_STOPS, FIT, QUESTIONS, PRICE_INTRO, FAQ_ITEMS } from "./data";
+import { pageMeta } from "@/lib/seo";
 
-export const metadata = {
+export const metadata = pageMeta({
   title: "MedTrainer pricing: what is published, and what the credentialing module covers — Sokndall",
   description:
     "MedTrainer bundles credentialing with compliance training and document management. Here is what that means for the price, and what a credentialing-only tool costs.",
-};
+  path: "/medtrainer-pricing",
+  type: "article",
+});
 
 export default function MedTrainerPricingPage() {
   return (

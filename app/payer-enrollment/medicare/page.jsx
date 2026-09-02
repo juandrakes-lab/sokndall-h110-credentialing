@@ -10,12 +10,15 @@ import StageBarChart from "@/components/site/StageBarChart";
 import Observed from "@/components/site/Observed";
 import { CONTENTS, FORMS, TIMELINE_CHART, PLAYBOOK, ERRORS } from "./data";
 import { otherGuides } from "../clusterData";
+import { pageMeta } from "@/lib/seo";
 
-export const metadata = {
+export const metadata = pageMeta({
   title: "Medicare provider enrollment: PECOS, the forms, and revalidation — Sokndall",
   description:
     "How Medicare enrollment runs, which CMS-855 form applies to your situation, what revalidation does when it goes past due, and how to track a date CMS does not reliably remind you about.",
-};
+  path: "/payer-enrollment/medicare",
+  type: "article",
+});
 
 const RELATED = otherGuides("/payer-enrollment/medicare");
 

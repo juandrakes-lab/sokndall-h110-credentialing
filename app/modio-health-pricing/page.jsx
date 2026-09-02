@@ -6,12 +6,15 @@ import SiteFooter from "@/components/site/SiteFooter";
 import Faq from "@/components/site/Faq";
 import CompetitorPricingTable from "@/components/site/CompetitorPricingTable";
 import { KNOWN, STRENGTHS, FIT, THIRD_OPTION, QUESTIONS, FAQ_ITEMS } from "./data";
+import { pageMeta } from "@/lib/seo";
 
-export const metadata = {
+export const metadata = pageMeta({
   title: "Modio Health pricing: what is public, and what to know before the call — Sokndall",
   description:
     "Modio quotes after a demo. Here is what is verifiable, who OneView fits, and what a published-price alternative costs.",
-};
+  path: "/modio-health-pricing",
+  type: "article",
+});
 
 export default function ModioHealthPricingPage() {
   return (

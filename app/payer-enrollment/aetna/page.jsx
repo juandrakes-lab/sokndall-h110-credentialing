@@ -9,12 +9,15 @@ import ExploreMore from "@/components/site/ExploreMore";
 import Observed from "@/components/site/Observed";
 import { CONTENTS, STEPS, COMBOS, PLAYBOOK, ERRORS } from "./data";
 import { otherGuides } from "../clusterData";
+import { pageMeta } from "@/lib/seo";
 
-export const metadata = {
+export const metadata = pageMeta({
   title: "Aetna provider enrollment: the process, the timeline, and the NPI mismatch — Sokndall",
   description:
     "How to submit to Aetna, what to do during the months of review, and the specific NPI and TIN error that has providers paid out-of-network for weeks without knowing why.",
-};
+  path: "/payer-enrollment/aetna",
+  type: "article",
+});
 
 const RELATED = otherGuides("/payer-enrollment/aetna");
 

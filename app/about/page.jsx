@@ -2,12 +2,15 @@ import "@/components/site/site.css";
 import "@/components/site/site-article.css";
 import SiteNav from "@/components/site/SiteNav";
 import SiteFooter from "@/components/site/SiteFooter";
+import { pageMeta } from "@/lib/seo";
 
-export const metadata = {
+export const metadata = pageMeta({
   title: "About — Sokndall",
   description:
     "Credentialing and payer enrollment tracking software for medical practices and billing companies with 1 to 50 providers.",
-};
+  path: "/about",
+  type: "article",
+});
 
 // Short, no keyword target, entity-coherence page — answers "is this a real
 // company" quickly. Same minimal single-column treatment as /security.

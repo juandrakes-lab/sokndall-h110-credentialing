@@ -9,12 +9,15 @@ import ExploreMore from "@/components/site/ExploreMore";
 import StageBarChart from "@/components/site/StageBarChart";
 import { CONTENTS, STAGES, STAGE_CHART, ERRORS, GUIDES } from "./data";
 import { otherGuides } from "./clusterData";
+import { pageMeta } from "@/lib/seo";
 
-export const metadata = {
+export const metadata = pageMeta({
   title: "Payer enrollment: how the process actually runs, payer by payer — Sokndall",
   description:
     "What enrollment is, why being credentialed does not mean you can bill, how long each stage really takes, and what to do during the months when nothing appears to be happening.",
-};
+  path: "/payer-enrollment",
+  type: "article",
+});
 
 const RELATED = otherGuides("/payer-enrollment");
 

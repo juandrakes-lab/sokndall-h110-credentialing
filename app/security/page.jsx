@@ -2,12 +2,15 @@ import "@/components/site/site.css";
 import "@/components/site/site-article.css";
 import SiteNav from "@/components/site/SiteNav";
 import SiteFooter from "@/components/site/SiteFooter";
+import { pageMeta } from "@/lib/seo";
 
-export const metadata = {
+export const metadata = pageMeta({
   title: "Security — Sokndall",
   description:
     "Sokndall holds provider credentials and payer enrollment records. It does not hold PHI, which removes most of what usually stands between you and starting.",
-};
+  path: "/security",
+  type: "article",
+});
 
 // Short, no keyword target, objection-handling page — this exists to answer
 // one question quickly, not to persuade at length. No masthead kicker, no

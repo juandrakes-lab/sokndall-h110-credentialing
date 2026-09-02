@@ -1,10 +1,12 @@
 import Link from "next/link";
+import { pageMeta } from "@/lib/seo";
 
-export const metadata = {
+export const metadata = pageMeta({
   title: "Free Credentialing Spreadsheet Template — Sokndall",
   description:
     "A free Google Sheets template for tracking provider credentials and expiration dates. Copy it, no email required.",
-};
+  path: "/credentialing-spreadsheet-template",
+});
 
 const SHEET_URL = process.env.NEXT_PUBLIC_TEMPLATE_SHEET_URL;
 

@@ -9,12 +9,15 @@ import ExploreMore from "@/components/site/ExploreMore";
 import Observed from "@/components/site/Observed";
 import { CONTENTS, MEDICAL_STAGES, EVERNORTH_STEPS } from "./data";
 import { otherGuides } from "../clusterData";
+import { pageMeta } from "@/lib/seo";
 
-export const metadata = {
+export const metadata = pageMeta({
   title: "Cigna provider enrollment: the widest timeline of any major payer — Sokndall",
   description:
     "The Evernorth path for behavioral health, what the observed waits actually look like, and what to do when you are told the network is closed.",
-};
+  path: "/payer-enrollment/cigna",
+  type: "article",
+});
 
 const RELATED = otherGuides("/payer-enrollment/cigna");
 

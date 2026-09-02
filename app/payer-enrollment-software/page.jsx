@@ -7,12 +7,14 @@ import StatusBadge from "@/components/site/StatusBadge";
 import EnrollmentMatrix, { MatrixLegend } from "@/components/site/EnrollmentMatrix";
 import { TRIAL_HREF } from "@/components/site/siteData";
 import { STATUSES, TIMELINE_DAYS, TIMELINE_NODES, LOG_ROWS, CLOSING_POINTS } from "./data";
+import { pageMeta } from "@/lib/seo";
 
-export const metadata = {
+export const metadata = pageMeta({
   title: "Payer enrollment software that tracks the waiting — Sokndall",
   description:
     "One record per provider per payer, from submitted to effective date. Status, confirmation number, who you talked to last, and how long it has been since anyone checked. $79 to $699 a month, published, no demo call.",
-};
+  path: "/payer-enrollment-software",
+});
 
 export default function PayerEnrollmentSoftwarePage() {
   return (
