@@ -1,0 +1,12 @@
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--surface-page);color:var(--text-body);font:var(--type-body);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+h1,h2,h3,h4,h5{color:var(--text-heading);margin:0;font-weight:var(--fw-semibold);letter-spacing:var(--ls-heading)}
+h1{font-size:var(--fs-display-1);line-height:var(--lh-tight);letter-spacing:var(--ls-display)}
+h2{font-size:var(--fs-h2);line-height:var(--lh-heading)}
+h3{font-size:var(--fs-h3);line-height:var(--lh-heading)}
+h4{font-size:var(--fs-h4);line-height:var(--lh-snug)}
+p{margin:0}
+a{color:var(--text-link);text-decoration:none;transition:var(--transition-hover)}
+a:hover{color:var(--text-link-hover)}
+::selection{background:var(--sage-200);color:var(--ink-900)}
+:focus-visible{outline:none;box-shadow:var(--focus-ring);border-radius:var(--radius-xs)}

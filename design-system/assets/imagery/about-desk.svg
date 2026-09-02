@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="620" height="460" viewBox="0 0 620 460">
+  <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#e6ecdd"/><stop offset="1" stop-color="#d3e0d2"/>
+  </linearGradient></defs>
+  <rect width="620" height="460" rx="14" fill="url(#g)"/>
+  <text x="310" y="230" text-anchor="middle" font-family="Poppins,sans-serif" font-size="18" font-weight="600" fill="#2f5d3f">
+    PLACEHOLDER — about photo
+  </text>
+  <text x="310" y="258" text-anchor="middle" font-family="Poppins,sans-serif" font-size="13" fill="#4b564d">
+    over-the-shoulder at a laptop · replace with a real photo
+  </text>
+</svg>

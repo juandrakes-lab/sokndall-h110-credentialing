@@ -1,0 +1,304 @@
+/* Sokndall landing — Phase 3: design-system skin applied.
+   Forest green + gold + Poppins + sage pills + 16px cards + soft shadows.
+   Only theme (colour / type / shape) changed vs Phase 1 — every layout metric
+   (container width, padding, gaps, section rhythm, matrix dims, image-slot
+   mechanics, breakpoints) is byte-identical, so the reported image sizes hold. */
+
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap");
+
+/* Horizontal-overflow safety net belongs on the root element, not on
+   .sokndall-landing itself. `overflow-x` set to anything but `visible` on a
+   non-root ancestor forces its `overflow-y` to compute as `auto` per the CSS
+   overflow spec, which turns that ancestor into a scroll container — and
+   `position: sticky` on any descendant (the nav) then sticks to THAT
+   container instead of the viewport, which in practice means it never
+   visibly sticks at all, since the container itself scrolls out with the
+   page. html/body are special-cased against the viewport instead, so this
+   keeps the clipping without breaking sticky. Every bleed image already
+   wraps its own `overflow: hidden` section locally (see Landing.jsx,
+   payer-enrollment-software/page.jsx), so nothing relied on the root having
+   this — it was a redundant safety net that cost every page its sticky nav. */
+/* Only the root element — setting it on body too turns body into its own
+   nested scroll container distinct from the viewport (both html and body
+   having an explicit overflow value disables the normal body-to-viewport
+   overflow propagation), which is a second, subtler way to break sticky. */
+html:has(.sokndall-landing) { overflow-x: hidden; }
+
+.sokndall-landing {
+  /* ---- design-system tokens, mapped onto the landing's var names ---- */
+  --bg: #f6f8f3;                 /* paper — page + light sections */
+  --panel: #eef3ec;             /* cream-tint panels (§2 positioning, §5 matrix, §7 scope) */
+  --ink: #1a1f1c;               /* heading ink */
+  --ink-soft: #5b6660;          /* body text */
+  --dark-bg: #14281d;           /* forest-900 — the two dark bands */
+  --forest-800: #1c3a2a;        /* forest section (§4) + primary button */
+  --forest-card: #294636;       /* card surface on forest */
+  --accent: #2f5d3f;            /* forest-600 — links, in-line emphasis */
+  --accent-hover: #14281d;
+  --gold: #e8b84b;
+  --gold-hover: #d4a53a;
+  --line: #e2e7e0;              /* hairline */
+  --line-strong: #cdd5cd;
+  --sage: #e5f0d8;
+  --sage-ink: #2f5d3f;
+  --text-on-dark: #ffffff;
+  --text-on-dark-soft: #c4d1c6;
+  --border-on-dark: rgba(255, 255, 255, 0.14);
+  --stuck: #b4453c;             /* danger — the matrix "stuck" signal */
+
+  --display: "Poppins", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --sans: "Poppins", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "Poppins", system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  /* matrix cell colours */
+  --cell-calm-bg: rgba(47, 93, 63, 0.10);
+  --cell-stuck-bg: rgba(180, 69, 60, 0.14);
+  --cell-calm-mark: #2f5d3f;
+  --cell-stuck-mark: #b4453c;
+
+  /* layout (unchanged from Phase 1) */
+  --maxw: 1280px;
+  --pad-x: 48px;
+  --img-frame-clip: 22px;
+
+  /* shape / elevation */
+  --radius-btn: 6px;
+  --radius-card: 16px;
+  --shadow-card: 0 1px 2px rgba(20, 40, 29, 0.04), 0 10px 30px rgba(20, 40, 29, 0.06);
+  --shadow-card-hover: 0 2px 6px rgba(20, 40, 29, 0.06), 0 18px 40px rgba(20, 40, 29, 0.10);
+  --shadow-btn: 0 1px 2px rgba(20, 40, 29, 0.12);
+
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  -webkit-font-smoothing: antialiased;
+  width: 100%;
+}
+
+.sokndall-landing *,
+.sokndall-landing *::before,
+.sokndall-landing *::after { box-sizing: border-box; }
+
+.sokndall-landing a { color: var(--accent); text-decoration: none; }
+.sokndall-landing a:hover { color: var(--accent-hover); }
+/* component links carry their own colour — qualified so the base `a` rule
+   (specificity 0-1-1) doesn't override the class */
+
+.lp-container { max-width: var(--maxw); margin: 0 auto; padding-left: var(--pad-x); padding-right: var(--pad-x); }
+
+/* wordmark — set in Poppins Bold, uppercase, tracked, per the design system */
+.sokndall-landing .lp-wordmark {
+  font-family: var(--display); font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.06em;
+  line-height: 1; color: var(--ink); text-decoration: none;
+}
+
+/* eyebrow — a fully-rounded sage pill (design-system Pill), not a tracked caps label */
+.lp-eyebrow {
+  display: inline-flex; align-items: center;
+  padding: 6px 14px; border-radius: 999px;
+  background: var(--sage); color: var(--sage-ink);
+  font-family: var(--sans); font-size: 13px; font-weight: 500;
+  letter-spacing: 0.01em; text-transform: none;
+}
+
+.lp-h1 { font-family: var(--display); font-weight: 600; font-size: clamp(2.1rem, 3.6vw, 3.2rem); line-height: 1.08; letter-spacing: -0.02em; margin: 0; color: var(--ink); text-wrap: pretty; }
+.lp-h2 { font-family: var(--display); font-weight: 600; font-size: clamp(1.8rem, 2.9vw, 2.35rem); line-height: 1.16; letter-spacing: -0.015em; margin: 0; color: var(--ink); text-wrap: pretty; }
+.lp-h2 em { font-style: normal; color: var(--accent); }
+.lp-h3 { font-family: var(--display); font-size: 19px; font-weight: 600; line-height: 1.32; margin: 0; color: var(--ink); }
+.lp-lead { font-size: 17px; line-height: 1.65; color: var(--ink-soft); }
+.lp-body { font-size: 16px; line-height: 1.65; color: var(--ink-soft); }
+
+/* ---- buttons / links (prefixed with .sokndall-landing so the class beats the
+   base `a` colour rule) ---- */
+.sokndall-landing .lp-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  background: var(--forest-800); color: #fff;
+  padding: 14px 28px; font-size: 15px; font-weight: 600;
+  border: 1px solid var(--forest-800); border-radius: var(--radius-btn);
+  box-shadow: var(--shadow-btn);
+  font-family: var(--sans); cursor: pointer;
+  transition: background 160ms ease, border-color 160ms ease, color 160ms ease, transform 120ms ease;
+}
+.sokndall-landing .lp-btn:hover { background: var(--dark-bg); border-color: var(--dark-bg); color: #fff; }
+.sokndall-landing .lp-btn:active { transform: scale(0.985); }
+.sokndall-landing .lp-btn--sm { padding: 10px 20px; font-size: 14px; }
+.sokndall-landing .lp-btn--accent { background: var(--gold); border-color: var(--gold); color: var(--ink); }
+.sokndall-landing .lp-btn--accent:hover { background: var(--gold-hover); border-color: var(--gold-hover); color: var(--ink); }
+.sokndall-landing .lp-btn--ghost { background: transparent; color: var(--forest-800); border-color: var(--line-strong); box-shadow: none; }
+.sokndall-landing .lp-btn--ghost:hover { background: var(--sage); border-color: var(--sage); color: var(--forest-800); }
+.sokndall-landing .lp-underline { color: var(--accent); font-size: 15px; font-weight: 600; border-bottom: 1px solid currentColor; padding-bottom: 2px; }
+.sokndall-landing .lp-underline:hover { color: var(--accent-hover); }
+.sokndall-landing .lp-navlink { font-size: 14px; color: var(--ink); font-weight: 500; }
+.sokndall-landing .lp-navlink:hover { color: var(--accent); }
+.sokndall-landing .lp-footlink { font-size: 14px; color: var(--text-on-dark-soft); }
+.sokndall-landing .lp-footlink:hover { color: #fff; }
+
+/* ---- sections ---- */
+.lp-section { max-width: var(--maxw); margin: 0 auto; padding: 96px var(--pad-x); }
+.lp-section--flush { padding: 0; max-width: none; }
+.lp-panel { background: var(--panel); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.lp-dark { background: var(--dark-bg); }
+.lp-forest { background: var(--forest-800); }
+
+.lp-nav {
+  position: sticky; top: 0; z-index: 50;
+  background: color-mix(in srgb, var(--bg) 92%, transparent);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--line);
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 20px; padding: 16px var(--pad-x); flex-wrap: wrap;
+}
+
+/* ============================================================
+   IMAGE SLOTS — 3 treatments.
+   TRANSPARENT only when the image is anchored to a section seam.
+   Everything else is a normal framed image.
+   ------------------------------------------------------------
+   bleed  — light sections (§1 hero, §3 problem): transparent cut-out,
+            top at the content margin, bottom flush with the next seam,
+            so the subject stands on the boundary.
+   framed — light sections, not anchored (§2 positioning): a normal
+            photo in a 16px rounded frame, hairline + soft shadow.
+   tile   — dark section (§4 three things): opaque, contained, centred,
+            subtle diagonal top-right cut.
+   ============================================================ */
+.lp-img { display: block; width: 100%; height: auto; }
+
+.lp-imgslot {
+  width: 100%;
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px; text-align: center;
+  font-family: var(--sans); font-size: 11px; line-height: 1.5; color: var(--ink-soft);
+}
+.lp-imgslot > span { max-width: 44ch; }
+.lp-imgslot .t { display: block; font-weight: 600; color: var(--accent); margin-bottom: 6px; letter-spacing: 0.04em; }
+
+/* -- framed (normal photo on a light section) -- */
+.lp-img-framed {
+  border: 1px solid var(--line);
+  background: #fff;
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+}
+.lp-img-framed .lp-imgslot {
+  border: 1px dashed var(--line-strong);
+  aspect-ratio: var(--slot-ar, 3 / 2);
+}
+
+/* -- bleed -- */
+.lp-img-bleed {
+  position: absolute;
+  top: var(--bleed-top, 96px);
+  bottom: 0;
+  right: var(--pad-x);
+  width: var(--bleed-w, 416px);
+  display: flex; align-items: flex-end;
+  pointer-events: none;
+}
+.lp-img-bleed > .lp-imgslot {
+  height: 100%;
+  border: 1px dashed var(--line-strong); background: transparent;
+  border-radius: 14px;
+  align-items: flex-end;
+}
+/* real image fills the column width and is cropped at the bottom by the seam
+   (the box ends exactly at the next section, and the section is overflow:hidden) */
+.lp-img-bleed > .lp-img { height: 100%; width: 100%; object-fit: cover; object-position: 50% 0; }
+
+/* --contain: show the whole figure, uncropped, feet on the seam (letterboxed at top) */
+.lp-img-bleed--contain > .lp-img { object-fit: contain; object-position: 50% 100%; }
+
+.lp-bleed-content { padding: var(--bleed-top, 96px) var(--pad-x); }
+@media (min-width: 1101px) {
+  .lp-bleed-content {
+    padding-right: calc(var(--pad-x) + var(--bleed-w, 416px) + var(--bleed-gap, 64px));
+  }
+}
+
+/* -- tile (forest section) -- */
+.lp-imgtile {
+  border: 1px solid var(--border-on-dark);
+  background: var(--forest-card);
+  padding: 16px;
+  clip-path: polygon(0 0, calc(100% - var(--img-frame-clip)) 0, 100% var(--img-frame-clip), 100% 100%, 0 100%);
+}
+.lp-imgtile .lp-imgslot {
+  border: 1px dashed rgba(255, 255, 255, 0.2);
+  aspect-ratio: var(--slot-ar, 1 / 1);
+  color: var(--text-on-dark-soft);
+}
+.lp-imgtile .lp-imgslot .t { color: var(--gold); }
+
+/* -- scope: 2×2 card grid (design-system card: 16px radius, hairline, soft shadow) -- */
+.lp-scope-grid {
+  display: grid; grid-template-columns: 1fr;
+  gap: var(--card-gap, 24px);
+  margin-top: 48px;
+}
+@media (min-width: 860px) {
+  .lp-scope-grid { grid-template-columns: 1fr 1fr; }
+}
+.lp-scope-card {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+  padding: 32px 28px;
+  display: flex; flex-direction: column; gap: 10px;
+}
+
+/* -- pricing card -- */
+.lp-price-card {
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+}
+
+/* -- forest section (§4): flip text to on-dark -- */
+.lp-forest .lp-h2 { color: var(--text-on-dark); }
+.lp-forest .lp-h3 { color: var(--text-on-dark); }
+.lp-forest .lp-forest-body { color: var(--text-on-dark-soft); }
+
+@media (max-width: 1100px) {
+  .lp-img-bleed {
+    position: static; width: 100%; max-width: 420px;
+    margin: 40px auto 0; padding: 0 var(--pad-x);
+  }
+  .lp-img-bleed > .lp-imgslot { height: auto; aspect-ratio: var(--slot-ar, 4 / 5); }
+  .lp-img-bleed > .lp-img { height: auto; object-fit: contain; }
+  .lp-bleed-content { padding-bottom: 0; }
+}
+
+/* ---- matrix ---- */
+.lp-matrix-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius-card); background: #fff; }
+.lp-matrix {
+  display: grid;
+  grid-template-columns: 130px repeat(12, 58px);
+  grid-template-rows: 34px repeat(15, 30px);
+  width: max-content;
+}
+.lp-matrix-corner { grid-row: 1; grid-column: 1; border-bottom: 1px solid var(--line); border-right: 1px solid var(--line); }
+.lp-matrix-colh { grid-row: 1; display: flex; align-items: center; justify-content: center; font-family: var(--sans); font-size: 11px; font-weight: 600; color: var(--ink-soft); border-bottom: 1px solid var(--line); font-variant-numeric: tabular-nums; }
+.lp-matrix-rowh { grid-column: 1; display: flex; align-items: center; font-family: var(--sans); font-size: 11px; color: var(--ink); padding-left: 10px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); font-variant-numeric: tabular-nums; }
+.lp-matrix-cell { border-bottom: 1px solid var(--line); border-right: 1px solid var(--line); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; }
+.lp-matrix-cell .m { font-size: 11px; line-height: 1; }
+.lp-matrix-cell .d { font-family: var(--sans); font-size: 10px; color: var(--ink-soft); line-height: 1; font-variant-numeric: tabular-nums; }
+
+@keyframes lpCellIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+.lp-cell-anim { animation: lpCellIn 0.45s ease both; }
+@media (prefers-reduced-motion: reduce) {
+  .lp-cell-anim { animation: none !important; opacity: 1 !important; transform: none !important; }
+}
+
+/* ---- FAQ ---- */
+.lp-faq-q { display: flex; justify-content: space-between; align-items: center; padding: 22px 0; cursor: pointer; gap: 20px; border-bottom: 1px solid var(--line); }
+.lp-faq-q h3 { font-family: var(--display); font-size: 17px; font-weight: 600; margin: 0; color: var(--ink); }
+.lp-faq-q .g { font-family: var(--sans); font-size: 20px; color: var(--accent); flex: 0 0 auto; line-height: 1; }
+.lp-faq-a { padding: 22px 0 6px; max-width: 660px; border-bottom: 1px solid var(--line); }
+
+/* ---- responsive ---- */
+@media (max-width: 900px) {
+  .sokndall-landing { --pad-x: 24px; }
+  .lp-section { padding: 64px var(--pad-x); }
+}

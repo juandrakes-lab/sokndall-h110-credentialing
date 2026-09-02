@@ -1,0 +1,91 @@
+<!-- @dsCard group="Spacing" viewport="760x700" name="Section layout" subtitle="How a section fills its width: the two-column head, and where a body block may never sit alone" -->
+<!DOCTYPE html><html><head><meta charset="utf-8"><link rel="stylesheet" href="../styles.css"><style>
+body{padding:22px;background:var(--surface-page);font-family:var(--font-sans);margin:0;color:var(--text-body)}
+.lbl{font:var(--type-eyebrow);text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);margin:0 0 10px}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:22px}
+.demo{border:1px solid rgba(20,40,29,.10);border-radius:var(--radius-md);background:#fff;padding:16px;position:relative}
+.demo.bad{border-color:rgba(180,69,60,.35)}
+.tag{position:absolute;top:-9px;left:14px;font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:2px 8px;border-radius:999px}
+.tag.no{background:#b4453c;color:#fff}
+.tag.yes{background:var(--forest-600);color:#fff}
+.eb{display:inline-block;background:var(--sage-100,#e5f0d8);color:var(--forest-600);font-size:9px;padding:3px 7px;border-radius:999px;margin-bottom:7px}
+.h{height:9px;background:var(--text-heading);border-radius:2px;margin-bottom:5px}
+.h.w70{width:70%}.h.w50{width:50%}.h.w85{width:85%}
+.t{height:5px;background:rgba(91,102,96,.42);border-radius:2px;margin-bottom:5px}
+.void{background:repeating-linear-gradient(45deg,rgba(180,69,60,.10),rgba(180,69,60,.10) 5px,transparent 5px,transparent 10px);border:1px dashed rgba(180,69,60,.4);border-radius:4px}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.note{font-size:12px;line-height:1.55;color:var(--text-muted);margin:0 0 18px}
+.note b{color:var(--text-heading)}
+.rule{font-size:12px;line-height:1.6;color:var(--text-muted);margin:0;padding-left:16px;position:relative}
+.rule+.rule{margin-top:8px}
+.rule::before{content:"";position:absolute;left:0;top:7px;width:6px;height:6px;border-radius:2px;background:var(--forest-600);opacity:.5}
+.rule b{color:var(--text-heading)}
+</style></head><body>
+
+<p class="lbl">The two-column section head</p>
+<p class="note">A headline with body copy under it, left-aligned, leaves the rest of the container empty — on a 1200px container that is roughly <b>280px of dead space on every text section</b>. Put the body in the second column instead.</p>
+<p class="note"><b>Which edge the body aligns to depends on how tall the body is.</b> Measure <b>H</b> = eyebrow top → headline bottom, and <b>B</b> = the body's height. If <b>B reaches H</b> (within ~24px; it may overrun a little, which reads as the headline sitting centred against it) the body starts level with the <b>eyebrow</b>. If <b>B falls well short of H</b> it starts level with the <b>headline</b> instead — a short body hung off the eyebrow ends high above the headline's baseline and reads as floating, because the eyebrow is a small pill with no visual weight to anchor it. Neither can be decided in CSS; it is set per section.</p>
+
+<div class="pair">
+  <div class="demo bad"><span class="tag no">Not this</span>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+      <div><span class="eb">Eyebrow</span><div class="h w85"></div><div class="h w50"></div>
+        <div style="margin-top:10px"><div class="t"></div><div class="t"></div><div class="t" style="width:60%"></div></div>
+      </div>
+      <div class="void"></div>
+    </div>
+  </div>
+  <div class="demo"><span class="tag yes">Short body → headline</span>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start">
+      <div><span class="eb">Eyebrow</span><div class="h w85"></div><div class="h w50"></div></div>
+      <div style="padding-top:19px"><div class="t"></div><div class="t"></div><div class="t" style="width:72%"></div></div>
+    </div>
+  </div>
+</div>
+
+<div class="pair" style="grid-template-columns:1fr">
+  <div class="demo"><span class="tag yes">Tall body → eyebrow</span>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start">
+      <div><span class="eb">Eyebrow</span><div class="h w85"></div><div class="h w50"></div></div>
+      <div><div class="t"></div><div class="t"></div><div class="t"></div><div class="t"></div><div class="t"></div><div class="t" style="width:58%"></div></div>
+    </div>
+  </div>
+</div>
+
+<p class="lbl">A body block never sits alone in half a section</p>
+<p class="note">If there is no second column of copy, something else fills it — a schematic, a photo, a table. A wide figure that renders narrower than the container goes <b>beside</b> its copy rather than under a headline with white space next to it.</p>
+
+<div class="pair">
+  <div class="demo bad"><span class="tag no">Not this</span>
+    <div class="h w70"></div>
+    <div style="margin:10px 0 12px"><div class="t"></div><div class="t" style="width:64%"></div></div>
+    <div style="display:grid;grid-template-columns:1.7fr 1fr;gap:10px">
+      <div style="height:56px;border:1px solid rgba(20,40,29,.12);border-radius:4px;background:var(--surface-page)"></div>
+      <div class="void" style="height:56px"></div>
+    </div>
+  </div>
+  <div class="demo"><span class="tag yes">This</span>
+    <div style="display:grid;grid-template-columns:1fr 1.6fr;gap:12px;align-items:start">
+      <div><span class="eb">Eyebrow</span><div class="h" style="width:90%"></div><div class="h w70"></div>
+        <div style="margin-top:9px"><div class="t"></div><div class="t"></div><div class="t" style="width:70%"></div></div>
+      </div>
+      <div style="height:104px;border:1px solid rgba(20,40,29,.12);border-radius:4px;background:var(--surface-page)"></div>
+    </div>
+  </div>
+</div>
+
+<p class="lbl">The rules</p>
+<p class="rule"><b>Headline left, body right.</b> The default for any section whose content is prose. The body aligns to the eyebrow when it is tall enough to reach the headline's bottom, and to the headline when it is not — see above.</p>
+<p class="rule"><b>When the body is far taller than the headline block, centre the section instead.</b> Neither alignment survives a body that overruns the block by more than its own height.</p>
+<p class="rule"><b>An element narrower than the container is centred, not left-aligned.</b> An accordion, a form, a single figure with no copy to sit beside it — centred it reads as deliberate and its margins are symmetric; pushed to the left margin it is just the void again, wearing a different shirt.</p>
+<p class="rule"><b>A section aligns one way.</b> If the section is left-aligned, its closing line is too — a centred paragraph under left-aligned content reads as a different section that lost its heading.</p>
+<p class="rule"><b>An eyebrow labels a section; it cannot be the headline.</b> A pill on its own carries no weight, so any section that matters gets a real headline under it.</p>
+<p class="rule"><b>A closing pair goes in two columns</b>, and the two paragraphs are written within ~20% of each other so they bottom out together.</p>
+<p class="rule"><b>A statement is a full-bleed band, never a rounded card floating inside a section.</b> A card inside a section that could have been the section is the section done twice.</p>
+<p class="rule"><b>Parallel items are a card grid, not a list</b> — and the grid fills both rows. Five items run 3 + 2 with the second row spanning wider, never 3 + 2 with a hole.</p>
+<p class="rule"><b>Closing sections are centered and the CTA sits under the copy</b>, never beside the headline at the same height.</p>
+<p class="rule"><b>Light sections carry an eyebrow; forest and dark sections do not.</b> The absence is the pattern that makes the presence read as deliberate.</p>
+<p class="rule"><b>No invented device.</b> A statement set off by a hairline rule, a lone paragraph in display type — if the pattern appears nowhere else in the system, it is not a solution to a spacing problem. Fold the copy into a block that already exists, or draw the section's claim.</p>
+<p class="rule"><b>Never let a light strip get trapped between two dark masses.</b> If the argument requires it, give it its own tint, its own hairlines and full section height so it reads as a section rather than the gap between two others.</p>
+
+</body></html>

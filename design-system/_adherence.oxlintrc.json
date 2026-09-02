@@ -1,0 +1,145 @@
+{
+  "plugins": ["react", "import"],
+  "rules": {
+    "no-restricted-imports": [
+      "warn",
+      {
+        "patterns": [
+          {
+            "group": [
+              "components/brand/**",
+              "components/core/**",
+              "components/content/**",
+              "components/navigation/**",
+              "ui_kits/**"
+            ],
+            "message": "Import design-system components from 'index.js', not component internals."
+          }
+        ]
+      }
+    ],
+    "no-restricted-syntax": [
+      "warn",
+      {
+        "selector": "Literal[value=/#[0-9a-fA-F]{3,8}\\b/]",
+        "message": "Raw hex colour — use a design-system colour token via var()."
+      },
+      {
+        "selector": "Literal[value=/\\b\\d+px\\b/]",
+        "message": "Raw px value — use a design-system spacing/radius token via var()."
+      },
+      {
+        "selector": "Literal[value=/font-family\\s*:\\s*(?!['\\\"]?(?:Poppins))/i]",
+        "message": "Font not provided by the design system. Available: Poppins (--font-sans)."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Wordmark'] > JSXAttribute > JSXIdentifier[name!=/^(?:size|color|tone|as|key|ref|className|style|children)$/]",
+        "message": "<Wordmark> declared props: size, color, tone, as."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Wordmark'] > JSXAttribute[name.name='tone'] > Literal[value!=/^(?:ink|inverse|accent)$/]",
+        "message": "<Wordmark> tone must be 'ink' | 'inverse' | 'accent'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Button'] > JSXAttribute > JSXIdentifier[name!=/^(?:variant|size|arrow|iconLeft|iconRight|fullWidth|disabled|as|onClick|href|key|ref|className|style|children)$/]",
+        "message": "<Button> declared props: variant, size, arrow, iconLeft, iconRight, fullWidth, disabled, as."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Button'] > JSXAttribute[name.name='variant'] > Literal[value!=/^(?:primary|gold|outline|ghost|onDark)$/]",
+        "message": "<Button> variant must be 'primary' | 'gold' | 'outline' | 'ghost' | 'onDark'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Button'] > JSXAttribute[name.name='size'] > Literal[value!=/^(?:sm|md|lg)$/]",
+        "message": "<Button> size must be 'sm' | 'md' | 'lg'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='ArrowLink'] > JSXAttribute > JSXIdentifier[name!=/^(?:weight|tone|size|href|key|ref|className|style|children)$/]",
+        "message": "<ArrowLink> declared props: weight, tone, size, href."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='ArrowLink'] > JSXAttribute[name.name='tone'] > Literal[value!=/^(?:default|onDark)$/]",
+        "message": "<ArrowLink> tone must be 'default' | 'onDark'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Pill'] > JSXAttribute > JSXIdentifier[name!=/^(?:icon|tone|key|ref|className|style|children)$/]",
+        "message": "<Pill> declared props: icon, tone."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Pill'] > JSXAttribute[name.name='tone'] > Literal[value!=/^(?:sage|dark)$/]",
+        "message": "<Pill> tone must be 'sage' | 'dark'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Badge'] > JSXAttribute[name.name='tone'] > Literal[value!=/^(?:sage|gold|forest|neutral|onDark)$/]",
+        "message": "<Badge> tone must be 'sage' | 'gold' | 'forest' | 'neutral' | 'onDark'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Card'] > JSXAttribute > JSXIdentifier[name!=/^(?:interactive|elevation|tone|pad|key|ref|className|style|children)$/]",
+        "message": "<Card> declared props: interactive, elevation, tone, pad."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Card'] > JSXAttribute[name.name='elevation'] > Literal[value!=/^(?:none|card|panel|float)$/]",
+        "message": "<Card> elevation must be 'none' | 'card' | 'panel' | 'float'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Card'] > JSXAttribute[name.name='tone'] > Literal[value!=/^(?:light|dark)$/]",
+        "message": "<Card> tone must be 'light' | 'dark'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='IconCircle'] > JSXAttribute > JSXIdentifier[name!=/^(?:icon|tone|size|key|ref|className|style)$/]",
+        "message": "<IconCircle> declared props: icon, tone, size."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='IconCircle'] > JSXAttribute[name.name='tone'] > Literal[value!=/^(?:white|sage|gold|forest)$/]",
+        "message": "<IconCircle> tone must be 'white' | 'sage' | 'gold' | 'forest'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='SectionHeading'] > JSXAttribute > JSXIdentifier[name!=/^(?:eyebrow|eyebrowIcon|title|description|size|align|tone|key|ref|className|style)$/]",
+        "message": "<SectionHeading> declared props: eyebrow, eyebrowIcon, title, description, size, align, tone."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='SectionHeading'] > JSXAttribute[name.name='size'] > Literal[value!=/^(?:h2|display)$/]",
+        "message": "<SectionHeading> size must be 'h2' | 'display'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='SectionHeading'] > JSXAttribute[name.name='align'] > Literal[value!=/^(?:left|center)$/]",
+        "message": "<SectionHeading> align must be 'left' | 'center'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='ServiceCard'] > JSXAttribute > JSXIdentifier[name!=/^(?:icon|title|body|linkLabel|href|tone|key|ref|className|style)$/]",
+        "message": "<ServiceCard> declared props: icon, title, body, linkLabel, href, tone."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='ServiceCard'] > JSXAttribute[name.name='tone'] > Literal[value!=/^(?:dark|light)$/]",
+        "message": "<ServiceCard> tone must be 'dark' | 'light'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='FeatureItem'] > JSXAttribute[name.name='tone'] > Literal[value!=/^(?:light|dark)$/]",
+        "message": "<FeatureItem> tone must be 'light' | 'dark'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='LogoWall'] > JSXAttribute > JSXIdentifier[name!=/^(?:caption|names|tone|key|ref|className|style)$/]",
+        "message": "<LogoWall> declared props: caption, names, tone."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='StatStrip'] > JSXAttribute > JSXIdentifier[name!=/^(?:stats|tone|key|ref|className|style)$/]",
+        "message": "<StatStrip> declared props: stats, tone."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='NavBar'] > JSXAttribute > JSXIdentifier[name!=/^(?:items|active|onSelect|phone|phoneLabel|transparent|key|ref|className|style)$/]",
+        "message": "<NavBar> declared props: items, active, onSelect, phone, phoneLabel, transparent."
+      }
+    ]
+  },
+  "overrides": [
+    { "files": ["**/index.js"], "rules": { "no-restricted-imports": "off" } }
+  ],
+  "x-design-system": {
+    "namespace": "SokndallDS",
+    "components": [
+      "Wordmark","Button","ArrowLink","Pill","Badge","Card","IconCircle",
+      "SectionHeading","ServiceCard","FeatureItem","LogoWall","StatStrip","NavBar","ScrollCue"
+    ],
+    "fontFamilies": ["Poppins"],
+    "tokenSource": "_ds_manifest.json"
+  }
+}

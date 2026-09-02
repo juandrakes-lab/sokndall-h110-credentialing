@@ -1,0 +1,124 @@
+<!-- @template name="Marketing homepage" description="Sokndall homepage: hero, forest services section, about block with floating stat, footer. Static HTML built on the design tokens — no framework, no runtime." -->
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sokndall — Smart Financial Solutions</title>
+<link rel="stylesheet" href="../../styles.css">
+<script src="https://unpkg.com/lucide@0.462.0/dist/umd/lucide.min.js"></script>
+<style>
+  .wrap{max-width:var(--container-max);margin:0 auto;padding:0 var(--page-x)}
+  .wm{font-family:var(--font-display);font-weight:var(--fw-bold);letter-spacing:.06em;text-transform:uppercase}
+  .pill{display:inline-flex;align-items:center;gap:8px;padding:6px 14px 6px 12px;border-radius:var(--radius-pill);background:var(--sage-100);color:var(--sage-ink);font:var(--type-eyebrow)}
+  .pill.dark{background:rgba(255,255,255,.1);color:#fff;border:1px solid var(--border-on-dark)}
+  .btn{display:inline-flex;align-items:center;gap:8px;height:46px;padding:0 24px;border-radius:var(--radius-button);font:var(--type-button);text-decoration:none;box-shadow:var(--shadow-button)}
+  .btn .chip{display:grid;place-items:center;width:1.55em;height:1.55em;border-radius:var(--radius-xs);font-size:.85em;margin-right:-.35em}
+  .btn-primary{background:var(--action-primary);color:#fff}
+  .btn-primary .chip{background:rgba(255,255,255,.14)}
+  .btn-gold{background:var(--action-gold);color:var(--ink-900)}
+  .btn-gold .chip{background:rgba(20,40,29,.12)}
+  .svc{display:flex;flex-direction:column;gap:var(--space-5);background:var(--surface-dark-card);border:1px solid var(--border-on-dark);border-radius:var(--radius-card);padding:var(--space-8)}
+  .svc h4{color:#fff;font:var(--type-h4);margin:0}
+  .svc p{color:var(--text-body-on-dark);font:var(--type-small);margin:0;flex:1}
+  .circle{width:56px;height:56px;display:grid;place-items:center;background:#fff;color:var(--forest-800);border-radius:999px;flex:0 0 auto}
+  .learn{display:inline-flex;align-items:center;gap:6px;color:#fff;font:var(--type-small);font-weight:var(--fw-semibold);text-decoration:underline;text-underline-offset:3px}
+  .feat{display:flex;align-items:center;gap:12px;font:var(--type-small);color:var(--text-body);list-style:none}
+  .feat span{display:grid;place-items:center;width:22px;height:22px;border-radius:999px;background:var(--sage-100);color:var(--forest-600)}
+  .fcol > div{font:var(--type-eyebrow);font-weight:600;color:var(--gold-400)}
+  .fcol a{display:block;margin-top:12px;font:var(--type-small);color:rgba(255,255,255,.78)}
+</style></head>
+<body>
+
+<header style="position:sticky;top:0;z-index:20;background:var(--white);border-bottom:1px solid var(--border-hairline)">
+  <div class="wrap" style="height:var(--nav-h);display:flex;align-items:center;gap:var(--space-9)">
+    <span class="wm" style="font-size:20px;color:var(--ink-900)">Sokndall</span>
+    <nav style="display:flex;gap:var(--space-7);margin:0 auto;font:var(--type-nav)">
+      <a href="#" style="color:var(--forest-600);font-weight:600">Services</a>
+      <a href="#" style="color:var(--ink-800)">About Us</a>
+      <a href="#" style="color:var(--ink-800)">Blog</a>
+      <a href="#" style="color:var(--ink-800)">Pages</a>
+      <a href="#" style="color:var(--ink-800)">Contact</a>
+    </nav>
+    <div style="display:flex;align-items:center;gap:12px">
+      <span class="circle" style="width:40px;height:40px;background:var(--tint-sage);color:var(--tint-sage-ink)"><i data-lucide="phone" style="width:16px;height:16px"></i></span>
+      <span style="display:flex;flex-direction:column;line-height:1.25">
+        <span style="font:var(--type-small);font-size:var(--fs-caption);color:var(--text-muted)">Speak With An Expert</span>
+        <span style="font:var(--type-small);font-weight:600;color:var(--ink-900)">+1 646 555 0198</span>
+      </span>
+    </div>
+  </div>
+</header>
+
+<section style="position:relative;overflow:hidden;background:var(--gradient-hero)">
+  <div style="position:absolute;inset:0;left:46%;background:linear-gradient(135deg,#dfe8d6,#cdddd0);-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 24%);mask-image:linear-gradient(90deg,transparent 0,#000 24%)"></div>
+  <div style="position:absolute;inset:0;background:linear-gradient(90deg,rgba(246,248,243,.98) 0%,rgba(246,248,243,.86) 40%,rgba(246,248,243,0) 78%)"></div>
+  <div class="wrap" style="position:relative">
+    <div style="max-width:560px;padding:var(--space-12) 0 var(--space-14)">
+      <span class="pill">&#127942; Top-Rated Accounting &amp; Advisory Firm in USA</span>
+      <h1 style="margin:var(--space-5) 0 0;text-wrap:balance">Smart Financial Solutions for a Stronger Tomorrow</h1>
+      <p style="font:var(--type-lead);color:var(--text-body);margin:var(--space-5) 0 0;max-width:440px">Avoid costly mistakes and keep more of what you earn. We help individuals and businesses save, grow, and thrive.</p>
+      <div style="display:flex;gap:var(--space-4);margin-top:var(--space-8)">
+        <a class="btn btn-primary" href="#">Get Free Consultation <span class="chip">&#8599;</span></a>
+        <a class="btn btn-gold" href="#">Schedule a Call <span class="chip">&#8599;</span></a>
+      </div>
+      <div style="margin-top:var(--space-10);font:var(--type-small);font-weight:500;color:var(--text-muted)">Trusted by 500+ businesses across the USA</div>
+    </div>
+  </div>
+</section>
+
+<section style="background:var(--gradient-dark)">
+  <div class="wrap" style="padding:var(--space-14) var(--page-x)">
+    <div style="display:flex;flex-direction:column;align-items:center;gap:var(--space-4);text-align:center;max-width:640px;margin:0 auto">
+      <span class="pill dark">&#128155; We're Here To Support Your Financial Success</span>
+      <h2 style="color:#fff;text-wrap:balance">Comprehensive Accounting Solutions for Your Business.</h2>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--card-gap);margin-top:var(--space-11)">
+      <div class="svc"><div style="display:flex;align-items:center;gap:16px"><span class="circle"><i data-lucide="receipt"></i></span><h4>Tax Planning &amp; Preparation</h4></div><p>Strategic tax planning and accurate filing to minimize your tax liability and keep you compliant year-round.</p><a class="learn" href="#">Learn More &#8599;</a></div>
+      <div class="svc"><div style="display:flex;align-items:center;gap:16px"><span class="circle"><i data-lucide="bar-chart-3"></i></span><h4>Accounting &amp; Bookkeeping</h4></div><p>Accurate books and real-time financial insight to help you make better business decisions.</p><a class="learn" href="#">Learn More &#8599;</a></div>
+      <div class="svc"><div style="display:flex;align-items:center;gap:16px"><span class="circle"><i data-lucide="wallet"></i></span><h4>Payroll Management</h4></div><p>Full-service payroll processing so your team gets paid accurately and on time, every time.</p><a class="learn" href="#">Learn More &#8599;</a></div>
+      <div class="svc"><div style="display:flex;align-items:center;gap:16px"><span class="circle"><i data-lucide="briefcase"></i></span><h4>Business Advisory</h4></div><p>Expert guidance to help you grow, manage risk, and reach your goals.</p><a class="learn" href="#">Learn More &#8599;</a></div>
+    </div>
+    <div style="display:flex;justify-content:center;margin-top:var(--space-9)">
+      <a class="btn btn-gold" href="#">Explore All Services <span class="chip">&#8599;</span></a>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap" style="padding:var(--space-14) var(--page-x)">
+    <div style="display:grid;grid-template-columns:1fr 1.1fr;gap:var(--space-12);align-items:center">
+      <div style="position:relative">
+        <div style="height:440px;border-radius:var(--radius-image);border-top-right-radius:0;background:linear-gradient(135deg,#e6ecdd,#d3e0d2)"></div>
+        <div style="position:absolute;right:-24px;bottom:-28px;max-width:220px;background:#fff;border:1px solid var(--border-card);border-radius:var(--radius-card);box-shadow:var(--shadow-float);padding:var(--space-6)">
+          <div style="font-family:var(--font-display);font-size:var(--fs-h3);font-weight:600;color:var(--text-heading);line-height:1.1">15+</div>
+          <div style="font:var(--type-small);color:var(--text-body);margin-top:4px">Years advising individuals and businesses across the USA.</div>
+        </div>
+      </div>
+      <div>
+        <span class="pill">&#128155; Why Sokndall</span>
+        <h2 style="margin:var(--space-4) 0 0;text-wrap:balance">Simplifying Accounting So You Can Focus on What Matters Most.</h2>
+        <p style="font:var(--type-body);color:var(--text-body);margin:var(--space-4) 0 0;max-width:460px">Our experienced accountants take care of your numbers so you can focus on running and growing your business — from daily bookkeeping to financial reporting.</p>
+        <ul style="display:flex;flex-direction:column;gap:var(--space-3);padding:0;margin:var(--space-7) 0 0">
+          <li class="feat"><span><i data-lucide="check" style="width:13px;height:13px"></i></span>Client-Centric Approach</li>
+          <li class="feat"><span><i data-lucide="check" style="width:13px;height:13px"></i></span>Proven Track Record</li>
+          <li class="feat"><span><i data-lucide="check" style="width:13px;height:13px"></i></span>Commitment to Excellence</li>
+        </ul>
+        <div style="margin-top:var(--space-8)"><a class="btn btn-primary" href="#">More About Us <span class="chip">&#8599;</span></a></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer style="background:var(--forest-900)">
+  <div class="wrap" style="padding:var(--space-12) var(--page-x) var(--space-8);display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:var(--space-11)">
+    <div>
+      <span class="wm" style="font-size:20px;color:#fff">Sokndall</span>
+      <p style="font:var(--type-small);color:rgba(255,255,255,.6);margin:var(--space-5) 0 0;max-width:240px">Smart financial solutions that help individuals and businesses save, grow, and thrive.</p>
+    </div>
+    <div class="fcol"><div>Services</div><a href="#">Tax Planning</a><a href="#">Bookkeeping</a><a href="#">Payroll</a><a href="#">Advisory</a></div>
+    <div class="fcol"><div>Company</div><a href="#">About Us</a><a href="#">Careers</a><a href="#">Blog</a><a href="#">Contact</a></div>
+    <div class="fcol"><div>Legal</div><a href="#">Privacy</a><a href="#">Terms</a><a href="#">Disclosures</a></div>
+  </div>
+  <div style="border-top:1px solid rgba(255,255,255,.12)"><div class="wrap" style="padding:var(--space-5) var(--page-x);font:var(--type-small);font-size:var(--fs-caption);color:rgba(255,255,255,.5)">&#169; 2026 Sokndall. All rights reserved.</div></div>
+</footer>
+
+<script>window.lucide&&window.lucide.createIcons({attrs:{"stroke-width":1.75}});</script>
+</body></html>

@@ -1,0 +1,70 @@
+:root{
+/* --- Forest: the brand green. Fills the dark editorial sections and the primary CTA. --- */
+--forest-50:#eef4ee;--forest-100:#d8e6d9;--forest-200:#b3cdb6;--forest-300:#84ab8b;
+--forest-400:#4f8560;--forest-500:#357a48;--forest-600:#2f5d3f;--forest-700:#244a32;
+--forest-800:#1c3a2a;--forest-900:#14281d;
+--forest-card:#294636;      /* card surface inside dark sections */
+
+/* --- Gold: the single warm accent. The high-emphasis CTA and nothing else. --- */
+--gold-300:#f2d489;--gold-400:#edc76a;--gold-500:#e8b84b;--gold-600:#d4a53a;--gold-700:#b3892c;
+
+/* --- Sage: the soft pill/eyebrow background lifted straight from the comp. --- */
+--sage-100:#e5f0d8;--sage-200:#d3e6bf;--sage-ink:#2f5d3f;
+
+/* --- Ink / neutral ramp: warm, faintly green-grey text on off-white surfaces. --- */
+--ink-900:#1a1f1c;--ink-800:#242b26;--ink-700:#37413a;--ink-600:#4b564d;
+--ink-500:#5b6660;--ink-400:#7c877f;--ink-300:#a3ada6;--ink-200:#c9d0ca;
+--ink-100:#e4e8e3;--ink-050:#eef2ec;
+--white:#ffffff;--paper:#f6f8f3;--paper-warm:#fbfcf9;
+
+/* --- Surface tints: available behind icons and callouts. The reference uses plain
+       white icon circles; these exist for range, not as section backgrounds. --- */
+--tint-sage:#e8f1dd;--tint-gold:#f7eccf;--tint-forest:#e4ede4;--tint-cream:#f1f0e6;
+--tint-sage-ink:#3a6b3f;--tint-gold-ink:#8a6a1f;--tint-forest-ink:#2f5d3f;--tint-cream-ink:#7a6f4a;
+
+/* --- Semantic --- */
+--success-500:#3a6b3f;--warning-500:#b3892c;--danger-500:#b4453c;--info-500:#2f5d3f;
+--success-bg:#e5f0d8;--warning-bg:#f7eccf;--danger-bg:#f6e4e2;--info-bg:#e4ede4;
+
+/* ================= Semantic aliases ================= */
+--text-heading:var(--ink-900);
+--text-body:var(--ink-500);
+--text-muted:var(--ink-400);
+--text-accent:var(--forest-600);
+--text-link:var(--forest-600);
+--text-link-hover:var(--forest-800);
+--text-on-dark:var(--white);
+--text-body-on-dark:#c4d1c6;
+--text-eyebrow:var(--sage-ink);
+--text-on-gold:var(--ink-900);
+
+--surface-page:var(--paper);
+--surface-card:var(--white);
+--surface-raised:var(--white);
+--surface-subtle:var(--ink-050);
+--surface-dark:var(--forest-800);
+--surface-dark-card:var(--forest-card);
+
+--border-hairline:var(--ink-100);
+--border-card:#e7ebe4;
+--border-strong:var(--ink-200);
+--border-on-dark:rgba(255,255,255,.12);
+--border-focus:var(--forest-500);
+
+--action-primary:var(--forest-800);
+--action-primary-hover:var(--forest-900);
+--action-primary-press:#0f1f16;
+--action-gold:var(--gold-500);
+--action-gold-hover:var(--gold-600);
+--action-gold-press:var(--gold-700);
+--action-outline-border:var(--ink-200);
+--action-outline-text:var(--ink-900);
+--action-on-dark-bg:var(--white);
+--action-on-dark-text:var(--forest-800);
+--action-disabled-bg:var(--ink-100);
+--action-disabled-text:var(--ink-300);
+
+/* --- The only two gradients in the system: the hero glow and the dark-section wash. --- */
+--gradient-hero:linear-gradient(180deg,#f0f5ea 0%,#f6f8f3 42%); /* @kind color */
+--gradient-dark:linear-gradient(180deg,#2a4a37 0%,#1c3a2a 45%,#16281d 100%); /* @kind color */
+}

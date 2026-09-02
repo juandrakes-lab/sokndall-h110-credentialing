@@ -1,0 +1,13 @@
+:root{
+--ease-standard:cubic-bezier(.4,0,.2,1); /* @kind other */
+--ease-out:cubic-bezier(0,0,.2,1); /* @kind other */
+--ease-in:cubic-bezier(.4,0,1,1); /* @kind other */
+--dur-fast:120ms; /* @kind other */
+--dur-base:180ms; /* @kind other */
+--dur-slow:280ms; /* @kind other */
+--dur-reveal:520ms; /* @kind other */
+--transition-hover:background-color var(--dur-base) var(--ease-standard),color var(--dur-base) var(--ease-standard),border-color var(--dur-base) var(--ease-standard),box-shadow var(--dur-base) var(--ease-standard); /* @kind other */
+--transition-card:box-shadow var(--dur-slow) var(--ease-standard),transform var(--dur-slow) var(--ease-standard); /* @kind other */
+--lift-hover:translateY(-3px); /* @kind other */
+--press-scale:0.985; /* @kind other */
+}

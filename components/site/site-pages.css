@@ -1,0 +1,376 @@
+/* Sokndall — shared page components.
+   Companion to site.css (the landing skin). Everything here is scoped to the
+   same .sokndall-landing theme block, so it inherits the design-system vars:
+   forest/gold/paper, Poppins, 16px cards, 6px buttons, soft green shadows.
+
+   Used by /landing, /pricing, /payer-enrollment-software,
+   and /credential-expiration-tracking. The /payer-enrollment/ article cluster
+   does NOT use this file — it runs on site-article.css instead.
+   Nothing here changes the landing's own layout metrics. */
+
+/* ---- generic page furniture ---- */
+.lp-page-head { max-width: var(--maxw); margin: 0 auto; padding: 88px var(--pad-x) 72px; }
+.lp-note { font-size: 13px; color: var(--ink-soft); font-variant-numeric: tabular-nums; margin: 0; }
+
+/* two-column split that collapses cleanly */
+.lp-split { display: grid; grid-template-columns: 1fr; gap: 48px; align-items: start; }
+@media (min-width: 1000px) {
+  .lp-split { grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; }
+  .lp-split--wide-left { grid-template-columns: 1.1fr 0.9fr; }
+  .lp-split--wide-right { grid-template-columns: 0.9fr 1.1fr; }
+  .lp-split--top { align-items: start; }
+}
+
+/* ---- STATUS BADGES ------------------------------------------------
+   Colour + shape + monospace count. The shape carries the meaning on its
+   own, so the badges still read in greyscale. */
+.lp-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 5px 12px 5px 10px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  font-family: var(--sans); font-size: 12.5px; font-weight: 500;
+  line-height: 1.2; white-space: nowrap;
+}
+.lp-badge .mk { font-size: 10px; line-height: 1; flex: 0 0 auto; }
+.lp-badge .ct {
+  font-size: 11.5px; font-variant-numeric: tabular-nums;
+  opacity: 0.8; padding-left: 7px;
+  border-left: 1px solid currentColor;
+}
+.lp-badge--neutral { background: #eaeeea; border-color: var(--line-strong); color: #5b6660; }
+.lp-badge--forest  { background: rgba(47, 93, 63, 0.10); border-color: rgba(47, 93, 63, 0.26); color: #2a5238; }
+.lp-badge--sage    { background: var(--sage); border-color: #cfe2bc; color: var(--sage-ink); }
+.lp-badge--gold    { background: rgba(232, 184, 75, 0.20); border-color: rgba(180, 138, 40, 0.36); color: #806011; }
+.lp-badge--amber   { background: rgba(214, 138, 44, 0.16); border-color: rgba(176, 108, 24, 0.36); color: #864d10; }
+.lp-badge--rust    { background: rgba(180, 69, 60, 0.13); border-color: rgba(180, 69, 60, 0.32); color: #8f3129; }
+.lp-badge--deep    { background: rgba(122, 40, 34, 0.12); border-color: rgba(122, 40, 34, 0.32); color: #7a2822; }
+
+.lp-forest .lp-badge--neutral { background: rgba(255, 255, 255, 0.10); border-color: var(--border-on-dark); color: var(--text-on-dark-soft); }
+
+.lp-badge-legend { display: flex; flex-wrap: wrap; gap: 10px; }
+
+/* ---- DATA TABLE ---- */
+.lp-table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius-card); background: #fff; box-shadow: var(--shadow-card); }
+.lp-table { border-collapse: collapse; width: 100%; min-width: 700px; }
+.lp-table th, .lp-table td { text-align: left; padding: 16px 20px; vertical-align: top; border-bottom: 1px solid var(--line); }
+.lp-table thead th {
+  font-family: var(--sans); font-size: 11px; font-weight: 600;
+  letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-soft);
+  background: var(--panel); border-bottom: 1px solid var(--line-strong);
+  white-space: nowrap;
+}
+.lp-table tbody tr:last-child td { border-bottom: 0; }
+.lp-table td { font-size: 14.5px; line-height: 1.55; color: var(--ink-soft); }
+.lp-table td strong { color: var(--ink); font-weight: 600; }
+.lp-table tr.is-hot td { background: rgba(180, 69, 60, 0.05); }
+
+/* ---- PRICING ROWS — the detailed version of the home pricing component ---- */
+.lp-plans { display: flex; flex-direction: column; gap: 22px; }
+.lp-plan {
+  position: relative;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+  padding: 34px 32px;
+  display: grid; grid-template-columns: 1fr; gap: 28px;
+}
+@media (min-width: 940px) {
+  .lp-plan { grid-template-columns: 240px 1fr 200px; gap: 44px; align-items: start; }
+}
+.lp-plan--featured { border-color: var(--accent); box-shadow: var(--shadow-card-hover); }
+.lp-plan-label {
+  position: absolute; top: -11px; left: 32px;
+  background: var(--accent); color: #fff;
+  font-family: var(--sans); font-size: 11px; font-weight: 600;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  padding: 5px 12px; border-radius: 999px;
+}
+.lp-plan-name { font-family: var(--display); font-size: 24px; font-weight: 600; margin: 0 0 12px; color: var(--ink); }
+.lp-plan-price { display: flex; align-items: baseline; gap: 6px; }
+.lp-plan-price .amt { font-family: var(--display); font-size: 40px; font-weight: 600; color: var(--ink); font-variant-numeric: tabular-nums; letter-spacing: -0.02em; line-height: 1; }
+.lp-plan-price .per { font-size: 15px; color: var(--ink-soft); }
+.lp-plan-unit { margin: 12px 0 0; font-size: 13.5px; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+.lp-plan-features { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
+.lp-plan-features li { position: relative; padding-left: 24px; font-size: 15px; line-height: 1.6; color: var(--ink-soft); }
+.lp-plan-features li::before {
+  content: ""; position: absolute; left: 2px; top: 9px;
+  width: 8px; height: 8px; border-radius: 2px; background: var(--accent); opacity: 0.5;
+}
+.lp-plan-cta { display: flex; flex-direction: column; gap: 10px; }
+.lp-plan-cta form { display: flex; }
+.sokndall-landing .lp-plan-cta .lp-btn { width: 100%; }
+.lp-plan-cta .lp-note { text-align: center; }
+
+/* ---- COST CALLOUT ---- */
+.lp-callout {
+  background: #fff; border: 1px solid var(--line);
+  border-radius: var(--radius-card); box-shadow: var(--shadow-card);
+  padding: 32px 30px; display: flex; flex-direction: column; gap: 12px;
+}
+.lp-callout h3 { font-family: var(--display); font-size: 18px; font-weight: 600; margin: 0; color: var(--ink); }
+.lp-callout .fig { font-family: var(--display); font-size: 26px; font-weight: 600; color: var(--ink); font-variant-numeric: tabular-nums; letter-spacing: -0.01em; }
+.lp-callout p { margin: 0; font-size: 15px; line-height: 1.6; color: var(--ink-soft); }
+
+/* ---- SCHEMATIC: multi-client structure (Billing Co) ---- */
+.lp-clients { display: flex; flex-direction: column; gap: 14px; }
+.lp-client-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+@media (min-width: 560px) { .lp-client-grid { grid-template-columns: repeat(3, 1fr); } }
+.lp-client {
+  background: #fff; border: 1px solid var(--line); border-radius: 10px;
+  padding: 14px; display: flex; flex-direction: column; gap: 9px;
+}
+.lp-client .nm { font-size: 12px; font-weight: 600; color: var(--ink); }
+.lp-client .rw { display: flex; justify-content: space-between; gap: 8px; font-size: 11.5px; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+.lp-client .rw b { font-weight: 600; color: var(--ink); }
+.lp-client .bar { height: 4px; border-radius: 2px; background: var(--line); overflow: hidden; }
+.lp-client .bar i { display: block; height: 100%; background: var(--cell-stuck-mark); opacity: 0.7; }
+.lp-rollup {
+  background: var(--forest-800);
+  border-radius: 12px; padding: 20px;
+  display: flex; flex-direction: column; gap: 8px;
+}
+.lp-rollup .lb { font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gold); }
+.lp-rollup .tx { font-size: 14.5px; line-height: 1.55; color: var(--text-on-dark); font-variant-numeric: tabular-nums; }
+
+/* ---- SCHEMATIC: twelve-month renewal cadence ----
+   One mark per date falling due. The point is density, not identity, so the
+   only distinction drawn is the CAQH attestation clock, which is the majority
+   of the marks and the reason no month is empty. */
+.lp-cadence { background: #fff; border: 1px solid var(--line); border-radius: var(--radius-card); box-shadow: var(--shadow-card); padding: 30px 28px 22px; }
+.lp-cadence-scroll { overflow-x: auto; }
+.lp-cadence-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 10px; align-items: end; min-width: 620px; }
+.lp-cad-month { display: flex; flex-direction: column; align-items: center; }
+.lp-cad-stack { display: flex; flex-direction: column-reverse; gap: 3px; align-items: center; }
+.lp-cad-mark { width: 16px; height: 8px; border-radius: 2px; background: rgba(47, 93, 63, 0.62); }
+.lp-cad-mark--caqh { background: var(--gold); }
+.lp-cad-m { font-size: 11px; color: var(--ink-soft); margin-top: 10px; }
+.lp-cad-n { font-size: 11px; color: var(--ink); font-weight: 600; margin-top: 2px; font-variant-numeric: tabular-nums; }
+.lp-cadence-foot { display: flex; justify-content: space-between; gap: 16px 28px; flex-wrap: wrap; margin-top: 22px; padding-top: 16px; border-top: 1px solid var(--line); font-size: 13px; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+.lp-cad-key { display: flex; align-items: center; gap: 8px; }
+.lp-cad-key i { width: 16px; height: 8px; border-radius: 2px; display: inline-block; }
+
+/* ---- SCHEMATIC: horizontal enrollment timeline ---- */
+.lp-timeline { background: #fff; border: 1px solid var(--line); border-radius: var(--radius-card); box-shadow: var(--shadow-card); padding: 30px 34px 22px; }
+.lp-timeline-track { position: relative; height: 3px; background: var(--line-strong); border-radius: 2px; margin: 46px 0 0; }
+.lp-timeline-fill { position: absolute; left: 0; top: 0; bottom: 0; background: var(--accent); border-radius: 2px; }
+.lp-timeline-node { position: absolute; top: 50%; transform: translate(-50%, -50%); }
+.lp-timeline-node .dot { display: block; width: 11px; height: 11px; border-radius: 50%; background: #fff; border: 2px solid var(--line-strong); }
+.lp-timeline-node.is-on .dot { background: var(--accent); border-color: var(--accent); }
+.lp-timeline-node.is-end .dot { background: var(--cell-stuck-mark); border-color: var(--cell-stuck-mark); }
+.lp-timeline-node .lb { position: absolute; top: 18px; left: 50%; transform: translateX(-50%); font-size: 11px; color: var(--ink-soft); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.lp-timeline-node .cap { position: absolute; bottom: 18px; left: 50%; transform: translateX(-50%); font-size: 11.5px; font-weight: 600; color: var(--ink); white-space: nowrap; }
+.lp-timeline-node.at-start .lb, .lp-timeline-node.at-start .cap { left: 0; transform: none; }
+.lp-timeline-node.at-end .lb, .lp-timeline-node.at-end .cap { left: auto; right: 0; transform: none; }
+.lp-timeline-foot { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-top: 46px; padding-top: 18px; border-top: 1px solid var(--line); font-size: 13px; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+
+/* ---- SCHEMATIC: follow-up log ---- */
+.lp-log { background: #fff; border: 1px solid var(--line); border-radius: var(--radius-card); box-shadow: var(--shadow-card); overflow: hidden; }
+.lp-log-head { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; padding: 18px 24px; background: var(--panel); border-bottom: 1px solid var(--line-strong); }
+.lp-log-head .ti { font-family: var(--display); font-size: 15px; font-weight: 600; color: var(--ink); margin: 0; }
+.lp-log-row { display: grid; grid-template-columns: 1fr; gap: 6px; padding: 18px 24px; border-bottom: 1px solid var(--line); }
+@media (min-width: 780px) { .lp-log-row { grid-template-columns: 96px 1fr 156px; gap: 20px; align-items: baseline; } }
+.lp-log-row:last-child { border-bottom: 0; }
+.lp-log-row .dt { font-size: 12.5px; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+.lp-log-row .bd { font-size: 14.5px; line-height: 1.55; color: var(--ink-soft); }
+.lp-log-row .bd b { color: var(--ink); font-weight: 600; }
+.lp-log-row .rf { font-size: 12px; color: var(--ink-soft); font-variant-numeric: tabular-nums; letter-spacing: 0.02em; }
+.lp-log-foot { display: flex; gap: 28px; flex-wrap: wrap; padding: 16px 24px; background: var(--panel); border-top: 1px solid var(--line-strong); font-size: 13px; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+.lp-log-foot b { color: var(--ink); font-weight: 600; }
+
+/* ---- SCHEMATIC: the alert ladder ---- */
+.lp-ladder { display: grid; grid-template-columns: 1fr; border: 1px solid var(--line); border-radius: var(--radius-card); background: #fff; box-shadow: var(--shadow-card); overflow: hidden; }
+@media (min-width: 920px) { .lp-ladder { grid-template-columns: repeat(4, 1fr); } }
+.lp-rung { padding: 26px 24px; border-bottom: 1px solid var(--line); display: flex; flex-direction: column; gap: 12px; }
+.lp-rung:last-child { border-bottom: 0; }
+@media (min-width: 920px) {
+  .lp-rung { border-bottom: 0; border-right: 1px solid var(--line); }
+  .lp-rung:last-child { border-right: 0; }
+}
+.lp-rung .tone { height: 3px; border-radius: 2px; width: 36px; }
+.lp-rung .num { font-family: var(--display); font-size: 30px; font-weight: 600; color: var(--ink); font-variant-numeric: tabular-nums; letter-spacing: -0.02em; line-height: 1; }
+.lp-rung .num small { font-size: 14px; font-weight: 500; color: var(--ink-soft); letter-spacing: 0; }
+.lp-rung p { margin: 0; font-size: 14px; line-height: 1.6; color: var(--ink-soft); }
+
+/* ---- SCHEMATIC: status derives itself ---- */
+.lp-derive { display: grid; grid-template-columns: 1fr; gap: 20px; }
+@media (min-width: 860px) { .lp-derive { grid-template-columns: 250px 1fr; gap: 36px; align-items: center; } }
+.lp-derive-in { background: #fff; border: 1px solid var(--line); border-radius: var(--radius-card); box-shadow: var(--shadow-card); padding: 22px; }
+.lp-derive-in .lb { font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-soft); display: block; margin-bottom: 10px; }
+.lp-derive-in .fld { border: 1px solid var(--line-strong); border-radius: 6px; padding: 11px 13px; font-size: 15px; color: var(--ink); font-variant-numeric: tabular-nums; background: var(--bg); }
+.lp-derive-in .hint { margin: 12px 0 0; font-size: 12.5px; line-height: 1.5; color: var(--ink-soft); }
+.lp-derive-out { display: flex; flex-direction: column; gap: 10px; }
+.lp-derive-row { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; padding: 13px 16px; background: #fff; border: 1px solid var(--line); border-radius: 10px; }
+.lp-derive-row .nm { font-size: 14px; color: var(--ink); font-weight: 500; flex: 1 1 180px; }
+.lp-derive-row .dtx { font-size: 13px; color: var(--ink-soft); font-variant-numeric: tabular-nums; flex: 0 0 100px; }
+
+/* ---- SCHEMATIC: the Monday digest ---- */
+.lp-digest { background: var(--forest-card); border: 1px solid var(--border-on-dark); border-radius: var(--radius-card); overflow: hidden; }
+.lp-digest-head { padding: 20px 24px; border-bottom: 1px solid var(--border-on-dark); display: flex; flex-direction: column; gap: 5px; }
+.lp-digest-head .sb { font-family: var(--display); font-size: 15px; font-weight: 600; color: var(--text-on-dark); }
+.lp-digest-head .mt { font-size: 12px; color: var(--text-on-dark-soft); font-variant-numeric: tabular-nums; }
+.lp-digest-line { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 14px 24px; border-bottom: 1px solid rgba(255, 255, 255, 0.07); }
+.lp-digest-line:last-child { border-bottom: 0; }
+.lp-digest-line .tx { font-size: 14px; color: var(--text-on-dark-soft); line-height: 1.5; }
+.lp-digest-line .ct { font-family: var(--display); font-size: 19px; font-weight: 600; color: var(--text-on-dark); font-variant-numeric: tabular-nums; flex: 0 0 auto; }
+.lp-digest-line.is-hot .ct { color: var(--gold); }
+
+/* ---- SCHEMATIC: multi-state licence rows ---- */
+.lp-states { background: #fff; border: 1px solid var(--line); border-radius: var(--radius-card); box-shadow: var(--shadow-card); overflow: hidden; }
+.lp-states-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; padding: 16px 22px; background: var(--panel); border-bottom: 1px solid var(--line-strong); font-family: var(--display); font-size: 14.5px; font-weight: 600; color: var(--ink); }
+.lp-state-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding: 13px 22px; border-bottom: 1px solid var(--line); }
+.lp-state-row:last-child { border-bottom: 0; }
+.lp-state-row .st { font-size: 14px; font-weight: 600; color: var(--ink); flex: 1 1 140px; }
+.lp-state-row .dt { font-size: 13px; color: var(--ink-soft); font-variant-numeric: tabular-nums; flex: 0 0 auto; }
+
+/* ============================================================
+   REDISTRIBUTION PASS
+   Every text block used to be capped at 900px inside an 1184px
+   container — 284px of dead space to the right of every section.
+   These are the shapes that close it.
+   ============================================================ */
+
+/* two-column section head: headline left, body right.
+   The body aligns to the TOP OF THE HEADLINE, not to the eyebrow above it — the
+   eyebrow is a small pill with no visual weight, so hanging the body off it just
+   makes the text look like it floats above the headline. The eyebrow therefore
+   gets its own grid row spanning nothing, and headline and body share row 2.
+   The body column is what fills the old 284px void. */
+.lp-head2 { display: grid; grid-template-columns: 1fr; row-gap: 18px; align-items: start; }
+.lp-head2 > .lp-eyebrow { justify-self: start; }
+.lp-head2 > .bd { display: flex; flex-direction: column; gap: 18px; }
+.lp-head2 > .bd > p { margin: 0; }
+@media (min-width: 1000px) {
+  .lp-head2 { grid-template-columns: 1fr 1fr; column-gap: 64px; }
+  .lp-head2 > .lp-eyebrow { grid-column: 1; grid-row: 1; }
+  .lp-head2 > .lp-h1,
+  .lp-head2 > .lp-h2 { grid-column: 1; grid-row: 2; }
+  .lp-head2 > .bd { grid-column: 2; grid-row: 2; padding-top: 8px; }
+
+  /* --frombadge: the body starts level with the EYEBROW instead.
+     Which of the two is right depends on how tall the body is, so it cannot be
+     decided in CSS — it is set per section by measuring:
+
+       let H = eyebrow top → headline bottom (the whole left block)
+       let B = the body's height
+
+       B reaches H (within ~24px, and may overrun it a little)  → --frombadge
+       B falls well short of H                                  → default
+
+     A short body hung off the eyebrow ends high above the headline's baseline
+     and reads as floating; a tall body started at the headline runs far past
+     the block and opens a hole under it. */
+  /* `auto 1fr` matters: without it a body taller than the left block spreads its
+     extra height across both rows and pushes the headline away from its
+     eyebrow. Row 1 stays the eyebrow's own height; row 2 absorbs the rest. */
+  .lp-head2--frombadge { grid-template-rows: auto 1fr; }
+  .lp-head2--frombadge > .bd { grid-row: 1 / span 2; padding-top: 6px; }
+}
+
+/* two even prose columns — for a balanced closing pair */
+.lp-cols2 { display: grid; grid-template-columns: 1fr; gap: 20px; }
+@media (min-width: 900px) { .lp-cols2 { grid-template-columns: 1fr 1fr; gap: 56px; } }
+.lp-cols2 > p { margin: 0; }
+
+/* full-width statement band — replaces the floating payoff card */
+.lp-band .in { max-width: 1000px; margin: 0 auto; padding: 76px var(--pad-x); text-align: center; }
+.lp-band p {
+  font-family: var(--display); font-weight: 500;
+  font-size: clamp(1.3rem, 2.6vw, 1.8rem); line-height: 1.45;
+  margin: 0; color: var(--text-on-dark); font-variant-numeric: tabular-nums;
+  text-wrap: pretty;
+}
+.lp-band em { font-style: normal; color: var(--gold); }
+
+/* trial terms — three labelled blocks across a forest band */
+.lp-terms { display: grid; grid-template-columns: 1fr; border-top: 1px solid var(--border-on-dark); }
+.lp-term { padding: 26px 0; border-bottom: 1px solid var(--border-on-dark); }
+.lp-term:last-child { border-bottom: 0; }
+@media (min-width: 880px) {
+  .lp-terms { grid-template-columns: repeat(3, 1fr); }
+  .lp-term { border-bottom: 0; border-right: 1px solid var(--border-on-dark); padding: 32px; }
+  .lp-term:first-child { padding-left: 0; }
+  .lp-term:last-child { border-right: 0; padding-right: 0; }
+}
+.lp-term .lb { display: block; font-family: var(--display); font-size: 17px; font-weight: 600; color: var(--text-on-dark); margin-bottom: 10px; }
+.lp-term p { margin: 0; font-size: 15px; line-height: 1.6; color: var(--text-on-dark-soft); }
+
+/* card grid — scope cards */
+.lp-cardgrid { display: grid; grid-template-columns: 1fr; gap: 24px; }
+@media (min-width: 860px) { .lp-cardgrid--3 { grid-template-columns: repeat(3, 1fr); } }
+.lp-card {
+  background: #fff; border: 1px solid var(--line);
+  border-radius: var(--radius-card); box-shadow: var(--shadow-card);
+  padding: 30px 28px; display: flex; flex-direction: column; gap: 12px; text-align: left;
+}
+.lp-card h3 { font-family: var(--display); font-size: 18px; font-weight: 600; line-height: 1.35; margin: 0; color: var(--ink); }
+.lp-card p { margin: 0; font-size: 14.5px; line-height: 1.6; color: var(--ink-soft); }
+.lp-card .cy { font-size: 12.5px; font-weight: 600; color: var(--accent); font-variant-numeric: tabular-nums; }
+.lp-card a { font-size: 13.5px; color: var(--ink); border-bottom: 1px solid var(--ink); align-self: flex-start; margin-top: 2px; }
+
+/* five cycle cards — 3 + 2, both rows filling the full width.
+   A plain 3-column grid would leave a third of the second row empty, which is
+   the same void this pass exists to remove. */
+.lp-cycles-grid { display: grid; grid-template-columns: 1fr; gap: 22px; }
+@media (min-width: 720px) {
+  .lp-cycles-grid { grid-template-columns: repeat(2, 1fr); }
+  .lp-cycles-grid > :nth-child(5) { grid-column: span 2; }
+}
+@media (min-width: 1040px) {
+  .lp-cycles-grid { grid-template-columns: repeat(6, 1fr); }
+  .lp-cycles-grid > :nth-child(-n + 3) { grid-column: span 2; }
+  .lp-cycles-grid > :nth-child(n + 4) { grid-column: span 3; }
+}
+
+/* matrix beside its copy — the grid keeps its natural width and the column that
+   was empty carries the section's text and legend */
+.lp-matrix-layout { display: grid; grid-template-columns: 1fr; gap: 40px; align-items: start; }
+/* 1240 is the width at which the widest grid (15x12) plus a readable copy
+   column both fit. Engaging the split any earlier squeezes the `auto` column
+   below the grid's own width and the matrix starts scrolling inside its frame
+   for no reason — below this it simply stacks, copy above, grid full width. */
+@media (min-width: 1240px) { .lp-matrix-layout { grid-template-columns: minmax(320px, 1fr) auto; gap: 48px; } }
+.lp-matrix-copy { display: flex; flex-direction: column; align-items: flex-start; gap: 18px; }
+.lp-matrix-copy > .lp-body { margin: 0; }
+.lp-matrix-figure { min-width: 0; display: flex; flex-direction: column; }
+.lp-matrix-figure .lp-matrix-wrap { order: 1; }
+.lp-matrix-figure > div:last-child { order: 2; margin: 18px 0 0; }
+
+/* centered closing section */
+.lp-center { display: flex; flex-direction: column; align-items: center; text-align: center; }
+.lp-center > p { margin-left: auto; margin-right: auto; }
+.lp-ctarow { display: flex; flex-wrap: wrap; gap: 18px 28px; align-items: center; justify-content: center; }
+
+/* ---- matrix, parameterised ----
+   site.css hard-codes 15 x 12 for the landing. These vars let the same
+   component render any size (the enrollment page uses 12 x 10). Imported
+   after site.css, so this wins. */
+.lp-matrix {
+  grid-template-columns: var(--m-labelw, 130px) repeat(var(--m-cols, 12), var(--m-cellw, 58px));
+  grid-template-rows: 34px repeat(var(--m-rows, 15), 30px);
+}
+/* the grid is narrower than the container at most sizes — shrink-wrap the frame
+   to it rather than leaving a wide empty gutter inside the card */
+.lp-matrix-wrap { width: max-content; max-width: 100%; }
+
+/* ---- nav ----
+   The design system's header is desktop-only: it scrolls rather than wraps.
+   Below 900px the link row would wrap to three rows inside a sticky bar and eat
+   half the screen, so the links drop out and the bar stops sticking — wordmark
+   and the trial CTA are what matter on a phone. */
+.lp-navlinks { display: flex; align-items: center; gap: 28px; flex-wrap: wrap; }
+@media (max-width: 900px) {
+  .lp-navlinks { display: none; }
+  .lp-nav { position: static; flex-wrap: nowrap; }
+}
+
+/* ---- tighter page padding on small screens ---- */
+@media (max-width: 900px) {
+  .lp-page-head { padding: 56px var(--pad-x) 48px; }
+  .lp-plan { padding: 28px 22px; }
+  .lp-trial { padding: 34px 26px; }
+  .lp-payoff { padding: 32px 26px; }
+  .lp-timeline { padding: 24px 20px 18px; }
+}
+

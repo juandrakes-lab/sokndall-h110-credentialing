@@ -1,0 +1,38 @@
+:root{
+--font-sans:"Poppins",-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+--font-display:var(--font-sans);
+--font-mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+
+--fw-regular:400; /* @kind font */
+--fw-medium:500; /* @kind font */
+--fw-semibold:600; /* @kind font */
+--fw-bold:700; /* @kind font */
+
+--fs-display-1:56px;--fs-display-2:44px;
+--fs-h2:34px;--fs-h3:26px;--fs-h4:20px;--fs-h5:17px;
+--fs-lead:18px;--fs-body:16px;--fs-small:14px;--fs-caption:13px;--fs-eyebrow:13px;
+--fs-stat:30px;
+
+--lh-tight:1.08; /* @kind font */
+--lh-heading:1.16; /* @kind font */
+--lh-snug:1.32; /* @kind font */
+--lh-body:1.65; /* @kind font */
+--lh-loose:1.8; /* @kind font */
+
+--ls-display:-0.02em; /* @kind font */
+--ls-heading:-0.015em; /* @kind font */
+--ls-body:0em; /* @kind font */
+--ls-eyebrow:0.01em; /* @kind font */
+--ls-nav:0.005em; /* @kind font */
+
+/* Semantic type roles — the shorthand `font:` value for each text style. */
+--type-display:var(--fw-semibold) var(--fs-display-1)/var(--lh-tight) var(--font-display);
+--type-h2:var(--fw-semibold) var(--fs-h2)/var(--lh-heading) var(--font-display);
+--type-h4:var(--fw-semibold) var(--fs-h4)/var(--lh-snug) var(--font-sans);
+--type-lead:var(--fw-regular) var(--fs-lead)/var(--lh-body) var(--font-sans);
+--type-body:var(--fw-regular) var(--fs-body)/var(--lh-body) var(--font-sans);
+--type-small:var(--fw-regular) var(--fs-small)/var(--lh-body) var(--font-sans);
+--type-nav:var(--fw-medium) var(--fs-small)/1.2 var(--font-sans);
+--type-button:var(--fw-semibold) var(--fs-small)/1 var(--font-sans);
+--type-eyebrow:var(--fw-medium) var(--fs-eyebrow)/1.2 var(--font-sans);
+}

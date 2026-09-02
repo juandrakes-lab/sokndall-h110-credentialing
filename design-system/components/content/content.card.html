@@ -1,0 +1,34 @@
+<!-- @dsCard group="Components" viewport="760x520" name="Content — SectionHeading, ServiceCard, FeatureItem, LogoWall, StatStrip" subtitle="Section openers, service tiles, proof lists" -->
+<!DOCTYPE html><html><head><meta charset="utf-8"><link rel="stylesheet" href="../../styles.css">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js"></script>
+<script src="https://unpkg.com/lucide@0.462.0/dist/umd/lucide.min.js"></script>
+<script src="../../_ds_bundle.js"></script>
+<style>body{background:var(--surface-page);padding:22px;font-family:var(--font-sans)}#root{display:block}.lbl{font:var(--type-eyebrow);text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);margin-bottom:10px}.row{display:flex;align-items:center;gap:14px;flex-wrap:wrap}.col{display:flex;flex-direction:column;gap:22px}.dark{background:var(--gradient-dark);border-radius:var(--radius-lg);padding:22px}</style></head><body><div id="root"></div>
+<script type="text/babel">
+const {SectionHeading,ServiceCard,FeatureItem,LogoWall,StatStrip}=window.SokndallDS;
+function Demo(){return <div className="col">
+ <div className="dark">
+  <SectionHeading tone="dark" align="center" eyebrow="We're Here To Support Your Financial Success" eyebrowIcon="💛" title="Comprehensive Accounting Solutions for Your Business."/>
+  <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'var(--card-gap)',marginTop:22}}>
+   <ServiceCard icon="receipt" title="Tax Planning &amp; Preparation" body="Strategic tax planning and accurate filing to minimize your liability and keep you compliant year-round."/>
+   <ServiceCard icon="bar-chart-3" title="Accounting &amp; Bookkeeping" body="Accurate books and real-time financial insight to help you make better decisions."/>
+  </div>
+ </div>
+ <div><div className="lbl">SectionHeading — light + FeatureItem</div>
+  <SectionHeading eyebrow="Why Sokndall" eyebrowIcon="💛" title="Simplifying Accounting So You Can Focus on What Matters Most." description="We take care of your numbers so you can focus on running and growing your business."/>
+  <ul style={{display:'flex',flexDirection:'column',gap:'var(--space-3)',padding:0,margin:'16px 0 0'}}>
+   <FeatureItem>Client-Centric Approach</FeatureItem>
+   <FeatureItem>Proven Track Record</FeatureItem>
+   <FeatureItem>Commitment to Excellence</FeatureItem>
+  </ul>
+ </div>
+ <div><div className="lbl">StatStrip · LogoWall</div>
+  <StatStrip stats={[{value:'500+',label:'Businesses Served'},{value:'15+',label:'Years Advising'},{value:'98%',label:'Client Retention'}]}/>
+  <div style={{marginTop:22}}><LogoWall names={['Intuit','Xero','FreshBooks','Gusto','Wave']}/></div>
+ </div>
+</div>}
+ReactDOM.createRoot(document.getElementById('root')).render(<Demo/>);
+</script>
+<script>setTimeout(function(){window.lucide&&window.lucide.createIcons({attrs:{"stroke-width":1.75}});},80);</script></body></html>

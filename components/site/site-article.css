@@ -1,0 +1,469 @@
+/* Sokndall — the long-form article template.
+   ==========================================================================
+   Used by every content/guide page: the /payer-enrollment/ cluster today,
+   and anything editorial that follows. NOT for /landing, /pricing or the
+   product pages — those are landings and keep site-pages.css.
+
+   These pages are articles: a centered masthead, then a main reading column
+   plus a sticky contents sidebar above ~1220px, collapsing to a single
+   column with a collapsible contents disclosure below it. No alternating
+   section backgrounds, no cards inside the body copy, no CTA between
+   sections — the only conversion point is the block at the very end. An H2
+   is a heading inside one document, weighted by size and space, not by a
+   module background. The nav/footer are the site's normal full-weight ones
+   (SiteNav/SiteFooter with no variant) — these pages get the same header
+   strip as the product pages, not a dimmed one.
+
+   The skin is unchanged: this file rides on top of site.css, so it inherits
+   the same theme block (.sokndall-landing) and the same forest/gold/paper
+   tokens and Poppins. What changes is the layout category, not the brand.
+   ========================================================================== */
+
+/* Same element as the theme wrapper (.sokndall-landing.lp-article-page), not a
+   descendant of it — these are set on the page's own root div. */
+.lp-article-page {
+  --article-ink: #3c4842;
+  /* the two-column shell's math: 700 (main) + 64 (gap) + 300 (sidebar) */
+  --shell-main: 700px;
+  --shell-sidebar: 300px;
+  --shell-gap: 64px;
+  --shell-w: calc(var(--shell-main) + var(--shell-gap) + var(--shell-sidebar));
+  /* a table or other figure may run wider than the prose column, but never
+     past this — enough for a three-column table to breathe */
+  --measure-wide: 50rem;
+  /* the nav strip's own height plus a little air, reused as the sidebar's
+     sticky offset and every anchor's scroll-margin. These pages use the same
+     full-weight nav as the product pages (not a dimmed variant), so this
+     matches that header's real height. */
+  --nav-h: 92px;
+  /* the single spacer between the masthead's closing rule and whatever
+     comes next — the mobile contents disclosure, or (at the two-column
+     breakpoint) the sidebar/article row. One value, reused both places, so
+     the gap reads the same regardless of viewport. */
+  --head-gap: 40px;
+}
+
+/* ---- the shell: single column by default, two columns once there is room
+   for main + gap + sidebar without starving the reading column ---- */
+.lp-shell {
+  max-width: 45rem;
+  margin: 0 auto;
+  padding: 0 24px 96px;
+}
+@media (min-width: 1220px) {
+  .lp-shell {
+    max-width: var(--shell-w);
+    padding: 0 var(--pad-x) 120px;
+    display: grid;
+    grid-template-columns: var(--shell-main) var(--shell-sidebar);
+    column-gap: var(--shell-gap);
+    row-gap: var(--head-gap);
+    align-items: start;
+  }
+  /* the masthead and the mobile-only contents block run full width above
+     the split; the split itself is just the article column and the aside.
+     The mobile contents block is display:none up here, so it drops out of
+     grid flow entirely — the header row and the article/sidebar row are the
+     only two, separated by the row-gap above. */
+  .lp-shell > .lp-a-span { grid-column: 1 / -1; }
+}
+
+/* ---- the solo shell: single column, always ------------------------------
+   For the pages in this family that are shorter and don't need a contents
+   sidebar at all — the three competitor-pricing pages, /security, /about.
+   Same centered-masthead + prose typography as .lp-shell, but it never
+   switches to two columns; there is nothing to put in a second one. */
+.lp-solo-shell { max-width: 42rem; margin: 0 auto; padding: 0 24px 96px; }
+@media (min-width: 900px) { .lp-solo-shell { padding: 0 var(--pad-x) 120px; } }
+
+/* a small centered block — the FAQ heading on the competitor pages. Not
+   worth a whole utility class family for one recurring use. */
+.lp-center-block { text-align: center; max-width: 34rem; margin: 0 auto 40px; }
+.lp-center-block h2 { margin-bottom: 12px; }
+.lp-center-block p { margin: 0; }
+
+.lp-article-main { min-width: 0; }
+
+/* The one controlled exception to the measure: a table that needs more room
+   than the prose steps out symmetrically on both sides, and only on a wide
+   single-column viewport (in the two-column shell the main track is already
+   fixed-width, so there is nothing to step out into). */
+@media (min-width: 64rem) and (max-width: 1219px) {
+  .lp-a-wide {
+    width: var(--measure-wide);
+    max-width: none;
+    margin-left: calc((45rem - var(--measure-wide)) / 2);
+  }
+}
+
+/* ---- masthead: kicker, headline, standfirst, optional lead image -------
+   Centered — kicker, headline and standfirst sit in a narrow centered
+   column regardless of viewport, the lead image (where a page has one) sits
+   a little wider, still centered, and the closing rule runs the full width
+   of the shell. Below the rule the page reverts to the normal left-aligned
+   two-column reading layout — the centering is a masthead device, not a
+   page-wide one. No eyebrow pill here: a pill labels a module on a landing
+   page, and the same job is done here by a plain text kicker that is also
+   the link back to the cluster this page belongs to. */
+.lp-article-head { padding: 48px 0 0; text-align: center; }
+.lp-article-head .lp-head-text { max-width: 640px; margin: 0 auto; }
+.sokndall-landing .lp-kicker {
+  display: inline-block;
+  font-size: 13px; font-weight: 600; letter-spacing: 0.06em;
+  text-transform: uppercase; color: var(--accent);
+  margin-bottom: 24px;
+}
+.sokndall-landing .lp-kicker:hover { color: var(--accent-hover); }
+
+.lp-article-head h1 {
+  font-family: var(--display); font-weight: 600;
+  font-size: clamp(1.9rem, 3.6vw, 2.6rem); line-height: 1.16;
+  letter-spacing: -0.02em; color: var(--ink);
+  margin: 0 0 20px; text-wrap: pretty;
+}
+.lp-standfirst {
+  font-size: clamp(1.05rem, 1.7vw, 1.15rem); line-height: 1.55;
+  color: var(--ink-soft); margin: 0 auto 32px; max-width: 560px; text-wrap: pretty;
+}
+.lp-article-rule { border: 0; border-top: 1px solid var(--line-strong); margin: var(--head-gap) 0 0; }
+
+/* the lead image: at most one per article, right under the masthead text.
+   A normal framed photo — no bleed, no tile, this is editorial not a hero.
+   Wider than the text column (a full-bleed-feeling break before the rule)
+   but still centered and still capped, never wider than the reading column
+   below it gets at the two-column breakpoint. */
+.lp-article-lead-img { max-width: 720px; margin: 8px auto 0; }
+
+/* ---- contents: shared visual language for the sidebar TOC and the mobile
+   collapsible version. A plain list, not a card. ---- */
+.lp-toc-list { list-style: none; margin: 0; padding: 0; }
+.lp-toc-list li { margin-bottom: 2px; }
+.sokndall-landing .lp-toc-list a {
+  display: flex; gap: 11px; align-items: baseline;
+  padding: 7px 0; font-size: 14.5px; line-height: 1.4; color: var(--ink-soft);
+  border-left: 2px solid transparent; padding-left: 12px; margin-left: -13px;
+  transition: color 140ms ease, border-color 140ms ease;
+}
+.sokndall-landing .lp-toc-list a:hover { color: var(--ink); }
+.sokndall-landing .lp-toc-list a.is-active {
+  color: var(--ink); font-weight: 600; border-left-color: var(--accent);
+}
+.lp-toc-list a .n { color: var(--accent); font-size: 12px; font-weight: 600; font-variant-numeric: tabular-nums; flex: 0 0 auto; opacity: 0.8; }
+
+.lp-toc-heading {
+  font-size: 11px; letter-spacing: 0.09em; text-transform: uppercase;
+  color: var(--ink-soft); margin: 0 0 14px;
+}
+
+/* ---- desktop sidebar: sticky, contents only ----------------------------
+   Hidden below the breakpoint where main+gap+sidebar no longer fit without
+   starving the reading column. Just the contents list — no related-guides
+   section here any more; that interlinking job belongs entirely to the
+   "Explore more guides" cards at the end of the article, which every
+   viewport gets, so it isn't duplicated in two places with two different
+   visual treatments. A floating card (white, hairline, shadow, radius) so
+   it reads as a distinct, elevated panel against the page instead of a bare
+   list of links sitting in the margin. "Locked" per the brief: it stays
+   pinned in place while the article scrolls past it. */
+.lp-sidebar { display: none; }
+@media (min-width: 1220px) {
+  .lp-sidebar {
+    display: block;
+    position: sticky;
+    top: var(--nav-h);
+    align-self: start;
+    max-height: calc(100vh - var(--nav-h) - 32px);
+    overflow-y: auto;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-card);
+    padding: 26px 26px 22px;
+  }
+}
+
+/* ---- mobile / collapsed contents: a native <details>, no JS needed ------
+   Shown only where the sidebar isn't; the sidebar's own JS (scroll-spy)
+   never runs for this copy, which is fine — collapsed, it doesn't need it.
+   Same floating-card treatment as the desktop sidebar (white, shadow,
+   radius) so the two read as the same component in two layouts, not two
+   different ones. */
+.lp-toc-mobile {
+  margin: var(--head-gap) 0 var(--head-gap);
+  background: #fff; border: 1px solid var(--line); border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card); padding: 4px 20px;
+}
+.lp-toc-mobile summary {
+  cursor: pointer; list-style: none; padding: 14px 0;
+  font-family: var(--display); font-size: 14.5px; font-weight: 600; color: var(--ink);
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+}
+.lp-toc-mobile summary::-webkit-details-marker { display: none; }
+.lp-toc-mobile summary::after {
+  content: "+"; font-size: 18px; font-weight: 400; color: var(--accent); line-height: 1;
+}
+.lp-toc-mobile[open] summary::after { content: "\2212"; }
+.lp-toc-mobile .lp-toc-heading { display: none; }
+.lp-toc-mobile .lp-toc-list { padding-bottom: 12px; }
+.sokndall-landing .lp-toc-mobile .lp-toc-list a { padding-left: 0; margin-left: 0; border-left: 0; padding-top: 8px; padding-bottom: 8px; }
+.sokndall-landing .lp-toc-mobile .lp-toc-list a.is-active { font-weight: 500; }
+
+@media (min-width: 1220px) {
+  .lp-toc-mobile { display: none; }
+}
+
+/* ---- body ---------------------------------------------------------------
+   Reduced from the first pass: 17px/1.6 is a standard article read, not a
+   display-type paragraph, and the measure is now the fixed main column
+   rather than a character-tuned max-width. */
+.lp-article-main section { padding: 0; background: none; border: 0; }
+.lp-anchor { scroll-margin-top: var(--nav-h); }
+
+.lp-article-main h2 {
+  font-family: var(--display); font-weight: 600;
+  font-size: clamp(1.3rem, 2vw, 1.5rem); line-height: 1.3;
+  letter-spacing: -0.01em; color: var(--ink);
+  /* more air above than below, so the heading groups with the paragraph
+     that follows it rather than floating evenly between two blocks */
+  margin: 60px 0 14px; text-wrap: pretty;
+}
+.lp-article-main section:first-of-type h2 { margin-top: 0; }
+.lp-article-main h3 {
+  font-family: var(--display); font-size: 1.0625rem; font-weight: 600;
+  line-height: 1.4; color: var(--ink); margin: 32px 0 10px;
+}
+.lp-article-main p {
+  font-size: 1.0625rem; line-height: 1.6; color: var(--article-ink);
+  margin: 0 0 20px; text-wrap: pretty;
+}
+.lp-article-main p:last-child { margin-bottom: 0; }
+.lp-article-main strong { font-weight: 600; color: var(--ink); }
+
+/* Links in running copy get a visible, standing treatment — brand colour and
+   a real underline, not a near-invisible hairline. These are structural
+   cross-links (other guides, the tools, the template), so they read as
+   navigable rather than as incidental emphasis. The contents/related lists
+   keep their own link styles above and are excluded here. */
+.sokndall-landing .lp-article-main p a,
+.sokndall-landing .lp-list a,
+.sokndall-landing .lp-numbered a,
+.sokndall-landing .lp-labelled a {
+  color: var(--accent); font-weight: 500;
+  text-decoration: underline; text-decoration-color: rgba(47, 93, 63, 0.45);
+  text-underline-offset: 2px;
+}
+.sokndall-landing .lp-article-main p a:hover,
+.sokndall-landing .lp-list a:hover,
+.sokndall-landing .lp-numbered a:hover,
+.sokndall-landing .lp-labelled a:hover { text-decoration-color: currentColor; }
+
+/* a run-in label for a definition or a stage: bold lead, prose after */
+.lp-article-main .lead-in { font-weight: 600; color: var(--ink); }
+
+/* ---- lists ---------------------------------------------------------------
+   Article lists: a marker, a hanging indent, and nothing else. */
+.lp-list { margin: 0 0 22px; padding: 0; list-style: none; }
+.lp-list li {
+  position: relative; padding-left: 24px;
+  font-size: 1.0625rem; line-height: 1.58; color: var(--article-ink);
+  margin-bottom: 12px;
+}
+.lp-list li:last-child { margin-bottom: 0; }
+.lp-list li::before {
+  content: ""; position: absolute; left: 3px; top: 0.66em;
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--accent); opacity: 0.55;
+}
+.lp-list li b, .lp-list li strong { font-weight: 600; color: var(--ink); }
+
+.lp-numbered { counter-reset: n; margin: 0 0 22px; padding: 0; list-style: none; }
+.lp-numbered > li {
+  counter-increment: n; position: relative; padding-left: 38px;
+  font-size: 1.0625rem; line-height: 1.58; color: var(--article-ink);
+  margin-bottom: 16px;
+}
+.lp-numbered > li:last-child { margin-bottom: 0; }
+.lp-numbered > li::before {
+  content: counter(n) "."; position: absolute; left: 0; top: 0;
+  font-family: var(--display); font-size: 0.9375rem; font-weight: 600;
+  color: var(--accent); font-variant-numeric: tabular-nums;
+}
+.lp-numbered > li b, .lp-numbered > li strong { font-weight: 600; color: var(--ink); }
+.lp-numbered > li p { margin: 6px 0 0; font-size: 1.0625rem; }
+
+/* a labelled list — the week-by-week playbook. Label in its own column,
+   content in the other: stacking the label directly above a bold lead-in
+   (both dark, both emphasized) made the two read as one blurred unit and
+   buried the heading above the list in the same visual weight as its own
+   rows. A dedicated marker column reads as a timeline at a glance and can't
+   be confused with the section heading above it. */
+.lp-labelled { margin: 0 0 22px; padding: 0; list-style: none; }
+.lp-labelled > li {
+  display: grid; grid-template-columns: 132px 1fr; gap: 18px; align-items: baseline;
+  padding: 16px 0; border-bottom: 1px solid var(--line);
+}
+.lp-labelled > li:first-child { padding-top: 2px; }
+.lp-labelled > li:last-child { border-bottom: 0; padding-bottom: 0; }
+.lp-labelled .lb {
+  font-family: var(--display); font-size: 0.75rem;
+  font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase;
+  color: var(--accent); line-height: 1.45; font-variant-numeric: tabular-nums;
+}
+.lp-labelled .bd { font-size: 1.0625rem; line-height: 1.58; color: var(--article-ink); }
+.lp-labelled b, .lp-labelled strong { font-weight: 600; color: var(--ink); }
+@media (max-width: 560px) {
+  .lp-labelled > li { grid-template-columns: 1fr; gap: 6px; align-items: start; }
+}
+
+/* ---- blockquote: the observed case ---------------------------------------
+   The cluster's one recurring rhetorical move — the documented case set
+   against the published figure — and the content most worth a reader's
+   attention on the page, so it can't read as a slightly-bigger paragraph.
+   A left-rule alone wasn't enough: the type is Poppins throughout the site
+   (--display and --sans are the same family), so without a background the
+   only difference from body copy was a couple of points of size. A tint
+   turns it into an actual card growing off the accent spine, which is what
+   makes it register as a distinct category of content at a glance rather
+   than on close reading. */
+.lp-observed {
+  margin: 36px 0; padding: 22px 26px;
+  background: var(--panel);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 var(--radius-card) var(--radius-card) 0;
+}
+.lp-observed .lb { display: block; font-size: 11px; letter-spacing: 0.09em; text-transform: uppercase; color: var(--accent); margin-bottom: 10px; font-weight: 700; }
+.lp-observed p { font-family: var(--display); font-size: 1.0625rem; line-height: 1.55; font-weight: 500; color: var(--ink); margin: 0 0 14px; }
+.lp-observed p:last-child { margin-bottom: 0; }
+.lp-observed strong { font-weight: 700; }
+.lp-observed .src { display: block; font-family: var(--sans); font-size: 13px; line-height: 1.5; color: var(--ink-soft); margin-top: 12px; }
+
+/* ---- table ----------------------------------------------------------------
+   A table in an article: hairlines and small caps, no frame, no shadow, no
+   rounded card. It scrolls inside its own width on a phone. */
+.lp-a-tablewrap { overflow-x: auto; margin: 0 0 24px; }
+.lp-a-table { border-collapse: collapse; width: 100%; min-width: 34rem; }
+.lp-a-table th, .lp-a-table td { text-align: left; vertical-align: top; padding: 13px 18px 13px 0; border-bottom: 1px solid var(--line); }
+.lp-a-table th:last-child, .lp-a-table td:last-child { padding-right: 0; }
+.lp-a-table thead th { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-soft); border-bottom: 1px solid var(--line-strong); white-space: nowrap; padding-top: 0; }
+.lp-a-table td { font-size: 0.9375rem; line-height: 1.6; color: var(--article-ink); }
+.lp-a-table td:first-child { color: var(--ink); font-weight: 600; white-space: nowrap; }
+.lp-a-table--3 th:nth-child(2) { width: 22%; }
+
+/* a caption under a table or figure */
+.lp-a-caption { font-size: 13px; line-height: 1.55; color: var(--ink-soft); margin: -10px 0 26px; }
+
+/* ---- weighted section -----------------------------------------------------
+   For the one section on a short page that the copy explicitly calls out as
+   more important than the rest — currently /about's "who runs this," which
+   the brief flags as the section to give real weight, not treat as one more
+   closing paragraph. A tinted panel (same recipe as .lp-cta-block: panel
+   tint, hairline, radius) plus slightly larger body type. Not a CTA — no
+   button lives here — so it stays its own class rather than reusing that
+   one and implying a conversion point that isn't there. */
+/* Qualified under .lp-article-main so it outranks the blanket
+   `.lp-article-main section { padding: 0; background: none; border: 0 }`
+   reset above (a bare `.lp-weighted` loses that specificity fight, since
+   that reset carries a class *and* an element selector). */
+.lp-article-main .lp-weighted {
+  margin: 48px 0 0; padding: 34px 36px;
+  background: var(--panel); border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+}
+.lp-weighted h2 { margin-top: 0; }
+.lp-weighted p { font-size: 1.125rem; line-height: 1.65; }
+.lp-weighted p:last-child { margin-bottom: 0; }
+
+/* ---- stage/duration bar chart --------------------------------------------
+   A qualitative horizontal bar chart: real HTML/CSS, not a photo, used where
+   the copy names a concrete duration comparison. Bars are sized to the
+   relative weight given in `w` (0–1), not to a fabricated day count — the
+   label carries the actual stated range in words. */
+.lp-barchart { margin: 32px 0 28px; border-top: 1px solid var(--line); padding-top: 24px; }
+.lp-barchart-row { display: grid; grid-template-columns: 168px 1fr; gap: 16px; align-items: center; padding: 9px 0; }
+.lp-barchart-row .lb { font-size: 13.5px; font-weight: 600; color: var(--ink); }
+.lp-barchart-track { position: relative; height: 22px; background: var(--panel); border-radius: 5px; overflow: hidden; }
+.lp-barchart-fill { position: absolute; inset: 0 auto 0 0; background: var(--accent); opacity: 0.82; border-radius: 5px; display: flex; align-items: center; }
+.lp-barchart-row.is-long .lp-barchart-fill { background: var(--stuck); opacity: 0.78; }
+.lp-barchart-fill span {
+  padding-left: 10px; font-size: 11.5px; font-weight: 600; color: #fff;
+  font-variant-numeric: tabular-nums; white-space: nowrap;
+}
+.lp-barchart-row.is-tiny .lp-barchart-fill span { color: var(--ink); padding-left: 8px; }
+@media (max-width: 640px) {
+  .lp-barchart-row { grid-template-columns: 1fr; gap: 6px; }
+}
+
+/* ---- portal-check schematic (Aetna) ---------------------------------------
+   A light schematic of a benefits-check panel — not a real screenshot, a
+   drawn diagram of the mechanism, same spirit as the bar chart above. */
+.lp-portalcheck { margin: 28px 0 8px; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+.lp-portalcheck-bar { display: flex; align-items: center; gap: 7px; padding: 10px 16px; background: var(--panel); border-bottom: 1px solid var(--line); }
+.lp-portalcheck-bar i { width: 8px; height: 8px; border-radius: 50%; background: var(--line-strong); display: inline-block; }
+.lp-portalcheck-bar span { margin-left: 8px; font-size: 12px; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+.lp-portalcheck-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding: 14px 18px; border-bottom: 1px solid var(--line); }
+.lp-portalcheck-row:last-child { border-bottom: 0; }
+.lp-portalcheck-row .cb { font-size: 13.5px; color: var(--article-ink); font-variant-numeric: tabular-nums; }
+.lp-portalcheck-row .rs { font-size: 12.5px; font-weight: 600; flex: 0 0 auto; padding: 3px 10px; border-radius: 999px; }
+.lp-portalcheck-row .rs.ok { color: #2a5238; background: rgba(47, 93, 63, 0.12); }
+.lp-portalcheck-row .rs.no { color: #8f3129; background: rgba(180, 69, 60, 0.1); }
+
+/* ---- the closing: CTA block, then interlinking cards ---------------------
+   The CTA block is the single conversion point on the page — it gets a
+   little visual weight (a tint, a radius) to read as a distinct stopping
+   point after the prose, the way a newsletter box does at the end of a real
+   article. "Explore more guides" is pure interlinking, not another pitch. */
+.lp-cta-block {
+  margin-top: 64px; padding: 34px 36px;
+  background: var(--panel); border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+}
+.lp-cta-block p { font-size: 1.0625rem; line-height: 1.6; color: var(--article-ink); margin: 0 0 22px; }
+.lp-cta-block p:last-of-type { margin-bottom: 0; }
+.lp-article-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 16px 26px; margin-top: 22px; }
+
+.lp-explore { margin-top: 56px; }
+.lp-explore .hd {
+  font-family: var(--display); font-size: 1.0625rem; font-weight: 600; color: var(--ink);
+  margin: 0 0 20px;
+}
+.lp-explore-grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
+@media (min-width: 640px) { .lp-explore-grid { grid-template-columns: repeat(3, 1fr); } }
+.sokndall-landing .lp-explore-card {
+  display: flex; flex-direction: column; gap: 8px;
+  padding: 20px 22px; border: 1px solid var(--line); border-radius: 12px;
+  background: #fff; text-decoration: none;
+  transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+}
+.sokndall-landing .lp-explore-card:hover {
+  border-color: var(--line-strong); box-shadow: var(--shadow-card); transform: translateY(-2px);
+}
+.lp-explore-card .cat { font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-soft); }
+.lp-explore-card h4 { font-family: var(--display); font-size: 15px; font-weight: 600; color: var(--ink); margin: 0; line-height: 1.35; }
+.lp-explore-card p { font-size: 13px; line-height: 1.5; color: var(--ink-soft); margin: 0; }
+.lp-explore-card .go { font-size: 12.5px; font-weight: 600; color: var(--accent); margin-top: auto; padding-top: 2px; }
+@media (prefers-reduced-motion: reduce) {
+  .sokndall-landing .lp-explore-card { transition: none; }
+  .sokndall-landing .lp-explore-card:hover { transform: none; }
+}
+
+/* ---- nav ----------------------------------------------------------------
+   These pages use the site's normal full-weight nav (SiteNav with no
+   variant) — the same header strip as the product pages, same button
+   colour, same link weight. .lp-nav itself (sticky, blur, height) lives in
+   site.css; the nav link row and its desktop-only rule live in
+   site-pages.css, which these pages do not import, so they're restated
+   here. */
+.lp-navlinks { display: flex; align-items: center; gap: 28px; flex-wrap: wrap; }
+@media (max-width: 900px) {
+  .lp-navlinks { display: none; }
+}
+
+@media (max-width: 900px) {
+  .lp-shell { padding: 0 20px 72px; }
+  .lp-article-head { padding-top: 32px; }
+  .lp-article-main h2 { margin-top: 48px; }
+  .lp-observed { padding: 18px 18px 18px 20px; margin: 30px 0; }
+  .lp-cta-block { padding: 26px 24px; }
+  .lp-sidebar { padding: 22px 20px 18px; }
+  .lp-toc-mobile { padding: 4px 16px; }
+}

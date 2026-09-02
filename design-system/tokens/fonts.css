@@ -1,0 +1,6 @@
+/* Sokndall type: no font binaries were supplied with the reference comp.
+   Poppins (Google Fonts) is the nearest match to the rounded geometric sans in
+   the source — same circular bowls, high x-height, tight display tracking.
+   This is a FLAGGED SUBSTITUTION. Swap the @import for licensed @font-face files
+   when the real family is available; keep the --font-sans token name unchanged. */
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap");

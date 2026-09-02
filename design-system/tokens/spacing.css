@@ -1,0 +1,16 @@
+:root{
+--space-0:0px;--space-1:4px;--space-2:8px;--space-3:12px;--space-4:16px;--space-5:20px;
+--space-6:24px;--space-7:32px;--space-8:40px;--space-9:48px;--space-10:56px;
+--space-11:64px;--space-12:80px;--space-13:96px;--space-14:120px;
+
+/* Layout */
+--container-max:1200px;
+--page-x:40px;          /* horizontal page padding on desktop */
+--gutter:24px;
+--section-y:104px;
+--section-y-tight:64px;
+--card-pad:28px;
+--card-gap:24px;
+--stack-gap:16px;
+--nav-h:76px; /* @kind spacing */
+}
