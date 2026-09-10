@@ -22,6 +22,12 @@ Testing the two Vercel Cron routes locally requires the bearer token: `curl -H "
 
 **Stack:** Next.js App Router, plain JSX (no TypeScript), Supabase (Postgres + Auth), Polar for billing, Resend for email, deployed on Vercel with Vercel Cron. Everything is server-rendered with Server Actions — no client-side state management library, and no API routes beyond `/auth/callback` and the cron/webhook endpoints. `@/*` resolves to the repo root (`jsconfig.json`).
 
+**Copy and links on marketing pages.** Copy strings carry inline links as
+`[text](/route)` or `[text](src:key)`, rendered by `components/neo/rich.jsx`;
+every external source lives in `components/neo/sources.js`, which decides
+`nofollow` (competitors, review directories) once per source. JSON-LD comes
+from `components/neo/schema.jsx`, reading the same data the page renders.
+
 **No PHI, ever, anywhere.** Only provider identity/credential data — that's what keeps this out of HIPAA/BAA territory. Never add patient data, and never add scraping of CAQH/NPPES/payer portals/state boards — manual entry and CSV import only.
 
 ### Styling systems — do not cross them
@@ -53,20 +59,17 @@ the homepage and all three product-ish landings go through it.
 
 **Four page categories, and they are not interchangeable.**
 
-- *Landings* (`/`, `/pricing`, `/payer-enrollment-software`,
-  `/credential-expiration-tracking`, `/for-billing-companies`) — blue hero
-  panel, `.sk-sec` sections, a section head that is pill → heading left /
-  supporting matter right, bento card grids, repeated CTAs. `components/neo/Landing.jsx`
-  is the fullest example.
-- *Articles* (the five `/payer-enrollment*` guides,
-  `/credentialing-spreadsheet-template`) — the `Article` component.
-  `variant="guide"` gives a centred masthead plus a sticky scroll-spy contents
-  sidebar above 1160px (`Toc`); `variant="solo"` is one ~42rem column that never
-  splits. No alternating surfaces, no cards inside body copy, no CTA between
-  sections — the only conversion point is the closing `.sk-article__cta`, plus
-  `ExploreMore` at the end of the payer-enrollment cluster.
-- *Editorial* (`/caqh-reattestation`, and every comparison page) —
-  `components/neo/Editorial.jsx`. A 1040px masthead over a 288px sticky contents
+- *Landings* (`/`, `/pricing`, `/credentialing-spreadsheet-template`,
+  `/payer-enrollment-software`, `/for-billing-companies`) — `LandingTemplate`
+  (`components/neo/LandingTemplate.jsx`) plus the section kit in
+  `landingSections.jsx`. Every page is a `page.jsx` that only composes, and a
+  sibling data file with the approved copy (`app/homeData.js` for `/`).
+  `app/page.jsx` is the fullest example. Prices are `PlanListSection`, a
+  vertical list — never three cards. No photography on a landing.
+- *Editorial* (the six guides and the four comparison pages) —
+  `components/neo/Editorial.jsx`, composed per page by
+  `components/neo/EditorialPage.jsx` from the page's `data.js` (the old
+  `Article` component still exists; no route of the v3.1 map uses it). A 1040px masthead over a 288px sticky contents
   sidebar and a 720px reading column, capped rather than fluid. Pieces come from
   `EditorialBits`; `EditorialToc` is the scroll-spy.
   **`variant="comparison"`** serves the three competitor pages off the same
@@ -78,8 +81,7 @@ the homepage and all three product-ish landings go through it.
   `SourcedPricingDisclosure`, `GoodFitSection` and `PurchaseModelCompare` in
   `ComparisonBits`, which are plain `<section>`s and drop into the column like
   any prose section. `MultiVendorComparison` lives there too and belongs to
-  `/best-credentialing-software` alone — that page has no approved copy yet, so
-  the component is proved at `/styleguide/comparison`, which is noindex.
+  `/best-credentialing-software` alone.
   Three rules the whole category carries: no competitor logos or screenshots
   (the components take names as text and have no image prop), no adjective
   characterizing a competitor negatively, and no figure without its provenance
