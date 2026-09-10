@@ -2870,9 +2870,12 @@ html:has(.sokndall-neo) { overflow-x: hidden; }
 }
 /* A figure written into its label: the label is the figure, so it takes the
    figure's weight rather than caption weight. */
-/* The `.sk-h4` step of the type scale (TOKENS.md §2), not a new size. */
+/* The `.sk-body--lg` step of the type scale (TOKENS.md §2), not a new size.
+   `.sk-h4` (18px) was tried first and wrapped a 37-character label to two
+   lines in the three-up band at 1280px — measured, not estimated — so the
+   label keeps the one line COPY_LIMITS gives it (≤50) at 16px semibold. */
 .sk-fig--label .sk-fig__l {
-  font-size: 1.125rem;
+  font-size: 1rem;
   line-height: 1.24;
   letter-spacing: -0.02em;
   margin-top: 0;

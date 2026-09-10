@@ -338,7 +338,7 @@ Regla de DESIGN_RULES.md que aplica: §5.
 Fecha: 2026-09-10
 Decisión: `value` pasa a ser opcional. El copy v3.1 escribe cada ancla como
 una sola frase en el slot de etiqueta ("$600 to $2,400 per provider, per
-year"); cuando no hay `value`, la etiqueta toma el paso `.sk-h4` de la escala
+year"); cuando no hay `value`, la etiqueta toma el paso `.sk-body--lg` (16px, semibold) de la escala — `.sk-h4` partía una etiqueta de 37 caracteres en dos líneas a 1280px, medido
 y no se parte la frase en cifra + unidad. La nota acepta el enlace de
 fuente, que así queda en la misma tarjeta que la cifra. Con cuatro figuras
 (`/pricing`) la grilla es 2 × 2.
