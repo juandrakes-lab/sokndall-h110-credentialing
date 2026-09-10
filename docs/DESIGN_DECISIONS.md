@@ -428,3 +428,81 @@ no repite la caja: su botón lleva el label del form y ancla a él
 Las dos fuentes externas que pide el copy (Maryland Department of Health,
 CMS) van sobre las palabras que respaldan, dentro de las pestañas 2 y 5.
 Regla de DESIGN_RULES.md que aplica: §9 (un CTA de plantilla, por email).
+
+## EditorialTemplate — FAQ en artículos, posición del CTA de plantilla, footer v3.1 (extensión)
+Fecha: 2026-09-10
+Decisión: el FAQ se renderiza también en la variante artículo, dentro de la
+columna de lectura después del cuerpo, con su propia entrada al final del
+índice ("Frequently asked questions", etiqueta estructural del molde). Así
+cuerpo y FAQ comparten el marco de dos columnas con índice sticky y la página
+pasa a una sola columna a ancho completo desde el bloque de relacionados.
+El `EmailCapture` toma su heading de la página (`templateCtaHeading`: el copy
+v3.1 escribe uno por página) y, en las seis guías, va antes de la última
+sección del cuerpo (`templateCtaAt="before-last"`), que en todas es el límite
+declarado: "después de explicar el problema y antes de la sección de cierre"
+(§9). La tabla de precio de la cola de comparación ya no imprime su línea
+fija de pre-v3.1 ni el enlace "See what is included": el párrafo de precio y
+el CTA de producto aprobados ya lo dicen.
+Política de imagen: sin cambio. El hueco de cabecera 21:9 lo impone el molde;
+se llena solo si la página pasa `image` a `PageHeader`.
+Regla de DESIGN_RULES.md que aplica: §9, §10, §11.
+Se aparta de: el copy de la Tanda C lista el EmailCapture *después* del
+límite declarado. Manda §9 (antes de la sección de cierre); reportado como
+contradicción.
+
+## SourcedPricingDisclosure — tres palabras de estado nuevas (extensión)
+Fecha: 2026-09-10
+Decisión: el vocabulario cerrado pasa de tres a seis: se agregan "Vendor
+stated", "User reported" y "Different product". Las tres nuevas exigen
+`note` con la procedencia; el componente sigue tirando error ante cualquier
+otra palabra. La procedencia acepta enlaces inline (una fila puede citar la
+página de producto y el perfil de Capterra a la vez).
+Razón: el copy aprobado de las cuatro comparativas clasifica sus filas con
+esas palabras. Un vendor describiendo su propio modelo no es "precio
+publicado" ni "no publicado"; una reseña de Capterra tampoco.
+Política de imagen: ninguna (sin prop de imagen, como antes).
+Regla de DESIGN_RULES.md que aplica: §2 reglas 2 y 5. Contradicción
+reportada: COPY_LIMITS.md dice "prints one of three fixed words"; el copy
+usa cinco.
+
+## StatedVsObserved — varias filas declaradas (extensión)
+Fecha: 2026-09-10
+Decisión: `stated` acepta un array de `{ text, source }`. Siguen siendo dos
+filas (Stated / Observed); dentro de Stated, un párrafo por pagador con su
+fuente en la misma línea.
+Razón: el copy de `/insurance-credentialing-for-therapists` pone dos
+ventanas publicadas (Optum, Evernorth) contra dos casos observados.
+Política de imagen: ninguna.
+Regla de DESIGN_RULES.md que aplica: §2 regla 2.
+
+## EditorialTemplate — `DocumentChecklist` (componente nuevo)
+Fecha: 2026-09-10
+Decisión: la checklist de `/provider-credentialing-checklist` es un bloque
+propio: regla gruesa arriba y abajo, filete entre filas y un cuadrado vacío
+antes de cada ítem. Sin tarjeta (la columna editorial no lleva tarjetas),
+sin número al lado del cuadrado (§6), sin `<input>`: es una lista HTML de
+servidor. "Descargable" es la caja de email de la misma página, que manda la
+lista como planilla; no hay descarga directa.
+Razón: el SERP de la keyword tiene Image pack y el brief pide la checklist
+como elemento visual, no como texto corrido. Ningún componente existente es
+una lista de documentos con forma de instrumento.
+Política de imagen: ninguna. Es una lista, no la foto de una.
+Regla de DESIGN_RULES.md que aplica: §1, §6, §9.
+
+## Las 10 páginas editoriales — cabecera sin fotografía; tarjetas de relacionados sin imagen
+Fecha: 2026-09-10
+Decisión: las 10 cabeceras quedan como el hueco declarado 21:9 del molde
+(3:2 bajo 760px), vacías. Las tarjetas de relacionados quedan con su hueco
+3:2 vacío. Se armó el registro `components/neo/pageImages.js` (cabecera,
+recorte 3:2 para tarjeta y OG 1200×630 por ruta) y
+`scripts/editorial-image.mjs` (convierte una foto a los tres archivos WebP/JPEG
+bajo 200 KB), de modo que llenar un hueco es una entrada en el registro.
+Razón: la key de Pexels entregada para la corrida es rechazada por la API —
+toda búsqueda no cacheada devuelve 401 "Invalid API key"; las únicas
+respuestas 200 eran aciertos de caché de Cloudflare de búsquedas ajenas. Sin
+búsqueda propia por página no hay selección documental posible, y "si dudás
+entre una foto y el hueco vacío, dejalo vacío". Las tarjetas que enlazan a
+landings (`/pricing`, la plantilla, `/payer-enrollment-software`) quedan
+vacías siempre: una landing no tiene cabecera fotográfica que recortar.
+Regla de DESIGN_RULES.md que aplica: §5 (hueco con ratio declarado, vacío),
+§10 (hueco 3:2 en tarjeta).

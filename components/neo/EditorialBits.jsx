@@ -2,27 +2,35 @@ import Link from "next/link";
 
 import Photo from "@/components/neo/Photo";
 import { pageKind } from "@/components/neo/pageKinds";
+import { cardImage } from "@/components/neo/pageImages";
+
+import Rich, { SmartLink } from "@/components/neo/rich";
 
 /** Internal routes go through next/link; a citation points off-site and opens
- *  in a new tab, so it does not lose the reader's place in a long page. */
+ *  in a new tab, so it does not lose the reader's place in a long page.
+ *  `href` may also be `src:<key>` from sources.js, in which case the registry
+ *  decides the rel — a competitor's page is `nofollow` wherever it is cited. */
 function Cite({ href, className, children }) {
-  if (/^https?:/i.test(href)) {
-    return (
-      <a className={className} href={href} target="_blank" rel="noopener">
-        {children}
-      </a>
-    );
-  }
   return (
-    <Link className={className} href={href}>
+    <SmartLink href={href} className={className}>
       {children}
-    </Link>
+    </SmartLink>
   );
 }
 
 // Formatted on the server with an explicit locale and time zone so the string
 // is identical in the SSR HTML and after hydration.
 const DATE_FMT = new Intl.DateTimeFormat("en-US", {
+  year: "numeric",
+  month: "long",
+  day: "numeric",
+  timeZone: "UTC",
+});
+// The v3.1 copy writes the meta row as "Guide · 8 September 2026 · 11 min
+// read": day-month-year and no "Updated" label. `dateStyle="dmy"` gives that;
+// the default stays month-day-year so /about and /security, out of scope for
+// the 2026-09-10 run, render exactly as before.
+const DATE_FMT_DMY = new Intl.DateTimeFormat("en-GB", {
   year: "numeric",
   month: "long",
   day: "numeric",
@@ -49,9 +57,11 @@ export function PageHeader({
   categoryHref,
   date,
   dateLabel = "Updated",
+  dateStyle = "mdy",
   readingTime,
   image,
 }) {
+  const fmt = dateStyle === "dmy" ? DATE_FMT_DMY : DATE_FMT;
   return (
     <header className="sk-edhead">
       <As>{title}</As>
@@ -65,7 +75,8 @@ export function PageHeader({
         ) : null}
         {date ? (
           <span>
-            {dateLabel} <time dateTime={date}>{DATE_FMT.format(new Date(date))}</time>
+            {dateLabel ? `${dateLabel} ` : null}
+            <time dateTime={date}>{fmt.format(new Date(date))}</time>
           </span>
         ) : null}
         {readingTime ? <span>{readingTime}</span> : null}
@@ -101,10 +112,17 @@ export function PageHeader({
  * the picture carries information the sentence cannot, and say why in
  * `imageCaption`, which prints as the caption.
  */
-export function ProseSection({ as: As = "h2", id, heading, image, imageCaption, children }) {
+export function ProseSection({ as: As = "h2", id, heading, image, imageCaption, paras, children }) {
   return (
     <section id={id}>
       {heading ? <As>{heading}</As> : null}
+      {/* `paras`: copy strings, each a paragraph, with inline links in
+          rich.jsx syntax. `children` still works for anything else. */}
+      {(paras || []).map((p, i) => (
+        <p key={i}>
+          <Rich text={p} />
+        </p>
+      ))}
       {children}
       {image ? (
         <figure className="sk-edhead__img">
@@ -140,7 +158,13 @@ export function ProseSection({ as: As = "h2", id, heading, image, imageCaption, 
  * `note` is where the observed side's provenance goes: these are reports, not
  * measurements, and the block says so rather than implying a dataset.
  */
+/* `stated` may also be an array of { text, source } — added 2026-09-10 for
+   /insurance-credentialing-for-therapists, whose copy sets two payers'
+   published windows side by side. They stay in the one Stated row, one
+   paragraph each, each with its source on its own line; the two-row form of
+   the block does not change. */
 export function StatedVsObserved({ caption, stated, statedSource, observed = [], note }) {
+  const statedRows = Array.isArray(stated) ? stated : [{ text: stated, source: statedSource }];
   return (
     <div className="sk-svo">
       {caption ? <span className="sk-small sk-svo__cap">{caption}</span> : null}
@@ -148,18 +172,20 @@ export function StatedVsObserved({ caption, stated, statedSource, observed = [],
       <div className="sk-svo__row">
         <span className="sk-micro sk-svo__lb">Stated</span>
         <div className="sk-svo__body">
-          <p>
-            {stated}
-            {statedSource ? (
-              <>
-                {" ("}
-                <Cite className="sk-src__a" href={statedSource.href}>
-                  {statedSource.label}
-                </Cite>
-                {")"}
-              </>
-            ) : null}
-          </p>
+          {statedRows.map((row) => (
+            <p key={row.text}>
+              {row.text}
+              {row.source ? (
+                <>
+                  {" ("}
+                  <Cite className="sk-src__a" href={row.source.href}>
+                    {row.source.label}
+                  </Cite>
+                  {")"}
+                </>
+              ) : null}
+            </p>
+          ))}
         </div>
       </div>
 
@@ -301,7 +327,23 @@ export function RelatedGuides({ heading = "Related guides", items = [] }) {
                 is the guide's own name — never "read more" (on-page-seo.md §6).
                 The image slot is aria-hidden so it adds nothing to the name. */}
             <Link href={g.href} className="sk-rg__link">
-              <span className="sk-rg__img" role="presentation" aria-hidden="true" />
+              {/* The card image is the linked page's own header, cropped to
+                  3:2 — never a new picture (pageImages.js). A page with no
+                  header photograph leaves the declared 3:2 slot empty. */}
+              {cardImage(g.href) ? (
+                <span className="sk-rg__img">
+                  <img
+                    src={cardImage(g.href).src}
+                    alt={cardImage(g.href).alt}
+                    width={cardImage(g.href).width}
+                    height={cardImage(g.href).height}
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </span>
+              ) : (
+                <span className="sk-rg__img" role="presentation" aria-hidden="true" />
+              )}
               {pageKind(g.href) ? (
                 <span className="sk-micro sk-rg__kind">{pageKind(g.href)}</span>
               ) : null}
@@ -332,5 +374,39 @@ export function EditorialClose({ href, label }) {
         {label}
       </Link>
     </p>
+  );
+}
+
+/**
+ * DocumentChecklist — a checklist set as an instrument in the reading column.
+ * Added 2026-09-10 for `/provider-credentialing-checklist`, whose SERP carries
+ * an image pack: the brief asks for the list as a visual, downloadable element
+ * rather than running text.
+ *
+ * Form, following StatedVsObserved rather than a card (the editorial column
+ * carries no cards): a heavy rule above, a hairline between rows, a heavy rule
+ * below, and an empty square before each item. One enumeration system only —
+ * the square, never a number beside it (DESIGN_RULES.md §6). The square is a
+ * glyph, not a checkbox input: nothing here is interactive, and the list is
+ * plain server-rendered HTML a crawler reads as a list.
+ *
+ * "Downloadable" is the page's email box, which sends the same list as a
+ * spreadsheet. There is no direct download link (DESIGN_RULES.md §9).
+ *
+ * Image policy: none. It is a list, not a picture of one.
+ */
+export function DocumentChecklist({ caption, items = [] }) {
+  return (
+    <div className="sk-chk">
+      {caption ? <span className="sk-small sk-svo__cap">{caption}</span> : null}
+      <ul className="sk-chk__list">
+        {items.map((it) => (
+          <li className="sk-chk__row" key={it}>
+            <span className="sk-chk__box" aria-hidden="true" />
+            <span>{it}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }

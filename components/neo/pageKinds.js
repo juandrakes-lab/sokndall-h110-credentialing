@@ -38,16 +38,16 @@ const PAGE_KINDS = {
   "/best-credentialing-software": "Comparison",
 
   "/caqh-reattestation": "Guide",
-  // The remaining article routes from the architecture, none built yet.
   "/insurance-credentialing-for-therapists": "Guide",
   "/behavioral-health-credentialing": "Guide",
   "/caqh-provider-data-portal": "Guide",
   "/provider-credentialing-checklist": "Guide",
-  "/payer-enrollment/aetna-behavioral-health": "Guide",
+  "/credentialing-services-for-therapists": "Guide",
 
   "/payer-enrollment-software": "Product",
-  "/credentialing-tracking-software": "Product",
   "/for-billing-companies": "Product",
+  // `/credentialing-tracking-software` and `/payer-enrollment/aetna-behavioral-
+  // health` were removed by H110_ARQUITECTURA_v3.1 and have no entry.
 };
 
 /** Returns the label for a route, or null. A missing route renders no eyebrow

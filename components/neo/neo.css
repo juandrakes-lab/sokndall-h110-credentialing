@@ -2946,3 +2946,35 @@ html:has(.sokndall-neo) { overflow-x: hidden; }
   .sk-head__row--noted { grid-template-areas: "title" "note" "aside"; }
   .sk-head__row--noted > .sk-head__aside { margin-top: var(--s-5); }
 }
+
+/* ---- RelatedGuides: the card image, once a header photograph exists ----- */
+.sk-rg__img img { display: block; width: 100%; height: 100%; object-fit: cover; }
+
+/* ---- DocumentChecklist (editorial) -------------------------------------- */
+/* Ruled like StatedVsObserved, not boxed: the reading column carries no cards.
+   One enumeration system — the empty square — and no number beside it. */
+.sk-chk { border-top: 2px solid var(--black); border-bottom: 2px solid var(--black); }
+.sk-ed__prose section > .sk-chk { margin-top: clamp(24px, 2.6vw, 32px); }
+.sk-ed__prose section > .sk-chk + p { margin-top: clamp(24px, 2.6vw, 32px); }
+.sk-chk__list { list-style: none; padding: 0; margin: 0; }
+.sk-chk__row {
+  display: grid;
+  grid-template-columns: 16px minmax(0, 1fr);
+  gap: var(--s-3);
+  align-items: start;
+  padding: var(--s-3) 0;
+  border-top: 1px solid var(--line-strong);
+  font-size: 0.9375rem;
+  line-height: 1.55;
+}
+.sk-chk__row:first-child { border-top: 0; }
+.sk-chk__box {
+  width: 14px;
+  height: 14px;
+  margin-top: 4px;
+  border: 1.5px solid var(--black);
+  border-radius: var(--r-xs);
+}
+
+/* ---- the SourcedFigure slot, set as its own line ------------------------ */
+.sk-ed__prose .sk-ed__fig { font-size: 0.9375rem; }
