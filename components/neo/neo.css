@@ -2931,3 +2931,18 @@ html:has(.sokndall-neo) { overflow-x: hidden; }
 
 /* ---- FAQ rows: a 48px floor everywhere, never a fixed height ----------- */
 .sk-faq__q { min-height: 48px; }
+
+/* ---- SectionHead with both a right column and a note ------------------- */
+/* The note sits second in source order (it is the section's direct answer)
+   and is placed under both columns by area, which is where the home put it. */
+.sk-head__row--noted {
+  grid-template-areas: "title aside" "note note";
+  row-gap: 0;
+}
+.sk-head__row--noted > .sk-h2 { grid-area: title; }
+.sk-head__row--noted > .sk-head__aside { grid-area: aside; }
+.sk-head__row--noted > .sk-head__note { grid-area: note; }
+@media (max-width: 900px) {
+  .sk-head__row--noted { grid-template-areas: "title" "note" "aside"; }
+  .sk-head__row--noted > .sk-head__aside { margin-top: var(--s-5); }
+}

@@ -51,7 +51,7 @@ export default function HeroPanel({
               {lines.map((line, i) => (
                 <span key={line}>
                   {line}
-                  {i < lines.length - 1 ? <br /> : null}
+                  {i < lines.length - 1 ? <>{" "}<br /></> : null}
                 </span>
               ))}
             </h1>

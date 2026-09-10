@@ -91,3 +91,12 @@ export const FOOTER_COLS_V31 = [
     ],
   },
 ];
+
+// The FAQ section heading on a landing page. No copy file supplies one for the
+// landing FAQs, so the landing uses the same structural label the editorial
+// template prints ("Frequently asked questions"), broken for the .sk-h2 line
+// budget. Recorded in DESIGN_DECISIONS.md, 2026-09-10.
+export const FAQ_HEADING = ["Frequently asked", "questions"];
+
+// The price format every plan row uses.
+export const PLAN_PERIOD = "/month";

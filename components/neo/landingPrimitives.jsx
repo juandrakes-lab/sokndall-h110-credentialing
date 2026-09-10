@@ -34,6 +34,33 @@ export function Band({ surface = "card", id, children }) {
  *  `note` renders full width underneath both columns. */
 export function SectionHead({ pill, title, aside, stat, statCaption, note }) {
   const lines = Array.isArray(title) ? title : [title];
+
+  const right = stat ? (
+    <div className="sk-head__aside sk-head__aside--stat">
+      <p className="sk-stat">{stat}</p>
+      {statCaption ? <p className="sk-small sk-head__statcap">{statCaption}</p> : null}
+    </div>
+  ) : statCaption ? (
+    <p className="sk-body sk-body--lg sk-head__aside sk-head__aside--cap">{statCaption}</p>
+  ) : aside ? (
+    <p className="sk-body sk-body--lg sk-head__aside">
+      <Rich text={aside} linkClassName="sk-link" />
+    </p>
+  ) : null;
+
+  const noteEl = note ? (
+    <p className="sk-body sk-head__note">
+      <Rich text={note} linkClassName="sk-link" />
+    </p>
+  ) : null;
+
+  // When a section has both a right column and a note, the note is the
+  // section's direct answer (on-page-seo.md §5: the first paragraph under the
+  // first H2). It is therefore placed in the DOM straight after the heading and
+  // moved under both columns by grid areas, so a crawler reading source order
+  // meets the answer first while the layout stays the approved one.
+  const noted = Boolean(noteEl && right);
+
   return (
     <div className="sk-head">
       {pill ? (
@@ -42,35 +69,20 @@ export function SectionHead({ pill, title, aside, stat, statCaption, note }) {
         </p>
       ) : null}
 
-      <div className="sk-head__row sk-head__row--top">
+      <div className={`sk-head__row sk-head__row--top${noted ? " sk-head__row--noted" : ""}`}>
         <h2 className="sk-h2">
           {lines.map((line, i) => (
             <span key={line}>
               {line}
-              {i < lines.length - 1 ? <br /> : null}
+              {i < lines.length - 1 ? <>{" "}<br /></> : null}
             </span>
           ))}
         </h2>
-
-        {stat ? (
-          <div className="sk-head__aside sk-head__aside--stat">
-            <p className="sk-stat">{stat}</p>
-            {statCaption ? <p className="sk-small sk-head__statcap">{statCaption}</p> : null}
-          </div>
-        ) : statCaption ? (
-          <p className="sk-body sk-body--lg sk-head__aside sk-head__aside--cap">{statCaption}</p>
-        ) : aside ? (
-          <p className="sk-body sk-body--lg sk-head__aside">
-            <Rich text={aside} linkClassName="sk-link" />
-          </p>
-        ) : null}
+        {noted ? noteEl : null}
+        {right}
       </div>
 
-      {note ? (
-        <p className="sk-body sk-head__note">
-          <Rich text={note} linkClassName="sk-link" />
-        </p>
-      ) : null}
+      {noted ? null : noteEl}
     </div>
   );
 }

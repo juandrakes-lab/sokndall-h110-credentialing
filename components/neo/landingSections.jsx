@@ -174,7 +174,7 @@ export function FigureBandSection({ head, figures, closing }) {
           {lines.map((line, i) => (
             <span key={line}>
               {line}
-              {i < lines.length - 1 ? <br /> : null}
+              {i < lines.length - 1 ? <>{" "}<br /></> : null}
             </span>
           ))}
         </h2>
@@ -301,7 +301,9 @@ export function PlanListSection({ head, plans, cta, note, id }) {
               </p>
             </div>
             <div className="sk-planrow__body">
-              <p className="sk-small">{p.desc}</p>
+              <p className="sk-small">
+                <Rich text={p.desc} linkClassName="sk-link" />
+              </p>
               <ul className="sk-list sk-plan__feats">
                 {(p.features || []).map((f) => (
                   <li key={f}>{f}</li>
