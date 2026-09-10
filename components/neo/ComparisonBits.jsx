@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { ProseSection } from "@/components/neo/EditorialBits";
+import Rich from "@/components/neo/rich";
 
 /** Internal routes go through next/link; a citation points off-site, opens in
  *  a new tab so it does not cost the reader their place, and carries
@@ -22,10 +23,20 @@ function Cite({ href, className, children }) {
   );
 }
 
+// The fixed status vocabulary. The first three are the original set; the last
+// three were added on 2026-09-10 because the approved v3.1 copy
+// (H110_COPY_TANDA_B) classifies its rows with them — a vendor describing its
+// own model is neither "published price" nor "not published", and a Capterra
+// review is neither. The set is still closed and the component still throws on
+// any other word; every label fits the 18-character status column
+// (COPY_LIMITS.md), "Different product" being the longest at 17.
 const STATUS_LABEL = {
   published: "Published",
   "not-published": "Not published",
   estimate: "Estimate",
+  "vendor-stated": "Vendor stated",
+  "user-reported": "User reported",
+  "different-product": "Different product",
 };
 
 /**
@@ -77,6 +88,11 @@ export function SourcedPricingDisclosure({
     if (c.status === "estimate" && !c.basis) {
       throw new Error("SourcedPricingDisclosure: an estimate requires a `basis`.");
     }
+    if (["vendor-stated", "user-reported", "different-product"].includes(c.status) && !c.note) {
+      throw new Error(
+        `SourcedPricingDisclosure: a \`${c.status}\` claim requires a \`note\` giving its provenance — who said it and where it was read.`
+      );
+    }
   });
 
   return (
@@ -90,12 +106,15 @@ export function SourcedPricingDisclosure({
             <span className="sk-micro sk-spd__lb">{STATUS_LABEL[c.status]}</span>
             <div className="sk-spd__body">
               <p>
-                {c.text}
+                <Rich text={c.text} />
                 {c.status === "estimate" ? <span className="sk-spd__est"> [estimate]</span> : null}
               </p>
               <span className="sk-small sk-spd__src">
                 {c.status === "estimate" ? `Basis: ${c.basis}` : null}
-                {c.note ? c.note : null}
+                {/* The provenance may cite more than one source inline
+                    ("the product page and the Capterra profile"), so it is a
+                    copy string with links rather than one `source` object. */}
+                {c.note ? <Rich text={c.note} /> : null}
                 {c.source ? (
                   <>
                     {c.note || c.basis ? " " : null}
@@ -203,7 +222,7 @@ export function PurchaseModelCompare({
         ))}
       </div>
 
-      {note ? <p className="sk-small sk-mvc__cap">{note}</p> : null}
+      {note ? <p className="sk-small sk-mvc__cap"><Rich text={note} /></p> : null}
     </section>
   );
 }
@@ -314,9 +333,18 @@ export function MultiVendorComparison({
         {sources.length ? (
           <ul className="sk-mvc__sources">
             {sources.map((s) => (
-              <li key={s.label}>
-                {s.vendor ? `${s.vendor}: ` : null}
-                <Cite href={s.href}>{s.label}</Cite>
+              <li key={s.label || s.text}>
+                {s.text ? (
+                  // A source row that cites two documents for one vendor
+                  // ("Capterra profile and product FAQ") is a copy string with
+                  // its links inline; rel comes from the source registry.
+                  <Rich text={s.text} />
+                ) : (
+                  <>
+                    {s.vendor ? `${s.vendor}: ` : null}
+                    <Cite href={s.href}>{s.label}</Cite>
+                  </>
+                )}
               </li>
             ))}
           </ul>
