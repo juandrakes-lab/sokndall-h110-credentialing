@@ -569,7 +569,7 @@ Regla de DESIGN_RULES.md que aplica: §2 regla 2, §6.
 
 ## Las 15 páginas — fuentes con dominio y sin documento
 Fecha: 2026-09-10
-Decisión: once fuentes que el copy nombra solo por dominio (BehaveHealth,
+Decisión: doce fuentes que el copy nombra solo por dominio (BehaveHealth,
 Evernorth resource library, UMR, Optum San Diego, Carelon contacto, Maryland
 Department of Health, BCBS Nebraska, Contracting Providers, RCMGen,
 HireGaynell, DrCredentialing, MedSole "Expired") enlazan a la raíz de ese
