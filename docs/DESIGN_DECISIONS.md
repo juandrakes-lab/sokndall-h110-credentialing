@@ -374,3 +374,57 @@ on-page-seo.md §7 exige `nofollow` en competidores; decidirlo una vez por
 fuente evita que dependa de quién tipeó el enlace.
 Política de imagen: no aplica.
 Regla de DESIGN_RULES.md que aplica: §2 regla 2, §8.
+
+## / — home reconstruida sobre el copy v3.1
+Fecha: 2026-09-10
+Decisión: la composición de la home se mantiene (hero con matriz → split
+list → quad → matriz → ancla → precios → qué no hace → FAQ → cierre) y todo
+el contenido sale de `app/homeData.js`, copiado del Tanda A. `Landing.jsx` y
+`landingData.js` (que reexportaba copy de la piel forest) se borraron.
+Los cuatro huecos reservados siguen vacíos con su ratio: hero (ocupado por
+el esquema, como antes), `.sk-slot--grey` de la Sección 2, `.sk-quad__img`
+3:2 y `.sk-quad__d`. Sin fotografía.
+Faltantes del copy y qué se hizo en cada caso:
+- Sección 3: el copy da "Stat caption" sin cifra. Se renderiza el pie solo;
+  no se inventa la cifra (ver entrada de `SectionHead`).
+- Sección 4: sin kicker para la tarjeta aparte; no se renderiza eyebrow.
+- Sección 8: el copy no trae H2 para el FAQ. Se usa la etiqueta estructural
+  "Frequently asked questions" que ya imprime `EditorialTemplate`, partida
+  en dos líneas por el presupuesto de `.sk-h2` (`FAQ_HEADING` en neoData).
+  Aplica igual a las cinco landings.
+- Cierre: el copy da título y cuerpo, no botones. Se reusan los dos labels
+  aprobados del hero ("Start 14-day trial" / "See all three plans"), que son
+  la misma acción.
+- Se quitó la etiqueta "Provider × payer — schematic" que el hero traía
+  sobre la matriz: no está en el copy v3.1 y el pie aprobado ya dice qué es.
+Regla de DESIGN_RULES.md que aplica: §5, §2 regla 1.
+
+## /pricing · /payer-enrollment-software · /for-billing-companies — reconstruidas de cero
+Fecha: 2026-09-10
+Decisión: las tres se reescribieron sobre `LandingTemplate` y el kit, sin
+mirar su composición anterior (entrada del 2026-09-06, que queda
+superada). Ninguna lleva fotografía ni figura en el hero: `/pricing` abre
+con la premisa y pasa directo a la lista de precios; las otras dos abren con
+su franja de cuatro y dejan la matriz (en `/payer-enrollment-software`) para
+su propia sección, dibujada a otra densidad que la de la home (6 × 5, tres
+celdas de acción) para que dos páginas del molde no repitan el mismo
+gráfico.
+Se aparta de la home en: el par de CTAs del hero de 9 y 11 reusa los labels
+aprobados de la home porque el copy de esas páginas no trae ninguno;
+`/pricing` no lleva CTA en el hero (cada fila de precio ya tiene el suyo).
+Los encabezados de columna de la tabla de estados ("Status", "What it
+means", "What to do") son etiquetas estructurales: el copy da las tres
+partes de cada fila pero no la fila de encabezado.
+Regla de DESIGN_RULES.md que aplica: §1, §2 reglas 3-4, §4.
+
+## /credentialing-spreadsheet-template — de `Article` a `LandingTemplate`
+Fecha: 2026-09-10
+Decisión: la página deja el molde `Article solo` y pasa a `LandingTemplate`,
+como manda la corrida (página 4 en la tanda de landing). La plantilla se
+ofrece arriba del pliegue con el `EmailCapture` en la columna derecha del
+hero (slot `form`), que es el único CTA de plantilla de la página. El cierre
+no repite la caja: su botón lleva el label del form y ancla a él
+(`#get-template`). Sin descarga directa en ninguna parte.
+Las dos fuentes externas que pide el copy (Maryland Department of Health,
+CMS) van sobre las palabras que respaldan, dentro de las pestañas 2 y 5.
+Regla de DESIGN_RULES.md que aplica: §9 (un CTA de plantilla, por email).
