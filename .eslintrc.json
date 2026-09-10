@@ -1,3 +1,59 @@
 {
-  "extends": "next/core-web-vitals"
+  "extends": "next/core-web-vitals",
+  "overrides": [
+    {
+      "files": [
+        "components/system/**/*.js",
+        "components/system/**/*.jsx",
+        "app/styleguide/**/*.js",
+        "app/styleguide/**/*.jsx"
+      ],
+      "excludedFiles": ["app/styleguide/tokens.reference.js"],
+      "rules": {
+        "no-restricted-syntax": [
+          "error",
+          {
+            "selector": "JSXAttribute[name.name='style']",
+            "message": "No inline style in the marketing system. box-shadow, arbitrary radius, hex and off-scale spacing all hide behind style={{}}. Use colour tokens + the type/spacing scale + utility classes (CATALOGO_SISTEMA.md §1)."
+          },
+          {
+            "selector": "JSXAttribute[name.name='className'] Literal[value=/[\\w-]\\[[^\\]]+\\]/]",
+            "message": "No arbitrary Tailwind values (mt-[37px], w-[203px], text-[#fff], aspect-[4/3]). Use the 4·8·12·16·24·32·48·64·96·128 scale or a token utility (.ratio-4x3, .corner-cut)."
+          },
+          {
+            "selector": "TemplateElement[value.raw=/[\\w-]\\[[^\\]]+\\]/]",
+            "message": "No arbitrary Tailwind values inside a template string. Same rule as above."
+          },
+          {
+            "selector": "Literal[value=/#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})\\b/]",
+            "message": "No hex colours in code. Use a token: ink, ink-2, rule, rule-light, paper, paper-2, muted, muted-dark, signal."
+          },
+          {
+            "selector": "TemplateElement[value.raw=/#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})\\b/]",
+            "message": "No hex colours in code. Use a colour token."
+          },
+          {
+            "selector": "JSXAttribute[name.name='className'] Literal[value=/(^|\\s)-?(shadow|drop-shadow|inset-shadow|ring)(-|\\s|$)/]",
+            "message": "No shadows or rings anywhere (CATALOGO §1.3). Elevation is a surface change plus a 1px hairline."
+          },
+          {
+            "selector": "JSXAttribute[name.name='className'] Literal[value=/(^|\\s)(blur|backdrop-blur)(-|\\s|$)/]",
+            "message": "No blur (CATALOGO §1.3)."
+          },
+          {
+            "selector": "JSXAttribute[name.name='className'] Literal[value=/(^|\\s)(bg-gradient-|bg-linear-|bg-radial|bg-conic|from-|via-|to-)/]",
+            "message": "No gradients (CATALOGO §1.3)."
+          },
+          {
+            "selector": "JSXAttribute[name.name='className'] Literal[value=/(^|\\s)rounded-(sm|md|lg|xl|2xl|3xl|t|b|l|r|tl|tr|bl|br|s|e|ss|se|es|ee)(-|\\s|$)/]",
+            "message": "One radius token only: `rounded` = 4px. `rounded-full` is allowed solely on the /about avatar (CATALOGO §1.3)."
+          },
+          {
+            "selector": "JSXAttribute[name.name='className'] Literal[value=/(^|\\s)border-(2|4|8)(\\s|$)/]",
+            "message": "Borders are always 1px. Hierarchy comes from border colour, not width (CATALOGO §1.3)."
+          }
+        ]
+      }
+    }
+  ]
 }

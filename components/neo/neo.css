@@ -1,0 +1,2825 @@
+/* ============================================================================
+   Sokndall marketing skin — "neo".
+   A self-contained stylesheet cloned from the reference comp: light-grey page,
+   one white rounded shell, a saturated blue hero panel notched around the
+   wordmark, and everything else composed as rounded cards on two surfaces
+   (white + soft grey) with one soft shadow.
+
+   Scoped entirely under `.sokndall-neo`. It shares nothing with
+   components/site/site.css (the forest/gold system) or with the Tailwind
+   `@theme` in app/globals.css — the three never meet, by design.
+   Every class is `.sk-` prefixed.
+   ========================================================================= */
+
+/* Clipping goes on the root, never on .sokndall-neo — `overflow-x` on a
+   non-root ancestor forces `overflow-y: auto`, turning that ancestor into the
+   scroll container, and every `position: sticky` descendant then sticks to it
+   instead of the viewport (i.e. never visibly sticks). Same trap the forest
+   skin already documented; keeping the fix. */
+html:has(.sokndall-neo) { overflow-x: hidden; }
+
+.sokndall-neo {
+  /* ==================================================================== *
+   * PALETTE — eight values, and nothing else. No gradients anywhere.
+   * Everything below that is not one of the eight is an alpha of one of
+   * them (hairlines, tints, hover states) — same hue, no new colour.
+   * The legacy variable NAMES are kept so the pages that have not been
+   * rebuilt yet keep compiling; only the values moved.
+   * ==================================================================== */
+
+  /* ---- the eight ---- */
+  --ink:        #0e2a2e;   /* dark primary surface + heading ink on light */
+  --ink-2:      #1b4348;   /* second dark surface + body ink on light */
+  --rule-dark:  #3d6a6b;   /* hairline on a dark surface */
+  --paper:      #f2f0ea;   /* light surface — the page ground */
+  --card:       #ffffff;   /* cards */
+  /* Every piece of text on a light surface is black, and every piece on a dark
+     surface is white. The only exception is `.sk-stat` ("60 days"), which
+     keeps --ink. This flattens the old three-step text hierarchy on purpose. */
+  --black:      #000000;
+  --body:       var(--black);
+  --muted:      var(--black);   /* was the grey microcopy step */
+  --muted-dark: #ffffff;        /* was the grey step on dark */
+  --amber:      #c88a2e;   /* primary CTA and action-required states ONLY */
+
+  /* ---- alphas of the above: hairlines and tints, never new hues ---- */
+  /* The hairline's weight is spent in two places, and it has to be. A border
+     cannot render thinner than one device pixel, so at DPR 1 the width alone
+     does nothing — the alpha carries it there. At DPR 2+ the sub-pixel width
+     bites as well. The two move together, keeping their ratio:
+     0.75px/0.09 -> 0.5px/0.06 -> 0.25px/0.03. Move one without the other and
+     only half the displays see it. At 0.03 the line is at the threshold of
+     visibility — that is the intent, not a mistake. */
+  --line:        rgba(14, 42, 46, 0.03);
+  --line-strong: rgba(14, 42, 46, 0.22);
+  --hairline:    0.25px;
+  --tint:        rgba(14, 42, 46, 0.05);   /* ink at 5% — nested light surface */
+  --tint-2:      rgba(14, 42, 46, 0.08);
+  --amber-tint:  rgba(200, 138, 46, 0.14); /* the only amber fill */
+  --rule-dark-2: rgba(61, 106, 107, 0.55);
+
+  /* ---- legacy aliases (pages awaiting rebuild resolve through these) ---- */
+  --page:        var(--card);   /* the page is white; paper is a card fill */
+  --shell:       var(--card);
+  --soft:        var(--paper);
+  --soft-2:      var(--tint);
+  --blue:        var(--black);    /* emphasis follows the text, never amber */
+  --blue-hover:  var(--ink-2);
+  --blue-deep:   var(--ink-2);
+  --blue-soft:   var(--tint);
+  --on-blue:      #ffffff;
+  --on-blue-soft: var(--muted-dark);
+  --on-blue-dim:  var(--muted-dark);
+  --blue-line:    var(--rule-dark);
+  --blue-line-2:  var(--rule-dark-2);
+
+  /* ---- signal: two states only. Neutral, or "needs action" in amber. ---- */
+  --ok:      var(--ink);
+  --ok-bg:   var(--tint);
+  --warn:    var(--amber);
+  --warn-bg: var(--amber-tint);
+  --stop:    var(--amber);
+  --stop-bg: var(--amber-tint);
+
+  /* ---- shape ---- */
+  --r-block: 28px;   /* the inset dark section */
+  --r-pill:  999px;  /* pills, marks, chips */
+  --r-xs:    4px;    /* the smallest chip — matrix legend swatch */
+  --r-panel: 16px;
+  --r-card:  14px;
+  --r-inner: 8px;
+  --r-btn:   6px;
+
+  /* ---- elevation. No card has a border; depth is the shadow.
+   * White cards are lit from above: the blur grows and the offset drops, so
+   * there is more shadow under the card than around its top.
+   * Grey cards sit closer to their surface: a tight, even perimeter.
+   * On the dark block the same light direction, read in black. ---- */
+  --sh-white: 0 1px 2px rgba(14, 42, 46, 0.035),
+              0 8px 16px -6px rgba(14, 42, 46, 0.08),
+              0 22px 40px -12px rgba(14, 42, 46, 0.115);
+  --sh-grey:  0 1px 3px rgba(14, 42, 46, 0.069),
+              0 0 10px rgba(14, 42, 46, 0.058);
+  --sh-on-ink: 0 2px 4px rgba(0, 0, 0, 0.207),
+               0 10px 24px -8px rgba(0, 0, 0, 0.391);
+  --sh-card:  var(--sh-white);
+  --sh-float: var(--sh-white);
+
+  /* ==================================================================== *
+   * SPACING SCALE. One 8px-based ramp; sections use --sec-y and nothing
+   * else, so vertical rhythm cannot drift per section again.
+   * ==================================================================== */
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-5: 24px;
+  --s-6: 32px;
+  --s-7: 48px;
+  --s-8: 64px;
+  --s-9: 96px;
+  --s-10: 128px;
+
+  --sec-y:  clamp(64px, 7vw, 112px);  /* every band's vertical padding */
+  --head-y: clamp(32px, 3.6vw, 56px); /* section head → section body */
+  --gap:    var(--s-4);               /* grid gutter */
+
+  /* ---- layout ---- */
+  --maxw:   1200px;
+  --page-x: clamp(14px, 3.2vw, 44px);  /* the dark block's margin from the edge */
+  --pad-x:  clamp(20px, 4vw, 56px);    /* inner padding inside a block */
+  /* A light section insets by margin + padding so its copy lines up with the
+     copy inside a dark block, which only insets by padding. */
+  --light-x: calc(var(--page-x) + var(--pad-x));
+
+  /* legacy layout aliases, same reason as the colour aliases above */
+  --card-pad:  clamp(20px, 2.4vw, 30px);  /* so a bleeding child can cancel it */
+  --sec-pad:   var(--pad-x);
+  --hero-pad:  var(--pad-x);
+  --shell-pad: 0px;
+
+  --sans: var(--font-geist), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: var(--font-geist-mono), ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+
+  background: var(--card);
+  color: var(--black);
+  font-family: var(--sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  width: 100%;
+  min-height: 100vh;
+}
+
+.sokndall-neo *,
+.sokndall-neo *::before,
+.sokndall-neo *::after { box-sizing: border-box; }
+
+/* The reset is wrapped in :where() so it carries ZERO specificity.
+ *
+ * Written plainly, `.sokndall-neo p { margin: 0 }` is (0,1,1) and outranks any
+ * single-class spacing rule like `.sk-hero__sub { margin-top: … }` at (0,1,0)
+ * — so every margin set on a paragraph, heading or list was being dropped on
+ * the floor, which is exactly why the vertical rhythm read as arbitrary. With
+ * :where() the reset is (0,0,0) and any class beats it, in any order. */
+:where(.sokndall-neo) :where(p, h1, h2, h3, h4, ul, ol, dl, dd, figure) { margin: 0; }
+:where(.sokndall-neo) :where(ul, ol) { padding: 0; list-style: none; }
+:where(.sokndall-neo) :where(img) { display: block; max-width: 100%; }
+:where(.sokndall-neo) :where(a) { color: inherit; text-decoration: none; }
+
+.sokndall-neo :focus-visible {
+  outline: 2px solid var(--amber);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+.sk-band--ink :focus-visible { outline-color: var(--amber); }
+
+/* ============================ BANDS ====================================== */
+
+/* Light sections are white — all of them. No grey section grounds and no rule
+   between sections; the separation is the vertical margin. Grey survives only
+   as a card fill.
+   A dark section is not full-bleed: it is a rounded block inset from the page
+   edges, floating on the white. */
+.sk-shell { display: contents; }
+
+.sk-band { padding-block: var(--sec-y); }
+.sk-band--paper,
+.sk-band--card { background: var(--card); padding-inline: var(--light-x); }
+
+.sk-band--ink,
+.sk-band--ink-2 {
+  color: #fff;
+  margin-inline: var(--page-x);
+  border-radius: var(--r-block);
+  padding-inline: var(--pad-x);
+}
+.sk-band--ink   { background: var(--ink); }
+.sk-band--ink-2 { background: var(--ink-2); }
+
+/* A dark block is its own object, so it needs air above and below rather than
+   butting into the section that precedes it. */
+.sk-band--ink + .sk-band--ink { margin-top: var(--s-4); }
+/* The CTA is a floating block and the footer runs edge to edge, so without
+   this their two dark masses read as one. */
+.sk-band--ink + .sk-footer { margin-top: var(--s-8); }
+
+/* The hero and the footer are the exceptions: they run edge to edge, square,
+   the way they did before the mid-page blocks started floating. Their copy
+   still insets by --light-x so it lines up with every white section. */
+.sk-hero.sk-band--ink {
+  margin-inline: 0;
+  border-radius: 0;
+  padding-inline: var(--light-x);
+}
+
+.sk-wrap {
+  max-width: var(--maxw);
+  margin-inline: auto;
+}
+
+/* `.sk-sec` is the pre-band section used by the pages still awaiting their
+   rebuild. It carries the measure itself so those pages keep their column
+   now that the page-level card is gone. */
+.sk-sec {
+  max-width: var(--maxw);
+  margin-inline: auto;
+  padding: var(--sec-y) var(--pad-x);
+}
+.sk-sec--tight  { padding-top: var(--s-7); }
+.sk-sec--flush  { padding-bottom: 0; }
+
+/* ============================ TYPE ======================================= */
+
+/* Geist is a tight, low-contrast grotesque; it takes — and needs — more size
+   and more negative tracking than the previous face to read as display type. */
+/* Only the SECTION headings (`.sk-h2`) took the +25%/regular-weight change.
+   The hero display and the in-card headings kept their own scale — they were
+   never in scope, they just share the family. */
+.sk-display {
+  font-size: clamp(2.5rem, 1.15rem + 5.8vw, 4.5rem);
+  line-height: 0.98;
+  letter-spacing: -0.042em;
+  font-weight: 600;
+}
+.sk-h2 {
+  font-size: clamp(2.5rem, 1.44rem + 4.5vw, 4.0625rem);
+  line-height: 1.02;
+  letter-spacing: -0.038em;
+  font-weight: 400;
+}
+/* In-card headings: original size, still bold. Only the colour moved. */
+.sk-h3 {
+  font-size: clamp(1.375rem, 1.15rem + 0.95vw, 1.75rem);
+  line-height: 1.14;
+  letter-spacing: -0.026em;
+  font-weight: 600;
+}
+.sk-h4 {
+  font-size: 1.125rem;
+  line-height: 1.24;
+  letter-spacing: -0.02em;
+  font-weight: 600;
+}
+.sk-stat {
+  font-size: clamp(3.4375rem, 1.75rem + 6.5vw, 5.3125rem);
+  line-height: 0.94;
+  letter-spacing: -0.045em;
+  font-weight: 400;
+  /* The one piece of text on a light surface that is not black. */
+  color: var(--ink);
+  /* Sans, not mono: this figure carries a unit word beside it, and mono spaces
+     the word oddly. Mono is for columns of digits — `.sk-num`. */
+  font-variant-numeric: tabular-nums;
+}
+.sk-body     { font-size: 0.9375rem;  line-height: 1.62; color: var(--body); }
+.sk-body--lg { font-size: 1rem;       line-height: 1.6;  color: var(--body); }
+/* Grey is footnote and caption weight only — it is not a body colour. */
+.sk-small    { font-size: 0.8125rem;  line-height: 1.5;  color: var(--muted); }
+.sk-micro {
+  font-size: 0.6875rem;
+  line-height: 1.4;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--muted);
+}
+/* Figures are set in Geist Mono so columns of numbers align. */
+.sk-num {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+  letter-spacing: -0.01em;
+}
+.sk-ink  { color: var(--black); }
+.sk-lead { font-size: clamp(1rem, 0.94rem + 0.3vw, 1.125rem); line-height: 1.58; color: var(--body); }
+
+/* Surface-portable text colours: the same component on blue or on white.
+ *
+ * `.sk-on-blue` marks the blue panel, but light cards float *inside* it — so
+ * every rule below has to stop at a light card's edge or the card renders
+ * white-on-white. The second block does exactly that, and outranks the first
+ * on specificity. Anything that opts back into blue (`.sk-card--blue`) is
+ * excluded from the reset. */
+.sk-on-blue .sk-body,
+.sk-on-blue .sk-small,
+.sk-on-blue .sk-lead,
+.sk-band--ink .sk-body,
+.sk-band--ink .sk-small,
+.sk-band--ink .sk-lead  { color: var(--muted-dark); }
+.sk-on-blue .sk-micro,
+.sk-band--ink .sk-micro { color: var(--muted-dark); }
+.sk-on-blue,
+.sk-on-blue .sk-ink,
+.sk-band--ink .sk-ink   { color: #fff; }
+.sk-band--ink .sk-h2,
+.sk-band--ink .sk-h3,
+.sk-band--ink .sk-h4,
+.sk-band--ink .sk-display { color: #fff; }
+
+/* A light surface floating on a dark band resets to light-surface ink.
+ *
+ * `.sk-herofig` is named explicitly: it is a white card but not a `.sk-card`,
+ * so without it the on-dark rules above win and its caption renders white on
+ * white. Any new light surface placed on a dark band needs adding here. */
+.sk-on-blue .sk-card:not(.sk-card--blue),
+.sk-band--ink .sk-card:not(.sk-card--blue),
+.sk-band--ink .sk-herofig { color: var(--black); }
+.sk-on-blue .sk-card:not(.sk-card--blue) :is(.sk-body, .sk-small, .sk-lead, .sk-micro),
+.sk-band--ink .sk-card:not(.sk-card--blue) :is(.sk-body, .sk-small, .sk-lead, .sk-micro),
+.sk-band--ink .sk-herofig :is(.sk-body, .sk-small, .sk-lead, .sk-micro) { color: var(--black); }
+.sk-on-blue .sk-card:not(.sk-card--blue) .sk-ink,
+.sk-band--ink .sk-card:not(.sk-card--blue) .sk-ink { color: var(--black); }
+.sk-on-blue .sk-card:not(.sk-card--blue) .sk-list li::before,
+.sk-band--ink .sk-card:not(.sk-card--blue) .sk-list li::before { background: var(--black); }
+
+/* ============================ PILL ======================================= */
+
+/* The eyebrow pill takes the primary dark, with a white label. Amber stays
+   reserved for the CTA and for action states. */
+.sk-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: var(--ink);
+  color: #fff;
+  border-radius: var(--r-pill);
+  padding: 6px 13px 6px 9px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: -0.005em;
+}
+.sk-pill::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.85);
+}
+/* On a dark band the pill needs the second dark surface to separate at all. */
+.sk-on-blue .sk-pill,
+.sk-band--ink .sk-pill { background: var(--ink-2); }
+
+/* ============================ BUTTONS ==================================== */
+
+.sk-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s-2);
+  border-radius: var(--r-btn);
+  padding: var(--s-3) 20px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: -0.006em;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: background-color 0.16s ease, color 0.16s ease, border-color 0.16s ease;
+  white-space: nowrap;
+}
+/* Amber is the primary CTA and nothing else. Its text is ink, not white —
+   white on #c88a2e is about 2.8:1 and fails; ink on amber is about 5.9:1.
+   Hover darkens the same swatch rather than introducing a second amber. */
+.sk-btn--primary { background: var(--amber); color: var(--black); }
+.sk-btn--primary:hover { filter: brightness(0.93); }
+.sk-btn--ghost { background: transparent; color: var(--black); border-color: var(--line-strong); }
+.sk-btn--ghost:hover { background: var(--tint); }
+.sk-btn--sm { padding: 9px 15px; font-size: 0.75rem; }
+
+/* The primary keeps its amber on a dark surface — it is the same CTA. */
+.sk-on-blue .sk-btn--ghost,
+.sk-band--ink .sk-btn--ghost { color: #fff; border-color: var(--rule-dark); }
+.sk-on-blue .sk-btn--ghost:hover,
+.sk-band--ink .sk-btn--ghost:hover { background: rgba(255, 255, 255, 0.07); }
+
+.sk-arr { font-size: 0.875em; line-height: 1; }
+.sk-arr-ico { width: 14px; height: 14px; flex: none; }
+
+/* The inline text link. */
+.sk-link { color: var(--blue); font-weight: 600; }
+.sk-link:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+/* ============================ NAV ======================================== */
+
+.sk-nav {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  min-height: 52px;
+}
+/* Specificity note: the reset `.sokndall-neo a` (0,1,1) outranks a bare
+   `.sk-nav__brand` (0,1,0), so on a dark bar the wordmark would inherit the
+   band's white and the light-bar rule would never apply. Qualified to win. */
+.sokndall-neo .sk-nav__brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  font-size: 1.0625rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: var(--black);
+  padding-right: 22px;
+  flex: none;
+}
+.sk-nav__mark { width: 19px; height: 19px; flex: none; color: var(--blue); }
+.sk-nav__links {
+  display: flex;
+  align-items: center;
+  gap: clamp(14px, 1.9vw, 30px);
+  font-size: 0.8125rem;
+  font-weight: 500;
+}
+.sk-nav__links a { color: var(--on-blue-soft); transition: color 0.16s ease; }
+.sk-nav__links a:hover,
+.sk-nav__links a[aria-current="page"] { color: #fff; }
+/* The nav CTA is the primary CTA, so it is the amber button. */
+.sk-nav__cta {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: var(--r-btn);
+  background: var(--amber);
+  color: var(--black);
+  padding: 10px var(--s-4);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  flex: none;
+  transition: filter 0.16s ease;
+}
+.sk-nav__cta:hover { filter: brightness(0.93); }
+
+/* The dark bar: the nav sitting on the ink hero band. */
+.sk-nav--dark { padding-block: var(--s-5); }
+.sokndall-neo .sk-nav--dark .sk-nav__brand { color: #fff; }
+.sk-nav--dark .sk-nav__mark { color: #fff; }
+
+/* The light bar: every page whose first block is not the ink band. */
+.sk-nav--light {
+  border-bottom: 1px solid var(--line);
+  max-width: var(--maxw);
+  margin-inline: auto;
+  padding: var(--s-5) var(--pad-x);
+}
+.sk-nav--light .sk-nav__links a { color: var(--muted); }
+.sk-nav--light .sk-nav__links a:hover,
+.sk-nav--light .sk-nav__links a[aria-current="page"] { color: var(--black); }
+
+@media (max-width: 880px) {
+  .sk-nav__links { display: none; }
+}
+
+/* Below 880px the link row leaves the nav bar. Rather than leaving those
+   routes unreachable until the footer, they reappear as a scrollable strip
+   directly under the header. */
+.sk-navm { display: none; }
+@media (max-width: 880px) {
+  .sk-navm {
+    display: flex;
+    gap: var(--s-2);
+    overflow-x: auto;
+    padding: 12px var(--sec-pad) 0;
+    scrollbar-width: none;
+  }
+  .sk-navm::-webkit-scrollbar { display: none; }
+  .sk-navm a {
+    flex: none;
+    background: var(--tint);
+    border-radius: var(--r-pill);
+    padding: var(--s-2) 14px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--black);
+    white-space: nowrap;
+  }
+  .sk-navm a[aria-current="page"] { background: var(--ink); color: #fff; }
+
+  /* On the ink band the strip inverts, so it reads on its own surface. */
+  .sk-band--ink .sk-navm { padding-inline: 0; }
+  .sk-band--ink .sk-navm a { background: var(--ink-2); color: #fff; }
+  .sk-band--ink .sk-navm a[aria-current="page"] { background: var(--rule-dark); color: #fff; }
+}
+
+/* ============================== HERO ===================================== */
+
+/* A full-bleed ink band, no notch and no background pattern. The nav is a
+   plain bar at the top of it; the hero proper is two simple columns — copy and
+   both CTAs on the left, a figure container on the right. */
+.sk-hero { background: var(--ink); color: #fff; }
+.sk-hero__inner { padding-bottom: var(--sec-y); }
+
+/* The gap the brief called out: the bar and the H1 were nearly touching. */
+.sk-hero__top {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+  gap: clamp(var(--s-6), 4vw, var(--s-8));
+  align-items: center;
+  padding-top: var(--s-9);
+}
+.sk-hero__copy { max-width: 40rem; }
+.sk-hero__sub { margin-top: var(--s-7); max-width: 46ch; }
+.sk-hero__cta { display: flex; flex-wrap: wrap; gap: var(--s-3); margin-top: var(--s-7); }
+
+/* The hero's right column carries the enrollment matrix — the object the
+   product is about — as a labelled schematic. Never a rendering of a screen.
+   `__media`, not `__figure`: the product pages already own `.sk-hero__figure`
+   for their cards-plus-cut-out row, and it is declared later in this file. */
+/* A declared visual slot: fixed 4:3, so whatever eventually fills it cannot
+   change the hero's height. The schematic occupies it for now. */
+.sk-hero__media { align-self: center; aspect-ratio: 4 / 3; }
+.sk-hero__media > * { height: 100%; }
+.sk-herofig {
+  align-content: start;
+  overflow: hidden;
+  background: var(--card);
+  border: var(--hairline) solid var(--line);
+  border-radius: var(--r-panel);
+  padding: var(--s-5);
+  box-shadow: var(--sh-on-ink);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--s-4);
+}
+.sk-herofig__cap { color: var(--muted); }
+.sk-herofig__note { color: var(--muted); }
+
+.sk-hero__rule {
+  height: 1px;
+  background: var(--rule-dark);
+  margin: var(--s-9) 0 var(--s-7);
+}
+
+/* Kept as no-ops: the notch and the tongue are gone, but the pages awaiting
+   their rebuild still render these elements. */
+.sk-hero__tab,
+.sk-hero__art { display: none; }
+
+/* The four-up capability strip under the rule. */
+.sk-strip {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--s-4);
+}
+.sk-strip__item {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: #fff;
+}
+.sk-strip__item .sk-tile svg { width: 22px; height: 22px; }
+
+@media (max-width: 900px) {
+  .sk-hero__top {
+    grid-template-columns: minmax(0, 1fr);
+    align-items: start;
+    padding-top: var(--s-7);
+  }
+  .sk-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 520px) {
+  .sk-strip { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* ============================ CARDS ====================================== */
+
+/* No card carries a border. Depth is the shadow, and the shadow says which
+   surface the card is: white cards are lit from above and cast downward; grey
+   cards sit tight against their surface with an even perimeter. */
+.sk-card {
+  background: var(--card);
+  border-radius: var(--r-card);
+  padding: var(--s-5);
+  border: var(--hairline) solid var(--line);
+  box-shadow: var(--sh-white);
+}
+.sk-card--soft { background: var(--paper); box-shadow: var(--sh-grey); }
+.sk-card--line { background: var(--card); box-shadow: var(--sh-white); }
+.sk-card--blue {
+  background: var(--ink);
+  color: #fff;
+  border-color: var(--rule-dark);
+  box-shadow: var(--sh-on-ink);
+}
+.sk-card--flat { box-shadow: none; }
+
+/* Inside a dark block the light still comes from above; it just reads black. */
+.sk-band--ink .sk-card,
+.sk-band--ink-2 .sk-card,
+.sk-on-blue .sk-card { box-shadow: var(--sh-on-ink); }
+.sk-card--pad { padding: var(--card-pad); }
+.sk-card--tall  { display: flex; flex-direction: column; }
+
+
+/* Nested surface inside a card: white on grey, grey on white. */
+.sk-inner {
+  background: var(--shell);
+  border-radius: var(--r-inner);
+  padding: 14px;
+}
+.sk-card:not(.sk-card--soft) > .sk-inner { background: var(--soft); }
+
+/* Icons sit on the surface with no box and no fill behind them. The glyphs
+   themselves are solid, not line art. */
+.sk-tile {
+  display: inline-grid;
+  place-items: center;
+  /* As a grid item the tile would stretch its column and centre the glyph in
+     it, which floats the icon away from the text it belongs to. */
+  justify-self: start;
+  background: none;
+  border: 0;
+  padding: 0;
+  color: var(--black);
+  flex: none;
+}
+.sk-tile svg { width: 26px; height: 26px; }
+.sk-tile--blue,
+.sk-tile--soft { background: none; border: 0; color: var(--black); }
+.sk-band--ink .sk-tile,
+.sk-on-blue .sk-tile { color: #fff; }
+
+/* ============================ SECTION HEAD =============================== */
+
+/* Pill, then a two-column head: heading left, supporting matter right. The
+   right column is never a second heading — it is the caption to the left one. */
+.sk-head { margin-bottom: var(--head-y); }
+.sk-head__pill { margin-bottom: var(--s-5); }
+.sk-head__row {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+  gap: clamp(20px, 4vw, 60px);
+  align-items: end;
+}
+.sk-head__row--top { align-items: start; }
+.sk-head__aside { max-width: 42ch; }
+.sk-head__aside--stat { text-align: right; }
+.sk-head__note { margin-top: var(--s-7); max-width: 62ch; }
+
+@media (max-width: 900px) {
+  .sk-head__row { grid-template-columns: minmax(0, 1fr); align-items: start; }
+  .sk-head__aside--stat { text-align: left; }
+}
+
+/* ============================ BENTO GRIDS ================================ */
+
+.sk-bento {
+  display: grid;
+  gap: var(--gap);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: start;
+}
+.sk-bento--2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.sk-bento--split { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); }
+.sk-stack { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--gap); }
+
+@media (max-width: 980px) {
+  .sk-bento,
+  .sk-bento--2,
+  .sk-bento--split { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* ============================ IMAGERY ==================================== */
+
+/* Photography is always in a rounded card, cropped by aspect-ratio, never
+   free-floating. `--ar` is set per instance. */
+.sk-photo {
+  border-radius: var(--r-card);
+  overflow: hidden;
+  background: var(--soft-2);
+  aspect-ratio: var(--ar, 4 / 3);
+  position: relative;
+}
+.sk-photo img { width: 100%; height: 100%; object-fit: cover; }
+
+/* Until real art lands: the slot states its own crop and direction. */
+.sk-photo__slot {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 4px;
+  padding: 14px;
+  background:
+    repeating-linear-gradient(
+      135deg,
+      transparent 0 9px,
+      rgba(14, 42, 46, 0.05) 9px 18px
+    ),
+    var(--soft-2);
+  color: var(--muted);
+}
+.sk-photo__slot b { font-size: 0.6875rem; letter-spacing: 0.04em; text-transform: uppercase; }
+.sk-photo__slot span { font-size: 0.75rem; line-height: 1.4; }
+
+/* A small white card overlaid on a photo, as in the comp. */
+.sk-photo__overlay {
+  position: absolute;
+  left: 12px;
+  bottom: 12px;
+  right: 12px;
+  max-width: 62%;
+  background: var(--shell);
+  border-radius: var(--r-inner);
+  padding: 11px 13px;
+  box-shadow: var(--sh-float);
+}
+
+/* ============================ STATUS MARKS =============================== */
+
+/* Colour + shape + a monospace-aligned count, so a state still reads in
+   greyscale. Ported wholesale from the app's own status vocabulary. */
+.sk-mark {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 999px;
+  padding: 3px 9px;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: -0.004em;
+  white-space: nowrap;
+}
+.sk-mark__g { font-size: 0.75em; line-height: 1; }
+.sk-mark__c {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+  opacity: 0.72;
+  padding-left: 5px;
+  margin-left: 1px;
+  border-left: 1px solid currentColor;
+}
+/* Same rule as the matrix: amber fills the badge, ink writes on it. */
+.sk-mark--ok   { background: var(--ok-bg);   color: var(--ok); }
+.sk-mark--warn,
+.sk-mark--stop {
+  background: var(--warn-bg);
+  color: var(--black);
+  box-shadow: inset 0 0 0 1px var(--amber);
+}
+.sk-mark--calm { background: var(--soft-2);  color: var(--black); }
+.sk-mark--blue { background: var(--blue-soft); color: var(--blue); }
+
+/* ============================ MATRIX ===================================== */
+
+/* Provider (rows) x payer (columns), one cell per application.
+ *
+ * Every cell carries a glyph, a written status and a day count. Colour is the
+ * last of the four signals, not the first — desaturate this and it still
+ * reads, which is the whole point: it is a diagram of a data model, not a
+ * heatmap, and not a picture of a product that does not exist yet. The note
+ * above it says so on the page, not just here. */
+.sk-matrix { overflow-x: auto; padding-bottom: var(--s-1); }
+.sk-matrix__note {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--s-2);
+  margin-bottom: var(--s-5);
+  padding: var(--s-3) var(--s-4);
+  border: var(--hairline) dashed var(--line-strong);
+  border-radius: var(--r-inner);
+  color: var(--muted);
+  font-size: 0.8125rem;
+  line-height: 1.5;
+}
+.sk-band--ink .sk-matrix__note { border-color: var(--rule-dark); color: var(--muted-dark); }
+
+.sk-matrix__grid {
+  display: grid;
+  gap: var(--s-2);
+  min-width: 780px;
+}
+.sk-matrix__corner,
+.sk-matrix__col,
+.sk-matrix__row {
+  font-size: 0.75rem;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+}
+.sk-matrix__col { padding-bottom: var(--s-1); font-weight: 700; color: var(--black); }
+.sk-matrix__row {
+  padding-right: var(--s-4);
+  white-space: nowrap;
+  font-weight: 600;
+  color: var(--black);
+}
+
+/* The cell: glyph + label on the first line, days on the second. */
+.sk-matrix__cell {
+  display: grid;
+  gap: 2px;
+  align-content: start;
+  padding: var(--s-2) var(--s-3);
+  border-radius: var(--r-inner);
+  border: var(--hairline) solid var(--line);
+  background: var(--card);
+  min-width: 0;
+}
+.sk-matrix__lb {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: -0.005em;
+  color: var(--black);
+}
+.sk-matrix__glyph { font-size: 0.75em; line-height: 1; }
+.sk-matrix__d {
+  font-size: 0.6875rem;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+
+/* Two states need action, and they are the only amber on the grid. The
+   heavier of the two carries a left rule as well, so the pair still separate
+   without colour. */
+/* Amber is the FILL on an action cell, never the text on it: #c88a2e as text
+   on a light surface measures 2.6:1 and fails. The label stays ink (about
+   14:1 on the tint), and the state is carried by fill + glyph + wording. */
+.sk-matrix__cell--action,
+.sk-matrix__cell--urgent {
+  background: var(--amber-tint);
+  border-color: rgba(200, 138, 46, 0.42);
+}
+.sk-matrix__cell--action .sk-matrix__lb,
+.sk-matrix__cell--urgent .sk-matrix__lb { color: var(--black); }
+.sk-matrix__cell--action .sk-matrix__d,
+.sk-matrix__cell--urgent .sk-matrix__d { color: var(--black); }
+/* The heavier of the two action states also carries a rule, so the pair stay
+   distinguishable from each other with the colour taken away. */
+.sk-matrix__cell--urgent { border-left: 3px solid var(--amber); }
+
+/* Legacy cell classes, for the pages awaiting rebuild. */
+.sk-matrix__cell--calm  { background: var(--card); }
+.sk-matrix__cell--slow  { background: var(--tint); }
+.sk-matrix__cell--stuck { background: var(--amber-tint); border-color: rgba(200, 138, 46, 0.42); }
+
+@media (max-width: 720px) {
+  .sk-matrix__grid { min-width: 640px; }
+}
+/* The legend restates each state as glyph + name + what it means, so the grid
+   is readable without having to infer anything from a colour. */
+.sk-matrix__legend {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--s-4) var(--s-5);
+  margin-top: var(--s-6);
+}
+.sk-matrix__legend-item { display: grid; gap: 3px; align-content: start; }
+.sk-matrix__legend-item .k {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--black);
+}
+.sk-band--ink .sk-matrix__legend-item .k { color: #fff; }
+/* The swatch maps the legend to the cell's fill; the glyph maps it to the
+   cell's shape. Neither depends on colour alone, and the label never does. */
+.sk-matrix__sw {
+  width: 15px;
+  height: 15px;
+  flex: none;
+  border-radius: var(--r-xs);
+  border: var(--hairline) solid var(--line);
+  background: var(--card);
+  display: grid;
+  place-items: center;
+  font-size: 8px;
+  line-height: 1;
+  color: var(--black);
+}
+.sk-matrix__sw.is-action { background: var(--amber-tint); border-color: var(--amber); }
+@media (max-width: 820px) {
+  .sk-matrix__legend { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+/* ============================ LISTS ====================================== */
+
+/* The marker is absolutely positioned rather than a grid cell. A list item
+   here routinely holds several inline children (`<b>label</b> text <Link/>`),
+   and in a grid container each of those becomes its own grid item — which
+   drops the running text into the 16px marker column, one word per line. */
+.sk-list { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--s-3); }
+.sk-list li {
+  position: relative;
+  padding-left: 18px;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: var(--muted);
+}
+.sk-list li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.62em;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--blue);
+}
+/* `.sk-list li` sets its own colour, so the surface-portable rules further up
+   never reach it — a blue surface has to restate both the text and the dot. */
+.sk-on-blue .sk-list li,
+.sk-band--ink .sk-list li,
+.sk-card--blue .sk-list li { color: var(--muted-dark); }
+.sk-on-blue .sk-list li::before,
+.sk-band--ink .sk-list li::before,
+.sk-card--blue .sk-list li::before { background: var(--muted-dark); }
+
+.sk-numbered { display: grid; grid-template-columns: minmax(0, 1fr); gap: 20px; counter-reset: sk-n; }
+.sk-numbered > li {
+  counter-increment: sk-n;
+  position: relative;
+  padding-left: 42px;
+}
+.sk-numbered > li::before {
+  content: counter(sk-n, decimal-leading-zero);
+  position: absolute;
+  left: 0;
+  top: 0.28em;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--blue);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+
+/* Label left, content right — a definition grid, not a stacked label. */
+.sk-def { display: grid; gap: 0; }
+.sk-def__row {
+  display: grid;
+  grid-template-columns: minmax(0, 0.62fr) minmax(0, 1.38fr);
+  gap: 24px;
+  padding: 18px 0;
+  border-top: 1px solid var(--line);
+}
+.sk-def__row:first-child { border-top: 0; padding-top: 0; }
+@media (max-width: 700px) {
+  .sk-def__row { grid-template-columns: minmax(0, 1fr); gap: 6px; }
+}
+
+/* ============================ PRICING ==================================== */
+
+.sk-plans {
+  margin-top: var(--s-3);
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--gap);
+  align-items: stretch;
+}
+.sk-plan { position: relative; display: flex; flex-direction: column; padding: clamp(24px, 2.4vw, 32px); }
+.sk-plan__price {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-1);
+  font-size: clamp(2.25rem, 1.5rem + 2.6vw, 3rem);
+  line-height: 1;
+  letter-spacing: -0.045em;
+  font-weight: 600;
+  margin: var(--s-4) 0 var(--s-2);
+}
+.sk-plan__per { font-size: 0.875rem; font-weight: 500; letter-spacing: -0.01em; opacity: 0.7; }
+.sk-plan__cta { margin-top: auto; padding-top: 22px; }
+.sk-plan__cta .sk-btn { width: 100%; }
+/* The featured plan is marked by an accent border, not a solid fill — filling
+   it made it a different kind of object from the two beside it. */
+.sk-plan--hi {
+  background: var(--card);
+  color: var(--black);
+  border: 2px solid var(--amber);
+  box-shadow: var(--sh-white);
+}
+.sk-plan--hi .sk-body,
+.sk-plan--hi .sk-small { color: var(--body); }
+.sk-plan--hi .sk-micro { color: var(--muted); }
+
+/* The label is anchored on the top edge, straddling the border. */
+.sk-plan__tag {
+  position: absolute;
+  top: 0;
+  left: var(--s-5);
+  transform: translateY(-50%);
+  background: var(--amber);
+  color: var(--black);
+  border-radius: var(--r-pill);
+  padding: 5px var(--s-3);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  white-space: nowrap;
+}
+
+@media (max-width: 980px) { .sk-plans { grid-template-columns: minmax(0, 1fr); } }
+
+/* ============================ FAQ ======================================== */
+
+/* One card per question, separated. This was tried as a single card with
+   hairline-separated rows and reverted: the separate cards are the deliberate
+   treatment, and the home is the reference for it. `DESIGN_RULES.md` §4 —
+   "toda tarjeta tiene separación visible de sus vecinas" — is the rule this
+   follows.
+   A closed row is a white card; an open one switches to the grey fill and the
+   tighter grey shadow. No borders — depth is the shadow. */
+.sk-faq { display: grid; gap: var(--s-3); }
+.sk-faq__item {
+  background: var(--card);
+  border: var(--hairline) solid var(--line);
+  border-radius: var(--r-card);
+  box-shadow: var(--sh-white);
+  overflow: hidden;
+}
+/* The row is flex with the items centred, so the question and the +/- sign
+   share one vertical axis. The sign is a flex item in normal flow and is NOT
+   positioned absolutely: absolute centring against text still in flow is what
+   throws it off-axis. */
+.sk-faq__q {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  text-align: left;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  padding: 18px 22px;
+  font-family: inherit;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  letter-spacing: -0.014em;
+  color: var(--black);
+}
+.sk-faq__sign {
+  flex: none;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--tint);
+  display: grid;
+  place-items: center;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  line-height: 1;
+  color: var(--black);
+}
+.sk-faq__a { padding: 0 22px 20px; max-width: 78ch; }
+.sk-faq__item[data-open="true"] { background: var(--paper); box-shadow: var(--sh-grey); }
+.sk-faq__item[data-open="true"] .sk-faq__sign { background: var(--ink); color: #fff; }
+
+/* ============================ CTA BLOCK ================================== */
+
+.sk-cta {
+  background: var(--blue);
+  border-radius: var(--r-panel);
+  padding: clamp(32px, 4.6vw, 66px) clamp(24px, 4vw, 58px);
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  text-align: center;
+}
+/* 46ch broke the heading over four lines. The block is wide enough for two
+   now; the paragraph keeps its own, narrower measure. */
+.sk-cta__inner { max-width: 46rem; margin: 0 auto; text-align: center; }
+.sk-cta__inner .sk-lead { max-width: 52ch; margin-inline: auto; }
+.sk-cta__btns { display: flex; flex-wrap: wrap; gap: var(--s-3); justify-content: center; margin-top: var(--s-6); }
+
+/* ============================ FOOTER ===================================== */
+
+.sk-footer {
+  background: var(--ink);
+  color: #fff;
+  padding: var(--s-8) var(--light-x) var(--s-6);
+}
+.sk-footer__top {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) repeat(4, minmax(0, 1fr));
+  gap: var(--s-5) clamp(var(--s-5), 3vw, var(--s-7));
+  padding-bottom: var(--s-7);
+  border-bottom: 1px solid var(--rule-dark);
+}
+.sk-footer__col { display: grid; gap: var(--s-3); align-content: start; }
+.sk-footer__col h3 { font-size: 0.75rem; font-weight: 700; letter-spacing: -0.005em; color: #fff; }
+.sk-footer__col a { font-size: 0.8125rem; color: var(--muted-dark); }
+.sk-footer__col a:hover { color: #fff; }
+.sokndall-neo .sk-footer .sk-nav__brand { color: #fff; }
+.sk-footer .sk-nav__mark { color: #fff; }
+.sk-footer .sk-small { color: var(--muted-dark); }
+.sk-footer__blurb { max-width: 30ch; }
+.sk-footer__btn { justify-self: start; margin-top: var(--s-1); }
+.sk-footer__bottom {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-3) var(--s-5);
+  justify-content: space-between;
+  align-items: center;
+  padding-top: var(--s-5);
+  font-size: 0.75rem;
+  color: var(--muted-dark);
+}
+@media (max-width: 900px) {
+  .sk-footer__top { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 520px) {
+  .sk-footer__top { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* ============================ ARTICLE ==================================== */
+
+/* Article pages are read, not converted against: one column, no alternating
+   surfaces, no cards inside body copy, one CTA at the end. */
+.sk-article { padding: clamp(34px, 4.4vw, 66px) var(--sec-pad) 0; }
+.sk-article__head { max-width: 46rem; margin: 0 auto clamp(28px, 3.4vw, 46px); }
+.sk-article__head .sk-display,
+.sk-article__head .sk-h2 { margin: 14px 0 var(--s-4); }
+.sk-article__rule { height: 1px; background: var(--line); max-width: 46rem; margin: 0 auto clamp(28px, 3.4vw, 44px); }
+
+.sk-prose { max-width: 42rem; margin: 0 auto; }
+/* Body copy is grouped into <section> wrappers for the contents anchors, so
+   the flow spacing has to reach inside them as well as across them. */
+.sk-prose > * + *,
+.sk-prose section > * + * { margin-top: 18px; }
+.sk-prose > section:first-child > h2:first-child { margin-top: 0; }
+.sk-prose h2 {
+  font-size: clamp(1.375rem, 1.15rem + 0.9vw, 1.75rem);
+  line-height: 1.2;
+  letter-spacing: -0.022em;
+  font-weight: 700;
+  margin-top: clamp(38px, 4vw, 56px);
+}
+.sk-prose h3 { font-size: 1.0625rem; font-weight: 700; letter-spacing: -0.012em; margin-top: 28px; }
+.sk-prose p  { font-size: 1rem; line-height: 1.68; color: var(--black); }
+.sk-prose .sk-list li { font-size: 1rem; line-height: 1.68; color: var(--black); }
+.sk-prose .sk-lead { font-size: 1.0625rem; line-height: 1.62; color: var(--muted); }
+
+/* Two-column article: reading column + sticky contents. */
+.sk-article__shell {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(24px, 3vw, 48px);
+  max-width: 66rem;
+  margin: 0 auto;
+}
+.sk-toc { display: none; }
+@media (min-width: 1160px) {
+  .sk-article__shell { grid-template-columns: minmax(0, 1fr) 272px; }
+  .sk-article__shell .sk-prose { margin: 0; }
+  .sk-toc {
+    display: block;
+    position: sticky;
+    top: 24px;
+    align-self: start;
+    background: var(--shell);
+    border: var(--hairline) solid var(--line);
+    border-radius: var(--r-card);
+    padding: 18px 20px;
+  }
+  .sk-toc ol { display: grid; gap: 9px; margin-top: 12px; counter-reset: sk-toc; }
+  .sk-toc a { font-size: 0.8125rem; line-height: 1.4; color: var(--muted); display: block; }
+  .sk-toc a:hover { color: var(--black); }
+  .sk-toc a[data-active="true"] { color: var(--blue); font-weight: 600; }
+}
+
+/* Mobile contents: a plain disclosure, no sticky card. */
+.sk-toc-m {
+  max-width: 42rem;
+  margin: 0 auto clamp(24px, 3vw, 36px);
+  background: var(--soft);
+  border-radius: var(--r-card);
+  padding: 14px 18px;
+}
+.sk-toc-m > summary {
+  cursor: pointer;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  list-style: none;
+}
+.sk-toc-m > summary::-webkit-details-marker { display: none; }
+.sk-toc-m ol { display: grid; gap: 9px; margin-top: 14px; }
+.sk-toc-m a { font-size: 0.8125rem; color: var(--muted); }
+@media (min-width: 1160px) { .sk-toc-m { display: none; } }
+
+/* The tinted card that carries an observed case inside an article. */
+.sk-observed {
+  background: var(--blue-soft);
+  border-radius: var(--r-card);
+  padding: 20px 22px;
+  margin-top: 22px;
+}
+.sk-observed p { font-size: 0.9375rem; line-height: 1.62; color: var(--black); }
+
+/* Article tables. */
+.sk-table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+.sk-table th,
+.sk-table td { text-align: left; padding: 12px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+.sk-table th { font-weight: 700; font-size: 0.75rem; letter-spacing: 0.02em; text-transform: uppercase; color: var(--muted); }
+.sk-table td { color: var(--black); line-height: 1.55; }
+.sk-table tr:last-child td { border-bottom: 0; }
+.sk-tablewrap { overflow-x: auto; border: var(--hairline) solid var(--line); border-radius: var(--r-card); }
+
+/* ============================ HOME: HERO CARDS =========================== */
+
+/* The floating card cluster at the foot of the hero panel. Widths differ per
+   column, as in the comp — a left card that carries a list, a narrow middle
+   stack, and a right stack topped by a short pill card. */
+.sk-hero__cards {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.92fr) minmax(0, 1.05fr);
+  gap: var(--s-3);
+  align-items: start;
+  margin-top: clamp(24px, 3vw, 38px);
+}
+@media (max-width: 1040px) {
+  .sk-hero__cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 640px) {
+  .sk-hero__cards { grid-template-columns: minmax(0, 1fr); }
+}
+
+.sk-hcard { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; align-content: start; padding: 16px; }
+.sk-hcard__head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.sk-hcard__head > *:first-child { min-width: 0; }
+
+.sk-hstats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.sk-kpi {
+  font-size: 1.5rem;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  font-weight: 700;
+  color: var(--black);
+  margin-top: 2px;
+}
+.sk-kpi--lg { font-size: 2rem; }
+
+.sk-hcard__rows { display: grid; grid-template-columns: minmax(0, 1fr); gap: 9px; }
+.sk-hrow { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.sk-hrow__t {
+  min-width: 0;
+  font-size: 0.75rem;
+  color: var(--black);
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sk-hcard--blue { gap: 12px; }
+.sk-tile--onblue { background: rgba(255, 255, 255, 0.16); border-color: transparent; color: #fff; }
+.sk-hcard__blue-t { color: #fff; }
+.sk-hcard__blue-b { color: var(--on-blue-soft); }
+
+/* The three-part fill bar under the panel count. */
+.sk-bar {
+  display: flex;
+  gap: 3px;
+  height: 7px;
+  margin-top: 4px;
+}
+.sk-bar__fill { border-radius: 999px; height: 100%; }
+.sk-bar__fill--ok   { flex: 165; background: var(--ok); }
+.sk-bar__fill--warn { flex: 9;   background: var(--warn); }
+.sk-bar__fill--stop { flex: 6;   background: var(--stop); }
+
+.sk-hcard__foot { display: flex; justify-content: space-between; gap: 10px; }
+
+.sk-hcard--pill {
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 14px 14px 16px;
+}
+.sk-hcard__pill-t { color: var(--black); }
+.sk-hcard__pill-t b { color: var(--black); font-weight: 700; }
+.sk-hcard__circ {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--blue);
+  color: #fff;
+  display: grid;
+  place-items: center;
+  flex: none;
+}
+.sk-hcard__circ svg { width: 15px; height: 15px; }
+
+.sk-chart { width: 100%; height: 72px; display: block; }
+
+/* ====================== PRODUCT: HERO FIGURE ============================= */
+
+/* A cut-out figure standing on the hero panel: two white cards to the left,
+   the photograph to the right, its feet landing on the panel's bottom edge. */
+.sk-hero__figure {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.68fr);
+  gap: clamp(16px, 2.4vw, 32px);
+  align-items: end;
+  margin-top: clamp(24px, 3vw, 38px);
+  margin-bottom: calc(var(--hero-pad) * -1);
+}
+.sk-hero__figure-cards { display: grid; gap: var(--s-3); align-self: end; padding-bottom: clamp(20px, 2.4vw, 34px); }
+.sk-hero__cut { align-self: end; }
+/* Capped so a portrait cut-out cannot set the hero's height on its own. */
+.sk-hero__cut img {
+  width: auto;
+  max-width: 100%;
+  max-height: clamp(300px, 30vw, 430px);
+  height: auto;
+  margin-left: auto;
+  display: block;
+}
+@media (max-width: 900px) {
+  .sk-hero__figure { grid-template-columns: minmax(0, 1fr); }
+  .sk-hero__cut { display: none; }
+}
+
+/* ====================== PRODUCT: TIMELINE =============================== */
+
+/* One application's life, plotted on a track. The scale is the payer's own
+   quoted window — never an invented day count. */
+.sk-timeline { margin-top: clamp(26px, 3vw, 40px); }
+.sk-timeline__track {
+  position: relative;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--soft-2);
+  margin: 74px 0 62px;
+}
+.sk-timeline__fill { position: absolute; inset: 0 auto 0 0; border-radius: 999px; background: var(--blue); }
+.sk-timeline__node { position: absolute; top: 50%; transform: translate(-50%, -50%); text-align: center; }
+.sk-timeline__node .dot {
+  display: block;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: var(--shell);
+  border: 3px solid var(--line-strong);
+  margin: 0 auto;
+}
+.sk-timeline__node.is-on .dot { border-color: var(--blue); }
+.sk-timeline__node.is-end .dot { border-color: var(--stop); background: var(--stop); }
+.sk-timeline__node .cap {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--black);
+}
+.sk-timeline__node .lb {
+  position: absolute;
+  top: 22px;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  font-size: 0.6875rem;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+.sk-timeline__node.at-start .cap,
+.sk-timeline__node.at-start .lb { left: 0; transform: none; }
+.sk-timeline__node.at-end .cap,
+.sk-timeline__node.at-end .lb { left: auto; right: 0; transform: none; }
+.sk-timeline__foot {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 24px;
+  justify-content: space-between;
+}
+
+/* ====================== PRODUCT: FOLLOW-UP LOG ========================== */
+
+.sk-log { background: var(--shell); border: var(--hairline) solid var(--line); border-radius: var(--r-card); overflow: hidden; }
+.sk-log__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 18px;
+  background: var(--soft);
+  border-bottom: 1px solid var(--line);
+}
+.sk-log__row {
+  display: grid;
+  grid-template-columns: 62px minmax(0, 1fr) 130px;
+  gap: 18px;
+  padding: 14px 18px;
+  border-top: 1px solid var(--line);
+  align-items: start;
+}
+.sk-log__row:first-of-type { border-top: 0; }
+.sk-log__row .dt {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--black);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+.sk-log__row .bd { font-size: 0.8125rem; line-height: 1.55; color: var(--muted); }
+.sk-log__row .bd b { color: var(--black); font-weight: 700; }
+.sk-log__row .rf {
+  font-size: 0.6875rem;
+  color: var(--muted);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+.sk-log__foot {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 24px;
+  justify-content: space-between;
+  padding: 14px 18px;
+  border-top: 1px solid var(--line);
+  background: var(--soft);
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+.sk-log__foot b { color: var(--black); }
+@media (max-width: 700px) {
+  .sk-log__row { grid-template-columns: minmax(0, 1fr); gap: 6px; }
+  .sk-log__row .rf { text-align: left; }
+}
+
+/* A status table where one row is the one that costs money. */
+.sk-table tr.is-hot td { background: var(--warn-bg); }
+.sk-table tr.is-hot td:first-child { border-top-left-radius: 8px; border-bottom-left-radius: 8px; }
+.sk-table tr.is-hot td:last-child { border-top-right-radius: 8px; border-bottom-right-radius: 8px; }
+
+/* Two body paragraphs set as columns, not as a paragraph with a fragment
+   under it. */
+.sk-cols2 {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(20px, 3vw, 44px);
+  margin-top: 28px;
+}
+@media (max-width: 760px) { .sk-cols2 { grid-template-columns: minmax(0, 1fr); } }
+
+/* A centred closing block: the CTA belongs under the section, not beside the
+   headline at the same height. */
+.sk-center { text-align: center; max-width: 62ch; margin: 0 auto; }
+.sk-center__btns { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin-top: 24px; }
+.sk-note { margin-top: 16px; }
+
+
+/* A centred closing paragraph + CTA set below a card row. */
+.sk-closing-block { margin-top: clamp(28px, 3.4vw, 44px); }
+
+
+/* ================= PRODUCT: EXPIRATION-PAGE SCHEMATICS =================== */
+
+/* "Ten providers is not ten dates" — one mark per date falling due, across
+   twelve months. The claim, drawn. */
+.sk-cadence { overflow-x: auto; }
+.sk-cadence__grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 10px;
+  align-items: end;
+  min-width: 560px;
+}
+.sk-cadence__m { display: grid; gap: 6px; justify-items: center; align-content: end; }
+.sk-cadence__stack { display: grid; gap: 3px; justify-items: center; }
+.sk-cadence__mark { width: 16px; height: 7px; border-radius: 2px; background: var(--blue); }
+.sk-cadence__mark--caqh { background: var(--warn); }
+.sk-cadence__lb { font-size: 0.6875rem; color: var(--muted); margin-top: 4px; }
+.sk-cadence__n {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--black);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+.sk-cadence__foot { display: flex; flex-wrap: wrap; gap: 8px 22px; margin-top: 18px; }
+.sk-cadence__key { display: flex; align-items: center; gap: 8px; font-size: 0.8125rem; color: var(--muted); }
+.sk-cadence__key i { width: 14px; height: 7px; border-radius: 2px; flex: none; }
+
+/* One input, five derived states. */
+.sk-derive {
+  display: grid;
+  grid-template-columns: minmax(0, 0.72fr) minmax(0, 1.28fr);
+  gap: var(--gap);
+  align-items: start;
+}
+@media (max-width: 900px) { .sk-derive { grid-template-columns: minmax(0, 1fr); } }
+.sk-derive__fld {
+  background: var(--shell);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-inner);
+  padding: 14px 16px;
+  font-size: 1.125rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--black);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+  margin: 10px 0 12px;
+}
+.sk-derive__row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 110px auto;
+  gap: 16px;
+  align-items: center;
+  padding: 13px 0;
+  border-top: 1px solid var(--line);
+}
+.sk-derive__row:first-child { border-top: 0; padding-top: 0; }
+.sk-derive__row .nm { font-size: 0.8125rem; font-weight: 600; color: var(--black); }
+.sk-derive__row .dtx {
+  font-size: 0.75rem;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+@media (max-width: 620px) {
+  .sk-derive__row { grid-template-columns: minmax(0, 1fr) auto; }
+  .sk-derive__row .dtx { grid-column: 1; }
+}
+
+/* The alert ladder: 90 / 60 / 30 / 14-7. */
+.sk-ladder { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--gap); }
+@media (max-width: 900px) { .sk-ladder { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 520px) { .sk-ladder { grid-template-columns: minmax(0, 1fr); } }
+.sk-rung { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; align-content: start; padding: 20px; }
+.sk-rung__tone { width: 34px; height: 5px; border-radius: 999px; }
+.sk-rung__n {
+  font-size: 1.75rem;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  font-weight: 700;
+  color: var(--black);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+.sk-rung__n small { font-size: 0.75rem; font-weight: 600; letter-spacing: 0; color: var(--muted); margin-left: 5px; }
+
+/* The Monday digest, as the email it is. */
+.sk-digest { background: var(--shell); border-radius: var(--r-card); overflow: hidden; box-shadow: var(--sh-float); }
+.sk-digest__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 14px 18px;
+  background: var(--soft);
+  border-bottom: 1px solid var(--line);
+}
+.sk-digest__line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 13px 18px;
+  border-top: 1px solid var(--line);
+}
+.sk-digest__line:first-of-type { border-top: 0; }
+.sk-digest__line .tx { font-size: 0.8125rem; color: var(--black); }
+.sk-digest__line.is-hot { background: var(--stop-bg); }
+.sk-digest__line.is-hot .tx { color: var(--stop); font-weight: 600; }
+.sk-digest__ct {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--black);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+.sk-digest__line.is-hot .sk-digest__ct { color: var(--stop); }
+
+/* One row per state a provider practises in. */
+.sk-staterow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 110px auto;
+  gap: 16px;
+  align-items: center;
+  padding: 13px 0;
+  border-top: 1px solid var(--line);
+}
+.sk-staterow:first-of-type { border-top: 0; padding-top: 0; }
+.sk-staterow .st { font-size: 0.8125rem; font-weight: 600; color: var(--black); }
+.sk-staterow .dt {
+  font-size: 0.75rem;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+
+/* Five cycle cards: three then two, the last two wider so neither row gaps. */
+.sk-cycles { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: var(--gap); }
+.sk-cycles > * { grid-column: span 2; }
+.sk-cycles > *:nth-child(4),
+.sk-cycles > *:nth-child(5) { grid-column: span 3; }
+@media (max-width: 900px) {
+  .sk-cycles { grid-template-columns: minmax(0, 1fr); }
+  .sk-cycles > *, .sk-cycles > *:nth-child(4), .sk-cycles > *:nth-child(5) { grid-column: auto; }
+}
+.sk-cycle__chip {
+  display: inline-flex;
+  align-self: start;
+  background: var(--blue-soft);
+  color: var(--blue);
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 0.6875rem;
+  font-weight: 600;
+}
+
+/* ============================ HOME: SECTIONS ============================= */
+
+.sk-h2__line { display: inline; }
+.sk-head__statcap { margin-top: 10px; max-width: 30ch; margin-left: auto; }
+@media (max-width: 900px) { .sk-head__statcap { margin-left: 0; } }
+
+/* Failure-mode cards. */
+.sk-prob { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; align-content: start; }
+.sk-prob__n {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--blue);
+  letter-spacing: 0.02em;
+}
+
+/* The statement that closes a section, set on its own line under the cards. */
+/* Plain text on the section ground — the same treatment as the note under the
+   pricing table. It is not a fourth failure mode, so it is not a card. */
+.sk-closing { margin-top: var(--s-7); max-width: 78ch; }
+.sk-closing__t { color: var(--black); max-width: 78ch; }
+
+/* The grid needs more of the split than the notes beside it. */
+.sk-matrixwrap { align-items: stretch; grid-template-columns: minmax(0, 1.42fr) minmax(0, 1fr); }
+@media (max-width: 980px) { .sk-matrixwrap { grid-template-columns: minmax(0, 1fr); } }
+
+/* Text colours inside a blue card, so the same body classes work on it. */
+.sk-card--blue .sk-body,
+.sk-card--blue .sk-small,
+.sk-card--blue .sk-lead  { color: var(--on-blue-soft); }
+.sk-card--blue .sk-micro { color: var(--on-blue-dim); }
+.sk-card--blue .sk-h3,
+.sk-card--blue .sk-h4,
+.sk-card--blue .sk-ink   { color: #fff; }
+.sk-oncard-t { margin: 8px 0 10px; }
+
+/* ============================ HOME: PRICE ANCHOR ========================= */
+
+/* A blue panel used mid-page — the hero's treatment without the notch. */
+.sk-panel {
+  position: relative;
+  background: var(--blue);
+  border-radius: var(--r-panel);
+  padding: clamp(28px, 4vw, 58px);
+  overflow: hidden;
+  isolation: isolate;
+}
+.sk-panel__in { position: relative; }
+
+.sk-figures { margin-top: clamp(26px, 3.4vw, 42px); }
+.sk-fig {
+  background: var(--ink-2);
+  border: 1px solid var(--rule-dark);
+  border-radius: var(--r-card);
+  padding: 20px;
+  display: grid;
+  gap: 6px;
+  align-content: start;
+}
+.sk-fig__v {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0 var(--s-2);
+  font-size: clamp(2rem, 1.3rem + 2.2vw, 2.75rem);
+  line-height: 1.02;
+  letter-spacing: -0.042em;
+  font-weight: 600;
+  color: #fff;
+}
+.sk-fig__u {
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0;
+  color: var(--muted-dark);
+  white-space: nowrap;
+}
+.sk-fig__l { font-size: 0.8125rem; font-weight: 600; color: #fff; margin-top: 6px; }
+.sk-anchor__closing { margin-top: var(--s-7); max-width: 76ch; }
+
+/* ============================ HOME: PRICING ============================== */
+
+.sk-plan__top { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.sk-plan__feats { margin-top: var(--s-5); }
+.sk-plan__feats li { font-size: 0.8125rem; }
+.sk-plans__note { margin-top: var(--s-5); }
+
+/* ============================ HOME: SCOPE =============================== */
+
+/* Icon beside the label rather than above it, so the label's first line and
+   the content column's first line share a baseline across the row. */
+.sk-def__label { display: flex; gap: 12px; align-items: flex-start; }
+.sk-def__label .sk-h4 { padding-top: var(--s-2); }
+.sk-scope__closing { margin-top: var(--s-7); max-width: 78ch; color: var(--black); }
+
+.sk-cta__b { margin-top: var(--s-5); }
+
+/* ======================== ARTICLE FURNITURE ============================== */
+
+.sk-article__kicker { color: var(--blue); }
+.sk-article__head { text-align: center; }
+.sk-article__head .sk-lead { max-width: 54ch; margin: 0 auto; }
+/* /security and /about carry no kicker and no lead image — a plain
+   left-aligned masthead, low visual ambition by design. */
+.sk-article__head--left { text-align: left; max-width: 42rem; }
+.sk-article__head--left .sk-lead { margin: 0; }
+.sk-article__head--left + .sk-article__rule { max-width: 42rem; }
+
+/* The observed case. */
+.sk-observed__lb { display: block; color: var(--blue); margin-bottom: 8px; }
+.sk-observed__src { display: block; margin-top: 10px; }
+.sk-prose .sk-observed p { font-size: 0.9375rem; line-height: 1.62; }
+.sk-prose .sk-observed > p + p { margin-top: 12px; }
+
+/* Qualitative duration bars. */
+.sk-bars {
+  display: grid;
+  gap: 10px;
+  margin-top: 26px;
+  background: var(--soft);
+  border-radius: var(--r-card);
+  padding: 22px;
+}
+.sk-bars__row { display: grid; grid-template-columns: minmax(0, 0.5fr) minmax(0, 1fr); gap: 16px; align-items: center; }
+.sk-bars__lb { font-size: 0.8125rem; font-weight: 600; color: var(--black); }
+.sk-bars__track { background: var(--soft-2); border-radius: 6px; overflow: hidden; }
+.sk-bars__fill {
+  background: var(--blue);
+  border-radius: 6px;
+  padding: 7px 10px;
+  min-width: 0;
+}
+.sk-bars__fill span { font-size: 0.6875rem; font-weight: 600; color: #fff; white-space: nowrap; }
+.sk-bars__fill.is-long { background: var(--stop); }
+.sk-bars__row.is-tiny .sk-bars__fill { background: var(--line-strong); }
+.sk-bars__row.is-tiny .sk-bars__fill span { color: var(--black); }
+.sk-bars__cap { margin-top: 8px; }
+@media (max-width: 620px) {
+  .sk-bars__row { grid-template-columns: minmax(0, 1fr); gap: 6px; }
+  .sk-bars__fill span { white-space: normal; }
+}
+
+/* End-of-cluster interlinking cards. */
+.sk-explore {
+  max-width: 42rem;
+  margin: clamp(40px, 5vw, 64px) auto 0;
+  padding-top: clamp(28px, 3vw, 40px);
+  border-top: 1px solid var(--line);
+}
+.sk-explore__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 18px;
+}
+.sk-explore__card {
+  background: var(--soft);
+  border-radius: var(--r-card);
+  padding: 18px;
+  display: grid;
+  gap: 8px;
+  align-content: start;
+  transition: background-color 0.16s ease;
+}
+.sk-explore__card:hover { background: var(--soft-2); }
+.sk-explore__go { font-size: 0.75rem; font-weight: 600; color: var(--blue); margin-top: 2px; }
+@media (max-width: 760px) { .sk-explore__grid { grid-template-columns: minmax(0, 1fr); } }
+
+/* The single conversion point at the foot of an article. */
+.sk-article__cta {
+  max-width: 42rem;
+  margin: clamp(40px, 5vw, 64px) auto 0;
+  background: var(--blue-soft);
+  border-radius: var(--r-card);
+  padding: clamp(22px, 2.6vw, 30px);
+}
+.sk-article__cta .sk-body { color: var(--black); }
+.sk-article__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px 20px;
+  align-items: center;
+  margin-top: 20px;
+}
+
+/* Label/content rows inside prose keep the reading column's type size. */
+.sk-def--prose { margin-top: 10px; }
+.sk-def--prose .sk-def__b { font-weight: 700; color: var(--black); }
+.sk-def--prose p { font-size: 1rem; line-height: 1.68; color: var(--black); }
+
+/* Solo articles never split into two columns. */
+.sk-solo { max-width: 42rem; margin: 0 auto; }
+
+/* The CTA block's own paragraph, so pages don't have to class it. */
+.sk-article__cta p { font-size: 0.9375rem; line-height: 1.62; color: var(--black); }
+
+/* Label left, explanation right — parallel explanations, not a sequence. */
+.sk-labelled { display: grid; gap: 0; margin-top: 10px; }
+.sk-labelled > li {
+  display: grid;
+  grid-template-columns: minmax(0, 0.4fr) minmax(0, 1fr);
+  gap: 24px;
+  padding: 18px 0;
+  border-top: 1px solid var(--line);
+}
+.sk-labelled > li:first-child { border-top: 0; padding-top: 0; }
+.sk-labelled .lb { font-size: 0.8125rem; font-weight: 700; color: var(--blue); }
+.sk-labelled .bd { font-size: 1rem; line-height: 1.68; color: var(--black); }
+.sk-labelled .bd b { color: var(--black); font-weight: 700; }
+@media (max-width: 620px) {
+  .sk-labelled > li { grid-template-columns: minmax(0, 1fr); gap: 6px; }
+}
+
+/* A drawn schematic of a payer portal's benefits check — the mechanism at the
+   same low fidelity as every other diagram here, never a simulated
+   screenshot. */
+.sk-portalcheck {
+  border: var(--hairline) solid var(--line);
+  border-radius: var(--r-card);
+  overflow: hidden;
+  margin-top: 24px;
+  background: var(--shell);
+}
+.sk-portalcheck-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 11px 15px;
+  background: var(--soft);
+  border-bottom: 1px solid var(--line);
+}
+.sk-portalcheck-bar i { width: 8px; height: 8px; border-radius: 50%; background: var(--line-strong); }
+.sk-portalcheck-bar span { margin-left: 10px; font-size: 0.75rem; font-weight: 600; color: var(--muted); }
+.sk-portalcheck-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 13px 15px;
+  border-top: 1px solid var(--line);
+}
+.sk-portalcheck-row:first-of-type { border-top: 0; }
+.sk-portalcheck-row .cb {
+  font-size: 0.8125rem;
+  color: var(--black);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+.sk-portalcheck-row .rs {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  border-radius: 999px;
+  padding: 3px 10px;
+  white-space: nowrap;
+}
+.sk-portalcheck-row .rs.ok { background: var(--ok-bg); color: var(--ok); }
+.sk-portalcheck-row .rs.no { background: var(--stop-bg); color: var(--stop); }
+
+/* A figure allowed to use the column's full width. */
+.sk-a-wide { margin-top: 24px; }
+.sk-a-caption { margin-top: 10px; font-size: 0.8125rem; line-height: 1.5; color: var(--muted); }
+
+/* The article's lead image: above the closing rule, never below it, and at
+   most one per page. */
+.sk-article__lead { max-width: 46rem; margin: 0 auto clamp(26px, 3vw, 38px); }
+
+/* ============================ MOTION ===================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .sokndall-neo *,
+  .sokndall-neo *::before,
+  .sokndall-neo *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+
+/* ======================= HOME: LAYERS + MATRIX =========================== */
+
+.sk-matrix__after { margin-top: var(--s-7); }
+
+/* The plan cards keep one shared height so the price row lines up. */
+
+/* Card rows whose members should share a height, so the row does not read as
+   ragged when one card carries less copy than its neighbours. */
+.sk-bento--eq { align-items: stretch; }
+.sk-bento--eq > * { height: 100%; }
+
+
+/* ======================= HERO: COMPACT MATRIX ============================ */
+
+/* Same cell anatomy as the full grid — glyph, label, days — at the size the
+   hero column allows. Nothing is dropped except the words "since contact". */
+.sk-matrix--compact .sk-matrix__grid { min-width: 0; gap: var(--s-1); }
+.sk-matrix--compact .sk-matrix__cell { padding: var(--s-2) 6px; gap: 1px; border-radius: var(--r-btn); }
+.sk-matrix--compact .sk-matrix__lb { font-size: 0.5625rem; gap: 3px; }
+.sk-matrix--compact .sk-matrix__d { font-size: 0.5625rem; }
+.sk-matrix--compact .sk-matrix__row,
+.sk-matrix--compact .sk-matrix__col { font-size: 0.625rem; }
+.sk-matrix--compact .sk-matrix__row { padding-right: var(--s-2); }
+.sk-matrix--compact .sk-matrix__col { justify-content: center; }
+/* Below this the four columns squeeze the labels into two-line fragments, so
+   the grid scrolls inside its card instead of compressing. */
+@media (max-width: 620px) {
+  .sk-matrix--compact .sk-matrix__grid { min-width: 400px; }
+}
+
+/* ==================== LAYERS / SCOPE: ROW CARDS =========================== */
+
+/* Title (with its icon) on the left, the explanation on the right. One item
+   per card, and the cards are the division — no rules between them. */
+/* Both columns centre on each other, so a one-line explanation sits level
+   with its heading instead of hanging from the top of the card. */
+.sk-row-card {
+  display: grid;
+  grid-template-columns: minmax(0, 0.78fr) minmax(0, 1.22fr);
+  gap: clamp(var(--s-5), 3vw, var(--s-8));
+  align-items: center;
+}
+/* Icon and heading run in parallel, centred on each other — the icon stacked
+   above the heading read as a separate element rather than part of it. */
+.sk-layer__t { display: flex; align-items: center; gap: var(--s-3); }
+.sk-layer__b { display: grid; gap: var(--s-4); }
+@media (max-width: 760px) {
+  .sk-row-card { grid-template-columns: minmax(0, 1fr); gap: var(--s-4); }
+}
+
+
+/* ===================== HOME: THREE LAYERS (3-up) ========================= */
+
+/* Three parallel cards with the icon stacked above the heading. Distinct from
+   the Scope rows below, which keep the icon beside the heading. */
+.sk-layer {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--s-3);
+  align-content: start;
+}
+.sk-layer .sk-tile { margin-bottom: var(--s-2); }
+/* The icon sits in the card's top-right corner, as in the reference. */
+.sk-layer__ico { position: absolute; top: var(--s-5); right: var(--s-5); margin-bottom: 0; }
+.sk-layer .sk-h4 { padding-right: var(--s-8); }
+
+
+
+/* ================= SECTION 2: GREY BLOCK + ROW-CARD LIST ================== */
+
+/* The reference's third section, used here: one large grey block on the left
+   holding a visual, a list of cards on the right whose title sits left and
+   whose explanation sits right. */
+.sk-split {
+  display: grid;
+  grid-template-columns: minmax(0, 0.86fr) minmax(0, 1.14fr);
+  gap: var(--gap);
+  align-items: stretch;
+}
+@media (max-width: 900px) {
+  .sk-split { grid-template-columns: minmax(0, 1fr); }
+  .sk-split .sk-slot { min-height: 240px; }
+}
+
+/* ============ SECTION 3: FOUR BLOCKS ACROSS THREE COLUMNS ================ */
+
+/* The reference's second section, used here. Column one is the widest and
+   carries content above a visual; column two is narrow, grey and full height;
+   column three holds two small blocks, content above a visual. */
+.sk-quad {
+  display: grid;
+  grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr) minmax(0, 1.18fr);
+  /* Column one is one card and its content sets the grid's height. The second
+     row takes whatever is left, so column three's reserved block fills down to
+     the same baseline. */
+  grid-template-rows: auto 1fr;
+  gap: var(--gap);
+  align-items: stretch;
+}
+.sk-quad__a { grid-column: 1; grid-row: 1 / span 2; }
+.sk-quad__b { grid-column: 2; grid-row: 1 / span 2; }
+.sk-quad__c { grid-column: 3; grid-row: 1; }
+.sk-quad__d { grid-column: 3; grid-row: 2; }
+
+/* Column one is a single block: copy at the top, the image below it inside the
+   same card. The image sits within the card's padding — it does not bleed. */
+.sk-quad__a { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--s-3); align-content: start; }
+/* The image bleeds to the card's left, right and bottom edges — the negative
+   margins cancel the card's padding exactly — and stays rounded on all four
+   corners, not just the two that meet the card's own. */
+.sk-quad__img {
+  margin: var(--s-5) calc(var(--card-pad) * -1) calc(var(--card-pad) * -1);
+  aspect-ratio: 3 / 2;
+  background: var(--tint-2);
+  border-radius: var(--r-card);
+}
+
+/* Column two: icon, heading and copy together at the top, the list pinned to
+   the bottom, and the slack between them left open. */
+.sk-quad__b { display: flex; flex-direction: column; justify-content: space-between; gap: var(--s-6); }
+.sk-quad__b-top { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--s-3); }
+
+@media (max-width: 980px) {
+  .sk-quad { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-template-rows: auto auto; }
+  .sk-quad__a { grid-column: 1; grid-row: 1; }
+  .sk-quad__b { grid-column: 2; grid-row: 1; }
+  .sk-quad__c { grid-column: 1; grid-row: 2; }
+  .sk-quad__d { grid-column: 2; grid-row: 2; aspect-ratio: 1 / 1; }
+}
+@media (max-width: 680px) {
+  .sk-quad { grid-template-columns: minmax(0, 1fr); grid-template-rows: none; }
+  .sk-quad__a, .sk-quad__b, .sk-quad__c, .sk-quad__d { grid-column: 1; grid-row: auto; }
+}
+
+/* ======================= RESERVED BLOCKS ================================= */
+
+/* The reserved block. Deliberately empty; placement and ratio live on the
+   modifier so the same visual serves more than one section. */
+.sk-slot {
+  display: grid;
+  place-content: center;
+  gap: var(--s-2);
+  text-align: center;
+  padding: var(--s-4);
+  border-radius: var(--r-card);
+  color: var(--black);
+}
+/* A dashed square placeholder, 1:1. */
+.sk-slot--square {
+  aspect-ratio: 1 / 1;
+  border: var(--hairline) dashed var(--line-strong);
+}
+/* A filled grey block that takes its height from whatever sits beside it. */
+.sk-slot--grey { background: var(--paper); box-shadow: var(--sh-grey); }
+/* A white one, for a reserved visual that sits among white cards. */
+.sk-slot--card {
+  background: var(--card);
+  border: var(--hairline) solid var(--line);
+  box-shadow: var(--sh-white);
+}
+.sk-slot__k { font-size: 0.6875rem; letter-spacing: 0.04em; text-transform: uppercase; }
+.sk-slot__r {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  border: var(--hairline) solid var(--line-strong);
+  border-radius: var(--r-pill);
+  padding: 2px var(--s-2);
+  justify-self: center;
+}
+
+/* ========================== EDITORIAL TEMPLATE ===========================
+   A second article weight, for the long reference pages (`/caqh-reattestation`
+   and its five siblings). It is NOT `.sk-article` with a wider sidebar:
+
+     - the contents list is on the LEFT and is the page's structural spine,
+       not an afterthought parked beside the text;
+     - the reading column is pinned to 680-720px at every width, so the measure
+       never drifts with the viewport the way a `1fr` column does;
+     - there is no card, no tint and no alternating surface inside the reading
+       column, and no CTA between sections. The only conversion points are the
+       sidebar's email capture (outside the column) and the closing block;
+     - inline links are underlined always. On a reference page a link is part
+       of the sentence's evidence, so it has to be visible while reading, not
+       on hover.
+
+   Everything here composes the existing tokens; nothing new is declared but
+   the layout metrics, which have no equivalent on the landing side. */
+
+.sk-ed {
+  --ed-x:    clamp(16px, 3vw, 40px);   /* the editorial page gutter */
+  --ed-toc:  288px;                    /* spec: 280-300 */
+  --ed-col:  720px;                    /* spec: 680-720, capped and not fluid */
+  --ed-gap:  32px;
+  /* box-sizing is border-box across this skin, so the measure includes the
+     gutter: 288 + 32 + 720 of track, plus 2x40. The masthead, the nav bar and
+     the two columns all share it, so the lead image runs edge to edge of the
+     same box the columns sit in. */
+  --ed-maxw: calc(var(--ed-toc) + var(--ed-gap) + var(--ed-col) + 80px);
+}
+
+/* The light nav bar carries its own 1200px measure, which would leave its left
+   edge outside the article. Re-parenting it here lets the bar share the
+   measure the masthead and the grid below it are using. */
+.sk-ed__bar,
+.sk-ed__head,
+.sk-ed__grid {
+  max-width: var(--ed-maxw);
+  margin-inline: auto;
+  padding-inline: var(--ed-x);
+}
+.sk-ed__bar .sk-nav--light {
+  max-width: none;
+  margin-inline: 0;
+  padding-inline: 0;
+}
+
+.sk-ed__head { padding-top: clamp(28px, 3.4vw, 52px); }
+
+.sk-ed__grid {
+  /* The trailing space is the standoff from the footer. Without it the last
+     link of the related list butts straight into the dark band. */
+  padding-block: 0 var(--sec-y);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas: "toc" "main" "rail" "foot";
+  gap: clamp(20px, 2.4vw, 32px);
+  justify-content: center;
+}
+
+/* One column: the sidebar's two blocks are unwrapped into the page flow, so
+   the contents can collapse to a plegable block at the top while the email
+   capture follows the article. */
+.sk-ed__side,
+.sk-ed__sidein { display: contents; }
+.sk-edtoc      { grid-area: toc; }
+.sk-ed__main   { grid-area: main; }
+.sk-ed__rail   { grid-area: rail; }
+.sk-ed__foot   { grid-area: foot; }
+.sk-ed__main,
+.sk-ed__rail,
+.sk-ed__foot { min-width: 0; max-width: 43rem; width: 100%; margin-inline: auto; }
+
+/* Two columns. The reading column is a hard cap, not a fraction, so it holds
+   its measure from 1120px all the way up: below that the third column of gutter
+   would have to come out of the reading measure, so the page goes single-column
+   instead of shipping a 660px column. */
+@media (min-width: 1120px) {
+  .sk-ed__grid {
+    grid-template-columns: var(--ed-toc) minmax(0, var(--ed-col));
+    /* The body and the FAQ stay in the reading column with the contents list
+       beside them — the FAQ is one more entry in that list. The page returns
+       to a single full-width column at the related block and stays that way to
+       the footer, so `foot` spans both tracks.
+       The left edge does not move across that break: the foot starts on the
+       same axis as the contents list and the masthead, which is the page's own
+       edge. All that changes is how far right the content runs. */
+    grid-template-areas:
+      "side main"
+      "foot foot";
+    gap: var(--ed-gap);
+  }
+  .sk-ed__side { display: block; grid-area: side; }
+  /* The column keeps the default `stretch` — a sticky child can only travel
+     as far as its own grid area is tall, so shrinking the area to its content
+     makes the contents list scroll away immediately. */
+  .sk-ed__sidein {
+    display: grid;
+    gap: var(--s-6);
+    align-content: start;
+    position: sticky;
+    top: var(--s-5);
+  }
+  .sk-edtoc,
+  .sk-ed__rail { grid-area: auto; }
+  .sk-ed__main,
+  .sk-ed__rail,
+  .sk-ed__foot { max-width: none; margin-inline: 0; }
+}
+
+/* ---- the reading column ------------------------------------------------ */
+
+/* Reuse `.sk-prose` verbatim for body type -- one source of truth for article
+   copy -- and only undo its own centring, which the grid column already does. */
+.sk-ed__main .sk-prose { max-width: none; margin: 0; }
+
+/* Inline links are underlined in the running text. `.sk-prose` on the article
+   template leaves them bare, which is right there and wrong here. */
+.sk-ed__prose p a,
+.sk-ed__prose li a,
+.sk-ed__prose dd a {
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+  font-weight: 500;
+}
+.sk-ed__prose p a:hover,
+.sk-ed__prose li a:hover { text-decoration-thickness: 2px; }
+
+/* Sections are separated by air alone -- no rules, no surface change. */
+.sk-ed__prose > section + section { margin-top: clamp(38px, 4vw, 56px); }
+.sk-ed__prose > section > h2:first-child { margin-top: 0; }
+
+/* ---- PageHeader (editorial) -------------------------------------------- */
+
+.sk-edhead { text-align: center; margin-bottom: clamp(26px, 3vw, 40px); }
+/* The masthead is as wide as both columns, but the title is not: at 1040px a
+   headline runs to 120 characters a line and stops being a headline. It keeps
+   its own measure and centres inside the band. */
+.sk-edhead h1 {
+  font-size: clamp(1.875rem, 1.35rem + 2.1vw, 2.625rem);
+  line-height: 1.14;
+  letter-spacing: -0.028em;
+  font-weight: 700;
+  max-width: 26ch;
+  margin-inline: auto;
+  margin-bottom: var(--s-4);
+}
+.sk-edhead__sub { font-size: 1.0625rem; line-height: 1.6; max-width: 54ch; margin-inline: auto; }
+
+/* Category, date, reading time. A row of facts about the document, so it is
+   set as one line of small type rather than as three chips. */
+.sk-edhead__meta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: var(--s-2) 14px;
+  /* Absolute, not `54ch`: this row is 13px type, so a ch-based cap matching
+     the standfirst's would be 100px narrower and leave the category about 25
+     characters. 30rem lines the rule up with the standfirst above it. */
+  max-width: 30rem;
+  margin-inline: auto;
+  margin-top: var(--s-5);
+  padding-top: var(--s-4);
+  border-top: 1px solid var(--line-strong);
+}
+.sk-edhead__meta > * { display: inline-flex; align-items: center; gap: 14px; }
+/* The separator trails its own item rather than leading the next one. The row
+   wraps at narrow widths, and a leading dot puts a stray bullet at the start
+   of the second line; a trailing one just ends the first line. */
+.sk-edhead__meta > *:not(:last-child)::after {
+  content: "";
+  width: 3px;
+  height: 3px;
+  border-radius: var(--r-pill);
+  background: var(--black);
+  opacity: 0.35;
+}
+.sk-edhead__cat { font-weight: 600; }
+
+/* The lead image runs the full measure -- both columns and the gutter between
+   them -- which is the whole reason the masthead sits above the split. At that
+   width a 3:2 crop is 700px tall and swallows the first screen, so the lead
+   band is cinematic; below 760px it goes back to 3:2, because 21:9 on a phone
+   is a 165px strip. */
+.sk-edhead__img { margin-top: clamp(22px, 2.6vw, 34px); }
+.sk-edhead__img .sk-photo { border-radius: var(--r-card); overflow: hidden; }
+@media (max-width: 760px) {
+  .sk-edhead__img .sk-photo { aspect-ratio: 3 / 2; }
+}
+.sk-edhead__cap { display: block; text-align: left; margin-top: 10px; opacity: 0.62; }
+
+/* ---- TableOfContents --------------------------------------------------- */
+
+/* Below the two-column breakpoint this is a plegable block; above it the
+   toggle disappears, the list is always shown, and the whole thing sticks.
+   The open/closed state is a data attribute rather than conditional rendering,
+   so the closed state costs nothing at first paint and every link is in the
+   server HTML either way. */
+.sk-edtoc {
+  background: var(--paper);
+  border-radius: var(--r-card);
+  padding: 14px 18px;
+}
+.sk-edtoc__btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-3);
+  width: 100%;
+  background: none;
+  border: 0;
+  padding: 0;
+  font: inherit;
+  color: var(--black);
+  cursor: pointer;
+  text-align: left;
+}
+.sk-edtoc__sign { font-size: 1.125rem; line-height: 1; font-weight: 400; }
+.sk-edtoc__list { display: grid; gap: 2px; margin-top: 14px; }
+.sk-edtoc[data-open="false"] .sk-edtoc__list { display: none; }
+
+.sk-edtoc a {
+  display: block;
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  padding: 6px 0 6px 14px;
+  border-left: 1px solid var(--line-strong);
+  opacity: 0.55;
+  transition: opacity 0.16s ease, border-color 0.16s ease;
+}
+.sk-edtoc a:hover { opacity: 1; }
+/* Active is weight and a solid rule, never colour -- amber is
+   action-required and a contents entry is not an action. */
+.sk-edtoc a[aria-current="true"] {
+  opacity: 1;
+  font-weight: 600;
+  border-left-color: var(--black);
+}
+
+@media (min-width: 1120px) {
+  /* `.sk-ed__sidein` is the sticky element above this breakpoint, so the list
+     only has to shed the plegable block's grey card. */
+  .sk-edtoc {
+    background: none;
+    padding: 0;
+  }
+  .sk-edtoc__list,
+  .sk-edtoc[data-open="false"] .sk-edtoc__list { display: grid; margin-top: var(--s-4); }
+}
+
+/* ---- StatedVsObserved -------------------------------------------------- */
+
+/* The project's own form, so the constraints are written down here:
+   (1) the two sides never merge into one paragraph -- they are separate rows
+       with their own labels and their own rule;
+   (2) the observed side is not a decorative pull-quote -- no tint, no card,
+       no oversized type, no quotation mark. It is body copy at the same size
+       and on the same left edge as the stated side. The asymmetry between the
+       two lives in the evidence, not in the styling.
+   The block reads as an instrument because it is ruled like a table, not
+   because it is boxed like a callout. */
+.sk-svo { border-top: 2px solid var(--black); }
+/* `.sk-prose section > * + *` is (0,1,1) and would flatten the block's own
+   margin to the 18px paragraph step, so the standoff is qualified to win. */
+.sk-ed__prose section > .sk-svo { margin-top: clamp(24px, 2.6vw, 32px); }
+.sk-ed__prose section > .sk-svo + p { margin-top: clamp(24px, 2.6vw, 32px); }
+.sk-svo__cap {
+  display: block;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--line-strong);
+  font-weight: 600;
+}
+.sk-svo__row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--s-2);
+  padding: var(--s-4) 0;
+  border-bottom: 1px solid var(--line-strong);
+}
+.sk-svo__row:last-child { border-bottom-width: 2px; border-bottom-color: var(--black); }
+.sk-svo__lb { opacity: 0.62; }
+.sk-svo__body p { font-size: 0.9375rem; line-height: 1.62; }
+.sk-svo__body > * + * { margin-top: 12px; }
+/* Each observed case: its figure in mono, because the figures stack and are
+   read down the column, then the case itself in plain body copy. */
+.sk-svo__case { display: grid; grid-template-columns: 76px minmax(0, 1fr); gap: var(--s-3); }
+.sk-svo__case .sk-num { font-size: 0.8125rem; padding-top: 2px; }
+.sk-svo__case p { margin: 0; }
+.sk-svo__note { display: block; margin-top: var(--s-3); opacity: 0.62; }
+
+@media (min-width: 620px) {
+  .sk-svo__row { grid-template-columns: 96px minmax(0, 1fr); gap: var(--s-5); align-items: start; }
+}
+
+/* ---- SourcedFigure ----------------------------------------------------- */
+
+/* Inline in the sentence. The figure carries the weight, the estimate marker
+   is words rather than an icon, and the source is a visible link on the same
+   line -- never a footnote marker. */
+.sk-src__v { font-weight: 600; }
+.sk-src__est { opacity: 0.62; }
+.sk-ed__prose .sk-src__a {
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+  font-weight: 500;
+}
+
+/* ---- RelatedGuides ----------------------------------------------------- */
+
+/* Three links, as ruled rows rather than cards -- the editorial column does
+   not carry cards, and the end of the page is not the place to start. */
+/* No rule above the related block. Sections are separated by vertical margin,
+   not by a drawn line — the line was doing the job the space already does. */
+.sk-rg {
+  margin-top: clamp(40px, 5vw, 64px);
+  padding-top: 0;
+}
+/* Three equal columns, and the count is fixed in the component, so the row
+   never ends in a gap.
+   The breakpoint is the template's own, 1120px, and not a smaller one: above
+   it the foot is a fixed 1040px, so a card is a fixed 336px and the character
+   caps in COPY_LIMITS are exact rather than a function of the viewport. Below
+   it the page is one column capped at 43rem, where three cards would be 213px
+   each — so it stacks. There is no two-column step, because 2 + 1 is the gap
+   in the row the fixed count exists to prevent. */
+.sk-rg__grid {
+  margin-top: var(--s-4);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--gap);
+  /* Natural heights. A card whose title runs to one line is shorter than its
+     neighbours, and that is correct: nothing is padded to match and nothing is
+     cut down to match. `stretch` would pull the short card to the row height,
+     which is the card stretched past its content that DESIGN_RULES.md §4
+     forbids. Getting a title to two lines is a copy job, not a layout one. */
+  align-items: start;
+}
+@media (min-width: 1120px) {
+  .sk-rg__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+/* `.sk-card` carries the whole treatment — white, --r-card, the 0.25px --line
+   hairline, --sh-white. Nothing is redeclared here; this only removes the
+   padding so the image slot can reach the card's top edge. */
+.sk-rg__card { padding: 0; overflow: hidden; cursor: pointer; }
+/* One anchor wraps image, eyebrow, title and hook, and fills the card, so the
+   whole card is the click target rather than the title alone. */
+.sk-rg__link {
+  display: grid;
+  gap: 6px;
+  padding: 0 var(--s-5) var(--s-5);
+  align-content: start;
+}
+/* The reserved image slot. Same 3:2 and same tinted fill as `.sk-quad__img`,
+   bled to the card's edges. Empty: no photograph, no label, no icon. */
+.sk-rg__img {
+  display: block;
+  margin: 0 calc(var(--s-5) * -1) var(--s-5);
+  aspect-ratio: 3 / 2;
+  background: var(--tint-2);
+}
+.sk-rg__kind { display: block; opacity: 0.62; }
+.sk-rg__t,
+.sk-rg__h { display: block; overflow-wrap: anywhere; }
+/* Black, not a link colour, and not underlined. The whole card is the anchor,
+   so styling the title as a hyperlink inside it says "this word is the link"
+   about a card that is entirely the link. Underlined brand blue stays reserved
+   for standalone links in the running text — the source citations. */
+.sk-rg__t {
+  color: var(--black);
+  font-size: 1rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+.sk-rg__h { opacity: 0.68; }
+.sk-rg__link:hover .sk-rg__t { text-decoration: underline; text-underline-offset: 3px; }
+
+/* ---- EmailCapture, sidebar variant ------------------------------------- */
+
+/* The one conversion element allowed to sit beside the reading column rather
+   than after it, because it lives in the sidebar and never interrupts the
+   text. Grey card plus the amber button: on an editorial page the template
+   download is the primary action, and this is where it is offered. */
+.sk-ec {
+  background: var(--paper);
+  border-radius: var(--r-card);
+  box-shadow: var(--sh-grey);
+  padding: 20px;
+  display: grid;
+  gap: var(--s-3);
+}
+.sk-ec__t { font-size: 0.9375rem; font-weight: 700; letter-spacing: -0.014em; line-height: 1.3; }
+.sk-ec__f { display: grid; gap: var(--s-2); }
+.sk-ec__in {
+  width: 100%;
+  background: var(--card);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-btn);
+  padding: 10px 12px;
+  font: inherit;
+  font-size: 0.8125rem;
+  color: var(--black);
+}
+.sk-ec__in::placeholder { color: var(--black); opacity: 0.42; }
+/* `.sk-btn` is nowrap, and a flex item's automatic minimum is its content, so
+   a label too long for the 232px rail grows the button straight out of the
+   card instead of wrapping. This is the one button that is allowed to wrap. */
+.sk-ec__btn { width: 100%; justify-content: center; white-space: normal; text-align: center; }
+.sk-ec__micro { opacity: 0.68; }
+.sk-ec__done { font-weight: 600; }
+
+
+/* ---- pieces borrowed from the article template -------------------------- */
+
+/* The closing block is `.sk-article__cta` unchanged — same tint, same button
+   pair — but its own 42rem measure would centre it inside a column that is
+   already the right width, so the cap comes off here. */
+.sk-ed__foot .sk-article__cta { max-width: none; }
+.sk-ed__foot > .sk-rg:first-child { margin-top: clamp(40px, 5vw, 64px); }
+/* The soft close on an informational article. One line, no band, no buttons —
+   a guide that answers a question and then asks for the sale has answered it
+   in order to ask. */
+.sk-ed__close { margin-top: clamp(40px, 5vw, 64px); font-size: 0.9375rem; }
+
+/* The mobile route strip insets by the landing gutter; on an editorial page it
+   has to line up with the contents block and the reading column instead. */
+.sk-ed .sk-navm { padding-inline: var(--ed-x); }
+
+/* ---- the reserved header image slot ------------------------------------ */
+
+/* Every EditorialTemplate page has one, article and comparison alike. It is an
+   empty box at a declared 21:9 and nothing else: no photograph, no label, no
+   "RESERVED" text. A grey box with words in it reads as content, and there is
+   no content there yet — the same reasoning, and the same tinted fill, as
+   `.sk-quad__img`. Below 760px it reverts to 3:2, because 21:9 on a phone is a
+   165px strip. */
+/* The bottom margin is not decoration: the masthead's own separation from the
+   grid lives on `.sk-edhead`, which is a child of `.sk-ed__head` and sits
+   ABOVE this slot. Without a bottom margin here the slot ends on exactly the
+   pixel the reading column begins — measured at 0px. It matches `.sk-edhead`'s
+   own bottom margin so the rhythm is the same whether a page shows this slot
+   or a real image. */
+.sk-ed__headslot {
+  margin-top: clamp(22px, 2.6vw, 34px);
+  margin-bottom: clamp(26px, 3vw, 40px);
+  aspect-ratio: 21 / 9;
+  background: var(--tint-2);
+  border-radius: var(--r-card);
+}
+@media (max-width: 760px) { .sk-ed__headslot { aspect-ratio: 3 / 2; } }
+
+/* ---- the downloadable-template CTA, in the reading column -------------- */
+
+/* One per page, at 70-80% of the column, placed by the template. It sits in
+   the flow between two sections and takes the section rhythm, so it reads as a
+   step in the page rather than as something pinned over it. */
+.sk-ed__tcta { margin-block: clamp(38px, 4vw, 56px); }
+.sk-ed__tcta .sk-ec { max-width: none; }
+.sk-ed__prose > .sk-ed__tcta + section { margin-top: 0; }
+
+/* ---- the comparison tail (variant="comparison") ------------------------- */
+
+/* Price -> CTA -> FAQ, inside the reading column rather than after it, so the
+   page keeps one continuous measure from the first H2 to the last answer.
+   Nothing here restyles the three blocks: `.sk-spd` and `.sk-pmc` already
+   carry their own rules, widened above to this column. */
+
+/* The closing block is `.sk-article__cta` unchanged, and its own 42rem cap
+   would centre it inside a column that is already the right width. Same
+   removal as in `.sk-ed__foot`, and the same section rhythm as the prose
+   sections it sits between -- it is a step in the page, not an interruption. */
+.sk-ed__prose > .sk-ed__cta { margin-top: clamp(38px, 4vw, 56px); }
+.sk-ed__cta .sk-article__cta { max-width: none; margin-inline: 0; }
+.sk-ed__prose > .sk-ed__cta + section { margin-top: clamp(38px, 4vw, 56px); }
+
+/* The FAQ is the home accordion, verbatim. Only its standoff from the heading
+   above it is set here. */
+.sk-ed__prose .sk-faq { margin-top: clamp(24px, 2.6vw, 32px); }
+/* The editorial variant. Same cards, same shadow, same sign — it adds two
+   declarations and duplicates no base rule, so the home keeps exactly the
+   treatment it had:
+     - --s-5 top and bottom, the reading column's own vertical step;
+     - a 48px touch target as a MINIMUM, never a fixed height, so a question
+       that wraps to two lines grows instead of being clipped. */
+.sk-ed__prose .sk-faq__q { padding-block: var(--s-5); min-height: 48px; }
+.sk-ed__prose .sk-faq__a { padding-bottom: var(--s-5); }
+/* The accordion's <h3> is a heading in the prose flow, so it was inheriting
+   `.sk-prose h3`'s 28px top margin INSIDE each card: 28px of dead space above
+   every question. That is what made the cards too tall, and what pushed the
+   question off the card's centre while the +/- sign stayed on the button's
+   own centre. The home never had it — its FAQ is not inside `.sk-prose`. */
+.sk-ed__prose .sk-faq h3 { margin: 0; font-size: inherit; line-height: inherit; }
+
+
+/* ========================= COMPARISON TEMPLATE ===========================
+   The four argument pages: /best-credentialing-software and the three
+   competitor-pricing pages. More argumentative than a landing, shorter than
+   an editorial, and single-column — there is no contents list, because a
+   700-1000 word page with seven sections does not need an outline beside it.
+
+   Measure. The landing runs to 1200px and the editorial's reading column is
+   pinned to 720px; this one sits between them at 780px. The line length does
+   NOT go with it: body copy here is 17px rather than 16px, so 780px holds the
+   same ~92 characters a line the editorial holds at 720px. The page reads as
+   wider without the measure getting longer, and the extra width is what the
+   two comparison tables need.
+
+   What it does not have, for the same reasons the editorial does not: no
+   cards inside the body copy, no alternating surfaces, no CTA between
+   sections. The one conversion point is at the foot, after the FAQ, and the
+   price is stated in the body long before it.
+   ========================================================================= */
+
+.sk-cmp {
+  --cmp-x:    clamp(16px, 3vw, 40px);
+  --cmp-col:  780px;
+  /* box-sizing is border-box across the skin, so the gutter is inside the
+     measure — same arithmetic as the editorial's --ed-maxw. */
+  --cmp-maxw: calc(var(--cmp-col) + 80px);
+}
+
+/* The light nav bar carries its own 1200px measure, which would put its left
+   edge outside the column. Re-parented onto this page's measure. */
+.sk-cmp__bar,
+.sk-cmp__body {
+  max-width: var(--cmp-maxw);
+  margin-inline: auto;
+  padding-inline: var(--cmp-x);
+}
+.sk-cmp__bar .sk-nav--light {
+  max-width: none;
+  margin-inline: 0;
+  padding-inline: 0;
+}
+.sk-cmp .sk-navm { padding-inline: var(--cmp-x); }
+
+.sk-cmp__body { padding-block: clamp(28px, 3.4vw, 52px) var(--sec-y); }
+.sk-cmp__head { margin-bottom: clamp(26px, 3vw, 40px); }
+
+/* ---- the reading column ------------------------------------------------ */
+
+/* `.sk-prose` is reused verbatim for the type; only its own centring and its
+   42rem cap come off, because the page measure already sets both. */
+.sk-cmp__prose { max-width: none; margin: 0; }
+.sk-cmp__prose p,
+.sk-cmp__prose .sk-list li { font-size: 1.0625rem; line-height: 1.66; }
+.sk-cmp__prose > section + section { margin-top: clamp(38px, 4vw, 56px); }
+.sk-cmp__prose > section > h2:first-child { margin-top: 0; }
+
+/* Inline links are underlined in the running text, as on the editorial page:
+   a source is part of the sentence's evidence, so it has to be visible while
+   reading rather than on hover. */
+/* Every link inside the column, not just the ones in running text: a source
+   sitting under a disclosure row or beneath the vendor table is the evidence
+   for the claim above it, and an unstyled one reads as plain text. */
+.sk-cmp__prose a {
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+  font-weight: 500;
+}
+.sk-cmp__prose a:hover { text-decoration-thickness: 2px; }
+
+/* ---- SourcedPricingDisclosure ------------------------------------------ */
+
+/* Ruled like a table, not boxed like a callout — the same instrument form as
+   StatedVsObserved on the editorial page, for the same reason.
+   The label column is the whole point: a claim with a published source and a
+   claim with no published price occupy the SAME column, at the same weight.
+   An absence rendered as a blank cell reads as missing work; rendered as a
+   row that says "Not published" beside the thing that was checked, it reads
+   as the finding it is. There is no colour anywhere in this block — the
+   status is a word. */
+.sk-spd { border-top: 2px solid var(--black); }
+/* `.sk-prose section > * + *` is (0,1,1) and would flatten this to the 18px
+   paragraph step, so the standoff is qualified to win. */
+.sk-cmp__prose section > .sk-spd,
+.sk-cmp__prose section > .sk-spd + p,
+.sk-ed__prose section > .sk-spd,
+.sk-ed__prose section > .sk-spd + p { margin-top: clamp(24px, 2.6vw, 32px); }
+
+.sk-spd__row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--s-2);
+  padding: var(--s-4) 0;
+  border-bottom: 1px solid var(--line-strong);
+}
+.sk-spd__row:last-child { border-bottom-width: 2px; border-bottom-color: var(--black); }
+.sk-spd__lb { opacity: 0.62; }
+.sk-cmp__prose .sk-spd__body p,
+.sk-ed__prose .sk-spd__body p { font-size: 0.9375rem; line-height: 1.62; }
+.sk-spd__body > * + * { margin-top: var(--s-3); }
+.sk-spd__src { display: block; opacity: 0.68; }
+.sk-spd__est { opacity: 0.62; }
+
+@media (min-width: 620px) {
+  .sk-spd__row { grid-template-columns: 128px minmax(0, 1fr); gap: var(--s-5); align-items: start; }
+}
+
+/* ---- PurchaseModelCompare ---------------------------------------------- */
+
+/* Two columns facing each other, one row per criterion, and every row states
+   the unit it measures. Units are the whole hazard in this comparison: a
+   price per seat and a price per provider tracked are different quantities,
+   and putting them side by side without saying so is the error that got the
+   previous price anchor scrapped. So `unit` is required by the component, not
+   an optional note.
+   Neither column is highlighted, tinted or ordered first as the winner — the
+   two are set identically and the reader does the comparing. */
+.sk-pmc { border-top: 2px solid var(--black); }
+.sk-cmp__prose section > .sk-pmc,
+.sk-cmp__prose section > .sk-pmc + p,
+.sk-ed__prose section > .sk-pmc,
+.sk-ed__prose section > .sk-pmc + p { margin-top: clamp(24px, 2.6vw, 32px); }
+
+.sk-pmc__row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--s-3);
+  padding: var(--s-4) 0;
+  border-bottom: 1px solid var(--line-strong);
+}
+.sk-pmc__row:last-child { border-bottom-width: 2px; border-bottom-color: var(--black); }
+.sk-pmc__crit { font-weight: 600; font-size: 0.9375rem; line-height: 1.4; }
+.sk-pmc__unit { display: block; margin-top: 4px; opacity: 0.62; }
+.sk-pmc__cells { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--s-4); }
+.sk-pmc__cell { display: grid; gap: 4px; }
+/* Not `.sk-micro`: these are vendor names, and uppercasing them rewrites a
+   brand that sets its own name in lower case. Small and semibold instead. */
+.sk-pmc__who { font-size: 0.8125rem; font-weight: 600; line-height: 1.4; opacity: 0.62; }
+.sk-cmp__prose .sk-pmc__cell p,
+.sk-ed__prose .sk-pmc__cell p { font-size: 0.9375rem; line-height: 1.62; }
+
+/* Below the two-column breakpoint the vendor name rides on each cell, so the
+   header row is redundant; above it the names are the column heads and the
+   per-cell name would repeat eight times. Exactly one of the two shows. */
+.sk-pmc__head { display: none; }
+@media (min-width: 620px) {
+  .sk-pmc__row  { grid-template-columns: 208px minmax(0, 1fr); gap: var(--s-5); align-items: start; }
+  .sk-pmc__cells { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--s-5); }
+  .sk-pmc__head { display: grid; padding-block: 0 var(--s-3); border-bottom: 1px solid var(--line-strong); }
+  .sk-pmc__head .sk-pmc__who { opacity: 1; }
+  .sk-pmc__cell .sk-pmc__who { display: none; }
+}
+
+/* ---- MultiVendorComparison --------------------------------------------- */
+
+/* /best-credentialing-software only. Vendors across, criteria down, and every
+   criterion carries the unit it is measured in. No logos and no screenshots:
+   a vendor is its name in text.
+   A cell is never blank and never estimated. Where a vendor does not publish
+   a figure the cell says "Not published" in words — the component refuses to
+   render an empty cell, which is the only way that rule survives contact with
+   a hurried content edit. */
+.sk-mvc { margin-top: clamp(24px, 2.6vw, 32px); }
+.sk-mvc .sk-table { min-width: 720px; }
+.sk-mvc thead th {
+  text-transform: none;
+  letter-spacing: -0.01em;
+  font-size: 0.875rem;
+  color: var(--black);
+  border-bottom: 2px solid var(--black);
+}
+.sk-mvc__self { display: block; font-weight: 400; opacity: 0.62; margin-top: 2px; }
+.sk-mvc th[scope="row"] {
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 0.875rem;
+  color: var(--black);
+  font-weight: 600;
+  width: 200px;
+}
+.sk-mvc__unit { display: block; font-weight: 400; opacity: 0.62; margin-top: 4px; }
+/* "Not published" is a fact in the same type as any other cell, dimmed only
+   enough to read as a different kind of answer. Never a dash, never blank. */
+.sk-mvc__np { opacity: 0.62; }
+.sk-mvc__cap { display: block; margin-top: var(--s-3); opacity: 0.68; }
+.sk-mvc__sources { margin-top: var(--s-3); }
+.sk-mvc__sources li { font-size: 0.8125rem; line-height: 1.5; padding: 4px 0; }
+
+/* ---- the closing block ------------------------------------------------- */
+
+/* `.sk-article__cta` unchanged, minus its own 42rem cap — the column is
+   already the right width. */
+.sk-cmp__foot { margin-top: clamp(40px, 5vw, 64px); }
+.sk-cmp__foot .sk-article__cta { max-width: none; margin-top: 0; }
+
+/* ======================== INSTITUTIONAL TEMPLATE =========================
+   /security and /about. 300-600 words, one narrow centred column, no
+   sidebar, no CTA between sections and none at the foot either: these two
+   pages answer an objection, and a page that answers an objection and then
+   asks for the sale has answered it in order to ask. The footer carries the
+   trial link, which is enough.
+
+   36rem holds ~72 characters at 16px — deliberately shorter than every other
+   template here. Low visual ambition by design.
+   ========================================================================= */
+
+.sk-inst {
+  --inst-x:    clamp(16px, 3vw, 40px);
+  --inst-col:  36rem;
+  --inst-maxw: calc(var(--inst-col) + 80px);
+}
+.sk-inst__body {
+  max-width: var(--inst-maxw);
+  margin-inline: auto;
+  padding-inline: var(--inst-x);
+}
+/* The nav bar is NOT re-parented onto this measure the way the editorial and
+   comparison templates re-parent it: 36rem plus gutters is 656px, and the four
+   links plus the CTA wrap onto a second row inside it. It keeps its own
+   1200px measure; both are centred, so the two still share a centre axis. */
+.sk-inst__body { padding-block: clamp(28px, 3.4vw, 52px) var(--sec-y); }
+.sk-inst__head { margin-bottom: clamp(22px, 2.6vw, 34px); }
+.sk-inst__prose { max-width: none; margin: 0; }
+.sk-inst__prose > section + section { margin-top: clamp(30px, 3.2vw, 44px); }
+.sk-inst__prose > section > h2:first-child { margin-top: 0; }
+.sk-inst__prose p a {
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+  font-weight: 500;
+}
+
+/* The portrait slot. /about takes a real photograph of the founder or of the
+   place the work happens, or it takes nothing — stock is a claim a visitor
+   can disprove in two clicks (there is no team and no boardroom). The slot
+   ships empty, at a declared 4:5, carrying its own direction so the brief
+   travels with the layout. /security has no image slot at all. */
+.sk-inst__portrait { margin-top: clamp(22px, 2.6vw, 30px); }
+.sk-inst__portrait .sk-photo {
+  border-radius: var(--r-card);
+  overflow: hidden;
+  max-width: 19rem;
+  margin-inline: auto;
+}
+.sk-inst__portrait .sk-small { display: block; text-align: left; margin-top: 10px; opacity: 0.62; }

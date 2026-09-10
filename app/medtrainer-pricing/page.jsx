@@ -1,11 +1,18 @@
-import Link from "next/link";
-import "@/components/site/site.css";
-import "@/components/site/site-article.css";
-import SiteNav from "@/components/site/SiteNav";
-import SiteFooter from "@/components/site/SiteFooter";
-import Faq from "@/components/site/Faq";
-import CompetitorPricingTable from "@/components/site/CompetitorPricingTable";
-import { KNOWN, STRENGTHS, WHERE_IT_STOPS, FIT, QUESTIONS, PRICE_INTRO, FAQ_ITEMS } from "./data";
+import Shell from "@/components/neo/Shell";
+import EditorialTemplate, { EditorialCta } from "@/components/neo/Editorial";
+import { GoodFitSection } from "@/components/neo/ComparisonBits";
+import { PageHeader, ProseSection, RelatedGuides } from "@/components/neo/EditorialBits";
+import {
+  CONTENTS,
+  RELATED,
+  KNOWN,
+  STRENGTHS,
+  WHERE_IT_STOPS,
+  FIT,
+  QUESTIONS,
+  PRICE_INTRO,
+  FAQ_ITEMS,
+} from "./data";
 import { pageMeta } from "@/lib/seo";
 
 export const metadata = pageMeta({
@@ -16,80 +23,83 @@ export const metadata = pageMeta({
   type: "article",
 });
 
+// Moved onto the editorial mould's comparison variant, alongside the other two
+// competitor pages. Copy unchanged; the price section is now the template's
+// rather than a row in this file, and "who MedTrainer is right for" renders
+// through `GoodFitSection` — same markup as a prose section, which is the
+// point of that component, but the slot is named.
+//
+// Worth keeping in view for a later pass: of the four vendors researched, this
+// is the only one that documents its own pricing logic in its own words —
+// utilization, scaling with users and modules. That makes it the page best
+// suited to `SourcedPricingDisclosure`, whose whole form is a claim beside its
+// provenance. The current copy states it in a paragraph instead, and recasting
+// approved copy into claim rows is a copy decision, not a template one.
 export default function MedTrainerPricingPage() {
   return (
-    <div className="sokndall-landing lp-article-page">
-      <SiteNav />
+    <Shell>
+      <EditorialTemplate
+        variant="comparison"
+        contents={CONTENTS}
+        header={
+          <PageHeader
+            title="MedTrainer pricing: what is published, and what the credentialing module actually covers"
+            standfirst="MedTrainer bundles credentialing with compliance training and document management. Here is what that means for the price, and what a credentialing-only tool costs."
+            category="Pricing comparison"
+            date="2026-09-06"
+            dateLabel="Checked"
+            readingTime="4 min read"
+          />
+        }
+        price={{
+          heading: "What Sokndall costs",
+          paras: [PRICE_INTRO],
+          href: "/pricing",
+          link: "See what is included",
+        }}
+        faq={FAQ_ITEMS}
+        cta={
+          <EditorialCta
+            body="Sokndall publishes its price because the comparison above is the whole argument. Fourteen days, card at signup, no demo to see any of it."
+            primary={{ href: "/login", label: "Start 14-day trial" }}
+            secondary={{ href: "/pricing", label: "See what is included" }}
+          />
+        }
+        related={<RelatedGuides items={RELATED} />}
+      >
+        <ProseSection id="known" heading="What is publicly known">
+          {KNOWN.map((p) => (
+            <p key={p}>{p}</p>
+          ))}
+        </ProseSection>
 
-      <div className="lp-solo-shell">
-        <header className="lp-article-head">
-          <div className="lp-head-text">
-            <h1>MedTrainer pricing: what is published, and what the credentialing module actually covers</h1>
-            <p className="lp-standfirst">
-              MedTrainer bundles credentialing with compliance training and document management. Here is what that
-              means for the price, and what a credentialing-only tool costs.
-            </p>
-          </div>
-          <hr className="lp-article-rule" />
-        </header>
+        <ProseSection id="strengths" heading="It is three products in one subscription">
+          {STRENGTHS.map((p) => (
+            <p key={p}>{p}</p>
+          ))}
+        </ProseSection>
 
-        <article className="lp-article-main">
-          <section id="known">
-            <h2>What is publicly known</h2>
-            {KNOWN.map((p) => (
-              <p key={p}>{p}</p>
-            ))}
-          </section>
+        <ProseSection id="where-it-stops" heading="Where the bundle stops making sense">
+          {WHERE_IT_STOPS.map((p) => (
+            <p key={p}>{p}</p>
+          ))}
+        </ProseSection>
 
-          <section id="strengths">
-            <h2>It is three products in one subscription</h2>
-            {STRENGTHS.map((p) => (
-              <p key={p}>{p}</p>
-            ))}
-          </section>
+        <GoodFitSection id="fit" heading="Who MedTrainer is right for">
+          {FIT.map((p) => (
+            <p key={p}>{p}</p>
+          ))}
+        </GoodFitSection>
 
-          <section id="where-it-stops">
-            <h2>Where the bundle stops making sense</h2>
-            {WHERE_IT_STOPS.map((p) => (
-              <p key={p}>{p}</p>
-            ))}
-          </section>
-
-          <section id="fit">
-            <h2>Who MedTrainer is right for</h2>
-            {FIT.map((p) => (
-              <p key={p}>{p}</p>
-            ))}
-          </section>
-
-          <section id="questions">
-            <h2>Questions worth asking on the demo call, whichever way you go</h2>
-            {QUESTIONS.map((p) => (
-              <p key={p}>{p}</p>
-            ))}
-          </section>
-
-          <section id="price">
-            <h2>Sokndall&rsquo;s price</h2>
-            <CompetitorPricingTable />
-            <p>{PRICE_INTRO}</p>
-            <div className="lp-article-actions" style={{ marginTop: 24 }}>
-              <Link href="/pricing" className="lp-underline">
-                See what is included &rarr;
-              </Link>
-            </div>
-          </section>
-
-          <section id="faq">
-            <div className="lp-center-block">
-              <h2>Frequently asked questions</h2>
-            </div>
-            <Faq items={FAQ_ITEMS} />
-          </section>
-        </article>
-      </div>
-
-      <SiteFooter variant="slim" />
-    </div>
+        <ProseSection
+          id="questions"
+          heading="Questions worth asking on the demo call, whichever way you go"
+        >
+          {QUESTIONS.map((p) => (
+            <p key={p}>{p}</p>
+          ))}
+        </ProseSection>
+      </EditorialTemplate>
+    </Shell>
   );
 }

@@ -25,10 +25,81 @@
   --color-enroll-orange-bg: #fff7ed;
 
   --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  /* ------------------------------------------------------------------ *
+   * MARKETING SYSTEM — CATALOGO_SISTEMA.md §1. Exact values.          *
+   * Distinct token names from the authenticated app above; no clash.  *
+   * Arbitrary values (hex in JSX, mt-[37px]) are lint-blocked for     *
+   * components/system/** and app/styleguide/** — not by taste.        *
+   * ------------------------------------------------------------------ */
+  --color-ink: #0e2a2e;         /* dark section ground / text on light */
+  --color-ink-2: #1b4348;       /* second dark surface */
+  --color-rule: #3d6a6b;        /* hairline on dark */
+  --color-rule-light: #d6d3ca;  /* hairline on light + grey placeholder fill */
+  --color-paper: #f2f0ea;       /* light section ground */
+  --color-paper-2: #ffffff;     /* elevated surface on light */
+  --color-muted: #5f6e6e;       /* secondary text on light */
+  --color-muted-dark: #8faeae;  /* secondary text on dark */
+  --color-signal: #c88a2e;      /* amber — signal only, never decoration */
+
+  /* Mono is only for figures compared vertically in a column (§1.2).
+   * The sans family is still one of four candidates (§6.1) — left as a
+   * system stack until /styleguide picks one and next/font wires it. */
+  --font-mono: ui-monospace, "SFMono-Regular", "SF Mono", Menlo, Consolas,
+    "Liberation Mono", monospace;
 }
 
 body {
   background-color: var(--color-ink-50);
   color: var(--color-ink-900);
   font-family: var(--font-sans);
+}
+
+/* ==================================================================== *
+ * MARKETING SYSTEM primitives. Type scale (§1.2), aspect-ratio and     *
+ * corner-cut utilities (there is no on-scale Tailwind class for 4/3 or *
+ * the TILE diagonal), and surface-portable colour helpers so a         *
+ * component can sit on paper or on ink without a variant prop.         *
+ * ==================================================================== */
+@layer components {
+  .t-display        { font-size: clamp(2.25rem, 1.55rem + 2.6vw, 2.75rem); line-height: 1.1;  font-weight: 500; letter-spacing: -0.011em; }
+  .t-h1             { font-size: clamp(1.75rem, 1.45rem + 1.05vw, 2.125rem); line-height: 1.15; font-weight: 500; letter-spacing: -0.006em; }
+  .t-h2             { font-size: clamp(1.375rem, 1.31rem + 0.27vw, 1.5rem); line-height: 1.25; font-weight: 500; }
+  .t-h3             { font-size: 1.125rem; line-height: 1.35; font-weight: 500; }
+  .t-body           { font-size: 1rem;      line-height: 1.55; }
+  .t-body-editorial { font-size: 1.0625rem; line-height: 1.6;  }
+  .t-small          { font-size: 0.875rem;  line-height: 1.5;  }
+
+  /* Only ever on numbers that line up with the number in the next row. */
+  .mono-data {
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    line-height: 1.4;
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum" 1;
+  }
+
+  /* Surface-portable helpers: components author against these, templates
+   * (or the .on-dark wrapper) flip them for dark bands. No shadows. */
+  .u-ink    { color: var(--color-ink); }
+  .u-muted  { color: var(--color-muted); }
+  .u-card   { background: var(--color-paper-2); border: 1px solid var(--color-rule-light); }
+  .u-hair   { border-color: var(--color-rule-light); }
+  .sg-link  { color: var(--color-ink-2); text-decoration: underline; text-underline-offset: 2px; text-decoration-thickness: 1px; }
+
+  .on-dark              { color: var(--color-paper); }
+  .on-dark .u-ink       { color: var(--color-paper); }
+  .on-dark .u-muted     { color: var(--color-muted-dark); }
+  .on-dark .u-card      { background: var(--color-ink-2); border-color: var(--color-rule); }
+  .on-dark .u-hair      { border-color: var(--color-rule); }
+  .on-dark .sg-link     { color: var(--color-paper); }
+}
+
+@layer utilities {
+  .ratio-1x1  { aspect-ratio: 1 / 1; }
+  .ratio-4x3  { aspect-ratio: 4 / 3; }
+  .ratio-3x2  { aspect-ratio: 3 / 2; }
+  .ratio-16x9 { aspect-ratio: 16 / 9; }
+  /* TILE: contained on a dark surface with a diagonal cut, top-right (§4). */
+  .corner-cut { clip-path: polygon(0 0, calc(100% - 1rem) 0, 100% 1rem, 100% 100%, 0 100%); }
 }

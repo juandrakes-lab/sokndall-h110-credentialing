@@ -1,268 +1,212 @@
 import Link from "next/link";
-import "@/components/site/site.css";
-import "@/components/site/site-pages.css";
-import SiteNav from "@/components/site/SiteNav";
-import SiteFooter from "@/components/site/SiteFooter";
-import Faq from "@/components/site/Faq";
-import { TRIAL_HREF } from "@/components/site/siteData";
+
+import Shell from "@/components/neo/Shell";
+import Nav from "@/components/neo/Nav";
+import Footer from "@/components/neo/Footer";
+import Faq from "@/components/neo/Faq";
+import Mark from "@/components/neo/Mark";
+import HeroArt from "@/components/neo/HeroArt";
+import { TRIAL_HREF } from "@/components/neo/neoData";
+import { PLANS, CLIENTS, TRIAL_TERMS, COST_BLOCKS, FAQ_ITEMS } from "./data";
 import { pageMeta } from "@/lib/seo";
-import { PLANS, CLIENTS, COST_BLOCKS, TRIAL_TERMS, FAQ_ITEMS } from "./data";
 
 export const metadata = pageMeta({
-  title: "Credentialing software pricing, published — Sokndall",
+  title: "Pricing — $79, $299, $699 a month, published — Sokndall",
   description:
-    "Three plans, three prices, no quote process. $79, $299 and $699 a month — $26, $20 and $14 per provider. 14-day trial, cancel self-serve from Settings.",
+    "Three plans, all published: $79 Solo, $299 Practice, $699 Billing Co. 14-day trial, card at signup, cancel self-serve. No demo required to see a number.",
   path: "/pricing",
 });
 
-/** Static CTA. Everyone gets the trial link; an already-signed-in user starts
- *  or manages a subscription from inside the app (Settings), not from this
- *  public marketing page, which stays fully static. */
-function PlanCta() {
-  return (
-    <Link href={TRIAL_HREF} className="lp-btn">
-      Start 14-day trial
-    </Link>
-  );
-}
-
 export default function PricingPage() {
-  return (
-    <div className="sokndall-landing">
-      <SiteNav />
+  const totalProviders = CLIENTS.reduce((n, c) => n + c.providers, 0);
+  const totalOpen = CLIENTS.reduce((n, c) => n + c.open, 0);
+  const totalQuiet = CLIENTS.reduce((n, c) => n + c.quiet, 0);
 
-      {/* 1 — HEADER. No image: on this page the price is the content.
-          Headline left, subhead right — the subhead is what fills the column
-          the headline would otherwise leave empty. */}
-      <header className="lp-page-head">
-        <div className="lp-head2">
-            <div className="lp-eyebrow">Pricing</div>
-            <h1 className="lp-h1">Credentialing software pricing, published</h1>
-            <div className="bd">
-            <p className="lp-lead">
-              Three plans, three prices, no quote process. Every plan has every feature. The difference is how many
-              providers you track, and whether you track them for your practice or for clients.
+  return (
+    <Shell>
+      <Nav current="/pricing" />
+
+      {/* Masthead */}
+      <section className="sk-sec sk-sec--flush">
+        <div className="sk-head">
+          <p className="sk-head__pill">
+            <span className="sk-pill">Pricing</span>
+          </p>
+          <div className="sk-head__row">
+            <h1 className="sk-h2">Three plans, all of them on this page</h1>
+            <p className="sk-body sk-body--lg sk-head__aside">
+              Every competitor in this category makes you book a demo before they will say a number. Here are all three,
+              with what each one includes. Card at signup, charged on day 15, cancel before then and it is not.
             </p>
           </div>
         </div>
-      </header>
 
-      {/* 2 — THE THREE PLANS. The home pricing list, expanded to full detail. */}
-      <section style={{ maxWidth: "var(--maxw)", margin: "0 auto", padding: "0 var(--pad-x) 96px" }}>
-        <div className="lp-plans">
-          {PLANS.map((plan) => (
-            <div key={plan.key} className={"lp-plan" + (plan.featured ? " lp-plan--featured" : "")}>
-              {plan.label && <div className="lp-plan-label">{plan.label}</div>}
-              <div>
-                <h2 className="lp-plan-name">{plan.name}</h2>
-                <div className="lp-plan-price">
-                  <span className="amt">{plan.price}</span>
-                  <span className="per">{plan.period}</span>
-                </div>
-                <p className="lp-plan-unit">{plan.perProvider}</p>
+        <div className="sk-plans">
+          {PLANS.map((p) => (
+            <article
+              className={`sk-card sk-plan ${p.featured ? "sk-plan--hi" : "sk-card--line sk-card--flat"}`}
+              key={p.key}
+            >
+              <div className="sk-plan__top">
+                <h2 className="sk-h4">{p.name}</h2>
+                {p.label ? <Mark state={{ label: p.label, glyph: "◆", tone: "blue" }} /> : null}
               </div>
-              <ul className="lp-plan-features">
-                {plan.features.map((f) => (
+              <p className="sk-plan__price sk-num">
+                {p.price}
+                <span className="sk-plan__per">{p.period}</span>
+              </p>
+              <p className="sk-small sk-num">{p.perProvider}</p>
+              <ul className="sk-list sk-plan__feats">
+                {p.features.map((f) => (
                   <li key={f}>{f}</li>
                 ))}
               </ul>
-              <div className="lp-plan-cta">
-                <PlanCta />
-                <p className="lp-note">Card required. Charged day 15.</p>
+              <div className="sk-plan__cta">
+                <Link href={TRIAL_HREF} className="sk-btn sk-btn--primary">
+                  Start 14-day trial
+                </Link>
               </div>
-            </div>
+            </article>
           ))}
         </div>
       </section>
 
-      {/* 3 — BILLING CO. The claim is structural, so the visual is the structure:
-          six isolated client organizations and the one number that only exists
-          when you can read across them. */}
-      <section className="lp-panel">
-        <div style={{ maxWidth: "var(--maxw)", margin: "0 auto", padding: "96px var(--pad-x)" }}>
-          <div className="lp-split lp-split--wide-left lp-split--top">
-            <div>
-              <div className="lp-eyebrow" style={{ marginBottom: 18 }}>
-                Billing Co
-              </div>
-              <h2 className="lp-h2" style={{ marginBottom: 24 }}>
-                Billing Co is a different structure, not a bigger number
-              </h2>
-              {/* B-1: the old closing line pointed at a digest number the copy no
-                  longer stated — it moved into the schematic. This gives the
-                  roll-up its antecedent back and drops the orphan one-liner. */}
-              <p className="lp-body" style={{ margin: "0 0 18px" }}>
-                Billing Co is not a bigger version of the other plans — each client sits in its own organization, with
-                its own providers and its own records, and nothing bleeds between them. That structure is what makes the
-                roll-up beside this text possible in the first place.
-              </p>
-              <p className="lp-body" style={{ margin: 0 }}>
-                You switch between clients without logging out, and you can give a staff member access to two clients and
-                not the other four.
-              </p>
-            </div>
-
-            <div className="lp-clients">
-              <div className="lp-client-grid">
-                {CLIENTS.map((c) => (
-                  <div key={c.name} className="lp-client">
-                    <div className="nm">{c.name}</div>
-                    <div className="rw">
-                      <span>Providers</span>
-                      <b>{c.providers}</b>
-                    </div>
-                    <div className="rw">
-                      <span>Open applications</span>
-                      <b>{c.open}</b>
-                    </div>
-                    <div className="bar">
-                      <i style={{ width: Math.round((c.quiet / c.open) * 100) + "%" }} />
-                    </div>
-                    <div className="rw">
-                      <span>Quiet 30+ days</span>
-                      <b>{c.quiet}</b>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <div className="lp-rollup">
-                <span className="lb">Monday digest · across all clients</span>
-                <span className="tx">
-                  23 applications need follow-up this week across your 6 clients, 4 of them have been quiet for over 30
-                  days.
-                </span>
-              </div>
-            </div>
-          </div>
-          <div style={{ marginTop: 32 }}>
-            <Link href="/for-billing-companies" className="lp-underline">
-              See the Billing Co plan in depth →
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* 4 — COST PER PROVIDER. The honest comparison, then the calculation with
-          the weight of a closing line. */}
-      <section style={{ maxWidth: "var(--maxw)", margin: "0 auto", padding: "96px var(--pad-x)" }}>
-        <div className="lp-head2" style={{ marginBottom: 56 }}>
-            <div className="lp-eyebrow">Cost per provider</div>
-            <h2 className="lp-h2">What this costs next to what you are already paying to stay credentialed</h2>
-            <div className="bd">
-            <p className="lp-lead">
-              This is not cheaper than credentialing software. It is a different thing, and the honest comparison is
-              against what maintaining credentials already costs — whether or not you have ever called it that.
-            </p>
-          </div>
-        </div>
-
-        <div className="lp-split lp-split--wide-right lp-split--top">
-          <div className="lp-img-framed">
-            <img
-              className="lp-img"
-              src="/pages/pricing-comparison.png"
-              alt="A practice manager at her desk comparing a credentialing service invoice against a provider roster on her laptop"
-            />
-          </div>
-          <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-            {COST_BLOCKS.map((b) => (
-              <div key={b.title} className="lp-callout">
-                <h3>{b.title}</h3>
-                <span className="fig">
-                  {b.figure} <span style={{ fontSize: 14, fontWeight: 400, color: "var(--ink-soft)" }}>{b.unit}</span>
-                </span>
-                <p>{b.body}</p>
-              </div>
-            ))}
-            <p className="lp-note">Ranges as published by the sources that publish one.</p>
-          </div>
-        </div>
-      </section>
-
-      {/* The payoff. Was a rounded card floating inside the section — now a
-          full-width band, the same device /landing uses after the problem
-          section. B-2 made the line self-contained so it survives the move. */}
-      <section className="lp-dark lp-band">
-        <div className="in">
-          <p>
-            Outsourced maintenance for fifteen providers starts around <em>$750 a month</em> at the low end of the
-            published range. Practice is <em>$299</em> for the same fifteen — $20 per provider.
-          </p>
-        </div>
-      </section>
-
-      {/* The consequence of the band above. It sits between two dark masses, so
-          it needs to read as a section in its own right rather than as the gap
-          between them: cream tint, its own hairlines, generous height, and lead
-          type instead of body. */}
-      <section className="lp-panel">
-        <div style={{ maxWidth: "var(--maxw)", margin: "0 auto", padding: "104px var(--pad-x)" }}>
-          {/* B-3: 31 and 45 words, so the two columns bottom out together. */}
-          <div className="lp-cols2">
-            <p className="lp-lead">
-              The gap is not a discount. It is the difference between paying a person to do the work and paying a system
-              to track it — and those are different jobs with different prices.
-            </p>
-            <p className="lp-lead">
-              If you want the work done for you, buy that; it is a real service. If your problem is that nobody can say
-              what needs attention this week without opening six things, that is a tracking problem, and it is priced
-              like one.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* 5 — TRIAL TERMS. The brief asks for the same visual weight as the price
-          itself, so this is a full forest band, not a card sitting inside one.
-          Three labelled commitments: what you get, what we ask, how you leave. */}
-      <section className="lp-forest">
-        <div style={{ maxWidth: "var(--maxw)", margin: "0 auto", padding: "88px var(--pad-x)" }}>
-          <div className="lp-center" style={{ marginBottom: 44 }}>
-            <div className="lp-eyebrow" style={{ marginBottom: 20 }}>
-              The Trial
-            </div>
-            <h2 className="lp-h2" style={{ maxWidth: 700 }}>
-              How the trial works
-            </h2>
-          </div>
-
-          <div className="lp-terms" style={{ marginBottom: 48 }}>
+      {/* Trial terms */}
+      <section className="sk-sec sk-sec--tight">
+        <div className="sk-card sk-card--soft sk-card--pad">
+          <div className="sk-def">
             {TRIAL_TERMS.map((t) => (
-              <div key={t.label} className="lp-term">
-                <span className="lb">{t.label}</span>
-                <p>{t.body}</p>
+              <div className="sk-def__row" key={t.label}>
+                <h3 className="sk-h4">{t.label}</h3>
+                <p className="sk-body">{t.body}</p>
               </div>
             ))}
           </div>
+        </div>
+      </section>
 
-          <div className="lp-center" style={{ gap: 14 }}>
-            <Link href={TRIAL_HREF} className="lp-btn lp-btn--accent">
-              Start 14-day trial
-            </Link>
-            <p className="lp-note" style={{ color: "var(--text-on-dark-soft)" }}>
-              No sales call. No quote request. No onboarding fee.
+      {/* What it is being compared to */}
+      <section className="sk-sec sk-sec--tight">
+        <div className="sk-panel sk-on-blue">
+          <HeroArt />
+          <div className="sk-panel__in">
+            <p className="sk-head__pill">
+              <span className="sk-pill">The comparison</span>
             </p>
+            <div className="sk-head__row">
+              <h2 className="sk-h2">What outsourcing the same work costs</h2>
+              <p className="sk-lead sk-head__aside">
+                Sokndall does not do the work. It tracks it. That is the whole reason the price is lower — you are not
+                paying for a person on the other end.
+              </p>
+            </div>
+
+            <div className="sk-bento sk-bento--2 sk-figures">
+              {COST_BLOCKS.map((c) => (
+                <div className="sk-fig" key={c.title}>
+                  <p className="sk-fig__v sk-num">{c.figure}</p>
+                  <p className="sk-micro">{c.unit}</p>
+                  <p className="sk-fig__l">{c.title}</p>
+                  <p className="sk-small">{c.body}</p>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
 
-      {/* 6 — FAQ */}
-      {/* 6 — FAQ. An accordion reads at ~840px, which is narrower than the
-          container: centred it is symmetric, left-aligned it is a 344px void.
-          Centred, with the eyebrow and headline over it. */}
-      <section style={{ maxWidth: "var(--maxw)", margin: "0 auto", padding: "96px var(--pad-x)" }}>
-        <div className="lp-center" style={{ gap: 18, marginBottom: 44 }}>
-          <div className="lp-eyebrow">FAQ</div>
-          <h2 className="lp-h2" style={{ maxWidth: 720 }}>
-            Nothing here is negotiable, so ask
-          </h2>
+      {/* The Billing Co structure */}
+      <section className="sk-sec sk-sec--tight">
+        <div className="sk-head">
+          <p className="sk-head__pill">
+            <span className="sk-pill">Billing Co</span>
+          </p>
+          <div className="sk-head__row sk-head__row--top">
+            <h2 className="sk-h2">Separate client organizations, one login</h2>
+            <p className="sk-body sk-body--lg sk-head__aside">
+              Each client is its own organization with its own providers, payers and applications. Users are restricted
+              to the clients they are assigned. One digest covers all of them.
+            </p>
+          </div>
         </div>
-        <div style={{ maxWidth: 840, margin: "0 auto" }}>
-          <Faq items={FAQ_ITEMS} />
+
+        <div className="sk-bento sk-bento--split">
+          <div className="sk-card sk-card--line sk-card--pad">
+            <div className="sk-hcard__head">
+              <p className="sk-micro">Client organizations</p>
+              <span className="sk-small sk-num">{CLIENTS.length} clients</span>
+            </div>
+            <div className="sk-note">
+              {CLIENTS.map((c) => (
+                <div className="sk-staterow" key={c.name}>
+                  <span className="st">{c.name}</span>
+                  <span className="dt">{c.providers} providers</span>
+                  {c.quiet ? (
+                    <Mark state={{ label: "Gone quiet", glyph: "▲", tone: "warn" }} count={String(c.quiet)} />
+                  ) : (
+                    <Mark state={{ label: "Open", glyph: "◐", tone: "blue" }} count={String(c.open)} />
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="sk-stack">
+            <div className="sk-card sk-card--soft sk-card--pad sk-stack">
+              <p className="sk-micro">Across every client</p>
+              <p className="sk-kpi sk-kpi--lg sk-num">{totalProviders}</p>
+              <p className="sk-small">
+                providers tracked, {totalOpen} open applications, {totalQuiet} that have gone quiet
+              </p>
+            </div>
+            <div className="sk-card sk-card--blue sk-card--pad sk-stack">
+              <p className="sk-micro">One digest</p>
+              <p className="sk-h4">Per client, or all of them at once</p>
+              <p className="sk-small">
+                Monday&rsquo;s email routes by client, so the person who owns an account gets the account, and whoever
+                runs the operation gets the whole board.
+              </p>
+            </div>
+          </div>
         </div>
       </section>
 
-      <SiteFooter />
-    </div>
+      {/* FAQ */}
+      <section className="sk-sec sk-sec--tight">
+        <div className="sk-head">
+          <p className="sk-head__pill">
+            <span className="sk-pill">Questions</span>
+          </p>
+          <div className="sk-head__row sk-head__row--top">
+            <h2 className="sk-h2">Answered before you have to ask</h2>
+          </div>
+        </div>
+        <Faq items={FAQ_ITEMS} openFirst />
+      </section>
+
+      {/* Closing */}
+      <section className="sk-sec sk-sec--tight">
+        <div className="sk-cta sk-on-blue">
+          <HeroArt />
+          <div className="sk-cta__inner">
+            <h2 className="sk-h2">No demo, no quote, no call.</h2>
+            <p className="sk-lead sk-cta__b">
+              Pick a plan, enter a card, import your providers. If it is not doing anything for you by day 14, cancel
+              and you are not charged.
+            </p>
+            <div className="sk-cta__btns">
+              <Link href={TRIAL_HREF} className="sk-btn sk-btn--primary">
+                Start 14-day trial
+              </Link>
+              <Link href="/payer-enrollment-software" className="sk-btn sk-btn--ghost">
+                See what it tracks
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <Footer />
+    </Shell>
   );
 }

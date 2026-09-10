@@ -64,3 +64,34 @@ export const FAQ_ITEMS = [
     a: "That is a reasonable split if the compliance training is the part of MedTrainer you actually value — nothing about either product requires the other.",
   },
 ];
+
+// Added with the move onto the editorial mould: the contents list for the
+// 288px sidebar and the related rows below the FAQ. Neither existed on the
+// solo-column template this page used before.
+export const CONTENTS = [
+  { id: "known", label: "What is publicly known" },
+  { id: "strengths", label: "Three products, one subscription" },
+  { id: "where-it-stops", label: "Where the bundle stops" },
+  { id: "fit", label: "Who MedTrainer is right for" },
+  { id: "questions", label: "Questions for the demo call" },
+  { id: "price", label: "What Sokndall costs" },
+  { id: "faq", label: "Questions" },
+];
+
+export const RELATED = [
+  {
+    href: "/symplr-pricing",
+    title: "symplr pricing",
+    hook: "The same question asked of the vendor that dominates the hospital segment.",
+  },
+  {
+    href: "/modio-health-pricing",
+    title: "Modio Health pricing",
+    hook: "The same question asked of OneView, and what a demo-only quote implies.",
+  },
+  {
+    href: "/pricing",
+    title: "What Sokndall costs",
+    hook: "Three plans, published, with what each one includes and what it does not.",
+  },
+];

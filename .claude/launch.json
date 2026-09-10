@@ -6,6 +6,13 @@
       "runtimeExecutable": "C:\\Users\\juand\\sokndall-h110-credentialing\\.claude\\run-dev.cmd",
       "runtimeArgs": [],
       "port": 3000
+    },
+    {
+      "name": "h110-marketing",
+      "runtimeExecutable": "C:\\Users\\juand\\sokndall-h110-credentialing\\.claude\\run-dev.cmd",
+      "runtimeArgs": [],
+      "port": 3000,
+      "autoPort": true
     }
   ]
 }

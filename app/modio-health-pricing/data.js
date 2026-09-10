@@ -59,3 +59,34 @@ export const FAQ_ITEMS = [
     a: "Possibly, depending on volume. That is a fair question to ask directly on a demo call rather than assume either way.",
   },
 ];
+
+// Added with the move onto the editorial mould: the contents list for the
+// 288px sidebar and the related rows below the FAQ. Neither existed on the
+// solo-column template this page used before.
+export const CONTENTS = [
+  { id: "known", label: "What is publicly known" },
+  { id: "strengths", label: "What OneView does well" },
+  { id: "fit", label: "Where the fit question comes in" },
+  { id: "third-option", label: "Two products, and a third" },
+  { id: "questions", label: "Questions for the demo call" },
+  { id: "price", label: "What Sokndall costs" },
+  { id: "faq", label: "Questions" },
+];
+
+export const RELATED = [
+  {
+    href: "/symplr-pricing",
+    title: "symplr pricing",
+    hook: "The same question asked of the vendor that dominates the hospital segment.",
+  },
+  {
+    href: "/medtrainer-pricing",
+    title: "MedTrainer pricing",
+    hook: "The one vendor here that documents how its price is calculated.",
+  },
+  {
+    href: "/pricing",
+    title: "What Sokndall costs",
+    hook: "Three plans, published, with what each one includes and what it does not.",
+  },
+];

@@ -10,6 +10,7 @@ const DISALLOW = [
   "/onboarding",
   "/auth",
   "/login",
+  "/styleguide",
 ];
 
 // Search and AI answer engines we explicitly welcome. GPTBot is intentionally

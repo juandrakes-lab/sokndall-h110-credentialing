@@ -24,10 +24,112 @@ Testing the two Vercel Cron routes locally requires the bearer token: `curl -H "
 
 **No PHI, ever, anywhere.** Only provider identity/credential data — that's what keeps this out of HIPAA/BAA territory. Never add patient data, and never add scraping of CAQH/NPPES/payer portals/state boards — manual entry and CSV import only.
 
-### Two unrelated styling systems — do not cross them
+### Styling systems — do not cross them
 
 1. **The authenticated app** (`app/(app)/*`, `app/login`, `app/onboarding`) uses **Tailwind v4**, configured via `@theme` in `app/globals.css` (not a `tailwind.config.js` — that's the v4 way). Classes like `ink-900`, `brand-600`, `status-active` come from there.
-2. **The marketing site** (`/landing`, `/pricing`, `/payer-enrollment-software`, `/credential-expiration-tracking`, `/credentialing-spreadsheet-template`) runs on a **separate, portable design system** rooted at `design-system/` (read `design-system/readme.md` and `SKILL.md` first) and its own CSS: `components/site/site.css` (the visual skin: forest/gold/paper tokens, type scale, buttons, image treatments) plus `components/site/site-pages.css` (page-level layout patterns, imported *after* `site.css` so it can override). Both are `.lp-*`-prefixed and scoped under a single `.sokndall-landing` wrapper div — nothing here touches Tailwind, and nothing from `app/globals.css` should leak into these pages.
+2. **The live marketing site** runs on the **neo skin**: `components/neo/neo.css`, `.sk-*`-prefixed, scoped under a single `.sokndall-neo` wrapper. **This is what every marketing route renders today** — see "The neo marketing skin" below. Start there.
+3. **The forest/gold system** described in the next paragraph (`components/site/*`, `.lp-*` under `.sokndall-landing`) is the skin the marketing site used before the neo rebuild. It is still in the tree and still compiles, but **no route imports it any more.** It is kept because every page's copy still lives in the `data.js` files beside those pages, and because reverting a route is a one-line import change. Do not add pages to it, and do not mix `.lp-*` and `.sk-*` in one page.
+
+The pre-neo marketing site (`/landing`, `/pricing`, `/payer-enrollment-software`, `/credential-expiration-tracking`, `/credentialing-spreadsheet-template`) runs on a **separate, portable design system** rooted at `design-system/` (read `design-system/readme.md` and `SKILL.md` first) and its own CSS: `components/site/site.css` (the visual skin: forest/gold/paper tokens, type scale, buttons, image treatments) plus `components/site/site-pages.css` (page-level layout patterns, imported *after* `site.css` so it can override). Both are `.lp-*`-prefixed and scoped under a single `.sokndall-landing` wrapper div — nothing here touches Tailwind, and nothing from `app/globals.css` should leak into these pages.
+
+### The neo marketing skin
+
+Everything under `components/neo/` — one stylesheet (`neo.css`), one wrapper
+(`.sokndall-neo`), one prefix (`.sk-`). It shares nothing with `site.css` or
+with the Tailwind `@theme`; the three never meet.
+
+**The shape of the page.** The grey `--page` ground is the page; a single white
+rounded card (`.sk-shell`, via `components/neo/Shell.jsx`) is the document, and
+nothing renders outside it. Every route is `<Shell>` wrapping either a landing
+(hero panel → sections → `Footer`) or an `<Article>`.
+
+**The signature block** is `HeroPanel`: a saturated blue rounded panel whose
+top-left corner is squared so a white *notch* can seat flush into it and carry
+the wordmark, with the nav riding on the blue beside it and a small blue tongue
+(`.sk-hero__tab`) dropping below the panel's bottom edge. The notch/nav pair
+lives in one absolutely-positioned row so the notch sizes itself to the
+wordmark. Do not reimplement this per page — `HeroPanel` is the only copy, and
+the homepage and all three product-ish landings go through it.
+
+**Four page categories, and they are not interchangeable.**
+
+- *Landings* (`/`, `/pricing`, `/payer-enrollment-software`,
+  `/credential-expiration-tracking`, `/for-billing-companies`) — blue hero
+  panel, `.sk-sec` sections, a section head that is pill → heading left /
+  supporting matter right, bento card grids, repeated CTAs. `components/neo/Landing.jsx`
+  is the fullest example.
+- *Articles* (the five `/payer-enrollment*` guides,
+  `/credentialing-spreadsheet-template`) — the `Article` component.
+  `variant="guide"` gives a centred masthead plus a sticky scroll-spy contents
+  sidebar above 1160px (`Toc`); `variant="solo"` is one ~42rem column that never
+  splits. No alternating surfaces, no cards inside body copy, no CTA between
+  sections — the only conversion point is the closing `.sk-article__cta`, plus
+  `ExploreMore` at the end of the payer-enrollment cluster.
+- *Editorial* (`/caqh-reattestation`, and every comparison page) —
+  `components/neo/Editorial.jsx`. A 1040px masthead over a 288px sticky contents
+  sidebar and a 720px reading column, capped rather than fluid. Pieces come from
+  `EditorialBits`; `EditorialToc` is the scroll-spy.
+  **`variant="comparison"`** serves the three competitor pages off the same
+  frame: nothing about the mould changes, but the last three blocks of the
+  reading column are fixed — our own price, the closing CTA, the FAQ — with
+  `RelatedGuides` below them. The price section is rendered unconditionally
+  rather than passed in, and the template throws when `faq` or `cta` is missing,
+  so the shape cannot erode by omission. The comparison body is built from
+  `SourcedPricingDisclosure`, `GoodFitSection` and `PurchaseModelCompare` in
+  `ComparisonBits`, which are plain `<section>`s and drop into the column like
+  any prose section. `MultiVendorComparison` lives there too and belongs to
+  `/best-credentialing-software` alone — that page has no approved copy yet, so
+  the component is proved at `/styleguide/comparison`, which is noindex.
+  Three rules the whole category carries: no competitor logos or screenshots
+  (the components take names as text and have no image prop), no adjective
+  characterizing a competitor negatively, and no figure without its provenance
+  in the same row — `SourcedPricingDisclosure` throws otherwise, and no cell in
+  `MultiVendorComparison` may be empty or estimated.
+- *Institutional* (`/security`, `/about`) — `components/neo/Institutional.jsx`.
+  One centred 36rem column, 300–600 words, no sidebar and **no CTA anywhere on
+  the page**, at the foot included: a page that answers a trust objection and
+  then asks for the sale has answered it in order to ask. Composed from
+  `PageHeader` and `ProseSection`, plus one portrait slot on `/about` — a real
+  photograph of the founder or of the desk this is built on, or nothing. Never
+  stock. It ships empty at a declared 4:5.
+
+The earlier `ComparisonTemplate.jsx` (its own 780px column) and `Comparison.jsx`
+(an `Article` wrapper) both did this job before and are **deleted** — there is
+one comparison mould now, not three.
+
+**Client components, and only these two:** `Faq` (the accordion — every answer
+is in the SSR HTML whether open or not, `hidden` rather than absent, so the copy
+stays crawlable) and `Toc` (the scroll-spy). Everything else renders on the
+server.
+
+**Diagrams stay diagrams.** The matrix, timeline, follow-up log, cadence chart,
+alert ladder, digest and portal-check are deliberately real HTML/CSS at low
+fidelity. They get replaced with actual product screenshots once the
+corresponding screen exists — never with better-drawn mockups now.
+
+**Two CSS traps this skin hit, both fixed and both easy to reintroduce:**
+
+- `.sk-on-blue` sets white text, but light cards float *inside* the blue panel,
+  so every on-blue rule is countered by a higher-specificity
+  `.sk-on-blue .sk-card:not(.sk-card--blue)` block. Any new text utility needs
+  an entry in both.
+- A one-column grid's implicit `auto` track takes its minimum from min-content,
+  so a wide child pushes the track past its container instead of being
+  constrained by it. Every single-column grid here declares
+  `grid-template-columns: minmax(0, 1fr)`. For the same reason a list item that
+  holds several inline children uses an absolutely-positioned `::before` marker
+  rather than a marker column — as a grid cell, each inline child becomes its
+  own grid item and the running text lands in the 16px marker column.
+
+**Photography** is real and already in `public/`: `landing/positioning.png` and
+`pages/hub-hero.png` are framed documentary shots (4:3 and 3:2);
+`landing/hero-photo.png`, `pages/enrollment-hero.png`,
+`pages/expiration-hero.png` and `landing/problem-figure.png` are transparent
+portrait cut-outs that stand on the blue hero panel with their feet on its
+bottom edge. Route them through `components/neo/Photo.jsx`, which renders a real
+`<img>` when given a `src` and a labelled, art-directed placeholder when not.
+The direction is fixed: documentary, real clinic back office, available light,
+nobody looking at or smiling into the camera.
 
 A marketing page's shape: a `page.jsx` that imports both CSS files, wraps its content in `<div className="sokndall-landing">`, opens with `<SiteNav />` and closes with `<SiteFooter />` (both from `components/site/`), and keeps its copy/content data in a sibling `data.js`. `app/pricing/page.jsx` is the fullest current example to copy from.
 
