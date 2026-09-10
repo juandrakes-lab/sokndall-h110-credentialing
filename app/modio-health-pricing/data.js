@@ -1,92 +1,134 @@
-// /modio-health-pricing — content for the shared competitor-pricing template
-// (see /symplr-pricing/data.js for the section-order rule all three follow).
+// `/modio-health-pricing` — copy verbatim from H110_COPY_TANDA_B_COMPARACION.md,
+// "PÁGINA 14". Replaces the pre-v3.1 copy entirely.
+//
+// The one concrete public fact about how Modio is sold is its paid search: 27
+// keywords whose ads lead to a demo booking, never to a figure. The copy
+// treats it as evidence, not a jab, and so does this page.
 
-export const KNOWN = [
-  "Modio does not publish prices for OneView on modiohealth.com. The site's own copy asks visitors to complete a form to receive a quote and an information kit — no figure appears before that. Subscription terms are arranged per organization.",
-  "Figures circulating on review sites and comparison posts vary widely and are not company-published. None of them are treated as a quote here.",
-  "This is common for data-verification platforms specifically, more so than for simple SaaS tools — pricing often scales with data volume and verification frequency, not just seat count, which makes a flat published number harder to give honestly even if a company wanted to.",
-];
+export const META = {
+  title: "Modio Health Pricing: What Is Public and What Is Not",
+  description:
+    "Modio Health does not publish a price for OneView. What it does publish is 27 paid search keywords, all of which lead to a demo booking rather than a figure.",
+};
 
-// Expanded from two paragraphs to four: the added middle paragraph defines
-// what primary source verification actually is and names the liability it
-// carries, so the claim that Sokndall "does not do that at all" lands as an
-// informed distinction rather than a dismissal.
-export const STRENGTHS = [
-  "OneView is a credentialing data platform. It pulls provider details from public and primary-source data — NPI, DEA, license numbers, education history, OIG exclusion status — so a provider's profile fills itself in rather than someone typing it from documents by hand.",
-  "Primary source verification means confirming a credential directly with the body that issued it, rather than trusting the copy a provider submits. A license number gets checked against the state board's own record, not just recorded as text. That is meaningfully different work from tracking a date, and it is the part of credentialing that carries the most liability if it is done wrong — a provider practicing on a fabricated or revoked license is a problem no tracker, including Sokndall, is built to catch.",
-  "OneView also stores documents with permissions, tracks expirables including CAQH reattestation dates, and runs monthly exclusion monitoring — checking providers against federal and state exclusion lists on an ongoing basis, not just at hiring.",
-  "If primary source verification and automated exclusion monitoring are the part of your work that actually hurts, that is the product built for it, and Sokndall does not do that at all — it assumes you have already verified, and records what you verified and when.",
-];
+export const HEADER = {
+  title: "Modio Health does not publish a price, and it buys 27 search keywords to say so",
+  standfirst:
+    "OneView is the closest product in this category to a small-practice tool, and finding out what it costs still requires a demo. The advertising spend around that demo is the most concrete evidence available of how it is sold.",
+  category: "Pricing",
+  date: "2026-09-08",
+  readingTime: "4 min read",
+};
 
-export const FIT = [
-  "Modio sells to hospital administrators, credentialing departments, group practices and staffing organizations, and also runs a credentialing service (Modio XCS) that does the submissions for you — its own materials cite enrollment averaging 60 days versus a 120-day industry standard, and cases of recovering revenue that credentialing gaps had cost. That is a service business layered on the software, not just a tracker.",
-  "Whether the software customer base itself includes much volume in the two-to-ten-physician range is not something Modio publishes a breakdown of, and no independent source here confirms it either way. That is worth asking directly on a demo call — how many customers your size are on it, and who supports them — rather than assuming an answer this page cannot verify.",
-];
-
-export const THIRD_OPTION = [
-  "Modio verifies. Sokndall tracks. And underneath both sits the option neither of them is: paying someone to physically maintain your credentials — reattest, renew, resubmit — which published estimates put at $600 to $2,400 per provider per year.",
-  "If you need primary source verification and exclusion monitoring pulled automatically, that is Modio's job. If you need someone else to do the maintenance work entirely, that is the $600–$2,400/year category, and it is a legitimate choice on its own terms. If your actual problem is that you do not know which of your fourteen open payer applications went quiet, and nobody tells you before an attestation lapses, that is a tracking problem, and it costs $79 to $699 a month here.",
-];
-
-// New section, between the third-option framing and the price table.
-export const QUESTIONS = [
-  "How verification actually works for licenses outside major databases — some state boards and international credentials are harder to verify automatically, and it is worth knowing whether those cases need manual work on your end regardless of which platform you use.",
-  "What “monthly exclusion monitoring” actually checks against, and whether that list matches what your state requires you to screen against.",
-  "Whether pricing scales with provider count, with verification volume, or with both — and what happens to the price if your provider count doubles.",
-  "If you are also considering Modio XCS, the service layer: what exactly is included, what the realistic timeline looks like for your specialty and state, and what happens if a submission stalls — who owns following up.",
-  "And the same question that applies everywhere in this category: what does exporting your data look like if you switch platforms later.",
-];
-
-export const FAQ_ITEMS = [
-  {
-    q: "Does Modio publish pricing anywhere?",
-    a: "Not publicly. You request a quote.",
-  },
-  {
-    q: "Can I use both?",
-    a: "You could, though for most practices under fifty providers the overlap is not worth two subscriptions.",
-  },
-  {
-    q: "Does Sokndall do primary source verification?",
-    a: "No, and it says so on every page.",
-  },
-  {
-    q: "What is the actual difference between verification and tracking?",
-    a: "Verification confirms a credential is real by checking with whoever issued it. Tracking records the dates and statuses you already know, and tells you when something needs attention. Most small practices need tracking daily and verification occasionally — at hiring and at renewal, not continuously.",
-  },
-  {
-    q: "If I only need occasional verification, is Modio overkill?",
-    a: "Possibly, depending on volume. That is a fair question to ask directly on a demo call rather than assume either way.",
-  },
-];
-
-// Added with the move onto the editorial mould: the contents list for the
-// 288px sidebar and the related rows below the FAQ. Neither existed on the
-// solo-column template this page used before.
+// No contents list in the copy for this page: the entries are its H2s verbatim.
 export const CONTENTS = [
-  { id: "known", label: "What is publicly known" },
-  { id: "strengths", label: "What OneView does well" },
-  { id: "fit", label: "Where the fit question comes in" },
-  { id: "third-option", label: "Two products, and a third" },
-  { id: "questions", label: "Questions for the demo call" },
-  { id: "price", label: "What Sokndall costs" },
-  { id: "faq", label: "Questions" },
+  { id: "fit", label: "When Modio Health is the right product to buy" },
+  { id: "price", label: "What Sokndall costs, and what it is being compared to" },
 ];
 
+// Claim 3's provenance is the copy's own: "Paid keyword data, September 2026".
+// The copy gives no URL for it, so it carries none (reported).
+export const DISCLOSURE = {
+  id: "disclosure",
+  lead:
+    "There is less public information about Modio's pricing than about any other product compared on this site. What exists is the shape of the sale rather than the price itself, and that turns out to be informative.",
+  claims: [
+    {
+      status: "not-published",
+      text: "Modio Health does not publish a price for OneView. The site offers a free demo booking and there is no self-serve signup path anywhere on it.",
+      note: "Confirmed on [modiohealth.com](src:modio). No third-party figure was found circulating for the product, which is unusual for one with [29 Capterra reviews](src:capterraModio).",
+    },
+    {
+      status: "not-published",
+      text: "The charging unit is not documented. Marketing copy refers to your team and your organisation without specifying seats, providers or modules.",
+      note: "[modiohealth.com](src:modio). Per-provider is the unit the market assumes informally, but Modio does not state it anywhere public.",
+    },
+    {
+      status: "vendor-stated",
+      text: "Modio runs 27 paid search keywords whose ad copy reads try our free demo today and schedule a demo. Not one of them leads to a figure.",
+      note: "Paid keyword data, September 2026. This is direct, citable evidence of the sales model rather than an inference about it.",
+    },
+  ],
+};
+
+export const PURCHASE = {
+  id: "purchase",
+  theirs: "Modio Health",
+  rows: [
+    {
+      criterion: "Published price",
+      unit: "yes or no, on the vendor's own site",
+      theirs: "No. A free demo booking, and no self-serve signup path anywhere on the site.",
+      ours: "Yes. Three figures on the page, and the same three inside the product schema.",
+    },
+    {
+      criterion: "What the ads promise",
+      unit: "what a paid click actually leads to",
+      theirs: "A demo booking. Twenty-seven paid keywords, and not one lands on a figure.",
+      ours: "The price list. There is no ad spend here, and no page behind a form.",
+    },
+  ],
+  note:
+    "The paid keyword data is evidence, not a jab. Twenty-seven keywords is a real budget spent getting a buyer into a conversation, and that spend is recovered somewhere inside whatever price the demo produces. It is also the clearest available answer to a question the site itself never answers: how Modio expects to be bought.",
+};
+
+export const FIT = {
+  id: "fit",
+  heading: "When Modio Health is the right product to buy",
+  paras: [
+    "Independent medical practices and organisations with tens rather than hundreds of providers, including mental health groups. Its own published case study is a practice with more than forty physicians, and [its Capterra base](src:capterraModio) runs about half hospital and health care with a quarter medical practice. Of every product compared on this site, this is the one whose customers most resemble the reader of this page, and it is a reasonable shortlist entry if you will sit through the demo.",
+  ],
+};
+
+// No EmailCapture heading in the copy for this page: the component default.
+export const TEMPLATE_HEADING = undefined;
+
+export const PRICE = {
+  heading: "What Sokndall costs, and what it is being compared to",
+  paras: [
+    "$79, $299 and $699 a month for up to 3, 15 and 50 providers — $26.33, $19.93 and $13.98 per provider. Every plan has every feature. Fourteen-day trial, card up front, cancel from Settings before day 15.",
+  ],
+};
+
+// Button labels are not given for this page; they are page 12's approved pair.
+export const CTA = {
+  body: "The same size of buyer, without the demo. The price is on the page and the trial starts when you decide it does.",
+  primary: { label: "Start the fourteen-day trial", href: "/login" },
+  secondary: { label: "See all three plans", href: "/pricing" },
+};
+
+export const FAQ = [
+  {
+    q: "How much does Modio Health cost?",
+    a: "Modio Health does not publish a price for OneView, and no third-party figure is circulating either — unusual for a product with [29 Capterra reviews](src:capterraModio). The site offers a free demo booking and no self-serve path. The charging unit is not documented anywhere public: the marketing copy refers to your team without specifying seats, providers or modules.",
+  },
+  {
+    q: "Does Modio Health publish its pricing?",
+    a: "No. It runs 27 paid search keywords whose ad copy invites you to try a free demo or schedule one, and not a single one of them leads to a figure. That advertising spend is the most concrete public evidence of how the product is sold, and it is a real budget that has to be recovered somewhere inside whatever price the demo eventually produces.",
+  },
+  {
+    q: "What is OneView?",
+    a: "OneView is Modio Health's credentialing platform — the product name you will see on the site and in reviews. It covers provider data management, credentialing and payer enrollment tracking for practices and medical groups. Its published case study is a practice with more than forty physicians, which is a fair indication of the size it is built around.",
+  },
+];
+
+// No related cards in the copy for this page. Architecture v3.1 §6: 14 → 3, 2.
+// Third card: symplr, titled with its own approved <title> (brand dropped) and
+// hooked with the first sentence of its approved meta description.
 export const RELATED = [
   {
-    href: "/symplr-pricing",
-    title: "symplr pricing",
-    hook: "The same question asked of the vendor that dominates the hospital segment.",
-  },
-  {
-    href: "/medtrainer-pricing",
-    title: "MedTrainer pricing",
-    hook: "The one vendor here that documents how its price is calculated.",
+    href: "/best-credentialing-software",
+    title: "Best Credentialing Software: What Each One Costs",
+    hook: "Five products, what each one actually costs, and who each is built for.",
   },
   {
     href: "/pricing",
-    title: "What Sokndall costs",
-    hook: "Three plans, published, with what each one includes and what it does not.",
+    title: "What Sokndall costs, and what each plan covers",
+    hook: "Three plans, three prices, and the unit each figure is counted in.",
+  },
+  {
+    href: "/symplr-pricing",
+    title: "symplr Provider Pricing: What Is Public and What Is Not",
+    hook: "symplr does not publish a price for symplr Provider.",
   },
 ];
