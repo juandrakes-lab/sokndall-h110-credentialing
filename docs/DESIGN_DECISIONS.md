@@ -506,3 +506,75 @@ landings (`/pricing`, la plantilla, `/payer-enrollment-software`) quedan
 vacías siempre: una landing no tiene cabecera fotográfica que recortar.
 Regla de DESIGN_RULES.md que aplica: §5 (hueco con ratio declarado, vacío),
 §10 (hueco 3:2 en tarjeta).
+
+## /best-credentialing-software — la tabla sin H2, y dónde van las cifras de costo
+Fecha: 2026-09-10
+Decisión: `MultiVendorComparison` entra sin H2: el copy le da entrada en el
+índice ("What the five products cost") pero no encabezado, así que la
+sección es destino del índice sin título propio. La sección de rangos de
+costo (que absorbe `credentialing software cost`) tiene H2 pero no entrada
+en el índice, tal como la trae el copy. Sus cuatro cifras con fuente van
+como lista de `SourcedFigure` antes del párrafo que las explica. El slot
+"No verificado" de cada vendor se imprime detrás de la etiqueta estructural
+"Not verified", del mismo tipo que "Stated / Observed".
+Regla de DESIGN_RULES.md que aplica: §2 regla 2, §6 (una sola enumeración:
+viñeta, sin número).
+
+## /medtrainer-pricing · /symplr-pricing · /modio-health-pricing — reescritas sobre el copy v3.1
+Fecha: 2026-09-10
+Decisión: las tres pasan a la estructura validada del copy
+(`SourcedPricingDisclosure` → `PurchaseModelCompare` → sección de para quién
+sí es adecuado → cola fija), las tres con los dos componentes de
+comparación. Queda superada la entrada del 2026-09-06 según la cual solo
+`/symplr-pricing` usaba `SourcedPricingDisclosure`: ahora las tres lo usan,
+porque el copy v3.1 de las tres está escrito en filas de afirmación.
+La columna del competidor va primero en `PurchaseModelCompare`, como la
+nombra el copy; ninguna columna se destaca.
+Faltantes del copy y qué se hizo:
+- Índice: el copy no da entradas para estas tres. Se usan sus H2 literales
+  (para quién sí, precio) más la entrada del FAQ; la divulgación y la tabla
+  de modelo de compra no tienen H2 en el copy y no reciben etiqueta
+  inventada. Quedan con 3 entradas, bajo el rango 5-10 de COPY_LIMITS
+  (que es de criterio, no de medida).
+- Relacionados: el copy no trae tarjetas para 12-14. Se armaron con strings
+  aprobados: las tarjetas que la página 3 ya escribe para `/pricing`, la
+  plantilla y `/medtrainer-pricing`; y para `/best-credentialing-software` y
+  `/symplr-pricing`, su `<title>` sin la marca y la primera oración de su
+  standfirst o meta description. Destinos según la arquitectura §6
+  (12-14 → 3 y 2).
+- `/symplr-pricing` y `/modio-health-pricing` no traen heading para el
+  `EmailCapture` ni labels para el CTA de producto: la caja usa el heading
+  por defecto de `templateCta.js` y el CTA reusa el par aprobado de la
+  página 12.
+Regla de DESIGN_RULES.md que aplica: §9, §10, §11.
+
+## Las seis guías — el enlace a /pricing con el anchor del copy
+Fecha: 2026-09-10
+Decisión: el copy de las seis guías pide un enlace a `/pricing` con el
+anchor "the three published plans" "sin agregar prosa nueva", pero esa
+frase no aparece en ninguno de los párrafos aprobados. Se pone como línea
+propia al final de la sección de límite declarado ("The three published
+plans", con mayúscula inicial por abrir línea). No se reescribió ningún
+párrafo para meterla.
+Regla de DESIGN_RULES.md que aplica: §9 (el enlace no es un CTA: no hay caja
+ni botón), on-page-seo.md §6.
+
+## /provider-credentialing-checklist — la lista como `DocumentChecklist`
+Fecha: 2026-09-10
+Decisión: los doce ítems van en `DocumentChecklist` (ver entrada del
+componente). La fuente de la lista, Maryland Department of Health, va en una
+línea propia debajo con la etiqueta "Source:", porque el copy la declara en
+la nota `(f)` y no dentro de la lista.
+Regla de DESIGN_RULES.md que aplica: §2 regla 2, §6.
+
+## Las 15 páginas — fuentes con dominio y sin documento
+Fecha: 2026-09-10
+Decisión: once fuentes que el copy nombra solo por dominio (BehaveHealth,
+Evernorth resource library, UMR, Optum San Diego, Carelon contacto, Maryland
+Department of Health, BCBS Nebraska, Contracting Providers, RCMGen,
+HireGaynell, DrCredentialing, MedSole "Expired") enlazan a la raíz de ese
+dominio y quedan marcadas `pending: true` en `sources.js`. La cita es visible
+y atribuible; el documento exacto es un cambio de una línea cuando exista la
+URL. No se investigó para completarlas: SIGUIENTE_FASE.md prohíbe mezclar
+ensamblado con investigación.
+Regla de DESIGN_RULES.md que aplica: §2 regla 2.
