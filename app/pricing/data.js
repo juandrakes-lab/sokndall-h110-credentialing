@@ -1,124 +1,146 @@
-// /pricing content. Prices and per-provider figures are plain text on the page
-// (no images of numbers) so they match any structured data added later.
+// `/pricing` — copy verbatim from H110_COPY_TANDA_A_LANDING.md, "PÁGINA 2 ·
+// `/pricing`". Rebuilt from zero on LandingTemplate on 2026-09-10; nothing of
+// the previous hand-built composition is carried over (DESIGN_DECISIONS.md).
 //
-// NOTE: these are the published marketing prices. `lib/plans.js` — which drives
-// the Polar checkout — still carries the older 49/99/199 figures. They have to
-// be reconciled before this page goes live.
+// Plan prices are not written here: they come from PLAN_PRICES in
+// components/neo/schema.jsx, which the SoftwareApplication schema reads too.
 
-export const PLANS = [
-  {
-    key: "solo",
-    name: "Solo",
-    price: "$79",
-    period: "/month",
-    perProvider: "$26 per provider per month",
-    features: [
-      "Up to 3 providers, 1 user",
-      "All credential tracking, all payer enrollment tracking",
-      "Weekly digest every Monday",
-    ],
-    featured: false,
-  },
-  {
-    key: "practice",
-    name: "Practice",
-    price: "$299",
-    period: "/month",
-    perProvider: "$20 per provider per month",
-    label: "Most complete for a group practice",
-    features: [
-      "Up to 15 providers, up to 3 users",
-      "Everything in Solo",
-      "All credential tracking, all payer enrollment tracking",
-      "Weekly digest every Monday",
-    ],
-    featured: true,
-  },
-  {
-    key: "billing_co",
-    name: "Billing Co",
-    price: "$699",
-    period: "/month",
-    perProvider: "$14 per provider per month",
-    features: [
-      "Up to 50 providers across all clients",
-      "Up to 10 users included, each restricted to assigned clients",
-      "Everything in Practice, plus the multi-client structure",
-      "One view across every client you manage",
-    ],
-    featured: false,
-  },
-];
+export const META = {
+  title: "Credentialing Software Pricing, Published in Full | Sokndall",
+  description:
+    "Credentialing software pricing published in full: $79, $299 or $699 a month, with every feature in every plan. No quote process and no demo call ever.",
+};
 
-// The six client organizations in the Billing Co schematic. The numbers add up
-// to the 23 in the digest line, on purpose.
-export const CLIENTS = [
-  { name: "Client 01", providers: 9, open: 6, quiet: 1 },
-  { name: "Client 02", providers: 7, open: 3, quiet: 0 },
-  { name: "Client 03", providers: 12, open: 5, quiet: 2 },
-  { name: "Client 04", providers: 5, open: 2, quiet: 0 },
-  { name: "Client 05", providers: 8, open: 4, quiet: 1 },
-  { name: "Client 06", providers: 6, open: 3, quiet: 0 },
-];
+// on-page-seo.md §4 pattern: premise in the H1, the exact keyword in the first
+// H2 below. The two sentences are set as two authored lines.
+export const HERO = {
+  title: ["No quote to get.", "No call to book."],
+  sub:
+    "Three plans, three prices, no quote process. Every plan has every feature. The difference is how many providers you track, and whether you track them for your own practice or for clients.",
+};
 
-// Trial terms as three labelled commitments (B-4). "No retention call" is kept
-// explicit rather than folded into "no email required" — it is the claim that
-// separates this from the incumbents' sales model, and it is brief copy.
-export const TRIAL_TERMS = [
-  {
-    label: "14 days, full product.",
-    body: "Every feature, from day one — nothing held back for the trial.",
-  },
-  {
-    label: "Card up front.",
-    body: "So you are not re-entering it when the trial ends and you decide to stay.",
-  },
-  {
-    label: "Cancel from Settings.",
-    body: "Self-serve, no email required, no retention call. The card is charged on day 15 if you do not.",
-  },
-];
+export const PLANS = {
+  head: { title: "Credentialing software pricing: three plans, published" },
+  plans: [
+    {
+      name: "Solo",
+      desc: "One provider or a small solo practice",
+      features: [
+        "Up to 3 providers, 1 user",
+        "$26.33 per provider per month",
+        "Every feature, including the weekly digest",
+      ],
+    },
+    {
+      name: "Practice",
+      highlighted: true,
+      tag: "Most complete for a group practice",
+      desc: "A group with one person handling this",
+      features: ["Up to 15 providers, up to 3 users", "$19.93 per provider per month", "Everything in Solo"],
+    },
+    {
+      name: "Billing Co",
+      desc: "[Separate client organizations, one login](/for-billing-companies)",
+      features: [
+        "Up to 50 providers across all clients",
+        "Up to 10 users, scoped to their clients",
+        "$13.98 per provider per month",
+        "Client data isolated from client data",
+      ],
+    },
+  ],
+  note:
+    "Every plan is monthly and cancels from Settings. Fourteen-day trial, card up front, nothing charged before day 15. What the per-provider figures compare against, below.",
+};
 
-export const COST_BLOCKS = [
-  {
-    title: "Ongoing maintenance, done for you",
-    figure: "$600 – $2,400",
-    unit: "per provider per year",
-    body: "Reattestation on the CAQH clock, recredentialing every two to three years, license and DEA renewals, roster updates. As a recurring fee, that lands at roughly $50 to $200 a month per provider.",
-  },
-  {
-    title: "One-time engagements",
-    figure: "$1,500 – $5,000",
-    unit: "per provider",
-    body: "Someone doing the initial submissions across your payers. You pay again when something structural changes: change your EIN and every application typically gets resubmitted, billable.",
-  },
-];
+// COPY_LIMITS: ≤21 per authored H2 line. Line 4 is 22 — one over. Kept as
+// approved and reported; the copy file's own shorter alternative changes the
+// wording, and approved copy is not rewritten to fit.
+export const UNITS = {
+  head: { title: ["A provider is not", "a user, and the", "difference is the", "whole comparison"] },
+  paras: [
+    "A provider is a record being tracked: one clinician, with their credentials and their enrollment applications. A user is a person who logs in. A three-person front office managing forty clinicians is three users and forty providers. A solo practitioner who does her own paperwork is one of each.",
+    "Sokndall charges by provider and includes users up to the plan's limit. MedTrainer states in [its own FAQ](src:medtrainerProduct) that its pricing scales with the number of users and modules. Neither model is wrong. They are simply not comparable, and every published comparison of this category that puts two per-unit figures side by side without saying which unit is measuring something it did not measure.",
+  ],
+  closing: "When you ask a vendor what it costs, the first question back should be yours: costs per what?",
+};
 
-export const FAQ_ITEMS = [
+export const ANCHOR = {
+  head: {
+    title: ["What this costs", "next to what you", "already pay"],
+    aside:
+      "Four published figures, and they do not measure the same thing. Two count providers handed to an outside team. One counts staff seats inside software. The last one is this product. Every figure states its unit, because that is exactly where this comparison usually goes wrong.",
+  },
+  figures: [
+    {
+      label: "$600 to $2,400 per provider, per year",
+      note: "Outsourced ongoing maintenance. Unit: one provider, per year. [Medicotech](src:medicotech) and [Medwave](src:medwave).",
+    },
+    {
+      label: "$1,500 to $5,000 per provider, once",
+      note: "Full initial outsourcing across core payers. Unit: one provider, once. [Medicotech](src:medicotech).",
+    },
+    {
+      label: "$3,600 to $9,000 a year, 15 users",
+      note: "[MedTrainer's own published category guidance](src:medtrainerBlog). Unit: staff seats, not providers.",
+    },
+    {
+      label: "$3,588 a year, 15 providers",
+      note: "Sokndall Practice, $299 a month. Unit: providers tracked. $239 each per year.",
+    },
+  ],
+  closing:
+    "Buying the work and tracking the work are different purchases at different prices. If you want someone to submit the applications, buy that instead.",
+};
+
+// TrialTermsBlock. Each item in the copy is "label — explanation"; the row card
+// sets the label as its title and the explanation beside it. The explanation's
+// first letter is capitalised because it now opens its own block — the only
+// typographic change made to the approved strings.
+export const TRIAL = {
+  head: { title: "How the trial works" },
+  items: [
+    { title: "14 days, full product", body: "Every feature from day one. Nothing is held back for the trial." },
+    {
+      title: "Card up front",
+      body: "So you are not re-entering it when the trial ends and you decide to stay.",
+    },
+    {
+      title: "Cancel from Settings",
+      body: "Self-serve, no email required. The card is charged on day 15 if you do not.",
+    },
+  ],
+};
+
+export const FAQ = [
   {
-    q: "Is there a contract?",
-    a: "No. Monthly, cancel any time. What you put in stays exportable.",
+    q: "How much does credentialing software cost?",
+    a: "Sokndall costs $79, $299 or $699 a month. Across the rest of the category nobody publishes a number: symplr, Modio Health, MedTrainer and CredentialStream all require a demo first, and [Capterra records all four as contact-vendor-for-pricing](/best-credentialing-software). The one public figure any of them offers is [MedTrainer's own blog guidance](src:medtrainerBlog) of $3,600 to $9,000 a year for fifteen users, which counts seats rather than providers.",
   },
   {
-    q: "Is there an annual discount?",
-    a: "No. One price, published, the same for everyone. There is no negotiated rate you are missing because you did not ask.",
+    q: "Is there a free credentialing software?",
+    a: "Not a real one. What exists is the free tier of a larger product, or a spreadsheet template — and [this site publishes one of those](/credentialing-spreadsheet-template), with the formulas already in it. Sokndall has a fourteen-day trial rather than a free plan, because a permanently free tier of a tracking tool tends to mean the tracking stops working at the moment it starts mattering.",
   },
   {
-    q: "What if I go over my provider limit?",
-    a: "You cannot add a new provider past the plan limit — you will see it before it blocks you, with the option to move up a plan right there. Nothing you have already entered is ever locked or hidden.",
+    q: "What happens if I cancel during the trial?",
+    a: "Nothing is charged. The card goes in at signup so that nothing has to be re-entered later, but the first charge lands on day 15. Cancel from Settings before then and it does not happen. There is no cancellation form, no retention call, and no email you have to send to a person. Your data stays exportable as CSV either way.",
+  },
+  {
+    q: "Do you charge per provider or per user?",
+    a: "Per provider. A provider is a clinician whose credentials and enrollments you track; a user is someone who logs in. Solo includes 3 providers and 1 user, Practice 15 providers and 3 users, Billing Co 50 providers and 10 users. Users are included rather than billed, which is the opposite of how most of this category prices, and it is why the per-unit figures do not compare directly.",
+  },
+  {
+    q: "Is there an onboarding fee?",
+    a: "No. There is no setup fee, no implementation cost, no paid migration and no training package. Spreadsheet import is built into the product, with a preview before anything commits. This is worth asking every vendor in the category separately from the license price, because implementation and training are frequently quoted as their own line and are not always mentioned unprompted.",
   },
   {
     q: "What counts as a provider?",
-    a: "Anyone you track credentials or enrollments for. Mark them inactive and they stop counting toward the limit.",
-  },
-  {
-    q: "Can I export everything?",
-    a: "Yes, CSV, any time, including after you cancel.",
-  },
-  {
-    q: "Do you offer setup or migration help?",
-    a: "Spreadsheet import is built in, with a preview before anything commits. There is no paid onboarding because there is nothing that needs a consultant.",
-    linkHref: "/credentialing-spreadsheet-template",
-    linkLabel: "Free spreadsheet template",
+    a: "Anyone you track credentials or enrollment records for — physicians, nurse practitioners, physician assistants, therapists, BCBAs, dietitians, physical therapists. If they have an NPI and a payer relationship you are maintaining, they count. Mark someone inactive and they stop counting against your plan limit immediately, so a departing clinician does not keep occupying a slot.",
   },
 ];
+
+export const CLOSING = {
+  title: "Start the fourteen-day trial",
+  body: "Card up front, cancel yourself from Settings before day 15. Nothing on this page changes after you sign up.",
+  primary: { label: "Start 14-day trial", href: "/login" },
+};
