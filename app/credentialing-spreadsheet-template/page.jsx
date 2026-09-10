@@ -1,76 +1,67 @@
-import Link from "next/link";
-
 import Shell from "@/components/neo/Shell";
-import Article, { ArticleCta } from "@/components/neo/Article";
+import Faq from "@/components/neo/Faq";
+import EmailCapture from "@/components/neo/EmailCapture";
+import { IconUsers, IconGrid, IconDoc, IconMail } from "@/components/neo/icons";
+import LandingTemplate, {
+  IconRowSection, ProseBandSection, PanelSection, CtaSection, HeroStrip,
+} from "@/components/neo/LandingTemplate";
+import { FAQ_HEADING } from "@/components/neo/neoData";
+import { TEMPLATE_CTA } from "@/components/neo/templateCta";
+import { JsonLd, faqSchema } from "@/components/neo/schema";
 import { pageMeta } from "@/lib/seo";
+import { META, HERO, FIELDS, LIMITS, ENOUGH, FAQ, CLOSING } from "./data";
 
+// `/credentialing-spreadsheet-template` — page 4 of the v3.1 map, rebuilt from
+// zero on LandingTemplate. Its function is email capture and a linkable asset,
+// so the offer is above the fold: the hero's right column is the email box,
+// which is this page's one template CTA. The file arrives by email; there is
+// no direct download anywhere on the page (DESIGN_RULES.md §9).
 export const metadata = pageMeta({
-  title: "Free credentialing spreadsheet template — Sokndall",
-  description:
-    "A free Google Sheets template for tracking provider credentials and expiration dates. Copy it, no email required.",
+  title: META.title,
+  description: META.description,
   path: "/credentialing-spreadsheet-template",
 });
 
-const SHEET_URL = process.env.NEXT_PUBLIC_TEMPLATE_SHEET_URL;
+const STRIP_ICONS = [IconUsers, IconGrid, IconDoc, IconMail];
+const FORM_ID = "get-template";
 
-// A give-away page, so it is an article rather than a landing: the offer is
-// the first thing on it and there is nothing to argue.
 export default function SpreadsheetTemplatePage() {
   return (
     <Shell>
-      <Article
-        variant="solo"
-        align="left"
-        kicker="Free template"
-        title="Free credentialing &amp; expiration tracking spreadsheet"
-        standfirst="A Google Sheet for tracking provider credentials — licenses, DEA registrations, malpractice insurance, board certifications — and when they expire. Make a copy and it is yours. No email, no signup."
-        after={
-          <ArticleCta
-            body="A spreadsheet works until someone forgets to update a formula, or you need more than one person keeping it current. Sokndall does the same tracking — plus payer enrollment status, CSV import for your existing roster, and email alerts before something expires."
-            primary={{ href: "/pricing", label: "See pricing" }}
-            secondary={{ href: "/login", label: "Start 14-day trial" }}
-          />
-        }
+      <JsonLd data={faqSchema(FAQ)} />
+
+      <LandingTemplate
+        current="/credentialing-spreadsheet-template"
+        hero={{
+          title: HERO.title,
+          sub: HERO.sub,
+          form: <EmailCapture heading={null} id={FORM_ID} />,
+          children: (
+            <HeroStrip
+              items={HERO.strip.map((label, i) => {
+                const Icon = STRIP_ICONS[i];
+                return { label, icon: <Icon /> };
+              })}
+            />
+          ),
+        }}
       >
-        <section id="copy">
-          <p>
-            {SHEET_URL ? (
-              <a href={SHEET_URL} target="_blank" rel="noopener noreferrer" className="sk-btn sk-btn--primary">
-                Make a copy &rarr;
-              </a>
-            ) : (
-              <span className="sk-small">Template link coming soon.</span>
-            )}
-          </p>
-        </section>
+        <IconRowSection id="tabs" head={FIELDS.head} items={FIELDS.items} />
 
-        <section id="whats-in-it">
-          <h2>What is in it</h2>
-          <ul className="sk-list">
-            <li>One row per credential: provider, type, state, issue date, expiration date.</li>
-            <li>Automatic days-until-expiration and colour-coded status — active, expiring, expired.</li>
-            <li>A dashboard tab summarizing what is due in the next 30, 60 and 90 days.</li>
-          </ul>
-        </section>
+        <IconRowSection id="limits" head={LIMITS.head} items={LIMITS.items} closing={LIMITS.closing} />
 
-        <section id="outgrow">
-          <h2>When you outgrow a spreadsheet</h2>
-          <p>
-            Below roughly 40 provider-payer pairs, a sheet is genuinely enough. Past that it stops being a tracker and
-            becomes something you have to remember to read — and the thing that fails is never the formula, it is the
-            Monday nobody opened it.
-          </p>
-          <p>
-            The other limit is people. A sheet has one owner in practice, whatever the sharing settings say. When two
-            coordinators are both updating it, the question stops being what the dates are and becomes whose copy is
-            current.{" "}
-            <Link href="/pricing" className="sk-link">
-              What the product costs, and what it tracks
-            </Link>
-            .
-          </p>
-        </section>
-      </Article>
+        <ProseBandSection id="enough" head={ENOUGH.head} paras={ENOUGH.paras} />
+
+        <PanelSection id="faq" head={{ title: FAQ_HEADING }}>
+          <Faq items={FAQ} openFirst />
+        </PanelSection>
+
+        <CtaSection
+          title={CLOSING.title}
+          body={CLOSING.body}
+          primary={{ label: TEMPLATE_CTA.buttonLabel, href: `#${FORM_ID}` }}
+        />
+      </LandingTemplate>
     </Shell>
   );
 }
