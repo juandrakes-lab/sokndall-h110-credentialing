@@ -68,7 +68,13 @@ const PRICE_ROWS = [
   { name: "Billing Co", price: "$699/mo", providers: "50 across clients", per: "$13.98" },
 ];
 
-export function PriceTable() {
+// `note` defaults to the pre-v3.1 line so any page still rendering the table
+// on its own keeps it; the comparison tail passes `note={null}`, because the
+// v3.1 price paragraph already says the same thing in approved words.
+const PRICE_NOTE =
+  "Published, monthly, cancel any time, 14-day trial with a card. No demo required to see any of it.";
+
+export function PriceTable({ note = PRICE_NOTE }) {
   return (
     <>
       <div className="sk-tablewrap">
@@ -93,7 +99,7 @@ export function PriceTable() {
           </tbody>
         </table>
       </div>
-      <p>Published, monthly, cancel any time, 14-day trial with a card. No demo required to see any of it.</p>
+      {note ? <p>{note}</p> : null}
     </>
   );
 }

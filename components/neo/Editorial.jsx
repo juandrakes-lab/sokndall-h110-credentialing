@@ -7,6 +7,12 @@ import Footer from "@/components/neo/Footer";
 import Faq from "@/components/neo/Faq";
 import TableOfContents from "@/components/neo/EditorialToc";
 import { PriceTable } from "@/components/neo/ArticleBits";
+import Rich from "@/components/neo/rich";
+import { FOOTER_BLURB_V31, FOOTER_COLS_V31 } from "@/components/neo/neoData";
+
+// The structural label of the FAQ section, and of its entry in the contents
+// list. It is the template's, not a page's: no copy file supplies one.
+const FAQ_LABEL = "Frequently asked questions";
 
 /**
  * EditorialTemplate — the long reference pages.
@@ -47,6 +53,19 @@ import { PriceTable } from "@/components/neo/ArticleBits";
  * The body of such a page is built from `SourcedPricingDisclosure`,
  * `GoodFitSection` and `PurchaseModelCompare` in `ComparisonBits`, which are
  * plain `<section>`s and drop into `children` like any other prose section.
+ *
+ * **Added 2026-09-10 for the v3.1 run.**
+ *   - `faq` renders on the article variant too, in the reading column after
+ *     the body, so body and FAQ share the two-column frame with the sticky
+ *     contents and the page goes to one full-width column at the related
+ *     block. The FAQ gets its own entry at the end of the contents list.
+ *   - `templateCtaHeading`: the v3.1 copy writes a heading for the email box
+ *     per page. Field label, button and microcopy stay in templateCta.js.
+ *   - `templateCtaAt="before-last"` places the box after the body's
+ *     second-to-last section — "after the problem is explained, before the
+ *     closing section" (DESIGN_RULES.md §9) — where the article's closing
+ *     section is its declared limit. The default keeps the old 75% rule.
+ *   - The footer is the v3.1 footer (FOOTER_BLURB_V31 / FOOTER_COLS_V31).
  */
 export default function EditorialTemplate({
   variant = "editorial",
@@ -60,6 +79,8 @@ export default function EditorialTemplate({
   cta,
   faq = [],
   templateCta = true,
+  templateCtaHeading,
+  templateCtaAt,
 }) {
   const comparison = variant === "comparison";
 
@@ -95,11 +116,15 @@ export default function EditorialTemplate({
   if (templateCta && sections.length > 1) {
     const before = comparison
       ? sections.length
-      : Math.min(sections.length - 1, Math.max(1, Math.round(sections.length * 0.75)));
+      : templateCtaAt === "before-last"
+        ? sections.length - 1
+        : typeof templateCtaAt === "number"
+          ? templateCtaAt
+          : Math.min(sections.length - 1, Math.max(1, Math.round(sections.length * 0.75)));
     body = [
       ...sections.slice(0, before),
       <div className="sk-ed__tcta" key="template-cta">
-        <EmailCapture />
+        <EmailCapture heading={templateCtaHeading} />
       </div>,
       ...sections.slice(before),
     ];
@@ -113,6 +138,12 @@ export default function EditorialTemplate({
   // content, and there is no content there yet. The art direction lives in
   // docs/image-brief-marketing-pages.md, not in the rendered page.
   const headerHasImage = isValidElement(header) && Boolean(header.props?.image);
+
+  // The FAQ is the last entry of the contents list whenever the page has one.
+  const toc =
+    faq.length && !contents.some((c) => c.id === "faq")
+      ? [...contents, { id: "faq", label: FAQ_LABEL }]
+      : contents;
 
   return (
     <div className="sk-ed">
@@ -140,7 +171,7 @@ export default function EditorialTemplate({
               reading column, because this column does not exist below ~980px
               and a CTA that is absent on every phone is not a CTA. */}
           <div className="sk-ed__sidein">
-            {contents.length ? <TableOfContents items={contents} /> : null}
+            {toc.length ? <TableOfContents items={toc} /> : null}
           </div>
         </div>
 
@@ -163,23 +194,31 @@ export default function EditorialTemplate({
                   {/* Indexed keys: a paragraph here can carry an inline
                       `SourcedFigure`, so it is a node rather than a string. */}
                   {(price.paras || []).map((p, i) => (
-                    <p key={i}>{p}</p>
+                    <p key={i}>
+                      <Rich text={p} />
+                    </p>
                   ))}
-                  <PriceTable />
-                  <p>
-                    <Link href={price.href || "/pricing"}>
-                      {price.link || "See what is included"}
-                    </Link>
-                  </p>
+                  <PriceTable note={null} />
+                  {price.link ? (
+                    <p>
+                      <Link href={price.href || "/pricing"}>{price.link}</Link>
+                    </p>
+                  ) : null}
                 </section>
 
                 <div className="sk-ed__cta">{cta}</div>
-
-                <section id="faq">
-                  <h2>Frequently asked questions</h2>
-                  <Faq items={faq} />
-                </section>
               </>
+            ) : null}
+
+            {/* The FAQ closes the reading column on both variants: after the
+                product CTA on a comparison page, after the body on an
+                article. Still inside the two-column frame, beside the
+                contents list. */}
+            {faq.length ? (
+              <section id="faq">
+                <h2>{FAQ_LABEL}</h2>
+                <Faq items={faq} />
+              </section>
             ) : null}
           </article>
         </div>
@@ -194,7 +233,7 @@ export default function EditorialTemplate({
         ) : null}
       </div>
 
-      <Footer />
+      <Footer blurb={FOOTER_BLURB_V31} cols={FOOTER_COLS_V31} />
     </div>
   );
 }
