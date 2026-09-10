@@ -2978,3 +2978,7 @@ html:has(.sokndall-neo) { overflow-x: hidden; }
 
 /* ---- the SourcedFigure slot, set as its own line ------------------------ */
 .sk-ed__prose .sk-ed__fig { font-size: 0.9375rem; }
+
+/* ---- comparison vendor sections: the "Not verified" line ---------------- */
+.sk-ed__prose .sk-ed__nv { font-size: 0.9375rem; }
+.sk-ed__nvlb { margin-right: var(--s-2); opacity: 0.62; }

@@ -173,6 +173,10 @@ export function PurchaseModelCompare({
   theirs,
   rows = [],
   note,
+  // The v3.1 copy names the competitor's column first ("Nombre columna 1:
+  // MedTrainer"). Order is not a ranking here — both columns are set
+  // identically — so the page may follow the copy. Added 2026-09-10.
+  theirsFirst = false,
 }) {
   if (!theirs) {
     throw new Error("PurchaseModelCompare: `theirs` (the other vendor's name) is required.");
@@ -197,8 +201,8 @@ export function PurchaseModelCompare({
         <div className="sk-pmc__row sk-pmc__head" aria-hidden="true">
           <span />
           <div className="sk-pmc__cells">
-            <span className="sk-small sk-pmc__who">{ours}</span>
-            <span className="sk-small sk-pmc__who">{theirs}</span>
+            <span className="sk-small sk-pmc__who">{theirsFirst ? theirs : ours}</span>
+            <span className="sk-small sk-pmc__who">{theirsFirst ? ours : theirs}</span>
           </div>
         </div>
 
@@ -209,14 +213,15 @@ export function PurchaseModelCompare({
               <span className="sk-small sk-pmc__unit">Measured in: {r.unit}</span>
             </div>
             <div className="sk-pmc__cells">
-              <div className="sk-pmc__cell">
-                <span className="sk-small sk-pmc__who">{ours}</span>
-                <p>{r.ours}</p>
-              </div>
-              <div className="sk-pmc__cell">
-                <span className="sk-small sk-pmc__who">{theirs}</span>
-                <p>{r.theirs}</p>
-              </div>
+              {(theirsFirst
+                ? [[theirs, r.theirs], [ours, r.ours]]
+                : [[ours, r.ours], [theirs, r.theirs]]
+              ).map(([who, text]) => (
+                <div className="sk-pmc__cell" key={who}>
+                  <span className="sk-small sk-pmc__who">{who}</span>
+                  <p>{text}</p>
+                </div>
+              ))}
             </div>
           </div>
         ))}
