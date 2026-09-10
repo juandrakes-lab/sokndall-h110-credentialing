@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useId, useState } from "react";
 
 import { TEMPLATE_CTA } from "@/components/neo/templateCta";
 
@@ -12,15 +12,16 @@ import { TEMPLATE_CTA } from "@/components/neo/templateCta";
  * offer is the point: shrinking them into a footnote is exactly the behaviour
  * this product's copy criticises elsewhere.
  *
- * **It lives in the reading column, once, at 70–80% of the article** — placed
- * there by `EditorialTemplate`, not by any page. It used to sit in the sticky
- * sidebar under the contents list, which was wrong twice over: that column
- * collapses below ~980px, so on a phone the box did not exist at all; and an
- * email box pinned beside the reader for the length of the article is the
- * aggressive-funnel pattern the whole site is built to avoid.
+ * **Once per page, in the body flow.** On an editorial page `EditorialTemplate`
+ * places it; on `/credentialing-spreadsheet-template` it is the hero's form.
+ * Never in the sticky sidebar: that column collapses below ~1120px, so on a
+ * phone the box would not exist, and an email box pinned beside the reader is
+ * the aggressive-funnel pattern the whole site avoids.
  *
- * Every word and the destination come from `templateCta.js`. Do not pass copy
- * in per page — that is how the two competing wordings got there.
+ * The field label, button and microcopy come from `templateCta.js` and are not
+ * passed per page. `heading` is per page (the v3.1 copy writes one for each),
+ * and `heading={null}` drops it where the surrounding block already says what
+ * the box is — the template page's hero.
  *
  * Client only for the submitted state. The heading, the label, the button and
  * the microcopy are all in the server HTML.
@@ -28,33 +29,31 @@ import { TEMPLATE_CTA } from "@/components/neo/templateCta";
  * No backend yet: `action` posts nowhere and the submit handler shows the
  * acknowledgement locally. Wiring it to Resend is a separate piece of work.
  */
-export default function EmailCapture({
-  heading = TEMPLATE_CTA.heading,
-  buttonLabel = TEMPLATE_CTA.buttonLabel,
-  microcopy = TEMPLATE_CTA.microcopy,
-  action = TEMPLATE_CTA.action,
-}) {
+export default function EmailCapture({ heading = TEMPLATE_CTA.heading, id }) {
   const [done, setDone] = useState(false);
+  const uid = useId();
+  const inputId = `${uid}-email`;
 
   return (
     <form
       className="sk-ec"
-      action={action}
+      id={id}
+      action={TEMPLATE_CTA.action}
       method="post"
       onSubmit={(e) => {
         e.preventDefault();
         setDone(true);
       }}
     >
-      <p className="sk-ec__t">{heading}</p>
+      {heading ? <p className="sk-ec__t">{heading}</p> : null}
 
       <div className="sk-ec__f">
-        <label className="sk-small" htmlFor="sk-ec-email">
-          Work email
+        <label className="sk-small" htmlFor={inputId}>
+          {TEMPLATE_CTA.fieldLabel}
         </label>
         <input
           className="sk-ec__in"
-          id="sk-ec-email"
+          id={inputId}
           type="email"
           name="email"
           required
@@ -62,11 +61,11 @@ export default function EmailCapture({
           placeholder="you@practice.com"
         />
         <button type="submit" className="sk-btn sk-btn--primary sk-btn--sm sk-ec__btn">
-          {buttonLabel}
+          {TEMPLATE_CTA.buttonLabel}
         </button>
       </div>
 
-      <p className="sk-small sk-ec__micro">{microcopy}</p>
+      <p className="sk-small sk-ec__micro">{TEMPLATE_CTA.microcopy}</p>
 
       {done ? (
         <p className="sk-small sk-ec__done" role="status">

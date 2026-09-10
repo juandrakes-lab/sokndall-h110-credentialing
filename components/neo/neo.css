@@ -323,10 +323,12 @@ html:has(.sokndall-neo) { overflow-x: hidden; }
  * white. Any new light surface placed on a dark band needs adding here. */
 .sk-on-blue .sk-card:not(.sk-card--blue),
 .sk-band--ink .sk-card:not(.sk-card--blue),
-.sk-band--ink .sk-herofig { color: var(--black); }
+.sk-band--ink .sk-herofig,
+.sk-band--ink .sk-ec { color: var(--black); }
 .sk-on-blue .sk-card:not(.sk-card--blue) :is(.sk-body, .sk-small, .sk-lead, .sk-micro),
 .sk-band--ink .sk-card:not(.sk-card--blue) :is(.sk-body, .sk-small, .sk-lead, .sk-micro),
-.sk-band--ink .sk-herofig :is(.sk-body, .sk-small, .sk-lead, .sk-micro) { color: var(--black); }
+.sk-band--ink .sk-herofig :is(.sk-body, .sk-small, .sk-lead, .sk-micro),
+.sk-band--ink .sk-ec :is(.sk-body, .sk-small, .sk-lead, .sk-micro) { color: var(--black); }
 .sk-on-blue .sk-card:not(.sk-card--blue) .sk-ink,
 .sk-band--ink .sk-card:not(.sk-card--blue) .sk-ink { color: var(--black); }
 .sk-on-blue .sk-card:not(.sk-card--blue) .sk-list li::before,
@@ -2823,3 +2825,109 @@ html:has(.sokndall-neo) { overflow-x: hidden; }
   margin-inline: auto;
 }
 .sk-inst__portrait .sk-small { display: block; text-align: left; margin-top: 10px; opacity: 0.62; }
+
+
+/* ===================== v3.1 KIT ADDITIONS (2026-09-10) ===================
+   Everything below composes existing tokens. Each block names the component
+   it serves; the decision behind each is in docs/DESIGN_DECISIONS.md. */
+
+/* ---- HeroPanel ---------------------------------------------------------- */
+
+/* A hero with no right column. This was an inline style on the component. */
+.sk-hero__top--solo { grid-template-columns: minmax(0, 1fr); }
+/* The template page's form, in the right column the schematic uses elsewhere.
+   A grey card on the ink band takes the on-ink shadow, like every light
+   surface floating on a dark block. */
+.sk-hero__form { align-self: center; }
+.sk-hero__form .sk-ec { box-shadow: var(--sh-on-ink); padding: var(--card-pad); }
+
+/* ---- SectionHead: a caption with no figure above it --------------------- */
+.sk-head__aside--cap { max-width: 34ch; }
+
+/* ---- inline links in landing copy --------------------------------------- */
+
+/* A link inside running landing copy is usually a source citation, and a
+   citation has to be visible while reading, not on hover — the same rule the
+   editorial column follows. Underlined, never a colour change. */
+.sk-band p .sk-link,
+.sk-band li .sk-link {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+}
+.sk-band--ink .sk-link,
+.sk-link--on-ink { color: #fff; }
+.sk-band--ink .sk-card:not(.sk-card--blue) .sk-link { color: var(--black); }
+
+/* ---- QuadSection: two small cards in column three ----------------------- */
+.sk-quad__c { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--gap); align-content: start; }
+
+/* ---- FigureBandSection -------------------------------------------------- */
+
+/* Four figures lay out two by two: four across puts each label on four lines. */
+@media (min-width: 981px) {
+  .sk-figures--4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+/* A figure written into its label: the label is the figure, so it takes the
+   figure's weight rather than caption weight. */
+/* The `.sk-h4` step of the type scale (TOKENS.md §2), not a new size. */
+.sk-fig--label .sk-fig__l {
+  font-size: 1.125rem;
+  line-height: 1.24;
+  letter-spacing: -0.02em;
+  margin-top: 0;
+}
+
+/* ---- PlanListSection ---------------------------------------------------- */
+
+/* The price list, one plan per row, read top to bottom. */
+.sk-planlist {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--s-6);
+}
+.sk-planrow {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.4fr) auto;
+  gap: clamp(var(--s-5), 3vw, var(--s-8));
+  align-items: center;
+  padding: clamp(24px, 2.4vw, 32px);
+}
+.sk-planrow .sk-plan__price { margin: var(--s-3) 0 0; }
+.sk-planrow__body .sk-plan__feats { margin-top: var(--s-3); }
+.sk-planrow--hi { border: 2px solid var(--amber); }
+@media (max-width: 860px) {
+  .sk-planrow { grid-template-columns: minmax(0, 1fr); align-items: start; }
+  .sk-planrow__cta .sk-btn { width: 100%; }
+}
+
+/* ---- ProseBandSection --------------------------------------------------- */
+
+/* Running paragraphs on the section ground, on the heading's left edge. */
+.sk-proseband__body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--s-4);
+  max-width: 68ch;
+}
+
+/* ---- StatusTableSection ------------------------------------------------- */
+
+/* The status column is a mark, not a heading style; the row header keeps the
+   table's semantics without the uppercase header treatment. */
+.sk-statustable .sk-table tbody th {
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: inherit;
+  font-weight: 600;
+  color: var(--black);
+  white-space: nowrap;
+}
+.sk-statustable .sk-table { font-size: 0.9375rem; }
+.sk-statustable .sk-mark { font-size: 0.75rem; }
+
+/* ---- FAQ rows: a 48px floor everywhere, never a fixed height ----------- */
+.sk-faq__q { min-height: 48px; }

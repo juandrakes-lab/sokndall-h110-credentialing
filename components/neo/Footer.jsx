@@ -2,7 +2,14 @@ import Link from "next/link";
 import { FOOTER_COLS, TRIAL_HREF } from "@/components/neo/neoData";
 import { Wordmark } from "@/components/neo/icons";
 
-export default function Footer() {
+const DEFAULT_BLURB =
+  "Credential expiry and payer enrollment tracking for practices with 3 to 30 providers. Published pricing. No demo required.";
+
+// `blurb` and `cols` default to the pre-v3.1 values, which is what `/about`
+// and `/security` still render: those two pages are out of scope for the
+// 2026-09-10 run and are left exactly as they were. The v3.1 templates pass
+// FOOTER_BLURB_V31 / FOOTER_COLS_V31 from neoData.
+export default function Footer({ blurb = DEFAULT_BLURB, cols = FOOTER_COLS }) {
   return (
     <footer className="sk-footer">
       <div className="sk-wrap">
@@ -12,16 +19,13 @@ export default function Footer() {
             <Wordmark className="sk-nav__mark" />
             sokndall
           </Link>
-          <p className="sk-small sk-footer__blurb">
-            Credential expiry and payer enrollment tracking for practices with 3 to 30 providers.
-            Published pricing. No demo required.
-          </p>
+          <p className="sk-small sk-footer__blurb">{blurb}</p>
           <Link href={TRIAL_HREF} className="sk-btn sk-btn--primary sk-btn--sm sk-footer__btn">
             Start free trial
           </Link>
         </div>
 
-        {FOOTER_COLS.map((col) => (
+        {cols.map((col) => (
           <div className="sk-footer__col" key={col.heading}>
             <h3>{col.heading}</h3>
             {col.links.map((l) => (

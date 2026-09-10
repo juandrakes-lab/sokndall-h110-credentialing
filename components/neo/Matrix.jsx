@@ -62,15 +62,23 @@ function key([r, c]) {
   return `${r}-${c}`;
 }
 
-export function MatrixNote() {
+/** The visible "this is not a screenshot" note. Pages pass their own approved
+ *  wording as `children`; the default is the pre-v3.1 home wording, kept for
+ *  the styleguide. Whatever the words, the note is always rendered — a
+ *  schematic without it reads as a product screen (DESIGN_RULES.md §2 regla 1). */
+export function MatrixNote({ children }) {
   return (
     <p className="sk-matrix__note">
       <span aria-hidden="true">◇</span>
-      <span>
-        <b>This is a schematic of the data model, not a product screenshot.</b> One cell per
-        provider-payer application, showing the status and the days since anyone last made contact —
-        drawn here at reduced size, five providers by five payers, so every cell stays readable.
-      </span>
+      {children ? (
+        <span>{children}</span>
+      ) : (
+        <span>
+          <b>This is a schematic of the data model, not a product screenshot.</b> One cell per
+          provider-payer application, showing the status and the days since anyone last made contact —
+          drawn here at reduced size, five providers by five payers, so every cell stays readable.
+        </span>
+      )}
     </p>
   );
 }

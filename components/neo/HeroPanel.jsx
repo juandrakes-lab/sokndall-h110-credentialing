@@ -5,9 +5,16 @@ import { NavBar, NavMobile } from "@/components/neo/Nav";
 // A full-bleed ink band: the nav bar at the top, then two simple columns —
 // copy, subhead and both CTAs on the left, a figure container on the right.
 //
-// No notch, no background pattern, no floating panel. `figure` is a real
-// photograph or a schematic; it is never a rendering of an interface that does
-// not exist yet. Omit it and the copy column runs the full measure.
+// No notch, no background pattern, no floating panel. `figure` is a
+// schematic; it is never a rendering of an interface that does not exist yet,
+// and on a landing page it is never a photograph of people (DESIGN_DECISIONS.md).
+// Omit it and the copy column runs the full measure.
+//
+// `form` takes the place of the CTA row on the one landing whose first action
+// is the free template rather than the trial (`/credentialing-spreadsheet-
+// template`). It is the EmailCapture box, passed in whole: the file still
+// arrives by email and never by a direct download (DESIGN_RULES.md §9). Added
+// 2026-09-10; it carries no image.
 //
 // `children` renders under a hairline below the two columns — the capability
 // strip on the pages that use one.
@@ -19,6 +26,7 @@ export default function HeroPanel({
   secondary,
   current,
   figure,
+  form,
   children,
 }) {
   const lines = Array.isArray(title) ? title : [title];
@@ -31,7 +39,7 @@ export default function HeroPanel({
       </div>
 
       <div className="sk-wrap sk-hero__inner">
-        <div className="sk-hero__top" style={figure ? undefined : { gridTemplateColumns: "minmax(0, 1fr)" }}>
+        <div className={`sk-hero__top${figure || form ? "" : " sk-hero__top--solo"}`}>
           <div className="sk-hero__copy">
             {eyebrow ? (
               <p className="sk-head__pill">
@@ -65,6 +73,7 @@ export default function HeroPanel({
           </div>
 
           {figure ? <div className="sk-hero__media">{figure}</div> : null}
+          {form && !figure ? <div className="sk-hero__form">{form}</div> : null}
         </div>
 
         {children ? (

@@ -1,5 +1,7 @@
 import "./globals.css";
 
+import { JsonLd, organizationSchema } from "@/components/neo/schema";
+
 export const metadata = {
   metadataBase: new URL("https://sokndall.com"),
   title: "Sokndall — Credentialing & Enrollments",
@@ -9,7 +11,12 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        {/* Organization on every page (on-page-seo.md §8). Static data, so it
+            costs nothing on the prerender. */}
+        <JsonLd data={organizationSchema()} />
+        {children}
+      </body>
     </html>
   );
 }

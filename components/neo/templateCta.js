@@ -1,9 +1,8 @@
 /**
  * The downloadable-template CTA — its words and its destination, in one place.
  *
- * There is exactly one of these boxes per editorial page, and it appears at
- * 70–80% of the reading column. Two things were wrong before and both are
- * fixed here rather than page by page:
+ * There is exactly one of these boxes per page. Two things were wrong before
+ * and both are fixed here rather than page by page:
  *
  *   1. **Two wordings for one request.** The sidebar box said "Email me the
  *      template" while the closing CTA said "Download the free template", for
@@ -17,6 +16,13 @@
  * "download" and then asks for an address is the small dishonesty this site
  * spends the rest of its copy avoiding.
  *
+ * **What a page may pass, and what it may not.** The approved v3.1 copy gives
+ * each page its own heading for the box (H110_COPY_TANDA_B/C, "EmailCapture
+ * heading"), so `heading` is per page. The field label, the button label and
+ * the microcopy are identical in every copy file, so they live here and are
+ * not passed in. Updated 2026-09-10 to the v3.1 wording: "Your email", and the
+ * microcopy ending "at any time".
+ *
  * `action` is where the form posts. It is "#" today — there is no backend, and
  * the component acknowledges locally — so wiring it to Resend is a one-line
  * change in this file. `href` is where a text link about the template points,
@@ -24,9 +30,10 @@
  */
 export const TEMPLATE_CTA = {
   heading: "Get the free credentialing template",
+  fieldLabel: "Your email",
   buttonLabel: "Email me the template",
   microcopy:
-    "One email with the spreadsheet. A few notes on credentialing after that, and one click unsubscribes.",
+    "One email with the spreadsheet. A few things about credentialing after that, and one click unsubscribes at any time.",
   action: "#",
   href: "/credentialing-spreadsheet-template",
   /** Anchor text wherever a page links to the template instead of showing the

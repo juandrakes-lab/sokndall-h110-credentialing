@@ -252,3 +252,125 @@ es "hueco de cabecera 21:9 vacío", pero es **una** entrada (el molde lo
 renderiza, no cada página) y ya está cubierto por §5 más el propio
 `Editorial.jsx`. Revisar de nuevo cuando se ensamble la tanda de producto
 sobre `LandingTemplate`.
+
+---
+
+# Corrida v3.1 — las 15 páginas (2026-09-10)
+
+Entradas de la corrida que construye el mapa de `H110_ARQUITECTURA_v3.1.md` §4.
+Primero los componentes (Paso A), declarados antes de su primer uso; después
+las decisiones por página, en el orden en que se construyeron.
+
+## LandingTemplate — `PlanListSection` (componente nuevo)
+Fecha: 2026-09-10
+Decisión: la lista de precios pasa a ser una lista vertical, un plan por fila
+(tarjeta blanca: nombre y precio a la izquierda, descripción y features al
+medio, botón de trial a la derecha). El plan del medio conserva el borde
+ámbar y la etiqueta montada sobre el borde superior, y el componente tira
+error si esa etiqueta no es literalmente "Most complete for a group
+practice". `PlanSection` (tres tarjetas) queda en el kit sin uso en el mapa.
+Razón: la regla de la corrida es precios en lista vertical, no en tres
+cards. Tres tarjetas lado a lado piden lectura "bueno/mejor/el mejor" y
+obligan a tres descripciones de largo distinto a columnas iguales, que es lo
+que §4 manda apilar.
+Política de imagen: ninguna. Sin hueco, sin ícono, sin ilustración.
+Regla de DESIGN_RULES.md que aplica: §2 reglas 7 y 8, §4 (apilar cuando los
+textos varían de largo).
+
+## LandingTemplate — `ProseBandSection` (componente nuevo)
+Fecha: 2026-09-10
+Decisión: sección de párrafos corridos: `SectionHead` (H2 + nota de
+introducción) arriba, 1-4 párrafos a 68ch alineados al borde izquierdo del
+H2, y una línea de cierre opcional. Sin tarjeta y sin cambio de superficie.
+Razón: el copy de las páginas de producto (`/payer-enrollment-software`,
+`/for-billing-companies`, `/pricing`, la plantilla) trae secciones que son
+un argumento en prosa, no ítems paralelos. Partirlas en row-cards inventa un
+paralelismo que el copy no tiene; meterlas en `SplitListSection` gasta un
+hueco reservado en una sección que no tiene nada que mostrar.
+Política de imagen: ninguna.
+Regla de DESIGN_RULES.md que aplica: §1 (componente nuevo solo si el copy no
+encaja en ninguno existente), §3 (ninguna sección con fondo gris).
+
+## LandingTemplate — `StatusTableSection` (componente nuevo)
+Fecha: 2026-09-10
+Decisión: tabla de tres columnas (estado · qué significa · qué hacer) para
+los seis estados de una solicitud. Cada estado es un `.sk-mark` con glifo +
+etiqueta escrita; solo "Info requested" lleva relleno y borde ámbar (es el
+único estado que pide acción del lector). Los glifos reusan el vocabulario
+de la matriz donde se solapan (● in review, ▲ info requested, ✓ approved).
+Razón: el copy entrega seis filas de tres campos: es una tabla, no seis
+tarjetas. **No lleva columna de cifra**: §2 regla 3 pide glifo + etiqueta +
+cifra, pero acá la tabla describe estados, no cuenta solicitudes, y una
+cifra por fila sería inventada. La cifra vive en la matriz de la misma
+página, que sí la tiene (días desde el último contacto).
+Política de imagen: ninguna.
+Regla de DESIGN_RULES.md que aplica: §2 regla 3 (estado nunca solo por
+color) y regla 4 (ámbar solo en estados de acción, como relleno, nunca
+texto). Se aparta de la regla 3 en la cifra, por la razón de arriba.
+
+## HeroPanel — slot `form` (extensión)
+Fecha: 2026-09-10
+Decisión: `HeroPanel` acepta `form`, que ocupa la columna derecha cuando no
+hay `figure`. Solo lo usa `/credentialing-spreadsheet-template`, que pone ahí
+el `EmailCapture`. De paso se reemplazó el `style` inline que el hero usaba
+sin figura por la clase `.sk-hero__top--solo`.
+Razón: el brief de la página 4 pide la plantilla arriba del pliegue y la
+regla de la corrida pide que la plantilla vaya siempre por email. El form
+es el CTA de plantilla de esa página (el único), no un segundo elemento.
+Política de imagen: el slot no lleva imagen. La columna derecha de un hero
+de landing lleva esquema o formulario, nunca foto de personas.
+Regla de DESIGN_RULES.md que aplica: §9 (CTA de plantilla por email, uno por
+página), §7 (sin estilos inline).
+
+## QuadSection — cuarto bloque de contenido (extensión)
+Fecha: 2026-09-10
+Decisión: el copy v3.1 de la home trae cuatro tarjetas para la Sección 3
+(wide, tall, "The Monday follow-up" y "One row per state"). La cuarta se
+apila bajo la chica en la fila uno de la columna tres; el hueco reservado
+blanco `.sk-quad__d` conserva la fila dos y sigue vacío.
+Razón: la corrida exige que los huecos reservados de la home sigan vacíos
+como están. Darle el hueco a la cuarta tarjeta lo habría consumido.
+Política de imagen: sin cambio — `.sk-quad__img` 3:2 y `.sk-quad__d` siguen
+vacíos.
+Regla de DESIGN_RULES.md que aplica: §5.
+
+## FigureBandSection — figura escrita en la etiqueta, y cuatro figuras (extensión)
+Fecha: 2026-09-10
+Decisión: `value` pasa a ser opcional. El copy v3.1 escribe cada ancla como
+una sola frase en el slot de etiqueta ("$600 to $2,400 per provider, per
+year"); cuando no hay `value`, la etiqueta toma el paso `.sk-h4` de la escala
+y no se parte la frase en cifra + unidad. La nota acepta el enlace de
+fuente, que así queda en la misma tarjeta que la cifra. Con cuatro figuras
+(`/pricing`) la grilla es 2 × 2.
+Razón: partir la frase aprobada en dos piezas tipográficas es reescribirla;
+dejarla a 13px la vuelve pie de foto. Cuatro en fila a 1200px pone cada
+etiqueta en cuatro líneas.
+Política de imagen: ninguna.
+Regla de DESIGN_RULES.md que aplica: §2 regla 2 (cifra con fuente en la
+misma línea), §4.
+
+## SectionHead — pie de cifra sin cifra (extensión)
+Fecha: 2026-09-10
+Decisión: si una sección trae `statCaption` y no `stat`, el pie se
+renderiza solo en la columna derecha, como aparte.
+Razón: el copy de la Sección 3 de la home entrega "Stat caption: Alerts at
+90, 60, 30, 14 and 7 days before expiry." sin ninguna cifra que lo acompañe.
+No se inventa una cifra para ponerle arriba.
+Política de imagen: ninguna.
+Regla de DESIGN_RULES.md que aplica: §2 regla 2.
+
+## `rich.jsx` + `sources.js` + `schema.jsx` (infraestructura, no visual)
+Fecha: 2026-09-10
+Decisión: el copy de los `data.js` escribe los enlaces como
+`[texto](/ruta)` o `[texto](src:clave)`. `sources.js` es el registro único
+de fuentes externas y decide el `rel` (competidores y directorios de
+reseñas `nofollow`, fuentes oficiales normal). `schema.jsx` arma el JSON-LD
+(Organization, SoftwareApplication + Offer, FAQPage, Article) leyendo los
+mismos datos que la página, para que el schema no pueda decir otra cosa que
+la pantalla. Las fuentes que el copy nombra solo por dominio llevan
+`pending: true` y apuntan a la raíz de ese dominio.
+Razón: §2 regla 2 exige la fuente en la misma línea que la cifra, y
+on-page-seo.md §7 exige `nofollow` en competidores; decidirlo una vez por
+fuente evita que dependa de quién tipeó el enlace.
+Política de imagen: no aplica.
+Regla de DESIGN_RULES.md que aplica: §2 regla 2, §8.

@@ -4,6 +4,12 @@
 // uses an inline `style` or a hex literal: every value comes from a token.
 //
 // Everything takes its content as props. No copy is hardcoded.
+//
+// Text props that can carry an inline source link go through `Rich`, so a data
+// file writes `[Medicotech](src:medicotech)` and the rel comes from the source
+// registry rather than from whoever typed the link.
+
+import Rich from "@/components/neo/rich";
 
 /** A full-bleed horizontal surface. `surface` picks the ground:
  *  "card" (white), "paper" (white — kept as an alias), "ink" / "ink-2" (the
@@ -22,6 +28,9 @@ export function Band({ surface = "card", id, children }) {
  *  `title` is an array of lines — the line breaks are a design decision, so
  *  they belong to the content, not to a CSS width guess.
  *  Pass either `aside` (a paragraph) or `stat` + `statCaption` (a figure).
+ *  A `statCaption` with no `stat` renders alone in the right column, set as a
+ *  caption: the copy can deliver the line without the figure, and the head
+ *  must not invent a number to sit above it.
  *  `note` renders full width underneath both columns. */
 export function SectionHead({ pill, title, aside, stat, statCaption, note }) {
   const lines = Array.isArray(title) ? title : [title];
@@ -48,12 +57,20 @@ export function SectionHead({ pill, title, aside, stat, statCaption, note }) {
             <p className="sk-stat">{stat}</p>
             {statCaption ? <p className="sk-small sk-head__statcap">{statCaption}</p> : null}
           </div>
+        ) : statCaption ? (
+          <p className="sk-body sk-body--lg sk-head__aside sk-head__aside--cap">{statCaption}</p>
         ) : aside ? (
-          <p className="sk-body sk-body--lg sk-head__aside">{aside}</p>
+          <p className="sk-body sk-body--lg sk-head__aside">
+            <Rich text={aside} linkClassName="sk-link" />
+          </p>
         ) : null}
       </div>
 
-      {note ? <p className="sk-body sk-head__note">{note}</p> : null}
+      {note ? (
+        <p className="sk-body sk-head__note">
+          <Rich text={note} linkClassName="sk-link" />
+        </p>
+      ) : null}
     </div>
   );
 }
@@ -75,6 +92,22 @@ export function ReservedSlot({ variant, ratio, className = "", label = "Reserved
   );
 }
 
+/** The four-up capability strip under the hero rule. `items`: [{ icon, label }]
+ *  where `icon` is an element from icons.jsx. Moved out of the home so every
+ *  landing sets it the same way. */
+export function HeroStrip({ items }) {
+  return (
+    <ul className="sk-strip">
+      {items.map((s) => (
+        <li className="sk-strip__item" key={s.label}>
+          {s.icon ? <span className="sk-tile">{s.icon}</span> : null}
+          {s.label}
+        </li>
+      ))}
+    </ul>
+  );
+}
+
 /** A card whose title sits left and its explanation right, centred on each
  *  other. `icon` is optional and renders beside the title. */
 // `headingLevel` is the tag; `.sk-h4` is the size. They are separate on
@@ -92,7 +125,9 @@ export function RowCard({ title, body, icon, headingLevel = "h3" }) {
         ) : (
           <H className="sk-h4">{title}</H>
         )}
-        <p className="sk-body">{body}</p>
+        <p className="sk-body">
+          <Rich text={body} linkClassName="sk-link" />
+        </p>
       </div>
     </article>
   );

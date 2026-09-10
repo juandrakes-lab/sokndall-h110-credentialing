@@ -1,10 +1,12 @@
 import Footer from "@/components/neo/Footer";
 import HeroPanel from "@/components/neo/HeroPanel";
+import { FOOTER_BLURB_V31, FOOTER_COLS_V31 } from "@/components/neo/neoData";
 
 /**
- * LandingTemplate — the six product and commercial pages: `/`, `/pricing`,
- * `/credentialing-spreadsheet-template`, `/payer-enrollment-software`,
- * `/credentialing-tracking-software`, `/for-billing-companies`.
+ * LandingTemplate — the five product and commercial pages of the v3.1 map:
+ * `/`, `/pricing`, `/credentialing-spreadsheet-template`,
+ * `/payer-enrollment-software`, `/for-billing-companies`.
+ * (`/credentialing-tracking-software` was removed by v3.1 and is not built.)
  *
  * This is the shell, and the shell is all it is: the blue hero panel at the
  * top, an ordered run of sections in the middle, the footer at the foot. The
@@ -48,6 +50,7 @@ export default function LandingTemplate({ current, hero, heroSlot, children }) {
           primary={hero.primary}
           secondary={hero.secondary}
           figure={hero.figure}
+          form={hero.form}
         >
           {hero.children}
         </HeroPanel>
@@ -55,7 +58,7 @@ export default function LandingTemplate({ current, hero, heroSlot, children }) {
 
       {children}
 
-      <Footer />
+      <Footer blurb={FOOTER_BLURB_V31} cols={FOOTER_COLS_V31} />
     </>
   );
 }
@@ -68,9 +71,12 @@ export {
   DiagramSection,
   FigureBandSection,
   PlanSection,
+  PlanListSection,
+  ProseBandSection,
+  StatusTableSection,
   IconRowSection,
   PanelSection,
   CtaSection,
 } from "@/components/neo/landingSections";
 
-export { Band, SectionHead, ReservedSlot, RowCard } from "@/components/neo/landingPrimitives";
+export { Band, SectionHead, ReservedSlot, RowCard, HeroStrip } from "@/components/neo/landingPrimitives";
