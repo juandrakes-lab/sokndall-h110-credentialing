@@ -747,3 +747,35 @@ proveedor/usuario tenía cuatro líneas de titular y la mitad derecha vacía.
 Política de imagen de `CountDiagram`: ninguna; marcas dibujadas, íconos
 sólidos sin caja.
 Regla de DESIGN_RULES.md que aplica: §14, §15, on-page-seo.md §4.
+
+## /payer-enrollment-software — recompuesta
+Fecha: 2026-09-11
+Decisión: encabezado claro con el recorrido de estados de una solicitud como
+objeto (`StatusTrack` en un `ScreenSlot`): los cinco estados en orden con los
+mismos glifos de la tabla, "Info requested" en ámbar con la pista de la tabla
+("The payer is waiting on you"), remate "Effective date, confirmed in writing"
+y la salida "Denied or withdrawn" debajo. No es la matriz de la home: esa queda
+para su propia sección. Secuencia: dos pasos (*split*) → la espera (banda
+oscura, con "90–120" grande y sus dos fuentes en el pie) → estados (tabla) →
+fecha efectiva (*media* invertida, `ScreenSlot` vacío "One application's
+confirmed effective date") → desajustes (*stack*) → matriz (banda oscura) → qué
+no hace (tres tarjetas, §4) → FAQ → cierre. Nunca más de tres blancas seguidas.
+La matriz pasa a 6 celdas de acción (3 info + 3 sin contacto): el copy dice
+"the six" dos veces y la grilla mostraba tres. Queda superada la entrada del
+2026-09-10 que la dejaba en tres para diferenciarla de la home; la densidad
+(6 × 5 contra 5 × 5) ya la diferencia.
+Pastillas escritas por el diseño, pendientes de revisión del copy: "Payer
+enrollment software" (encabezado), "Two steps", "The wait", "Statuses",
+"Effective date", "Data mismatches", "The matrix", "Scope", "FAQ". También la
+nota del esquema de estados, calcada de la nota aprobada de la matriz.
+Razón: ocho secciones blancas seguidas, cuatro con la mitad derecha vacía, y la
+matriz contradiciendo al copy que la describe.
+Regla de DESIGN_RULES.md que aplica: §14, §15, §16, §2 reglas 1-4.
+
+## Kit — títulos de tarjeta clara sobre banda oscura
+Fecha: 2026-09-11
+Decisión: contra-regla para `.sk-h3`/`.sk-h4` dentro de una tarjeta clara en
+`.sk-band--ink`.
+Razón: la trampa que CLAUDE.md ya documenta, reaparecida al pasar la matriz a
+banda oscura: el título de la tarjeta lateral salía blanco sobre blanco.
+Regla de DESIGN_RULES.md que aplica: §8.

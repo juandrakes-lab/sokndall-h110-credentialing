@@ -32,9 +32,12 @@ export function StatusTrack({ steps, end, branch }) {
       <ol className="sk-track__steps">
         {steps.map((s) => (
           <li className={`sk-track__step${s.action ? " is-action" : ""}`} key={s.label}>
-            <span className={`sk-mark ${s.action ? "sk-mark--warn" : "sk-mark--calm"}`}>
-              <span className="sk-mark__g" aria-hidden="true">{s.glyph}</span>
-              {s.label}
+            <span className="sk-track__row">
+              <span className={`sk-mark ${s.action ? "sk-mark--warn" : "sk-mark--calm"}`}>
+                <span className="sk-mark__g" aria-hidden="true">{s.glyph}</span>
+                {s.label}
+              </span>
+              <span className="sk-track__line" aria-hidden="true" />
             </span>
             {s.hint ? <span className="sk-track__hint">{s.hint}</span> : null}
           </li>

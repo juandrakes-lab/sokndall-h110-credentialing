@@ -13,6 +13,7 @@ export const META = {
 };
 
 export const HERO = {
+  eyebrow: "Payer enrollment software",
   title: ["Track the wait,", "not the paperwork"],
   sub:
     "One record per provider per payer, from submitted to effective date: status, confirmation number, who you spoke to last, and how long since anyone checked.",
@@ -21,6 +22,7 @@ export const HERO = {
 
 export const TWO_STEPS = {
   head: {
+    pill: "Two steps",
     title: ["Credentialing and", "provider enrollment", "are two steps"],
     note:
       "Credentialing is the verification: the payer confirms you are who you say you are. Enrollment is being accepted into the network and switched on for billing.",
@@ -37,7 +39,12 @@ export const TWO_STEPS = {
 // copy and do not appear.
 export const TIMELINE = {
   head: {
+    pill: "The wait",
     title: ["Submitting takes", "an afternoon. The", "next four months", "are the job"],
+    // The note's own figure, set large beside it — the reference's big number,
+    // with the note's two sources in the same line (§2 regla 2).
+    stat: "90–120",
+    statCaption: "days per provider per payer, on a good path ([HOM RCM](src:homrcm); [Assured](src:assured))",
     note:
       "Enrollment runs 90 to 120 days per provider per payer on a good path ([HOM RCM](src:homrcm); [Assured](src:assured)), and considerably longer when something goes sideways.",
   },
@@ -54,7 +61,7 @@ export const TIMELINE = {
 // The column headers are structural labels — the copy gives the three fields
 // of each row but not a header row; see DESIGN_DECISIONS.md.
 export const STATUSES = {
-  head: { title: ["Six statuses, and", "one of them is your", "problem right now"] },
+  head: { pill: "Statuses", title: ["Six statuses, and", "one of them is your", "problem right now"] },
   columns: ["Status", "What it means", "What to do"],
   rows: [
     {
@@ -80,7 +87,7 @@ export const STATUSES = {
 };
 
 export const EFFECTIVE = {
-  head: { title: ["Approved is not", "the date you can", "start billing"] },
+  head: { pill: "Effective date", title: ["Approved is not", "the date you can", "start billing"] },
   paras: [
     "[With Aetna, the in-network effective date is the day the contract is fully executed](src:clinicalDocsAetna) — not the day the application went in, and not the day someone told you it was approved. Bill against the wrong one and the claims come back. Some payers allow backdating and some do not, and you find out which after the fact.",
   ],
@@ -94,6 +101,7 @@ export const EFFECTIVE = {
 // which section 8 denies.
 export const MISMATCH = {
   head: {
+    pill: "Data mismatches",
     title: ["The mismatch that", "stalls it quietly"],
     note:
       "A payer will not act on an application whose fields disagree with each other, and nothing in the process tells you that is what happened.",
@@ -117,7 +125,7 @@ export const MISMATCH = {
 };
 
 export const MATRIX = {
-  head: { title: ["Every provider,", "every payer,", "one screen"] },
+  head: { pill: "The matrix", title: ["Every provider,", "every payer,", "one screen"] },
   note:
     "Low-fidelity schematic of the data model. It is not a screenshot, and no product interface exists yet. Providers run down the side, payers across the top, and one cell holds each provider-payer pair.",
   points: [
@@ -133,7 +141,7 @@ export const MATRIX = {
 };
 
 export const SCOPE = {
-  head: { title: ["What it does", "not do"] },
+  head: { pill: "Scope", title: ["What it does", "not do"] },
   items: [
     {
       title: "It does not submit",
@@ -178,3 +186,25 @@ export const CLOSING = {
   primary: { label: "See all three plans", href: "/pricing" },
   secondary: { label: "Start 14-day trial", href: "/login" },
 };
+
+// The hero's schematic: one application's statuses in order, from the status
+// table above (same glyphs, same names), with the exit branch under them. The
+// end cap is EFFECTIVE's closing ("the effective date the payer confirms, in
+// writing"); the one hint is the table's own "what it means" for the action
+// state. The note mirrors the approved matrix note, pending copy review.
+export const TRACK = {
+  screen: "One application, from submitted to effective date",
+  note: "Low-fidelity schematic of the statuses one application moves through. It is not a screenshot, and no product interface exists yet.",
+  steps: [
+    { glyph: "○", label: "Not started" },
+    { glyph: "◐", label: "Submitted" },
+    { glyph: "●", label: "In review" },
+    { glyph: "▲", label: "Info requested", action: true, hint: "The payer is waiting on you" },
+    { glyph: "✓", label: "Approved" },
+  ],
+  end: "Effective date, confirmed in writing",
+  branch: { glyph: "✕", label: "Denied or withdrawn", hint: "Record why. It matters when you reapply" },
+};
+
+// What the empty screen frame beside the effective-date section will hold.
+export const EFFECTIVE_SCREEN = "One application's confirmed effective date";

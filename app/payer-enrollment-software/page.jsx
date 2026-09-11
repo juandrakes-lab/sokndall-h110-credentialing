@@ -1,24 +1,31 @@
 import Shell from "@/components/neo/Shell";
 import Faq from "@/components/neo/Faq";
-import Matrix, { MatrixLegend, MatrixNote } from "@/components/neo/Matrix";
+import Matrix, { MatrixLegend } from "@/components/neo/Matrix";
+import { StatusTrack } from "@/components/neo/Schematics";
 import { IconGrid, IconClock, IconDoc, IconCalendar, IconBan, IconRefresh, IconUsers } from "@/components/neo/icons";
 import LandingTemplate, {
-  ProseBandSection, StatusTableSection, IconRowSection, DiagramSection, PanelSection, CtaSection, HeroStrip,
+  ProseBandSection, StatusTableSection, IconRowSection, DiagramSection, CardGridSection,
+  PanelSection, CtaSection, HeroStrip, ScreenSlot,
 } from "@/components/neo/LandingTemplate";
-import { FAQ_HEADING } from "@/components/neo/neoData";
+import { FAQ_HEAD } from "@/components/neo/neoData";
 import { JsonLd, faqSchema } from "@/components/neo/schema";
 import { pageMeta } from "@/lib/seo";
 import {
   META, HERO, TWO_STEPS, TIMELINE, STATUSES, EFFECTIVE, MISMATCH, MATRIX, SCOPE, FAQ, CLOSING,
+  TRACK, EFFECTIVE_SCREEN,
 } from "./data";
 
-// `/payer-enrollment-software` — page 9 of the v3.1 map, rebuilt from zero on
-// LandingTemplate. The hero carries no figure: the matrix is section 7 here,
-// drawn at this page's own density rather than the home's.
+// `/payer-enrollment-software` — page 9 of the v3.1 map, on LandingTemplate.
+// Recomposed 2026-09-11 (DESIGN_DECISIONS.md):
+//   light header with the status track as its object (not the home's matrix);
+//   two steps (split) → the wait (dark, with the 90–120 figure) → statuses
+//   (table) → effective date (text + screen frame) → mismatches (list beside
+//   its head) → the matrix (dark) → scope (three cards) → FAQ → close.
+// No more than three white sections in a row (DESIGN_RULES.md §15).
 //
 // The hero CTA pair reuses the home's approved labels ("Start 14-day trial",
 // "See all three plans") — the copy for this page gives none, and the action
-// is identical. Recorded in DESIGN_DECISIONS.md.
+// is identical.
 export const metadata = pageMeta({
   title: META.title,
   description: META.description,
@@ -36,23 +43,37 @@ export default function PayerEnrollmentSoftwarePage() {
       <LandingTemplate
         current="/payer-enrollment-software"
         hero={{
+          variant: "light",
+          eyebrow: HERO.eyebrow,
           title: HERO.title,
           sub: HERO.sub,
           primary: { label: "Start 14-day trial", href: "/login" },
           secondary: { label: "See all three plans", href: "/pricing" },
           children: (
             <HeroStrip
+              tone="light"
               items={HERO.strip.map((label, i) => {
                 const Icon = STRIP_ICONS[i];
                 return { label, icon: <Icon /> };
               })}
             />
           ),
+          figure: (
+            <ScreenSlot screen={TRACK.screen} ratio="16:6" tone="white" note={TRACK.note}>
+              <StatusTrack steps={TRACK.steps} end={TRACK.end} branch={TRACK.branch} />
+            </ScreenSlot>
+          ),
         }}
       >
         <ProseBandSection id="two-steps" head={TWO_STEPS.head} paras={TWO_STEPS.paras} closing={TWO_STEPS.closing} />
 
-        <ProseBandSection id="timeline" head={TIMELINE.head} paras={TIMELINE.paras} closing={TIMELINE.closing} />
+        <ProseBandSection
+          id="timeline"
+          surface="ink"
+          head={TIMELINE.head}
+          paras={TIMELINE.paras}
+          closing={TIMELINE.closing}
+        />
 
         <StatusTableSection
           id="statuses"
@@ -62,22 +83,40 @@ export default function PayerEnrollmentSoftwarePage() {
           closing={STATUSES.closing}
         />
 
-        <ProseBandSection id="effective-date" head={EFFECTIVE.head} paras={EFFECTIVE.paras} closing={EFFECTIVE.closing} />
+        <ProseBandSection
+          id="effective-date"
+          head={EFFECTIVE.head}
+          paras={EFFECTIVE.paras}
+          closing={EFFECTIVE.closing}
+          media={<ScreenSlot screen={EFFECTIVE_SCREEN} ratio="4:3" />}
+          flip
+        />
 
-        <IconRowSection id="mismatch" head={MISMATCH.head} items={MISMATCH.items} closing={MISMATCH.closing} />
+        <IconRowSection
+          id="mismatch"
+          layout="split"
+          head={MISMATCH.head}
+          items={MISMATCH.items}
+          closing={MISMATCH.closing}
+        />
 
         <DiagramSection
+          surface="ink"
           head={MATRIX.head}
-          note={<MatrixNote>{MATRIX.note}</MatrixNote>}
-          // Six providers by five payers at reduced size, three cells needing
-          // action — this page's own grid, not the home's 5 x 5.
-          diagram={<Matrix rows={6} cols={5} infoCount={1} quietCount={2} reviewCount={5} />}
+          // Six providers by five payers, six cells needing action — the copy
+          // says "the six" twice, so the grid shows six. The home's 5 x 5 is a
+          // different density.
+          diagram={
+            <ScreenSlot screen="Provider × payer matrix" ratio="16:9" tone="white" note={MATRIX.note}>
+              <Matrix rows={6} cols={5} infoCount={3} quietCount={3} reviewCount={5} />
+            </ScreenSlot>
+          }
           legend={<MatrixLegend />}
           points={MATRIX.points}
           aside={MATRIX.aside}
         />
 
-        <IconRowSection
+        <CardGridSection
           id="scope"
           head={SCOPE.head}
           items={SCOPE.items.map((s, i) => {
@@ -87,7 +126,7 @@ export default function PayerEnrollmentSoftwarePage() {
           closing={SCOPE.closing}
         />
 
-        <PanelSection id="faq" head={{ title: FAQ_HEADING }}>
+        <PanelSection id="faq" head={FAQ_HEAD} split>
           <Faq items={FAQ} openFirst />
         </PanelSection>
 
