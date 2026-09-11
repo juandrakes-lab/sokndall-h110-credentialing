@@ -14,6 +14,7 @@ export const META = {
 // on-page-seo.md §4 pattern: premise in the H1, the exact keyword in the first
 // H2 below. The two sentences are set as two authored lines.
 export const HERO = {
+  eyebrow: "Pricing",
   title: ["No quote to get.", "No call to book."],
   sub:
     "Three plans, three prices, no quote process. Every plan has every feature. The difference is how many providers you track, and whether you track them for your own practice or for clients.",
@@ -57,7 +58,10 @@ export const PLANS = {
 // approved and reported; the copy file's own shorter alternative changes the
 // wording, and approved copy is not rewritten to fit.
 export const UNITS = {
-  head: { title: ["A provider is not", "a user, and the", "difference is the", "whole comparison"] },
+  head: {
+    pill: "Provider vs. user",
+    title: ["A provider is not", "a user, and the", "difference is the", "whole comparison"],
+  },
   paras: [
     "A provider is a record being tracked: one clinician, with their credentials and their enrollment applications. A user is a person who logs in. A three-person front office managing forty clinicians is three users and forty providers. A solo practitioner who does her own paperwork is one of each.",
     "Sokndall charges by provider and includes users up to the plan's limit. MedTrainer states in [its own FAQ](src:medtrainerProduct) that its pricing scales with the number of users and modules. Neither model is wrong. They are simply not comparable, and every published comparison of this category that puts two per-unit figures side by side without saying which unit is measuring something it did not measure.",
@@ -67,6 +71,7 @@ export const UNITS = {
 
 export const ANCHOR = {
   head: {
+    pill: "Cost anchors",
     title: ["What this costs", "next to what you", "already pay"],
     aside:
       "Four published figures, and they do not measure the same thing. Two count providers handed to an outside team. One counts staff seats inside software. The last one is this product. Every figure states its unit, because that is exactly where this comparison usually goes wrong.",
@@ -87,6 +92,7 @@ export const ANCHOR = {
     {
       label: "$3,588 a year, 15 providers",
       note: "Sokndall Practice, $299 a month. Unit: providers tracked. $239 each per year.",
+      ours: true,
     },
   ],
   closing:
@@ -98,7 +104,7 @@ export const ANCHOR = {
 // first letter is capitalised because it now opens its own block — the only
 // typographic change made to the approved strings.
 export const TRIAL = {
-  head: { title: "How the trial works" },
+  head: { pill: "The trial", title: "How the trial works" },
   items: [
     { title: "14 days, full product", body: "Every feature from day one. Nothing is held back for the trial." },
     {
@@ -143,4 +149,15 @@ export const CLOSING = {
   title: "Start the fourteen-day trial",
   body: "Card up front, cancel yourself from Settings before day 15. Nothing on this page changes after you sign up.",
   primary: { label: "Start 14-day trial", href: "/login" },
+};
+
+// The provider-versus-user diagram beside the UNITS section: the copy's own
+// example, drawn. Counts and wording come from UNITS.paras[0]; nothing here is
+// a customer figure.
+export const UNITS_DIAGRAM = {
+  rows: [
+    { count: 3, unit: "users", note: "A user is a person who logs in.", kind: "person" },
+    { count: 40, unit: "providers", note: "A provider is a record being tracked.", kind: "record" },
+  ],
+  caption: "A three-person front office managing forty clinicians is three users and forty providers.",
 };

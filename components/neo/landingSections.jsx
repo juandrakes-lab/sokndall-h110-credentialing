@@ -138,9 +138,9 @@ export function QuadSection({ head, blocks, imageRatio = "3:2", labels = {} }) {
  *  The two cards keep their own heights (DESIGN_RULES.md §4 — height matching
  *  was repealed on 2026-09-06; the aside card used to stretch to the list
  *  beside it and float its body in the middle). */
-export function DiagramSection({ head, note, diagram, legend, points, aside }) {
+export function DiagramSection({ head, note, diagram, legend, points, aside, surface = "card" }) {
   return (
-    <Band>
+    <Band surface={surface}>
       <SectionHead {...head} />
 
       {note}

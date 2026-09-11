@@ -727,3 +727,23 @@ Razón: a 1280 con barra de scroll, "tells you what went / quiet" dejaba la
 última palabra sola. Se midió: la línea 1 ("Credentialing that") necesita
 567px; la columna de copy del hero pasa a 1,15fr (593px).
 Regla de DESIGN_RULES.md que aplica: §7.
+
+## /pricing — recompuesta
+Fecha: 2026-09-11
+Decisión: encabezado claro (`HeroPanel variant="light"`) con la lista de
+precios como su objeto: el primer H2 (la keyword exacta) va dentro del
+encabezado, a tamaño de título de tarjeta (`.sk-h3`) como rótulo de la lista, y
+la primera fila de precio queda arriba del pliegue en 1280×720. La sección
+proveedor/usuario pasa a *media* con `CountDiagram` (componente nuevo en
+`Schematics.jsx`): 3 personas contra 40 registros, el ejemplo del propio copy
+("a three-person front office managing forty clinicians"). Anclas en la banda
+oscura, 2×2, con la cifra propia en blanco. Términos del trial como
+`CardGridSection` (tres ítems de largo parecido, §4) con íconos calendario,
+tarjeta y círculo tachado. FAQ a dos columnas.
+Pastillas escritas por el diseño, pendientes de revisión del copy: "Pricing"
+(encabezado), "Provider vs. user", "Cost anchors", "The trial", "FAQ".
+Razón: el primer precio aparecía a y≈880 en una página de precios; la sección
+proveedor/usuario tenía cuatro líneas de titular y la mitad derecha vacía.
+Política de imagen de `CountDiagram`: ninguna; marcas dibujadas, íconos
+sólidos sin caja.
+Regla de DESIGN_RULES.md que aplica: §14, §15, on-page-seo.md §4.

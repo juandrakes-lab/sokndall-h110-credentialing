@@ -111,6 +111,32 @@ export function IconBan(p) {
   );
 }
 
+export function IconUser(p) {
+  return (
+    <svg {...base} {...p}>
+      <circle cx="12" cy="7.5" r="4.5" />
+      <path d="M12 13.5c-4.4 0-8 2.8-8 6.3 0 1.2 1 2.2 2.2 2.2h11.6c1.2 0 2.2-1 2.2-2.2 0-3.5-3.6-6.3-8-6.3Z" />
+    </svg>
+  );
+}
+
+export function IconCard(p) {
+  return (
+    <svg {...base} {...p}>
+      <path d="M2 7.5A2.5 2.5 0 0 1 4.5 5h15A2.5 2.5 0 0 1 22 7.5V9H2V7.5Z" />
+      <path d="M2 11h20v5.5a2.5 2.5 0 0 1-2.5 2.5h-15A2.5 2.5 0 0 1 2 16.5V11Zm3.5 3.25a.75.75 0 0 0 0 1.5h4a.75.75 0 0 0 0-1.5h-4Z" />
+    </svg>
+  );
+}
+
+export function IconLock(p) {
+  return (
+    <svg {...base} {...p}>
+      <path d="M12 2a5 5 0 0 0-5 5v2.2A2.5 2.5 0 0 0 5 11.6v7.9A2.5 2.5 0 0 0 7.5 22h9a2.5 2.5 0 0 0 2.5-2.5v-7.9a2.5 2.5 0 0 0-2-2.4V7a5 5 0 0 0-5-5Zm3 7H9V7a3 3 0 1 1 6 0v2Zm-3 4.5a1.5 1.5 0 0 1 .8 2.8V18a.8.8 0 0 1-1.6 0v-1.7a1.5 1.5 0 0 1 .8-2.8Z" />
+    </svg>
+  );
+}
+
 // Three stacked bars, the middle one offset — a panel of providers with one
 // row out of line.
 export function Wordmark(p) {

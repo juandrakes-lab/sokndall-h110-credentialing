@@ -3570,3 +3570,176 @@ html:has(.sokndall-neo) { overflow-x: hidden; }
    headline never strands its last word ("tells you what went / quiet"). It
    changes where a wrap falls, never where the copy breaks. */
 .sokndall-neo :is(.sk-display, .sk-h2) { text-wrap: balance; }
+
+
+/* ===================== SCHEMATICS (2026-09-11) ===========================
+   Schematics.jsx — low fidelity on purpose, inside a ScreenSlot. */
+
+/* ---- StatusTrack -------------------------------------------------------- */
+.sk-track { display: grid; gap: var(--s-5); padding: var(--s-3) var(--s-2) var(--s-2); }
+.sk-track__steps {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: var(--s-3);
+  align-items: start;
+}
+.sk-track__step,
+.sk-track__end { position: relative; display: grid; gap: var(--s-2); justify-items: start; }
+/* The connector runs from each step's mark to the next one. */
+.sk-track__step::after {
+  content: "";
+  position: absolute;
+  top: 11px;
+  left: calc(100% - var(--s-3));
+  width: calc(var(--s-3) * 2);
+  height: 2px;
+  background: var(--accent);
+  opacity: 0.45;
+}
+.sk-track .sk-mark { font-size: 0.75rem; padding: 4px 10px; position: relative; z-index: 1; }
+.sk-track__hint { font-size: 0.75rem; line-height: 1.35; max-width: 18ch; }
+.sk-track__endchip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--ink);
+  color: #fff;
+  border-radius: var(--r-pill);
+  padding: 4px 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+.sk-track__branch { display: flex; align-items: center; gap: var(--s-3); flex-wrap: wrap; }
+.sk-track__fork {
+  width: 22px;
+  height: 14px;
+  border-left: 2px solid var(--line-strong);
+  border-bottom: 2px solid var(--line-strong);
+  border-bottom-left-radius: 6px;
+  margin-top: -10px;
+}
+@media (max-width: 860px) {
+  .sk-track__steps { grid-template-columns: minmax(0, 1fr); gap: var(--s-4); }
+  .sk-track__step::after { top: 100%; left: 12px; width: 2px; height: var(--s-4); }
+  .sk-track__step,
+  .sk-track__end { grid-template-columns: auto minmax(0, 1fr); align-items: center; column-gap: var(--s-3); }
+  .sk-track__hint { max-width: none; }
+}
+
+/* ---- ClientStructure ---------------------------------------------------- */
+.sk-orgs {
+  --cols: 6;
+  display: grid;
+  gap: var(--s-3);
+  padding: var(--s-2);
+}
+.sk-orgs__login { display: flex; justify-content: center; }
+.sk-orgs__login .sk-mark { font-size: 0.75rem; padding: 5px 12px; gap: var(--s-2); background: var(--ink); color: #fff; }
+.sk-orgs__ico { width: 16px; height: 16px; }
+.sk-orgs__row,
+.sk-orgs__scopes {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
+  gap: var(--s-3);
+}
+.sk-orgs__tile {
+  display: grid;
+  gap: 2px;
+  justify-items: start;
+  padding: var(--s-3);
+  border-radius: var(--r-inner);
+  border: var(--hairline) solid var(--line-strong);
+  background: var(--card);
+  box-shadow: var(--sh-grey);
+}
+.sk-orgs__lock { width: 18px; height: 18px; color: var(--accent); margin-bottom: var(--s-1); }
+.sk-orgs__name { font-size: 0.8125rem; font-weight: 700; }
+.sk-orgs__note { font-size: 0.6875rem; }
+.sk-orgs__scope {
+  border-radius: var(--r-pill);
+  background: var(--tint-2);
+  border-top: 2px solid var(--accent);
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 5px var(--s-3);
+  text-align: center;
+}
+.sk-orgs__agg {
+  border-radius: var(--r-inner);
+  background: var(--paper);
+  border: var(--hairline) dashed var(--line-strong);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  padding: var(--s-3);
+  text-align: center;
+}
+.sk-orgs__scope--0-0 { grid-column: 1 / 2; }
+.sk-orgs__scope--0-1 { grid-column: 1 / 3; }
+.sk-orgs__scope--0-2 { grid-column: 1 / 4; }
+.sk-orgs__scope--0-3 { grid-column: 1 / 5; }
+.sk-orgs__scope--0-4 { grid-column: 1 / 6; }
+.sk-orgs__scope--0-5 { grid-column: 1 / 7; }
+.sk-orgs__scope--1-1 { grid-column: 2 / 3; }
+.sk-orgs__scope--1-2 { grid-column: 2 / 4; }
+.sk-orgs__scope--1-3 { grid-column: 2 / 5; }
+.sk-orgs__scope--1-4 { grid-column: 2 / 6; }
+.sk-orgs__scope--1-5 { grid-column: 2 / 7; }
+.sk-orgs__scope--2-2 { grid-column: 3 / 4; }
+.sk-orgs__scope--2-3 { grid-column: 3 / 5; }
+.sk-orgs__scope--2-4 { grid-column: 3 / 6; }
+.sk-orgs__scope--2-5 { grid-column: 3 / 7; }
+.sk-orgs__scope--3-3 { grid-column: 4 / 5; }
+.sk-orgs__scope--3-4 { grid-column: 4 / 6; }
+.sk-orgs__scope--3-5 { grid-column: 4 / 7; }
+.sk-orgs__scope--4-4 { grid-column: 5 / 6; }
+.sk-orgs__scope--4-5 { grid-column: 5 / 7; }
+.sk-orgs__scope--5-5 { grid-column: 6 / 7; }
+@media (max-width: 760px) {
+  .sk-orgs { --cols: 3; }
+  .sk-orgs__scopes { grid-template-columns: minmax(0, 1fr); }
+  .sk-orgs__scopes > * { grid-column: 1 / -1; }
+}
+
+/* ---- CountDiagram ------------------------------------------------------- */
+.sk-count {
+  display: grid;
+  gap: var(--s-6);
+  padding: var(--card-pad);
+  border-radius: var(--r-panel);
+  background: var(--paper);
+  box-shadow: var(--sh-grey);
+}
+.sk-count__row { display: grid; gap: var(--s-3); }
+.sk-count__head { display: flex; align-items: baseline; flex-wrap: wrap; gap: 0 var(--s-2); }
+.sk-count__n {
+  font-size: clamp(2.25rem, 1.4rem + 2.4vw, 3rem);
+  line-height: 1;
+  font-weight: 400;
+  letter-spacing: -0.04em;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+.sk-count__u { font-size: 1rem; font-weight: 700; }
+.sk-count__note { font-size: 0.8125rem; flex-basis: 100%; }
+.sk-count__marks { list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.sk-count__marks--record li {
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+  background: var(--card);
+  border: 1.5px solid var(--accent);
+}
+.sk-count__marks--person li { color: var(--ink); }
+.sk-count__person { width: 30px; height: 30px; }
+.sk-count__cap { font-size: 0.8125rem; border-top: 1px solid var(--line-strong); padding-top: var(--s-3); }
+
+/* ---- /pricing: the price list as the header's object -------------------- */
+.sk-pricehead { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--s-5); text-align: left; }
+.sk-pricehead__t { text-align: center; }
+.sk-pricehead .sk-plans__note { text-align: center; margin-top: 0; }
+.sk-lhero .sk-list li::before { background: var(--accent); }
+.sk-lhero .sk-list li { color: var(--black); }
