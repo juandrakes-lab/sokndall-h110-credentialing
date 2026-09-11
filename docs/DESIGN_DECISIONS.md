@@ -779,3 +779,24 @@ Decisión: contra-regla para `.sk-h3`/`.sk-h4` dentro de una tarjeta clara en
 Razón: la trampa que CLAUDE.md ya documenta, reaparecida al pasar la matriz a
 banda oscura: el título de la tarjeta lateral salía blanco sobre blanco.
 Regla de DESIGN_RULES.md que aplica: §8.
+
+## /for-billing-companies — recompuesta
+Fecha: 2026-09-11
+Decisión: encabezado claro con la estructura de clientes como objeto
+(`ClientStructure` en un `ScreenSlot`): un login, seis organizaciones con datos
+aislados, el coordinador asignado a dos clientes y no a los otros cuatro, y la
+vista agregada al pie. Seis porque el H1 dice seis; sin conteos, porque el copy
+no los da. Secuencia: problema (*split*) → estructura (filas con íconos:
+candado, cambio, personas, grilla, correo) → reporte (*media*, `ScreenSlot`
+vacío "Per-client report: dates, statuses, last follow-up") → anclas (banda
+oscura, `layout="side"`: el copy no trae párrafo lateral, así que el titular
+queda a la izquierda y las tres cifras apiladas a la derecha, la propia en
+blanco) → arquitectura (*split*) → FAQ → cierre.
+Pastillas y microcopy del esquema escritos por el diseño, pendientes de revisión
+del copy: "For billing companies" (encabezado), "The problem", "Structure",
+"Client reporting", "Cost anchors", "Billing Co plan", "FAQ"; en el esquema,
+"One login", "Isolated data", "Coordinator 1 · two clients", "Coordinator 2 ·
+the other four" y la línea de la vista agregada.
+Razón: una página que vende una estructura no mostraba ninguna; tres secciones
+con la mitad derecha vacía y un H2 de tres líneas sobre 38 palabras.
+Regla de DESIGN_RULES.md que aplica: §14, §15, §16, §2 regla 1.

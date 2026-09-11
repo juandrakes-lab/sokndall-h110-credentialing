@@ -12,6 +12,7 @@ export const META = {
 };
 
 export const HERO = {
+  eyebrow: "For billing companies",
   title: ["Six clients,", "not six sheets"],
   sub:
     "Separate client organizations, isolated data, one login, one weekly view across all of them. $699 a month for up to 50 providers across your book.",
@@ -25,6 +26,7 @@ export const HERO = {
 
 export const PROBLEM = {
   head: {
+    pill: "The problem",
     title: ["The problem is not", "volume. It is that", "nothing adds up"],
     note:
       "Each client has their own file, their own naming, their own way of recording a follow-up, and none of it totals.",
@@ -38,7 +40,7 @@ export const PROBLEM = {
 
 // Each item in the copy is "feature — explanation".
 export const STRUCTURE = {
-  head: { title: ["How the", "structure works"] },
+  head: { pill: "Structure", title: ["How the", "structure works"] },
   items: [
     {
       title: "Separate client organizations",
@@ -61,7 +63,7 @@ export const STRUCTURE = {
 };
 
 export const REPORT = {
-  head: { title: ["The report you can", "send without", "building it"] },
+  head: { pill: "Client reporting", title: ["The report you can", "send without", "building it"] },
   paras: [
     "When a client asks where their enrollments stand, the answer is a list with dates, statuses and the last follow-up on each one. Not a recollection, and not an afternoon of assembling.",
   ],
@@ -73,7 +75,7 @@ export const REPORT = {
 // the same line. The same article's "85-88%" saving compares against in-house
 // staff, a different unit, and is deliberately not used (copy note).
 export const ANCHOR = {
-  head: { title: ["What the work", "costs, and what", "tracking it costs"] },
+  head: { pill: "Cost anchors", title: ["What the work", "costs, and what", "tracking it costs"] },
   figures: [
     {
       label: "$600 to $2,400 per provider, per year",
@@ -82,6 +84,7 @@ export const ANCHOR = {
     {
       label: "$699 a month, up to 50 providers",
       note: "[Sokndall Billing Co](/pricing). Unit: providers tracked across your whole book.",
+      ours: true,
     },
     {
       label: "$960 to $1,120 a month, one specialist",
@@ -93,7 +96,7 @@ export const ANCHOR = {
 };
 
 export const ARCHITECTURE = {
-  head: { title: ["A different", "architecture, not", "a bigger number"] },
+  head: { pill: "Billing Co plan", title: ["A different", "architecture, not", "a bigger number"] },
   paras: [
     "Every feature in the smaller plans is here. What is different is the multi-client structure, and it is not available on Solo or Practice — the isolation is built into how the data is stored, not switched on afterwards.",
   ],
@@ -119,3 +122,25 @@ export const CLOSING = {
   body: "Card up front, cancel yourself from Settings before day 15. Full plan details on [the pricing page](/pricing).",
   primary: { label: "Start 14-day trial", href: "/login" },
 };
+
+// The hero's schematic: the structure the copy describes — one login, separate
+// client organizations with isolated data, a coordinator assigned to two
+// clients and not the other four, and one view across the book. Six clients
+// because the H1 says six. No counts: the copy gives none. The note mirrors the
+// approved matrix note; the tile and bar labels are layout microcopy built
+// from STRUCTURE's own words. All pending copy review.
+export const ORGS = {
+  screen: "Client organizations, scoped access and the aggregate view",
+  note: "Low-fidelity schematic of the data model. It is not a screenshot, and no product interface exists yet. Each client is its own organization; nothing crosses between them.",
+  login: "One login",
+  clients: ["Client A", "Client B", "Client C", "Client D", "Client E", "Client F"],
+  tileNote: "Isolated data",
+  scopes: [
+    { label: "Coordinator 1 · two clients", from: 0, to: 1 },
+    { label: "Coordinator 2 · the other four", from: 2, to: 5 },
+  ],
+  aggregate: "One aggregate view: follow-ups due this week and applications quiet for 30 days, across every client",
+};
+
+// What the empty screen frame beside the report section will hold.
+export const REPORT_SCREEN = "Per-client report: dates, statuses, last follow-up";
