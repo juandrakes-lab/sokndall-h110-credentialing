@@ -3,12 +3,12 @@ import Faq from "@/components/neo/Faq";
 import Matrix, { MatrixLegend } from "@/components/neo/Matrix";
 import HeroPanel from "@/components/neo/HeroPanel";
 import {
-  IconBan, IconDoc, IconGrid, IconCalendar, IconMail, IconClock,
+  IconBan, IconDoc, IconGrid, IconCalendar, IconMail, IconClock, IconBell,
   IconSearch, IconRefresh, IconShield, IconUsers,
 } from "@/components/neo/icons";
 import LandingTemplate, {
   SplitListSection, QuadSection, DiagramSection, FigureBandSection,
-  PlanListSection, IconRowSection, PanelSection, CtaSection, HeroStrip, ScreenSlot,
+  PlanListSection, IconRowSection, PanelSection, CtaSection, HeroStrip, ScreenSlot, Indicator,
 } from "@/components/neo/LandingTemplate";
 import { FAQ_HEAD, PLAN_PERIOD } from "@/components/neo/neoData";
 import { JsonLd, faqSchema, softwareSchema, PLAN_PRICES } from "@/components/neo/schema";
@@ -30,16 +30,17 @@ const SCOPE_ICONS = [IconSearch, IconRefresh, IconShield, IconUsers];
 function Hero() {
   return (
     <HeroPanel
+      variant="panel"
       current="/"
       title={HERO.title}
       sub={HERO.sub}
       primary={HERO.primary}
       secondary={HERO.secondary}
       figure={
-        // The data model at hero size. Four providers by four payers is the
-        // home's own density; /payer-enrollment-software draws a different
-        // grid rather than repeating this one.
-        <div className="sk-herofig">
+        // The data model at hero size, in the frame the real matrix screen
+        // will fill. Four providers by four payers is the home's own density;
+        // /payer-enrollment-software draws a different grid.
+        <ScreenSlot screen="Provider × payer matrix" ratio="4:3" tone="white" note={HERO.caption}>
           <Matrix
             compact
             rows={4}
@@ -50,9 +51,12 @@ function Hero() {
             providers={["P 01", "P 02", "P 03", "P 04"]}
             payers={["A", "B", "C", "D"]}
           />
-          <p className="sk-small sk-herofig__note">{HERO.caption}</p>
-        </div>
+        </ScreenSlot>
       }
+      indicators={HERO.indicators.map((ind, i) => {
+        const Icon = [IconBell, IconClock][i];
+        return <Indicator key={ind.label} icon={<Icon />} value={ind.value} label={ind.label} />;
+      })}
     >
       <HeroStrip
         items={HERO.strip.map((label, i) => {

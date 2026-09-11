@@ -697,3 +697,33 @@ Las demás se escribieron como etiquetas estructurales de 1-3 palabras:
 home — "What it tracks", "The matrix", "Cost anchors", "Pricing", "Scope", "FAQ".
 (Las de las otras cuatro páginas se listan en sus propias entradas.)
 Regla de DESIGN_RULES.md que aplica: §13.
+
+## / — hero restaurado al panel de la referencia (`HeroPanel variant="panel"`)
+Fecha: 2026-09-11
+Decisión: el hero de la home vuelve a ser el bloque firma de la referencia:
+panel de tinta con márgenes y esquinas redondeadas, muesca blanca en la esquina
+superior izquierda con la marca, nav sobre la tinta al lado, textura de líneas
+al 7,5% de blanco, y lengüeta centrada bajo el borde inferior. La matriz entra
+en un `ScreenSlot` 4:3 y dos `Indicator` flotan sobre sus bordes:
+"90 · 60 · 30 · 14 · 7 — days before an expiry, an alert goes out" y
+"30 days — with no contact flags an application". Los valores son hechos del
+copy aprobado (pie de la sección 3 y FAQ Q4 de la home; FAQ Q4 de
+/payer-enrollment-software); las etiquetas son microcopy de maquetado,
+pendiente de revisión.
+Razón: el hero de la home se había aplanado a un rectángulo a sangre; el
+fundador pidió volver a la referencia. Los empalmes de la muesca y la lengüeta
+son radiales de corte duro usados como forma (un cuarto de disco del color de
+la página), no degradados.
+Regla de DESIGN_RULES.md que aplica: §2 regla 1 (el esquema lleva su nota), §3
+(el hero es la excepción a sangre; ahora es un bloque con margen, como las
+bandas oscuras).
+
+## Titulares — `text-wrap: balance`
+Fecha: 2026-09-11
+Decisión: `.sk-display` y `.sk-h2` equilibran sus líneas. El copy sigue
+decidiendo dónde corta (en escritorio); el navegador reparte lo que envuelve
+entre corte y corte.
+Razón: a 1280 con barra de scroll, "tells you what went / quiet" dejaba la
+última palabra sola. Se midió: la línea 1 ("Credentialing that") necesita
+567px; la columna de copy del hero pasa a 1,15fr (593px).
+Regla de DESIGN_RULES.md que aplica: §7.

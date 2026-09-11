@@ -3405,3 +3405,168 @@ html:has(.sokndall-neo) { overflow-x: hidden; }
 .sk-quad__a { position: relative; }
 .sk-quad__t { padding-right: var(--s-8); }
 .sk-quad__a > .sk-layer__ico { position: absolute; top: var(--s-5); right: var(--s-5); }
+
+
+/* ===================== HERO VARIANTS (2026-09-11) ======================== */
+
+/* ---- variant="panel": the home. The reference's signature block. -------- */
+/* An ink panel inset from the page edges, rounded, with a white notch cut into
+   its top-left corner that carries the wordmark. The notch's own bottom-right
+   corner is rounded; the two fillets beside it are hard-stop radials used as
+   a shape (a quarter-disc of page white), not as a gradient — nothing on the
+   page blends. The texture is one line drawing at 7.5% white. */
+.sk-hero--panel {
+  --notch-h: 72px;
+  --notch-r: 18px;
+  position: relative;
+  margin: var(--page-x) var(--page-x) calc(22px + var(--s-4));
+  border-radius: var(--r-block);
+  padding-inline: var(--pad-x);
+  background-color: var(--ink);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 1200 720%27 preserveAspectRatio=%27none%27%3E%3Cg fill=%27none%27 stroke=%27white%27 stroke-opacity=%270.075%27 stroke-width=%271%27%3E%3Cpath d=%27M-20 60 C 300 34 520 101.6 800 65.2 S 1100 34 1220 75.6%27/%3E%3Cpath d=%27M-20 140 C 300 111 520 186.4 800 145.8 S 1100 111 1220 157.4%27/%3E%3Cpath d=%27M-20 220 C 300 188 520 271.2 800 226.4 S 1100 188 1220 239.2%27/%3E%3Cpath d=%27M-20 300 C 300 265 520 356.0 800 307.0 S 1100 265 1220 321.0%27/%3E%3Cpath d=%27M-20 380 C 300 342 520 440.8 800 387.6 S 1100 342 1220 402.8%27/%3E%3Cpath d=%27M-20 460 C 300 419 520 525.6 800 468.2 S 1100 419 1220 484.6%27/%3E%3Cpath d=%27M-20 540 C 300 496 520 610.4 800 548.8 S 1100 496 1220 566.4%27/%3E%3Cpath d=%27M-20 620 C 300 573 520 695.2 800 629.4 S 1100 573 1220 648.2%27/%3E%3Cpath d=%27M-20 700 C 300 650 520 780.0 800 710.0 S 1100 650 1220 730.0%27/%3E%3Cpath d=%27M80 -20 C 120 180 48.0 420 104.0 740%27/%3E%3Cpath d=%27M190 -20 C 236 180 153.2 420 217.6 740%27/%3E%3Cpath d=%27M300 -20 C 352 180 258.4 420 331.2 740%27/%3E%3Cpath d=%27M410 -20 C 468 180 363.6 420 444.8 740%27/%3E%3Cpath d=%27M520 -20 C 584 180 468.8 420 558.4 740%27/%3E%3Cpath d=%27M630 -20 C 700 180 574.0 420 672.0 740%27/%3E%3Cpath d=%27M740 -20 C 816 180 679.2 420 785.6 740%27/%3E%3Cpath d=%27M850 -20 C 932 180 784.4 420 899.2 740%27/%3E%3Cpath d=%27M960 -20 C 1048 180 889.6 420 1012.8 740%27/%3E%3Cpath d=%27M1070 -20 C 1164 180 994.8 420 1126.4 740%27/%3E%3Cpath d=%27M1180 -20 C 1280 180 1100.0 420 1240.0 740%27/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 100% 100%;
+}
+.sk-hero.sk-band--ink.sk-hero--panel {
+  margin-inline: var(--page-x);
+  border-radius: var(--r-block);
+  padding-inline: var(--pad-x);
+}
+.sk-hero__bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--notch-h);
+  display: flex;
+  align-items: stretch;
+  z-index: 1;
+}
+.sk-hero__notch {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: var(--card);
+  padding: 0 var(--s-6) 0 var(--pad-x);
+  border-bottom-right-radius: var(--notch-r);
+}
+.sk-hero__notch::before,
+.sk-hero__notch::after {
+  content: "";
+  position: absolute;
+  width: var(--notch-r);
+  height: var(--notch-r);
+  background: radial-gradient(circle at 100% 100%, transparent calc(var(--notch-r) - 0.5px), var(--card) var(--notch-r));
+}
+.sk-hero__notch::before { top: 0; left: 100%; }
+.sk-hero__notch::after { top: 100%; left: 0; }
+.sokndall-neo .sk-hero__notch .sk-nav__brand { color: var(--black); padding-right: 0; }
+.sk-hero__notch .sk-nav__mark { color: var(--ink); }
+.sk-hero__navrow {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 0 var(--pad-x) 0 calc(var(--notch-r) + var(--s-5));
+  min-width: 0;
+}
+.sk-hero--panel .sk-hero__inner { padding-top: var(--notch-h); }
+.sk-hero--panel .sk-hero__top { padding-top: var(--s-8); }
+.sk-hero--panel .sk-navm { padding-inline: 0; }
+
+/* The tongue: a short ink tab below the panel's bottom edge, centred, joined
+   to it by two concave fillets. */
+.sk-hero__tongue {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(36%, 420px);
+  height: 22px;
+  background: var(--ink);
+  border-radius: 0 0 var(--notch-r) var(--notch-r);
+}
+.sk-hero__tongue::before,
+.sk-hero__tongue::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  width: var(--notch-r);
+  height: var(--notch-r);
+}
+.sk-hero__tongue::before {
+  right: 100%;
+  background: radial-gradient(circle at 0 100%, transparent calc(var(--notch-r) - 0.5px), var(--ink) var(--notch-r));
+}
+.sk-hero__tongue::after {
+  left: 100%;
+  background: radial-gradient(circle at 100% 100%, transparent calc(var(--notch-r) - 0.5px), var(--ink) var(--notch-r));
+}
+
+/* The figure is a ScreenSlot now, which takes its schematic's height. */
+.sk-hero--panel .sk-hero__media { aspect-ratio: auto; position: relative; }
+.sk-hero--panel .sk-hero__media > * { height: auto; }
+/* Two real facts floating over the figure's edges, as the reference's chips. */
+.sk-hero__inds { position: absolute; inset: 0; pointer-events: none; }
+.sk-hero__inds > * { position: absolute; max-width: 250px; pointer-events: auto; }
+.sk-hero__inds > :nth-child(1) { left: calc(var(--s-7) * -1); bottom: calc(var(--s-8) * -1); }
+.sk-hero__inds > :nth-child(2) { right: calc(var(--s-6) * -1); top: calc(var(--s-7) * -1 - var(--s-2)); }
+/* The copy column takes more of the split than on the old band: at 1280 with a
+   classic scrollbar, "Credentialing that" no longer fitted 1.1fr and the H1 ran
+   to four lines. The compact matrix reads fine at 0.8fr. */
+.sk-hero--panel .sk-hero__top { grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr); }
+.sk-hero--panel .sk-hero__copy { max-width: none; }
+/* The panel's top margin must stay inside the wrapper, or it collapses through
+   to the body and the page ground above the panel is the body's, not white —
+   and the white notch then shows as a tab on a grey strip. */
+.sokndall-neo { display: flow-root; }
+
+@media (max-width: 880px) {
+  .sk-hero__navrow .sk-nav__links { display: none; }
+  .sk-hero--panel .sk-hero__navm { padding-top: calc(var(--notch-h) + var(--s-2)); }
+  .sk-hero--panel .sk-hero__inner { padding-top: 0; }
+  .sk-hero--panel .sk-hero__top { padding-top: var(--s-7); }
+}
+@media (max-width: 900px) {
+  .sk-hero__inds { position: static; display: flex; flex-wrap: wrap; gap: var(--s-3); margin-top: var(--s-5); }
+  .sk-hero__inds > * { position: static; }
+}
+@media (max-width: 520px) {
+  .sk-hero--panel { --notch-h: 60px; --notch-r: 14px; }
+  .sk-hero__notch { padding-right: var(--s-4); }
+  .sk-hero__tongue { width: 44%; }
+}
+
+/* ---- variant="light": the four product pages ---------------------------- */
+.sk-lhero {
+  background: var(--card);
+  padding-inline: var(--light-x);
+  padding-bottom: var(--sec-y);
+}
+.sk-nav--plain { padding-block: var(--s-5); }
+.sokndall-neo .sk-nav--plain .sk-nav__brand { color: var(--black); }
+.sk-nav--plain .sk-nav__mark { color: var(--ink); }
+.sk-nav--plain .sk-nav__links a { color: var(--black); opacity: 0.72; }
+.sk-nav--plain .sk-nav__links a:hover,
+.sk-nav--plain .sk-nav__links a[aria-current="page"] { color: var(--black); opacity: 1; }
+.sk-lhero .sk-navm { padding-inline: 0; }
+.sk-lhero__inner {
+  display: grid;
+  justify-items: center;
+  text-align: center;
+  padding-top: var(--s-8);
+}
+.sk-lhero__h1 { color: var(--black); }
+.sk-lhero__sub { margin-top: var(--s-6); max-width: 58ch; }
+.sk-lhero .sk-hero__cta { justify-content: center; margin-top: var(--s-6); }
+.sk-lhero__strip { margin-top: var(--s-7); }
+.sk-lhero__figure { margin-top: var(--s-8); }
+.sk-lhero__figure--form { max-width: 34rem; }
+@media (max-width: 880px) {
+  .sk-lhero__inner { padding-top: var(--s-7); }
+}
+
+/* ---- balanced headlines -------------------------------------------------- */
+/* The browser evens out the lines between the copy's authored breaks, so a
+   headline never strands its last word ("tells you what went / quiet"). It
+   changes where a wrap falls, never where the copy breaks. */
+.sokndall-neo :is(.sk-display, .sk-h2) { text-wrap: balance; }

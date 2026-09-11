@@ -21,6 +21,14 @@ export const HERO = {
   strip: ["No demo call", "No quote request", "Price list published", "Cancel before day 15"],
   caption:
     "This is the data model, not a screenshot. Sokndall is in development and no interface is shown anywhere on this site.",
+  // The two chips floating over the figure. Values are product facts the
+  // approved copy states elsewhere — the alert ladder (Section 3 stat caption,
+  // FAQ Q4) and the 30-day flag (/payer-enrollment-software FAQ Q4). The
+  // labels are layout microcopy, pending copy review (DESIGN_DECISIONS.md).
+  indicators: [
+    { value: "90 · 60 · 30 · 14 · 7", label: "days before an expiry, an alert goes out" },
+    { value: "30 days", label: "with no contact flags an application" },
+  ],
 };
 
 export const PROBLEM = {

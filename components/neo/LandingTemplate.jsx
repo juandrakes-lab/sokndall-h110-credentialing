@@ -45,6 +45,9 @@ export default function LandingTemplate({ current, hero, heroSlot, children }) {
       {heroSlot || (
         <HeroPanel
           current={current}
+          variant={hero.variant}
+          eyebrow={hero.eyebrow}
+          indicators={hero.indicators}
           title={hero.title}
           sub={hero.sub}
           primary={hero.primary}
