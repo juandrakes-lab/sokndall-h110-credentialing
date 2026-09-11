@@ -3778,3 +3778,19 @@ html:has(.sokndall-neo) { overflow-x: hidden; }
 }
 .sk-band--ink .sk-closing,
 .sk-band--ink .sk-scope__closing { border-left-color: var(--rule-dark); }
+
+/* The panel's wider copy column is a desktop split only. It outranks the
+   base `.sk-hero__top` one-column rule on specificity, so it restates it. */
+@media (max-width: 900px) {
+  .sk-hero--panel .sk-hero__top { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* On a phone the split header's email box comes before the chips, so the box
+   is on the first screen (the template page's brief: the file above the fold).
+   `display: contents` lifts the copy's children into the grid to be ordered. */
+@media (max-width: 900px) {
+  .sk-lhero__inner--split .sk-lhero__copy { display: contents; }
+  .sk-lhero__inner--split > .sk-lhero__form { order: 1; margin-top: var(--s-6); }
+  .sk-lhero__inner--split .sk-lhero__strip { order: 2; }
+  .sk-lhero__inner--split { row-gap: 0; }
+}

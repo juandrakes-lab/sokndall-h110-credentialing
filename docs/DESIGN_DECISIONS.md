@@ -828,3 +828,15 @@ Razón: la línea que resume una sección era texto suelto en unas y tenía regl
 en otras; ahora es un solo elemento en todo el kit, y es una de las dosis de
 color de marca por sección.
 Regla de DESIGN_RULES.md que aplica: §13 (espíritu: marca en cada sección).
+
+## Verificación de la ronda — móvil y build
+Fecha: 2026-09-11
+Decisión: dos correcciones salidas de revisar a 390/768: (1) el reparto de
+columnas del hero de la home (1,15fr / 0,85fr) le ganaba en especificidad a la
+regla de una columna del móvil y dejaba el hero partido a 390 — se reafirma la
+columna única bajo 900px; (2) en el encabezado partido de la plantilla, en el
+teléfono la caja de email pasa antes que los chips, para que quede en la
+primera pantalla. `next build` (en un worktree aparte, para no pisar el `.next`
+del dev server) da las cinco landings como ○ (Static); los greps de §0 dan 0 en
+las cinco `page.jsx`.
+Regla de DESIGN_RULES.md que aplica: §0, §9.
