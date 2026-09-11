@@ -3749,3 +3749,32 @@ html:has(.sokndall-neo) { overflow-x: hidden; }
    on the matrix aside once the matrix section moved onto ink (2026-09-11). */
 .sk-band--ink .sk-card:not(.sk-card--blue) :is(.sk-h3, .sk-h4),
 .sk-band--ink .sk-screen :is(.sk-h3, .sk-h4) { color: var(--black); }
+
+/* ---- the light header split: copy left, the email box right ------------- */
+.sk-lhero__copy { display: grid; justify-items: center; }
+.sk-lhero__inner--split {
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+  gap: clamp(32px, 5vw, 80px);
+  align-items: center;
+  justify-items: stretch;
+  text-align: left;
+}
+.sk-lhero__inner--split .sk-lhero__copy { justify-items: start; }
+.sk-lhero__inner--split .sk-strip--chips { justify-content: flex-start; }
+.sk-lhero__form .sk-ec { max-width: none; padding: var(--card-pad); box-shadow: var(--sh-grey); }
+@media (max-width: 900px) {
+  .sk-lhero__inner--split { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* ---- every section's closing line carries the accent rule --------------- */
+/* The same treatment the prose sections give their closing, so the line that
+   sums a section up reads as one element across the whole kit. */
+.sk-band .sk-closing,
+.sk-band .sk-scope__closing {
+  padding-left: var(--s-4);
+  border-left: 2px solid var(--accent);
+  font-weight: 500;
+  max-width: 72ch;
+}
+.sk-band--ink .sk-closing,
+.sk-band--ink .sk-scope__closing { border-left-color: var(--rule-dark); }

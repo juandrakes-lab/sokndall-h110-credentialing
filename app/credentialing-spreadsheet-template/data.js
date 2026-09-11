@@ -13,6 +13,7 @@ export const META = {
 };
 
 export const HERO = {
+  eyebrow: "Free template",
   title: ["The credentialing", "sheet, free"],
   sub:
     "Six tabs: providers, credentials, payer enrollment, CAQH, a dashboard that counts what is overdue, and a page on how to use it. Excel or Google Sheets.",
@@ -26,7 +27,7 @@ export const HERO = {
 // ProView quick reference published by the Maryland Department of Health, and
 // the dashboard's 30/60/90 windows follow the CMS revalidation guidance.
 export const FIELDS = {
-  head: { title: ["What is in the", "credentialing", "spreadsheet template"] },
+  head: { pill: "Inside the file", title: ["What is in the", "credentialing", "spreadsheet template"] },
   items: [
     {
       title: "Providers",
@@ -53,6 +54,7 @@ export const FIELDS = {
 
 export const LIMITS = {
   head: {
+    pill: "Limits",
     title: ["Where a", "spreadsheet stops"],
     note:
       "It is a real tool and it will hold a small practice together. The limits below are structural, not a formula problem.",
@@ -69,7 +71,7 @@ export const LIMITS = {
 };
 
 export const ENOUGH = {
-  head: { title: ["When this is", "enough, and when", "it stops being"] },
+  head: { pill: "When to switch", title: ["When this is", "enough, and when", "it stops being"] },
   paras: [
     "Two providers and three payers is six pairs plus a handful of credential rows. The sheet is the right tool for that, and buying software for it would be silly.",
     "Eight providers across twelve payers is 96 pairs, and this file holds 40 rows a tab. Add multi-state licensure and you are re-sorting every time someone asks a question. At that point the sheet is not tracking anything — it is where the tracking used to happen.",
@@ -104,3 +106,8 @@ export const CLOSING = {
   title: "Take the free file first, then decide",
   body: "It is free and it will tell you where you land. If it stops holding, the paid version is on [the pricing page](/pricing).",
 };
+
+// What the empty screen frame beside the form will hold: a real capture of the
+// file being given away. Not a product screen, so §2 regla 1 does not stand in
+// its way — it is the thing itself (DESIGN_DECISIONS.md, 2026-09-11).
+export const FILE_SCREEN = "The template, Dashboard tab";

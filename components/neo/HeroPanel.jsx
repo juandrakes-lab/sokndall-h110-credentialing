@@ -68,21 +68,23 @@ export default function HeroPanel({
         </div>
         <NavMobile current={current} />
 
-        <div className="sk-wrap sk-lhero__inner">
-          {eyebrow ? <Pill>{eyebrow}</Pill> : null}
-          <h1 className="sk-display sk-lhero__h1">
-            <Lines lines={title} />
-          </h1>
-          {sub ? <p className="sk-lead sk-lhero__sub">{sub}</p> : null}
-          {ctas}
-          {children ? <div className="sk-lhero__strip">{children}</div> : null}
+        {/* With a `form`, the head splits: copy left, the box right, so the
+            box is above the fold (the template page's brief). Without one the
+            head is centred. */}
+        <div className={`sk-wrap sk-lhero__inner${form ? " sk-lhero__inner--split" : ""}`}>
+          <div className="sk-lhero__copy">
+            {eyebrow ? <Pill>{eyebrow}</Pill> : null}
+            <h1 className="sk-display sk-lhero__h1">
+              <Lines lines={title} />
+            </h1>
+            {sub ? <p className="sk-lead sk-lhero__sub">{sub}</p> : null}
+            {ctas}
+            {children ? <div className="sk-lhero__strip">{children}</div> : null}
+          </div>
+          {form ? <div className="sk-lhero__form">{form}</div> : null}
         </div>
 
-        {figure || form ? (
-          <div className={`sk-wrap sk-lhero__figure${form && !figure ? " sk-lhero__figure--form" : ""}`}>
-            {figure || form}
-          </div>
-        ) : null}
+        {figure ? <div className="sk-wrap sk-lhero__figure">{figure}</div> : null}
       </section>
     );
   }

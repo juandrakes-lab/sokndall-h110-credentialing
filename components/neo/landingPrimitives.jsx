@@ -167,13 +167,23 @@ export function ReservedSlot({ variant, ratio, className = "", label = "Reserved
  *
  * `screen`: what goes here, written as a production note ("Provider × payer
  * matrix"). `note`: the "not a screenshot" line, required with a schematic
- * (DESIGN_RULES.md §2 regla 1).
+ * (DESIGN_RULES.md §2 regla 1). `todo`: the line on an empty frame — "Reserved
+ * for the product screen" unless the frame holds something else (the template
+ * page's frame holds a capture of the file itself).
  *
  * Image policy: this is the only image-bearing slot on a landing besides the
  * home's original reserved blocks. Product screens only — never stock, never
  * people.
  */
-export function ScreenSlot({ screen, ratio = "16:10", note, children, className = "", tone = "grey" }) {
+export function ScreenSlot({
+  screen,
+  ratio = "16:10",
+  note,
+  children,
+  className = "",
+  tone = "grey",
+  todo = "Reserved for the product screen",
+}) {
   if (children && !note) {
     throw new Error(
       `ScreenSlot "${screen}": a schematic needs its visible "not a screenshot" note (DESIGN_RULES.md §2 regla 1).`
@@ -196,7 +206,7 @@ export function ScreenSlot({ screen, ratio = "16:10", note, children, className 
       </figcaption>
       {empty ? (
         <div className={`sk-screen__hold sk-ar-${w}x${h}`} role="presentation">
-          <span className="sk-screen__todo">Reserved for the product screen</span>
+          <span className="sk-screen__todo">{todo}</span>
         </div>
       ) : (
         <div className="sk-screen__body">

@@ -800,3 +800,31 @@ the other four" y la línea de la vista agregada.
 Razón: una página que vende una estructura no mostraba ninguna; tres secciones
 con la mitad derecha vacía y un H2 de tres líneas sobre 38 palabras.
 Regla de DESIGN_RULES.md que aplica: §14, §15, §16, §2 regla 1.
+
+## /credentialing-spreadsheet-template — recompuesta
+Fecha: 2026-09-11
+Decisión: encabezado claro partido: copy a la izquierda, la caja de email a la
+derecha (el brief pide la plantilla arriba del pliegue; centrada, la caja caía
+a y≈740 en 1280×720), y debajo, a todo el ancho, un `ScreenSlot` 21:9 vacío
+para una captura real del archivo ("The template, Dashboard tab", con la línea
+"Reserved for a capture of the file"). Es el único visual del sitio que puede
+ser una captura hoy: no simula el producto, es la cosa que se regala. Pestañas
+en *stack* con íconos; límites en filas con íconos; "cuándo alcanza" en banda
+oscura (*split*) por el ritmo; FAQ a dos columnas. La caja recupera su heading
+por defecto ("Get the free credentialing template") porque ya no tiene al lado
+un bloque que diga qué es.
+Pastillas escritas por el diseño, pendientes de revisión del copy: "Free
+template" (encabezado), "Inside the file", "Limits", "When to switch", "FAQ".
+Pendiente del fundador: si el archivo de seis pestañas existe, su captura va en
+ese hueco.
+Regla de DESIGN_RULES.md que aplica: §9 (un solo CTA de plantilla, por email),
+§14, §15, §16.
+
+## Kit — la línea de cierre lleva la regla de acento en todas las secciones
+Fecha: 2026-09-11
+Decisión: `.sk-closing` y `.sk-scope__closing` toman la misma regla de acento
+a la izquierda que el cierre de la prosa.
+Razón: la línea que resume una sección era texto suelto en unas y tenía regla
+en otras; ahora es un solo elemento en todo el kit, y es una de las dosis de
+color de marca por sección.
+Regla de DESIGN_RULES.md que aplica: §13 (espíritu: marca en cada sección).
