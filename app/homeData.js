@@ -46,6 +46,7 @@ export const PROBLEM = {
 
 export const LAYERS = {
   head: {
+    pill: "What it tracks",
     title: ["Three things, tracked", "in one place"],
     statCaption: "Alerts at 90, 60, 30, 14 and 7 days before expiry.",
   },
@@ -75,7 +76,7 @@ export const LAYERS = {
 };
 
 export const MATRIX = {
-  head: { title: ["The screen this is", "really about"] },
+  head: { pill: "The matrix", title: ["The screen this is", "really about"] },
   note:
     "Low-fidelity schematic of the data model. It is not a screenshot, and no product interface exists yet. Providers run down the side, payers across the top, and one cell holds each pair.",
   points: [
@@ -92,6 +93,7 @@ export const MATRIX = {
 
 export const ANCHOR = {
   head: {
+    pill: "Cost anchors",
     title: ["What this work", "costs elsewhere"],
     aside:
       "Three published cost anchors sit around this product, and they do not measure the same thing. One counts providers handed to an outside team. One counts staff seats inside software. The third one is this product. Every figure below states which unit it is counting in.",
@@ -108,6 +110,7 @@ export const ANCHOR = {
     {
       label: "$3,588 a year, 15 providers",
       note: "[Sokndall Practice at $299 a month](/pricing). Unit: providers tracked. That is $239 each.",
+      ours: true,
     },
   ],
   closing:
@@ -115,7 +118,7 @@ export const ANCHOR = {
 };
 
 export const PRICING = {
-  head: { title: ["The whole price", "list, on this page"] },
+  head: { pill: "Pricing", title: ["The whole price", "list, on this page"] },
   plans: [
     {
       name: "Solo",
@@ -145,6 +148,7 @@ export const PRICING = {
 
 export const SCOPE = {
   head: {
+    pill: "Scope",
     title: ["What Sokndall", "does not do"],
     note:
       "Being clear about this now saves you a trial you were going to cancel in week two anyway, and saves us both the email.",
@@ -196,4 +200,14 @@ export const CLOSING = {
   body: "Card up front, cancel yourself before day 15. The price you see here is the price on the invoice.",
   primary: { label: "Start 14-day trial", href: "/login" },
   secondary: { label: "See all three plans", href: "/pricing" },
+};
+
+// What each of the home's reserved blocks will hold. Production notes, not
+// copy: the pages are not published until every block is filled with a real
+// product screen (decision of 2026-09-11), so the labels stay visible until
+// then and tell whoever captures the screens what goes where.
+export const SLOTS = {
+  problem: "Screen: one credential record and its expiry alerts",
+  quadWide: "Screen: one enrollment application and its follow-up log",
+  quadCorner: "Screen: the Monday digest email",
 };

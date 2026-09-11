@@ -45,6 +45,7 @@ exception: `.sk-stat` ("60 days") keeps `--ink`. There are no gradients.
 | `--tint` | `rgba(14, 42, 46, 0.05)` | Nested light surface |
 | `--tint-2` | `rgba(14, 42, 46, 0.08)` | Reserved image ground inside a grey card |
 | `--amber-tint` | `rgba(200, 138, 46, 0.14)` | The only amber fill — action-state cells |
+| `--accent` | → `--rule-dark` (`#3D6A6B`) | **Role, added 2026-09-11 — not a new colour.** The brand family's mid tone on light surfaces: icons, list dots, `.sk-stat`, the rule beside a section's closing line. 6.0:1 on white; never body text |
 
 ### Where amber is allowed
 
@@ -106,7 +107,7 @@ and `ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace`.
 | Role | Class | Size | Line height | Weight | Tracking |
 |---|---|---|---|---|---|
 | Hero H1 | `.sk-display` | `clamp(2.5rem, 1.15rem + 5.8vw, 4.5rem)` — 40→72px | 0.98 | 600 | −0.042em |
-| Section heading | `.sk-h2` | `clamp(2.5rem, 1.44rem + 4.5vw, 4.0625rem)` — 40→65px | 1.02 | **400** | −0.038em |
+| Section heading | `.sk-h2` | `clamp(2.25rem, 1.3rem + 3vw, 3.375rem)` — 36→54px (was 40→65px until 2026-09-11) | 1.04 | **400** | −0.036em |
 | Large card title | `.sk-h3` | `clamp(1.375rem, 1.15rem + 0.95vw, 1.75rem)` — 22→28px | 1.14 | 600 | −0.026em |
 | Card title | `.sk-h4` | `1.125rem` — 18px | 1.24 | 600 | −0.020em |
 | Figure | `.sk-stat` | `clamp(3.4375rem, 1.75rem + 6.5vw, 5.3125rem)` — 55→85px | 0.94 | 400 | −0.045em |

@@ -578,3 +578,122 @@ y atribuible; el documento exacto es un cambio de una línea cuando exista la
 URL. No se investigó para completarlas: SIGUIENTE_FASE.md prohíbe mezclar
 ensamblado con investigación.
 Regla de DESIGN_RULES.md que aplica: §2 regla 2.
+
+---
+
+# Ronda de pulido: las 5 landings (2026-09-11)
+
+Rama `design/landing-polish`. El estado anterior quedó marcado como tag
+`pre-landing-polish` sobre `main`; volver es `git switch main`. Referencia
+visual: la maqueta de NeoPay de la que se clonó la piel neo. El fundador
+confirmó que la paleta tinta/ámbar es suya y se mantiene, y que las páginas no
+se publican hasta que todo esté listo.
+
+## Kit — tamaño del H2 de sección
+Fecha: 2026-09-11
+Decisión: `.sk-h2` baja de 40→65px a 36→54px. Mantiene el peso regular.
+Razón: el H1 del hero es 72px en semibold; el H2 a 65px no se distinguía de él
+salvo por el peso. La referencia hace hero fuerte y secciones livianas pero con
+un salto de tamaño claro; 54px deja 1,33 de diferencia y una línea autoral de
+21 caracteres ya no se parte en una cuarta.
+Regla de DESIGN_RULES.md que aplica: §1 (valores en TOKENS). TOKENS.md §2
+actualizado.
+
+## Kit — cortes autorales del titular solo en escritorio
+Fecha: 2026-09-11
+Decisión: los `<br>` que escribe el copy llevan `.sk-br` y se apagan bajo 900px
+(`Lines` en landingPrimitives).
+Razón: a 390px dejaban palabras huérfanas ("one of them is / your / problem
+right now"). En escritorio el corte sigue siendo del copy.
+Regla de DESIGN_RULES.md que aplica: §7.
+
+## Kit — acento de marca (`--accent`)
+Fecha: 2026-09-11
+Decisión: nuevo rol, no nuevo color: `--accent` = `--rule-dark` (#3d6a6b), el
+tono medio de la familia tinta. Lo llevan en superficie clara los íconos, los
+puntos de lista, la cifra grande (`.sk-stat`) y la regla junto a la línea de
+cierre de una sección.
+Razón: la referencia vive de su azul en dosis chicas en cada sección; la
+paleta aprobada no tenía un tono medio en uso sobre blanco y todo lo que no es
+ámbar se leía negro. 6,0:1 sobre blanco; nunca texto de cuerpo.
+Regla de DESIGN_RULES.md que aplica: §2 regla 4 (el ámbar no cambia de rol).
+
+## Kit — `ScreenSlot` (componente nuevo)
+Fecha: 2026-09-11
+Decisión: marco cerrado para una pantalla de producto: barra con "Screen" + qué
+pantalla + ratio; adentro el esquema (con nota obligatoria) o nada (rayado,
+con ratio fijo). Sin cromo de ventana. Los tres huecos originales de la home
+toman el mismo rayado y una etiqueta de qué pantalla va:
+"one credential record and its expiry alerts" (sección 2), "one enrollment
+application and its follow-up log" (quad, ancho) y "the Monday digest email"
+(quad, esquina). Etiquetas propuestas; las ajusta el fundador.
+Razón: pedido del fundador: los huecos son para visuales del producto, y los
+esquemas son huecos cerrados que se llenan después. Discrepancia planteada y
+aceptada: el esquema no se vacía, queda adentro del marco hasta que exista la
+captura, porque hoy es lo único que explica el producto.
+Política de imagen: solo pantallas de producto. Nunca stock, nunca personas.
+Regla de DESIGN_RULES.md que aplica: §5 (reescrita), §16 (nueva).
+
+## Kit — `Indicator` (componente nuevo)
+Fecha: 2026-09-11
+Decisión: tarjetita con ícono en acento + valor + qué cuenta. Los "chips" de la
+referencia, con una diferencia innegociable: cada valor es un hecho del
+producto o una cifra con fuente del copy aprobado, nunca una métrica inventada.
+Política de imagen: ninguna (ícono sólido, sin caja, §5).
+Regla de DESIGN_RULES.md que aplica: §2 reglas 1-2.
+
+## Kit — `ProseBandSection` reconstruida, `IconRowSection split`, `CardGridSection`, FAQ `split`
+Fecha: 2026-09-11
+Decisión: la sección de prosa usa todo el ancho: *split* (titular a la
+izquierda, texto a la derecha) por defecto, *media* con un `ScreenSlot` al lado.
+La nota (respuesta directa, on-page-seo §5) abre la columna a tamaño `lead`; nota,
+párrafos y cierre comparten una sola medida, y el cierre lleva la regla de
+acento. `IconRowSection layout="split"` pone la lista al lado del titular.
+`CardGridSection` (nueva) pone 2-4 ítems de largo parecido en fila.
+`PanelSection split` pone el FAQ al lado de su titular.
+Razón: mitad derecha vacía en 9 secciones de las 5 landings; la nota era el
+texto más chico de la sección y había tres anchos de línea apilados.
+Regla de DESIGN_RULES.md que aplica: §14 (nueva), §4, §6.
+
+## Kit — tarjeta al lado de la matriz con altura natural
+Fecha: 2026-09-11
+Decisión: `DiagramSection` deja de usar `.sk-bento--eq`; las dos tarjetas bajo
+la matriz tienen su altura natural.
+Razón: el emparejado de alturas se derogó el 6 sep y el CSS lo seguía
+aplicando: la tarjeta "Where the sheet gives out" dejaba su cuerpo flotando en
+el medio.
+Regla de DESIGN_RULES.md que aplica: §4.
+
+## Kit — matriz a 3 pagadores en el teléfono; tabla de estados apilada
+Fecha: 2026-09-11
+Decisión: bajo 640px la matriz muestra las tres primeras columnas enteras en
+vez de cinco cortadas por un scroll sin señal; la tabla de estados pasa a una
+tarjeta por estado con los dos campos rotulados.
+Razón: a 390px se veían 2 de 5 pagadores y la columna "What to do" quedaba
+fuera de pantalla.
+Regla de DESIGN_RULES.md que aplica: §2 regla 3 (glifo + etiqueta intactos).
+
+## Kit — la cifra propia en la banda de anclas
+Fecha: 2026-09-11
+Decisión: la figura de Sokndall (`ours`) es la única tarjeta blanca en la banda
+oscura. `layout="side"` pone el titular a la izquierda y las figuras apiladas a
+la derecha cuando el copy no trae párrafo lateral.
+Razón: las tres cifras se veían iguales; la jerarquía blanco/gris de §3 marca
+cuál es la nuestra sin insignia ni adjetivo.
+Regla de DESIGN_RULES.md que aplica: §3, §2 regla 2.
+
+## / — íconos del quad
+Fecha: 2026-09-11
+Decisión: la tarjeta ancha lleva ícono en la esquina, como las chicas; la alta
+lo conserva arriba del título.
+Razón: tal cual la referencia. En la esquina, el ícono partía el título de la
+columna angosta en dos líneas (probado y revertido).
+Regla de DESIGN_RULES.md que aplica: §6.
+
+## Pastillas escritas por el diseño — pendientes de revisión del copy
+Fecha: 2026-09-11
+Decisión: el copy aprobado solo trae la pastilla de la sección 2 de la home.
+Las demás se escribieron como etiquetas estructurales de 1-3 palabras:
+home — "What it tracks", "The matrix", "Cost anchors", "Pricing", "Scope", "FAQ".
+(Las de las otras cuatro páginas se listan en sus propias entradas.)
+Regla de DESIGN_RULES.md que aplica: §13.

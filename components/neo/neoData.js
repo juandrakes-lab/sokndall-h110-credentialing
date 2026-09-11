@@ -98,5 +98,9 @@ export const FOOTER_COLS_V31 = [
 // budget. Recorded in DESIGN_DECISIONS.md, 2026-09-10.
 export const FAQ_HEADING = ["Frequently asked", "questions"];
 
+// The FAQ section head on every landing. The pill is a structural label, like
+// the heading itself (DESIGN_RULES.md §13: every section head carries one).
+export const FAQ_HEAD = { pill: "FAQ", title: FAQ_HEADING };
+
 // The price format every plan row uses.
 export const PLAN_PERIOD = "/month";

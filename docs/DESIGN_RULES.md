@@ -106,8 +106,14 @@ declarada, antes de usarse.
   entre la imagen real.** Es lo que permite llenar los huecos sin rehacer nada.
 - Un hueco reservado es un hueco: no se llena con texto de relleno, ícono
   decorativo ni diagrama abstracto inventado.
-- Un bloque que lleva contenido real (la escalera de alertas, el esquema de la
-  matriz) **no es un hueco reservado.** No confundir.
+- ~~Un bloque que lleva contenido real (la escalera de alertas, el esquema de la
+  matriz) **no es un hueco reservado.** No confundir.~~
+  **Reemplazado 11 sep 2026 (decisión del fundador).** Los esquemas de producto
+  (matriz, recorrido de estados, estructura de clientes) viven **dentro** de un
+  `ScreenSlot`: el marco cerrado de la pantalla de producto que los va a
+  reemplazar. Hoy el marco muestra el esquema con su nota de "no es una
+  captura"; mañana, la captura real al ratio que el marco declara. Un marco sin
+  esquema queda vacío, rayado, con la etiqueta de qué pantalla va ahí. Ver §16.
 - Fotografía, cuando exista: documental, personas haciendo algo concreto.
   Prohibido sonrisas a cámara, gente señalando gráficos, apretones de manos,
   equipos en sala de juntas. `/about` nunca lleva stock.
@@ -257,6 +263,54 @@ que el destino no tiene es el mismo defecto que vendría a reemplazar.
 ser estrategia anterior ya reemplazada en la arquitectura vigente.
 
 
+## 13. TODA CABECERA DE SECCIÓN LLEVA PASTILLA
+
+**11 sep 2026, decisión del fundador, siguiendo la referencia.** Cada sección
+de una landing abre con la pastilla (`.sk-pill`, tinta con etiqueta blanca),
+incluidas las bandas oscuras y el FAQ. Es la marca de color que abre la sección.
+
+- El texto de la pastilla es una etiqueta estructural de 1-3 palabras, como
+  "FAQ". Nunca repite el H2. Cuando el copy aprobado no la trae, se escribe y se
+  anota en DESIGN_DECISIONS.md como pendiente de revisión del copy.
+- Nunca ámbar (§2 regla 4).
+- El kit avisa en desarrollo (`console.warn`) cuando una cabecera no la trae.
+
+## 14. NINGUNA SECCIÓN DEJA LA MITAD DERECHA VACÍA
+
+Reclamado por el fundador el 28 ago 2026 sobre la piel anterior, resuelto ahí
+(`design-system/guidelines/section-layout.html`) y perdido en la reconstrucción
+neo; vuelto a reclamar el 11 sep. Una sección de texto usa una de cuatro
+distribuciones, elegida por lo que lleva:
+
+| Distribución | Cuándo |
+|---|---|
+| **split** — titular a la izquierda, texto a la derecha | Un argumento sin nada que mostrar |
+| **media** — titular y texto de un lado, `ScreenSlot` del otro (`flip` invierte) | La sección describe una pantalla del producto |
+| **stack** — titular a la izquierda, columna de tarjetas a la derecha | Una lista corta que cabe al lado de su titular |
+| **grid** — titular arriba, tarjetas en fila | 2-4 ítems de largo parecido (§4) |
+
+No todas las secciones llevan visual: cada `ScreenSlot` es una pantalla que
+alguien va a tener que capturar. La distribución *split* es la respuesta
+correcta para un argumento.
+
+## 15. RITMO DE BANDAS: NO MÁS DE TRES BLANCAS SEGUIDAS
+
+Una landing no pone más de tres secciones blancas seguidas entre el hero y el
+cierre. La cuarta pasa a bloque oscuro (`surface="ink"`). Cuál pasa es criterio
+de composición y se anota en DESIGN_DECISIONS.md.
+
+## 16. LOS HUECOS DE PANTALLA (`ScreenSlot`)
+
+- Todo visual del producto en una landing vive en un `ScreenSlot`: marco
+  redondeado, barra con la etiqueta "Screen" + qué pantalla va + el ratio.
+- Sin cromo de ventana: nada de puntitos de semáforo ni barra de URL. Eso
+  vestiría el marco de interfaz, que §2 regla 1 prohíbe.
+- Con esquema adentro, la nota de "no es una captura" es obligatoria: el
+  componente tira error sin ella.
+- Las páginas no se publican hasta que todos los huecos tengan su pantalla
+  real (decisión del 11 sep 2026), así que las etiquetas quedan visibles: son
+  la lista de producción de capturas.
+
 ---
 
 ## APÉNDICE — Checklist por página
@@ -277,6 +331,10 @@ ser estrategia anterior ya reemplazada en la arquitectura vigente.
 [ ] Un solo CTA de plantilla, por email, en el cuerpo; ninguno en la sticky
 [ ] CTA de producto solo si la página publica precio propio
 [ ] Relacionados: 3 tarjetas, eyebrow desde pageKinds.js, título sin subrayar
+[ ] Pastilla en cada cabecera de sección (§13)
+[ ] Ninguna sección con la mitad derecha vacía (§14)
+[ ] No más de tres secciones blancas seguidas (§15)
+[ ] Todo visual de producto dentro de un ScreenSlot con su etiqueta (§16)
 [ ] Capturas a 390 / 768 / 1440
 [ ] next build → ○ (Static)
 ```

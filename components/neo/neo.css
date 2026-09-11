@@ -58,6 +58,14 @@ html:has(.sokndall-neo) { overflow-x: hidden; }
   --amber-tint:  rgba(200, 138, 46, 0.14); /* the only amber fill */
   --rule-dark-2: rgba(61, 106, 107, 0.55);
 
+  /* ---- roles (2026-09-11). Not a new colour: a new job for one of the eight.
+     The brand family's mid tone, on light surfaces only — icons, list dots,
+     the big figure, the rule beside a closing line. It is what the reference
+     comp does with its blue, in small doses, so every section carries the
+     brand without a single word of body text changing colour. #3d6a6b on white
+     measures 6.0:1, so it would pass as text; it is still never body text. */
+  --accent:      var(--rule-dark);
+
   /* ---- legacy aliases (pages awaiting rebuild resolve through these) ---- */
   --page:        var(--card);   /* the page is white; paper is a card fill */
   --shell:       var(--card);
@@ -241,10 +249,16 @@ html:has(.sokndall-neo) { overflow-x: hidden; }
   letter-spacing: -0.042em;
   font-weight: 600;
 }
+/* Section headings are regular weight and a clear step under the hero's
+   semibold display — the reference sets them the same way. Until 2026-09-11
+   they ran to 65px against the display's 72px, so the two read as one size
+   with two weights and nothing said which was the page's headline. Now 54px
+   at the top of the range: 1.33 under the display, and a 21-character authored
+   line fits the head column without wrapping into a fourth line. */
 .sk-h2 {
-  font-size: clamp(2.5rem, 1.44rem + 4.5vw, 4.0625rem);
-  line-height: 1.02;
-  letter-spacing: -0.038em;
+  font-size: clamp(2.25rem, 1.3rem + 3vw, 3.375rem);
+  line-height: 1.04;
+  letter-spacing: -0.036em;
   font-weight: 400;
 }
 /* In-card headings: original size, still bold. Only the colour moved. */
@@ -2985,3 +2999,409 @@ html:has(.sokndall-neo) { overflow-x: hidden; }
 /* ---- comparison vendor sections: the "Not verified" line ---------------- */
 .sk-ed__prose .sk-ed__nv { font-size: 0.9375rem; }
 .sk-ed__nvlb { margin-right: var(--s-2); opacity: 0.62; }
+
+
+/* ===================== LANDING POLISH (2026-09-11) =======================
+   The pass that brings the landings back toward the reference comp: the brand
+   colour in small doses in every section, a pill on every head, no section
+   with an empty right half, and closed frames for the product screens.
+   Decisions in docs/DESIGN_DECISIONS.md under "Ronda de pulido, 2026-09-11";
+   the rules they created are DESIGN_RULES.md §13-§16. Scoped to `.sk-band`
+   and the hero wherever a rule could otherwise reach the editorial pages. */
+
+/* ---- authored headline breaks: desktop only ----------------------------- */
+@media (max-width: 900px) {
+  .sokndall-neo .sk-br { display: none; }
+}
+
+/* ---- the accent, in small doses ----------------------------------------- */
+.sk-band .sk-tile { color: var(--accent); }
+.sk-band--ink .sk-tile,
+.sk-hero .sk-tile { color: #fff; }
+.sk-band--ink .sk-card .sk-tile,
+.sk-hero .sk-card .sk-tile { color: var(--accent); }
+.sk-band .sk-list li::before { background: var(--accent); }
+.sk-band--ink .sk-list li::before { background: var(--muted-dark); }
+.sk-band--ink .sk-card:not(.sk-card--blue) .sk-list li::before { background: var(--accent); }
+.sk-band .sk-list li { color: var(--black); font-size: 0.9375rem; }
+.sk-band--ink .sk-list li { color: var(--muted-dark); }
+.sk-band--ink .sk-card:not(.sk-card--blue) .sk-list li { color: var(--black); }
+.sk-band .sk-stat { color: var(--accent); }
+.sk-band--ink .sk-stat { color: #fff; }
+
+/* ---- section head ------------------------------------------------------- */
+/* The note is the section's direct answer: lead size, not the smallest text. */
+.sk-head__note { margin-top: var(--s-6); max-width: 60ch; }
+.sk-head--center { display: grid; justify-items: center; text-align: center; }
+.sk-head--center .sk-head__note { margin-inline: auto; }
+.sk-head__statcap { max-width: 32ch; }
+
+/* ---- ScreenSlot: the closed frame a product screen will fill ------------- */
+.sk-screen {
+  margin: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  border-radius: var(--r-panel);
+  border: var(--hairline) solid var(--line);
+  background: var(--paper);
+  box-shadow: var(--sh-grey);
+  overflow: hidden;
+  color: var(--black);
+}
+.sk-screen--white { background: var(--card); box-shadow: var(--sh-white); }
+.sk-band--ink .sk-screen,
+.sk-hero .sk-screen { box-shadow: var(--sh-on-ink); }
+.sk-screen__bar {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  padding: 10px var(--s-4);
+  background: var(--card);
+  border-bottom: 1px solid var(--tint-2);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--black);
+  min-width: 0;
+}
+.sk-screen__k {
+  flex: none;
+  background: var(--ink);
+  color: #fff;
+  border-radius: var(--r-pill);
+  padding: 2px var(--s-2);
+  font-size: 0.625rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.sk-screen__name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sk-screen__r {
+  margin-left: auto;
+  flex: none;
+  font-family: var(--mono);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  border: var(--hairline) solid var(--line-strong);
+  border-radius: var(--r-pill);
+  padding: 1px var(--s-2);
+}
+.sk-screen__hold {
+  display: grid;
+  place-items: center;
+  padding: var(--s-5);
+  background:
+    repeating-linear-gradient(135deg, transparent 0 10px, var(--tint) 10px 20px),
+    var(--paper);
+}
+.sk-screen--white .sk-screen__hold {
+  background:
+    repeating-linear-gradient(135deg, transparent 0 10px, var(--tint) 10px 20px),
+    var(--card);
+}
+.sk-screen__todo {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  background: var(--card);
+  border-radius: var(--r-pill);
+  padding: var(--s-1) var(--s-3);
+  box-shadow: var(--sh-grey);
+}
+.sk-screen__body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--s-4);
+  padding: clamp(16px, 2vw, 24px);
+  background: var(--card);
+}
+.sk-screen__note {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--s-2);
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: var(--black);
+}
+.sk-screen__note > span:first-child { color: var(--accent); }
+/* Declared ratios for an empty frame. A class per ratio, not an inline style. */
+.sk-ar-16x10 { aspect-ratio: 16 / 10; }
+.sk-ar-16x9  { aspect-ratio: 16 / 9; }
+.sk-ar-4x3   { aspect-ratio: 4 / 3; }
+.sk-ar-3x2   { aspect-ratio: 3 / 2; }
+.sk-ar-1x1   { aspect-ratio: 1 / 1; }
+.sk-ar-21x9  { aspect-ratio: 21 / 9; }
+.sk-ar-4x5   { aspect-ratio: 4 / 5; }
+
+/* The home's original reserved blocks take the same hatch, so every "not yet"
+   on the site looks the same. */
+.sk-slot--grey,
+.sk-quad__img {
+  background:
+    repeating-linear-gradient(135deg, transparent 0 10px, var(--tint) 10px 20px),
+    var(--paper);
+}
+.sk-slot--card {
+  background:
+    repeating-linear-gradient(135deg, transparent 0 10px, var(--tint) 10px 20px),
+    var(--card);
+}
+.sk-slot__k {
+  background: var(--card);
+  border-radius: var(--r-pill);
+  padding: var(--s-1) var(--s-3);
+  box-shadow: var(--sh-grey);
+  font-weight: 600;
+  max-width: 34ch;
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 0.75rem;
+  line-height: 1.35;
+}
+
+/* ---- Indicator: a small real fact, set as a chip card ------------------- */
+.sk-ind {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-3);
+  padding: 10px var(--s-4) 10px var(--s-3);
+  border-radius: var(--r-card);
+  border: var(--hairline) solid var(--line);
+  background: var(--card);
+  box-shadow: var(--sh-white);
+  color: var(--black);
+}
+.sk-band--ink .sk-ind,
+.sk-hero .sk-ind { box-shadow: var(--sh-on-ink); }
+.sk-ind__ico { display: grid; place-items: center; color: var(--accent); flex: none; }
+.sk-ind__ico svg { width: 22px; height: 22px; }
+.sk-ind__txt { display: grid; gap: 1px; min-width: 0; }
+.sk-ind__v {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  font-variant-numeric: tabular-nums;
+}
+.sk-ind__l { font-size: 0.75rem; line-height: 1.35; }
+
+/* ---- the strip as chips, on a light header ------------------------------ */
+.sk-strip--chips {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--s-2) var(--s-3);
+}
+.sk-strip--chips .sk-strip__item {
+  color: var(--black);
+  background: var(--card);
+  border: var(--hairline) solid var(--line);
+  border-radius: var(--r-pill);
+  padding: var(--s-2) var(--s-4) var(--s-2) var(--s-3);
+  box-shadow: var(--sh-white);
+  gap: var(--s-2);
+}
+.sk-strip--chips .sk-tile { color: var(--accent); }
+.sk-strip--chips .sk-strip__item .sk-tile svg { width: 18px; height: 18px; }
+
+/* ---- the prose distributions: split / media / list ---------------------- */
+/* split: pill over the heading in the left column, the text in the right one,
+   its first line level with the heading. */
+.sk-prose2 {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-areas:
+    "pill ."
+    "title text"
+    "stat text";
+  grid-template-rows: auto auto 1fr;
+  column-gap: clamp(32px, 6vw, 96px);
+  align-items: start;
+}
+.sk-prose2__head { display: contents; }
+.sk-prose2__head > .sk-head__pill { grid-area: pill; }
+.sk-prose2__head > .sk-h2 { grid-area: title; }
+.sk-prose2__head > .sk-prose2__stat { grid-area: stat; }
+.sk-prose2 > .sk-prose2__text { grid-area: text; padding-top: 6px; }
+.sk-prose2__text {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--s-4);
+  max-width: 62ch;
+}
+.sk-prose2__note { margin-bottom: var(--s-1); }
+/* The closing line carries the section's one accent rule. */
+.sk-prose2__closing {
+  margin-top: var(--s-3);
+  padding-left: var(--s-4);
+  border-left: 2px solid var(--accent);
+  font-weight: 500;
+}
+.sk-prose2__stat { margin-top: var(--s-6); }
+.sk-prose2__statcap { margin-top: var(--s-2); max-width: 34ch; }
+
+/* media: heading and text in one column, the figure in the other. */
+.sk-prose2--media {
+  grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+  grid-template-areas: none;
+  grid-template-rows: none;
+  align-items: center;
+}
+.sk-prose2--media .sk-prose2__head { display: block; }
+.sk-prose2--media .sk-prose2__text { margin-top: var(--s-6); padding-top: 0; }
+.sk-prose2--flip .sk-prose2__media { order: -1; }
+
+/* list: pill, heading, note and closing on the left; the cards on the right. */
+.sk-prose2--list {
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  grid-template-areas: none;
+  grid-template-rows: none;
+}
+.sk-prose2--list .sk-prose2__head { display: block; }
+.sk-prose2--list .sk-prose2__note { margin-top: var(--s-6); }
+.sk-prose2--list .sk-scope__closing {
+  margin-top: var(--s-5);
+  padding-left: var(--s-4);
+  border-left: 2px solid var(--accent);
+}
+
+.sk-band--ink .sk-prose2__closing,
+.sk-band--ink .sk-prose2--list .sk-scope__closing { border-left-color: var(--rule-dark); }
+
+@media (max-width: 900px) {
+  .sk-prose2 {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "pill" "title" "stat" "text";
+    grid-template-rows: none;
+  }
+  .sk-prose2--media,
+  .sk-prose2--list {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: none;
+    row-gap: var(--s-7);
+  }
+  .sk-prose2 > .sk-prose2__text { margin-top: var(--s-6); padding-top: 0; }
+  .sk-prose2--flip .sk-prose2__media { order: 0; }
+}
+
+/* ---- row cards stacked (title over text), for a narrow column ----------- */
+.sk-row-card--stacked { grid-template-columns: minmax(0, 1fr); gap: var(--s-2); align-items: start; }
+
+/* ---- CardGridSection ---------------------------------------------------- */
+.sk-cardgrid {
+  display: grid;
+  gap: var(--gap);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: start;
+}
+.sk-cardgrid--2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.sk-cardgrid--4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.sk-cardgrid__item { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--s-3); align-content: start; }
+.sk-cardgrid__ico { margin-bottom: var(--s-3); }
+@media (max-width: 980px) {
+  .sk-cardgrid--4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .sk-cardgrid,
+  .sk-cardgrid--2 { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 560px) { .sk-cardgrid--4 { grid-template-columns: minmax(0, 1fr); } }
+
+/* ---- FAQ and other panels beside their head ----------------------------- */
+.sk-panelsplit {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.3fr);
+  gap: clamp(32px, 5vw, 80px);
+  align-items: start;
+}
+.sk-panelsplit__head { position: sticky; top: var(--s-6); }
+.sk-panelsplit__head .sk-prose2__note { margin-top: var(--s-5); }
+@media (max-width: 900px) {
+  .sk-panelsplit { grid-template-columns: minmax(0, 1fr); gap: var(--head-y); }
+  .sk-panelsplit__head { position: static; }
+}
+
+/* ---- DiagramSection: natural heights, the aside reads top-down ---------- */
+.sk-aside-card { display: grid; gap: var(--s-3); align-content: start; }
+.sk-matrix__after { align-items: start; }
+
+/* ---- FigureBandSection: our figure, and the side layout ----------------- */
+.sk-fig--ours { background: var(--card); border-color: var(--card); box-shadow: var(--sh-on-ink); }
+.sk-band--ink .sk-fig--ours .sk-fig__l,
+.sk-band--ink .sk-fig--ours .sk-small,
+.sk-band--ink .sk-fig--ours .sk-link { color: var(--black); }
+.sk-figside {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: clamp(32px, 6vw, 96px);
+  align-items: start;
+}
+.sk-figside__head .sk-anchor__closing { margin-top: var(--s-6); }
+.sk-figures--side { grid-template-columns: minmax(0, 1fr); margin-top: 0; }
+@media (min-width: 981px) {
+  .sk-figures--4 .sk-fig--label .sk-fig__l,
+  .sk-figures--side .sk-fig--label .sk-fig__l { font-size: 1.25rem; letter-spacing: -0.024em; }
+}
+@media (max-width: 900px) {
+  .sk-figside { grid-template-columns: minmax(0, 1fr); gap: var(--head-y); }
+}
+
+/* ---- the price rows: the per-provider figure is not a footnote ---------- */
+.sk-planrow__desc { font-weight: 600; }
+.sk-planrow .sk-plan__feats li { font-size: 0.9375rem; }
+
+/* ---- the status table on a phone: one card per status ------------------- */
+.sk-statustable tr.is-action th,
+.sk-statustable tr.is-action td { background: var(--amber-tint); }
+@media (max-width: 640px) {
+  .sk-statustable { border: 0; overflow: visible; }
+  .sk-statustable .sk-table,
+  .sk-statustable tbody,
+  .sk-statustable tr,
+  .sk-statustable th,
+  .sk-statustable td { display: block; width: 100%; }
+  .sk-statustable thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  .sk-statustable tr {
+    border: var(--hairline) solid var(--line);
+    border-radius: var(--r-card);
+    box-shadow: var(--sh-white);
+    padding: var(--s-4);
+    margin-bottom: var(--s-3);
+  }
+  .sk-statustable tr.is-action { background: var(--amber-tint); box-shadow: inset 0 0 0 1px var(--amber); }
+  .sk-statustable th,
+  .sk-statustable td { padding: 0; border: 0; background: none; }
+  .sk-statustable tr.is-action th,
+  .sk-statustable tr.is-action td { background: none; }
+  .sk-statustable td { margin-top: var(--s-3); }
+  .sk-statustable td::before {
+    content: attr(data-label);
+    display: block;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    margin-bottom: 2px;
+  }
+}
+
+/* ---- the matrix: three whole payers on a phone, never a hidden scroll ---- */
+.sk-matrix__grid {
+  grid-template-columns: minmax(120px, auto) repeat(var(--cols-sm, var(--cols)), minmax(0, 1fr));
+}
+.sk-matrix--compact .sk-matrix__grid {
+  grid-template-columns: minmax(52px, auto) repeat(var(--cols-sm, var(--cols)), minmax(0, 1fr));
+}
+@media (max-width: 640px) {
+  .sk-matrix__grid,
+  .sk-matrix--compact .sk-matrix__grid { --cols-sm: 3; min-width: 0; }
+  .sk-matrix__grid { grid-template-columns: minmax(84px, auto) repeat(var(--cols-sm), minmax(0, 1fr)); }
+  .sk-matrix .sk-matrix__x { display: none; }
+  .sk-matrix__row { padding-right: var(--s-2); white-space: normal; }
+}
+
+/* ---- the closing CTA keeps its measure with the smaller H2 -------------- */
+.sk-cta__inner .sk-head__pill { display: flex; justify-content: center; }
+
+/* ---- QuadSection: the wide card gets its icon, in the small cards' corner */
+/* The reference sets the corner icon on the short cards and the icon above
+   the title on the narrow tall one; the wide card had none. */
+.sk-quad__a { position: relative; }
+.sk-quad__t { padding-right: var(--s-8); }
+.sk-quad__a > .sk-layer__ico { position: absolute; top: var(--s-5); right: var(--s-5); }

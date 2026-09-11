@@ -1,20 +1,20 @@
 import Shell from "@/components/neo/Shell";
 import Faq from "@/components/neo/Faq";
-import Matrix, { MatrixLegend, MatrixNote } from "@/components/neo/Matrix";
+import Matrix, { MatrixLegend } from "@/components/neo/Matrix";
 import HeroPanel from "@/components/neo/HeroPanel";
 import {
-  IconBan, IconDoc, IconGrid, IconCalendar, IconMail,
+  IconBan, IconDoc, IconGrid, IconCalendar, IconMail, IconClock,
   IconSearch, IconRefresh, IconShield, IconUsers,
 } from "@/components/neo/icons";
 import LandingTemplate, {
   SplitListSection, QuadSection, DiagramSection, FigureBandSection,
-  PlanListSection, IconRowSection, PanelSection, CtaSection, HeroStrip,
+  PlanListSection, IconRowSection, PanelSection, CtaSection, HeroStrip, ScreenSlot,
 } from "@/components/neo/LandingTemplate";
-import { FAQ_HEADING, PLAN_PERIOD } from "@/components/neo/neoData";
+import { FAQ_HEAD, PLAN_PERIOD } from "@/components/neo/neoData";
 import { JsonLd, faqSchema, softwareSchema, PLAN_PRICES } from "@/components/neo/schema";
 import { pageMeta } from "@/lib/seo";
 import {
-  META, HERO, PROBLEM, LAYERS, MATRIX, ANCHOR, PRICING, SCOPE, FAQ, CLOSING,
+  META, HERO, PROBLEM, LAYERS, MATRIX, ANCHOR, PRICING, SCOPE, FAQ, CLOSING, SLOTS,
 } from "./homeData";
 
 // `/` — page 1 of the v3.1 map, on LandingTemplate. Composition only: which
@@ -71,22 +71,31 @@ export default function HomePage() {
       <JsonLd data={faqSchema(FAQ)} />
 
       <LandingTemplate heroSlot={<Hero />}>
-        <SplitListSection head={PROBLEM.head} items={PROBLEM.items} closing={PROBLEM.closing} />
+        <SplitListSection
+          head={PROBLEM.head}
+          items={PROBLEM.items}
+          closing={PROBLEM.closing}
+          reservedLabel={SLOTS.problem}
+        />
 
         <QuadSection
           head={LAYERS.head}
           blocks={[
-            LAYERS.wide,
+            { ...LAYERS.wide, icon: <IconClock /> },
             { ...LAYERS.tall, icon: <IconDoc /> },
             { ...LAYERS.small1, icon: <IconMail /> },
             { ...LAYERS.small2, icon: <IconGrid /> },
           ]}
+          labels={{ wide: SLOTS.quadWide, corner: SLOTS.quadCorner }}
         />
 
         <DiagramSection
           head={MATRIX.head}
-          note={<MatrixNote>{MATRIX.note}</MatrixNote>}
-          diagram={<Matrix rows={5} cols={5} infoCount={3} quietCount={3} reviewCount={6} />}
+          diagram={
+            <ScreenSlot screen="Provider × payer matrix" ratio="16:9" tone="white" note={MATRIX.note}>
+              <Matrix rows={5} cols={5} infoCount={3} quietCount={3} reviewCount={6} />
+            </ScreenSlot>
+          }
           legend={<MatrixLegend />}
           points={MATRIX.points}
           aside={MATRIX.aside}
@@ -115,7 +124,7 @@ export default function HomePage() {
           closing={SCOPE.closing}
         />
 
-        <PanelSection id="faq" head={{ title: FAQ_HEADING }}>
+        <PanelSection id="faq" head={FAQ_HEAD} split>
           <Faq items={FAQ} openFirst />
         </PanelSection>
 

@@ -120,13 +120,17 @@ export default function Matrix({
 
   const needsAction = cells.filter((x) => x.state === "info" || x.state === "quiet").length;
 
+  // The column count is a custom property rather than a finished
+  // grid-template, so the stylesheet can narrow the grid below 640px: a phone
+  // shows the first three payers whole instead of five payers cut off by a
+  // scroll edge nobody sees (2026-09-11). Columns past the third carry
+  // `.sk-matrix__x` and drop out at that width. It is a schematic, so the
+  // density is ours to choose — the note still says what it is.
   return (
     <div className={`sk-matrix${compact ? " sk-matrix--compact" : ""}`}>
       <div
         className="sk-matrix__grid"
-        style={{
-          gridTemplateColumns: `minmax(${compact ? 52 : 120}px, auto) repeat(${cols}, minmax(0, 1fr))`,
-        }}
+        style={{ "--cols": cols }}
         role="img"
         aria-label={
           `Schematic: ${rowLabels.length} providers down, ${colLabels.length} payers across, ` +
@@ -135,8 +139,8 @@ export default function Matrix({
         }
       >
         <div className="sk-matrix__corner" />
-        {colLabels.map((p) => (
-          <div className="sk-matrix__col" key={p}>{p}</div>
+        {colLabels.map((p, c) => (
+          <div className={`sk-matrix__col${c > 2 ? " sk-matrix__x" : ""}`} key={p}>{p}</div>
         ))}
 
         {rowLabels.map((label, r) => (
@@ -154,7 +158,7 @@ function Row({ label, cells, compact }) {
       {cells.map((cell) => {
         const s = CELL_STATES[cell.state];
         return (
-          <div key={cell.key} className={`sk-matrix__cell sk-matrix__cell--${s.kind}`}>
+          <div key={cell.key} className={`sk-matrix__cell sk-matrix__cell--${s.kind}${cell.c > 2 ? " sk-matrix__x" : ""}`}>
             <span className="sk-matrix__lb">
               <span className="sk-matrix__glyph" aria-hidden="true">{s.glyph}</span>
               {s.label}

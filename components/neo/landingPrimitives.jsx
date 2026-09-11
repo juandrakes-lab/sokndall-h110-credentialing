@@ -14,12 +14,45 @@ import Rich from "@/components/neo/rich";
 /** A full-bleed horizontal surface. `surface` picks the ground:
  *  "card" (white), "paper" (white — kept as an alias), "ink" / "ink-2" (the
  *  inset rounded dark blocks). `.sk-wrap` inside holds the measure. */
-export function Band({ surface = "card", id, children }) {
+export function Band({ surface = "card", id, className = "", children }) {
   return (
-    <section className={`sk-band sk-band--${surface}`} id={id}>
+    <section className={`sk-band sk-band--${surface}${className ? ` ${className}` : ""}`} id={id}>
       <div className="sk-wrap">{children}</div>
     </section>
   );
+}
+
+/** A heading's authored lines. The copy writes where a headline breaks, so the
+ *  break belongs to the content — but only where the line is wide enough to
+ *  honour it. `.sk-br` is `display: none` below 900px, so on a phone the
+ *  headline wraps naturally instead of stranding a word on its own line
+ *  ("one of them is / your / problem right now" at 390px, 2026-09-11). */
+export function Lines({ lines }) {
+  const arr = Array.isArray(lines) ? lines : [lines];
+  return arr.map((line, i) => (
+    <span key={line}>
+      {line}
+      {i < arr.length - 1 ? <>{" "}<br className="sk-br" /></> : null}
+    </span>
+  ));
+}
+
+/** The eyebrow pill. Every section head carries one (DESIGN_RULES.md §13,
+ *  2026-09-11): it is the brand-colour mark that opens a section, as in the
+ *  reference comp. Ink, never amber (§2 regla 4). */
+export function Pill({ children }) {
+  return (
+    <p className="sk-head__pill">
+      <span className="sk-pill">{children}</span>
+    </p>
+  );
+}
+
+function warnNoPill(where) {
+  if (process.env.NODE_ENV !== "production") {
+    // A warning, not a throw: a missing eyebrow is a copy gap, not a broken page.
+    console.warn(`${where}: section head without a pill — every section head carries one (DESIGN_RULES.md §13).`);
+  }
 }
 
 /** Section head: eyebrow pill, then heading left and supporting matter right.
@@ -31,14 +64,19 @@ export function Band({ surface = "card", id, children }) {
  *  A `statCaption` with no `stat` renders alone in the right column, set as a
  *  caption: the copy can deliver the line without the figure, and the head
  *  must not invent a number to sit above it.
- *  `note` renders full width underneath both columns. */
-export function SectionHead({ pill, title, aside, stat, statCaption, note }) {
-  const lines = Array.isArray(title) ? title : [title];
+ *  `note` renders full width underneath both columns.
+ *  `center` centres pill, heading and note on one axis (no right column). */
+export function SectionHead({ pill, title, aside, stat, statCaption, note, center = false }) {
+  if (!pill) warnNoPill("SectionHead");
 
   const right = stat ? (
     <div className="sk-head__aside sk-head__aside--stat">
       <p className="sk-stat">{stat}</p>
-      {statCaption ? <p className="sk-small sk-head__statcap">{statCaption}</p> : null}
+      {statCaption ? (
+        <p className="sk-small sk-head__statcap">
+          <Rich text={statCaption} linkClassName="sk-link" />
+        </p>
+      ) : null}
     </div>
   ) : statCaption ? (
     <p className="sk-body sk-body--lg sk-head__aside sk-head__aside--cap">{statCaption}</p>
@@ -49,10 +87,22 @@ export function SectionHead({ pill, title, aside, stat, statCaption, note }) {
   ) : null;
 
   const noteEl = note ? (
-    <p className="sk-body sk-head__note">
+    <p className="sk-lead sk-head__note">
       <Rich text={note} linkClassName="sk-link" />
     </p>
   ) : null;
+
+  if (center) {
+    return (
+      <div className="sk-head sk-head--center">
+        {pill ? <Pill>{pill}</Pill> : null}
+        <h2 className="sk-h2">
+          <Lines lines={title} />
+        </h2>
+        {noteEl}
+      </div>
+    );
+  }
 
   // When a section has both a right column and a note, the note is the
   // section's direct answer (on-page-seo.md §5: the first paragraph under the
@@ -63,20 +113,11 @@ export function SectionHead({ pill, title, aside, stat, statCaption, note }) {
 
   return (
     <div className="sk-head">
-      {pill ? (
-        <p className="sk-head__pill">
-          <span className="sk-pill">{pill}</span>
-        </p>
-      ) : null}
+      {pill ? <Pill>{pill}</Pill> : null}
 
       <div className={`sk-head__row sk-head__row--top${noted ? " sk-head__row--noted" : ""}`}>
         <h2 className="sk-h2">
-          {lines.map((line, i) => (
-            <span key={line}>
-              {line}
-              {i < lines.length - 1 ? <>{" "}<br /></> : null}
-            </span>
-          ))}
+          <Lines lines={title} />
         </h2>
         {noted ? noteEl : null}
         {right}
@@ -91,7 +132,10 @@ export function SectionHead({ pill, title, aside, stat, statCaption, note }) {
  *
  *  `variant`: "grey" (filled, takes its height from its neighbour), "card"
  *  (white, sits among white cards), "square" (dashed 1:1). `ratio` prints the
- *  reserved aspect ratio so the constraint is visible on the page itself. */
+ *  reserved aspect ratio so the constraint is visible on the page itself.
+ *  `label` says what goes there. The pages are not published until every slot
+ *  is filled (decision of 2026-09-11), so the label is a production note and
+ *  stays visible. */
 export function ReservedSlot({ variant, ratio, className = "", label = "Reserved" }) {
   // No variant means the bare `.sk-slot` — the caller's own class supplies the
   // ground. `.sk-quad__img` does exactly that.
@@ -104,12 +148,93 @@ export function ReservedSlot({ variant, ratio, className = "", label = "Reserved
   );
 }
 
-/** The four-up capability strip under the hero rule. `items`: [{ icon, label }]
- *  where `icon` is an element from icons.jsx. Moved out of the home so every
- *  landing sets it the same way. */
-export function HeroStrip({ items }) {
+/**
+ * ScreenSlot — the closed frame a product screen will fill. Added 2026-09-11.
+ *
+ * Every visual of the product on a landing lives in one of these: a rounded
+ * frame at a declared ratio, with a slim header naming the screen that goes
+ * there. Until the screen exists the frame shows one of two things:
+ *
+ *   - `children` — a low-fidelity schematic of the data model (the matrix, the
+ *     status track, the client structure). It explains the product today and
+ *     is replaced, never redrawn, when the screenshot exists.
+ *   - nothing — an empty, tinted frame. The label is the production note.
+ *
+ * With children the frame takes the schematic's height (a schematic cannot be
+ * squeezed into a ratio without scrolling on a phone); the ratio is still
+ * printed, and it is the ratio the screenshot will be cut to. Empty, the frame
+ * holds the ratio itself.
+ *
+ * `screen`: what goes here, written as a production note ("Provider × payer
+ * matrix"). `note`: the "not a screenshot" line, required with a schematic
+ * (DESIGN_RULES.md §2 regla 1).
+ *
+ * Image policy: this is the only image-bearing slot on a landing besides the
+ * home's original reserved blocks. Product screens only — never stock, never
+ * people.
+ */
+export function ScreenSlot({ screen, ratio = "16:10", note, children, className = "", tone = "grey" }) {
+  if (children && !note) {
+    throw new Error(
+      `ScreenSlot "${screen}": a schematic needs its visible "not a screenshot" note (DESIGN_RULES.md §2 regla 1).`
+    );
+  }
+  const empty = !children;
+  const [w, h] = ratio.split(":");
   return (
-    <ul className="sk-strip">
+    <figure
+      className={`sk-screen sk-screen--${tone}${empty ? " sk-screen--empty" : ""}${className ? ` ${className}` : ""}`}
+      data-ratio={ratio}
+    >
+      {/* No window chrome (traffic-light dots, a URL bar): that would dress
+          the frame as an interface, which §2 regla 1 forbids. The bar is a
+          production label and nothing else. */}
+      <figcaption className="sk-screen__bar">
+        <span className="sk-screen__k">Screen</span>
+        <span className="sk-screen__name">{screen}</span>
+        <span className="sk-screen__r">{ratio}</span>
+      </figcaption>
+      {empty ? (
+        <div className={`sk-screen__hold sk-ar-${w}x${h}`} role="presentation">
+          <span className="sk-screen__todo">Reserved for the product screen</span>
+        </div>
+      ) : (
+        <div className="sk-screen__body">
+          {note ? (
+            <p className="sk-screen__note">
+              <span aria-hidden="true">◇</span>
+              <span>{note}</span>
+            </p>
+          ) : null}
+          {children}
+        </div>
+      )}
+    </figure>
+  );
+}
+
+/** A small fact, set as an indicator: an icon, a figure or short value, and
+ *  what it counts. The reference's floating chips, with one difference that is
+ *  not negotiable: every value is a real product fact or a sourced figure from
+ *  the approved copy — never an invented metric (§2 reglas 1-2). */
+export function Indicator({ icon, value, label, tone = "white" }) {
+  return (
+    <div className={`sk-ind sk-ind--${tone}`}>
+      {icon ? <span className="sk-ind__ico">{icon}</span> : null}
+      <span className="sk-ind__txt">
+        {value ? <span className="sk-ind__v">{value}</span> : null}
+        <span className="sk-ind__l">{label}</span>
+      </span>
+    </div>
+  );
+}
+
+/** The four-up capability strip. `items`: [{ icon, label }] where `icon` is
+ *  an element from icons.jsx. On the ink hero it is a plain row under the
+ *  rule; on a light header (`tone="light"`) each item is a chip. */
+export function HeroStrip({ items, tone = "dark" }) {
+  return (
+    <ul className={`sk-strip${tone === "light" ? " sk-strip--chips" : ""}`}>
       {items.map((s) => (
         <li className="sk-strip__item" key={s.label}>
           {s.icon ? <span className="sk-tile">{s.icon}</span> : null}
@@ -121,14 +246,15 @@ export function HeroStrip({ items }) {
 }
 
 /** A card whose title sits left and its explanation right, centred on each
- *  other. `icon` is optional and renders beside the title. */
+ *  other. `icon` is optional and renders beside the title. `stacked` sets the
+ *  title above the explanation, for a card in a narrow column. */
 // `headingLevel` is the tag; `.sk-h4` is the size. They are separate on
 // purpose — the document outline should not be dictated by type scale.
-export function RowCard({ title, body, icon, headingLevel = "h3" }) {
+export function RowCard({ title, body, icon, headingLevel = "h3", stacked = false }) {
   const H = headingLevel;
   return (
     <article className="sk-card sk-card--pad">
-      <div className="sk-row-card">
+      <div className={`sk-row-card${stacked ? " sk-row-card--stacked" : ""}`}>
         {icon ? (
           <div className="sk-layer__t">
             <span className="sk-tile">{icon}</span>

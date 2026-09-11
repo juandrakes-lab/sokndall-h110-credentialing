@@ -71,12 +71,24 @@ export {
   DiagramSection,
   FigureBandSection,
   PlanSection,
+  PlanList,
   PlanListSection,
   ProseBandSection,
   StatusTableSection,
   IconRowSection,
+  CardGridSection,
   PanelSection,
   CtaSection,
 } from "@/components/neo/landingSections";
 
-export { Band, SectionHead, ReservedSlot, RowCard, HeroStrip } from "@/components/neo/landingPrimitives";
+export {
+  Band,
+  SectionHead,
+  ReservedSlot,
+  ScreenSlot,
+  Indicator,
+  RowCard,
+  HeroStrip,
+  Lines,
+  Pill,
+} from "@/components/neo/landingPrimitives";
