@@ -40,7 +40,12 @@ html:has(.sokndall-neo) { overflow-x: hidden; }
   --body:       var(--black);
   --muted:      var(--black);   /* was the grey microcopy step */
   --muted-dark: #ffffff;        /* was the grey step on dark */
-  --amber:      #c88a2e;   /* primary CTA and action-required states ONLY */
+  /* 2026-09-12: the yellow moved lighter (was #c88a2e, a muted mustard black
+     text barely lifted off: 5.1:1 in ink). #f2c14e carries black at 12.5:1.
+     A light yellow cannot draw a line on white, so strokes on a light surface
+     (action-state borders) take --amber-line, the same hue deepened. */
+  --amber:      #f2c14e;   /* CTA fill, the one highlight per section, action-state fill */
+  --amber-line: #b38314;   /* the same hue as a stroke on light: 3.4:1 on white */
 
   /* ---- alphas of the above: hairlines and tints, never new hues ---- */
   /* The hairline's weight is spent in two places, and it has to be. A border
@@ -58,7 +63,7 @@ html:has(.sokndall-neo) { overflow-x: hidden; }
   --hairline:    1px;
   --tint:        rgba(14, 42, 46, 0.05);   /* ink at 5% — nested light surface */
   --tint-2:      rgba(14, 42, 46, 0.08);
-  --amber-tint:  rgba(200, 138, 46, 0.14); /* the only amber fill */
+  --amber-tint:  rgba(242, 193, 78, 0.26); /* the action-state fill */
   --rule-dark-2: rgba(61, 106, 107, 0.55);
 
   /* ---- roles (2026-09-11). Not a new colour: a new job for one of the eight.
@@ -71,7 +76,7 @@ html:has(.sokndall-neo) { overflow-x: hidden; }
   /* The light end of the CTA's same-hue gradient (2026-09-11): amber mixed
      toward white, not a new colour. Gradients are allowed on buttons and as a
      soft glow on dark blocks only, and only within one hue (DESIGN_RULES §17). */
-  --amber-hi:    color-mix(in srgb, var(--amber) 72%, #ffffff);
+  /* --amber-hi retired 2026-09-12 with the button gradient. */
 
   /* ---- legacy aliases (pages awaiting rebuild resolve through these) ---- */
   --page:        var(--card);   /* the page is white; paper is a card fill */
@@ -188,7 +193,7 @@ html:has(.sokndall-neo) { overflow-x: hidden; }
 :where(.sokndall-neo) :where(a) { color: inherit; text-decoration: none; }
 
 .sokndall-neo :focus-visible {
-  outline: 2px solid var(--amber);
+  outline: 2px solid var(--ink);   /* a light yellow ring would vanish on white */
   outline-offset: 3px;
   border-radius: 4px;
 }
@@ -785,7 +790,7 @@ html:has(.sokndall-neo) { overflow-x: hidden; }
 .sk-mark--stop {
   background: var(--warn-bg);
   color: var(--black);
-  box-shadow: inset 0 0 0 1px var(--amber);
+  box-shadow: inset 0 0 0 1px var(--amber-line);
 }
 .sk-mark--calm { background: var(--soft-2);  color: var(--black); }
 .sk-mark--blue { background: var(--blue-soft); color: var(--blue); }
@@ -872,7 +877,7 @@ html:has(.sokndall-neo) { overflow-x: hidden; }
 .sk-matrix__cell--action,
 .sk-matrix__cell--urgent {
   background: var(--amber-tint);
-  border-color: rgba(200, 138, 46, 0.42);
+  border-color: var(--amber-line);
 }
 .sk-matrix__cell--action .sk-matrix__lb,
 .sk-matrix__cell--urgent .sk-matrix__lb { color: var(--black); }
@@ -880,12 +885,12 @@ html:has(.sokndall-neo) { overflow-x: hidden; }
 .sk-matrix__cell--urgent .sk-matrix__d { color: var(--black); }
 /* The heavier of the two action states also carries a rule, so the pair stay
    distinguishable from each other with the colour taken away. */
-.sk-matrix__cell--urgent { border-left: 3px solid var(--amber); }
+.sk-matrix__cell--urgent { border-left: 3px solid var(--amber-line); }
 
 /* Legacy cell classes, for the pages awaiting rebuild. */
 .sk-matrix__cell--calm  { background: var(--card); }
 .sk-matrix__cell--slow  { background: var(--tint); }
-.sk-matrix__cell--stuck { background: var(--amber-tint); border-color: rgba(200, 138, 46, 0.42); }
+.sk-matrix__cell--stuck { background: var(--amber-tint); border-color: var(--amber-line); }
 
 @media (max-width: 720px) {
   .sk-matrix__grid { min-width: 640px; }
@@ -923,7 +928,7 @@ html:has(.sokndall-neo) { overflow-x: hidden; }
   line-height: 1;
   color: var(--black);
 }
-.sk-matrix__sw.is-action { background: var(--amber-tint); border-color: var(--amber); }
+.sk-matrix__sw.is-action { background: var(--amber-tint); border-color: var(--amber-line); }
 @media (max-width: 820px) {
   .sk-matrix__legend { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
@@ -3377,7 +3382,7 @@ html:has(.sokndall-neo) { overflow-x: hidden; }
     padding: var(--s-4);
     margin-bottom: var(--s-3);
   }
-  .sk-statustable tr.is-action { background: var(--amber-tint); box-shadow: inset 0 0 0 1px var(--amber); }
+  .sk-statustable tr.is-action { background: var(--amber-tint); box-shadow: inset 0 0 0 1px var(--amber-line); }
   .sk-statustable th,
   .sk-statustable td { padding: 0; border: 0; background: none; }
   .sk-statustable tr.is-action th,
@@ -3822,53 +3827,45 @@ html:has(.sokndall-neo) { overflow-x: hidden; }
 .sk-hero .sk-pill,
 .sk-tile-ink .sk-pill { background: rgba(255, 255, 255, 0.1); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14); }
 
-/* ---- buttons: pill shape, one-hue gradient, the arrow in a dark disc ---- */
-/* The reference's CTA. The gradient runs inside amber only (amber-hi is amber
-   mixed toward white), the inset highlight gives it an edge, and the ink disc
-   carries the arrow — drawn by CSS, so every primary button on the site gets
-   it without a markup change. The label stays ink: 5.1:1 on amber, more on
-   the lighter top half. */
+/* ---- buttons: flat pill, the arrow on the yellow, a real shadow --------- */
+/* Round 3 (2026-09-12). The round-2 button imitated a lit, bevelled surface —
+   light on top, shade below, a glow of its own colour — and carried its arrow
+   in a dark disc. The founder asked for the opposite: a flat, modern surface,
+   the arrow straight on the yellow, and depth from a plain shadow. */
 .sk-btn { border-radius: var(--r-pill); }
 .sk-btn--primary,
 .sk-nav__cta {
-  background: linear-gradient(180deg, var(--amber-hi) 0%, var(--amber) 62%);
+  background: var(--amber);
   color: var(--black);
   border: 0;
   border-radius: var(--r-pill);
-  padding: 5px 5px 5px 20px;
-  gap: var(--s-3);
+  padding: 11px 18px 11px 22px;
+  gap: var(--s-2);
   font-weight: 600;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.4),
-    inset 0 -1px 0 rgba(14, 42, 46, 0.12),
-    0 1px 2px rgba(14, 42, 46, 0.18),
-    0 10px 20px -10px rgba(200, 138, 46, 0.75);
-  transition: filter 0.16s ease, box-shadow 0.16s ease;
+  box-shadow: 0 1px 2px rgba(14, 42, 46, 0.14), 0 8px 18px -8px rgba(14, 42, 46, 0.32);
+  transition: background-color 0.16s ease, box-shadow 0.16s ease, transform 0.16s ease;
 }
 .sk-btn--primary::after,
 .sk-nav__cta::after {
   content: "\2197";
-  display: grid;
-  place-items: center;
-  flex: none;
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  background: linear-gradient(180deg, var(--ink-2), var(--ink));
-  color: #fff;
-  font-size: 0.8125rem;
+  font-size: 0.95em;
   line-height: 1;
   transition: transform 0.2s ease;
 }
 .sk-btn--primary:hover,
-.sk-nav__cta:hover { filter: brightness(1.05); }
+.sk-nav__cta:hover {
+  filter: none;
+  background: color-mix(in srgb, var(--amber) 88%, var(--ink));
+  box-shadow: 0 2px 4px rgba(14, 42, 46, 0.16), 0 12px 22px -10px rgba(14, 42, 46, 0.4);
+}
 .sk-btn--primary:hover::after,
-.sk-nav__cta:hover::after { transform: rotate(45deg); }
-.sk-btn--sm.sk-btn--primary { padding: 4px 4px 4px 16px; }
-.sk-btn--sm.sk-btn--primary::after { width: 26px; height: 26px; }
+.sk-nav__cta:hover::after { transform: translate(2px, -2px); }
+.sk-btn--sm.sk-btn--primary { padding: 9px 14px 9px 18px; }
 .sk-nav__cta .sk-arr-ico { display: none; }
-.sk-nav__cta { padding: 4px 4px 4px 16px; }
-.sk-nav__cta::after { width: 28px; height: 28px; }
+.sk-nav__cta { padding: 10px 16px 10px 20px; }
+.sk-band--ink .sk-btn--primary,
+.sk-hero .sk-btn--primary,
+.sk-tile-ink .sk-btn--primary { box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 10px 22px -10px rgba(0, 0, 0, 0.6); }
 
 /* The secondary action is a link, not a second button: underlined, with the
    same arrow, no box (the reference's "Call Us Now"). */
@@ -3910,16 +3907,18 @@ html:has(.sokndall-neo) { overflow-x: hidden; }
   min-height: 56px;
   padding: 6px 6px 6px var(--s-5);
   border-radius: var(--r-pill);
-  background-color: var(--ink);
-  background-image: radial-gradient(120% 180% at 100% 0%, rgba(61, 106, 107, 0.45), transparent 55%);
-  box-shadow: 0 2px 6px rgba(14, 42, 46, 0.22), 0 14px 30px -12px rgba(14, 42, 46, 0.5);
-  color: #fff;
+  /* Round 3 (2026-09-12): white, as in the VELD reference, with a plain
+     shadow that sets it above the page and nothing else — no glow, no tint. */
+  background: var(--card);
+  border: var(--hairline) solid var(--line);
+  box-shadow: 0 1px 3px rgba(14, 42, 46, 0.08), 0 12px 32px -12px rgba(14, 42, 46, 0.28);
+  color: var(--black);
 }
-.sokndall-neo .sk-fnav .sk-nav__brand { color: #fff; padding-right: var(--s-3); }
-.sk-fnav .sk-nav__mark { color: #fff; }
-.sk-fnav .sk-nav__links a { color: rgba(255, 255, 255, 0.78); }
+.sokndall-neo .sk-fnav .sk-nav__brand { color: var(--black); padding-right: var(--s-3); }
+.sk-fnav .sk-nav__mark { color: var(--ink); }
+.sk-fnav .sk-nav__links a { color: var(--black); opacity: 0.7; }
 .sk-fnav .sk-nav__links a:hover,
-.sk-fnav .sk-nav__links a[aria-current="page"] { color: #fff; }
+.sk-fnav .sk-nav__links a[aria-current="page"] { color: var(--black); opacity: 1; }
 /* The home: out of sight until the hero has gone. */
 .sk-fnav--reveal {
   position: fixed;
@@ -4047,7 +4046,7 @@ html:has(.sk-fnav) { scroll-padding-top: 88px; }
 .sk-figcard--ours {
   background: var(--amber);
   border-color: transparent;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 12px 28px -14px rgba(200, 138, 46, 0.8);
+  box-shadow: var(--sh-white);
 }
 .sk-figcard--ours,
 .sk-figcard--ours .sk-small,
@@ -4191,25 +4190,7 @@ html:has(.sk-fnav) { scroll-padding-top: 88px; }
 .sk-hero--photo .sk-hero__bar { z-index: 3; }
 .sk-hero__credit { position: absolute; right: var(--pad-x); bottom: var(--s-4); z-index: 3; }
 
-/* ---- hero variant C: the panel beside a photo card ---------------------- */
-.sk-hero-pair {
-  display: grid;
-  grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
-  gap: var(--gap);
-  margin: var(--page-x) var(--page-x) calc(22px + var(--s-4));
-  align-items: stretch;
-}
-.sk-hero-pair .sk-hero.sk-band--ink.sk-hero--panel { margin: 0; }
-.sk-hero-pair .sk-hero__top--solo .sk-hero__copy { max-width: 40rem; }
-.sk-hero-pair__photo { border-radius: var(--r-block); min-height: 560px; }
-.sk-hero-pair__photo .sk-photoframe__over { left: var(--s-4); right: var(--s-4); bottom: var(--s-4); }
-.sk-hero-pair__fig { display: grid; gap: var(--s-3); justify-items: start; width: 100%; }
-.sk-hero-pair__ind { display: flex; }
-.sk-hero-pair__fig .sk-screen { box-shadow: 0 16px 40px -16px rgba(14, 42, 46, 0.6); }
-@media (max-width: 980px) {
-  .sk-hero-pair { grid-template-columns: minmax(0, 1fr); }
-  .sk-hero-pair__photo { min-height: 520px; }
-}
+/* Hero variant C (panel beside a photo card) was discarded in round 3. */
 .sk-sgvar { font: 600 0.8125rem/1 var(--sans); padding: var(--s-6) var(--light-x) 0; }
 /* A panel with no figure column (variant C keeps its figure on the photo card)
    is one column; the panel's two-column split outranks the base rule. */
@@ -4243,20 +4224,6 @@ html:has(.sk-fnav) { scroll-padding-top: 88px; }
 .sk-plancard .sk-plan__price { margin: 0; }
 .sk-plancard__desc { font-weight: 600; }
 .sk-plancard__cta { align-self: flex-start; margin-top: var(--s-2); }
-/* The one mustard element of its section: this product's own plan. The CTA on
-   it turns ink, since amber on amber would vanish. */
-.sk-plancard--ours {
-  background: var(--amber);
-  border-color: transparent;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 18px 36px -18px rgba(200, 138, 46, 0.85);
-}
-.sk-plancard--ours .sk-list li::before { background: var(--ink); }
-.sk-plancard--ours .sk-btn--primary {
-  background: linear-gradient(180deg, var(--ink-2), var(--ink));
-  color: #fff;
-  box-shadow: 0 1px 2px rgba(14, 42, 46, 0.3), 0 10px 20px -10px rgba(14, 42, 46, 0.6);
-}
-.sk-plancard--ours .sk-btn--primary::after { background: var(--card); color: var(--ink); }
 
 /* ---- StageCompare ------------------------------------------------------- */
 .sk-stages { list-style: none; padding: 0; display: grid; gap: var(--gap); }
@@ -4333,3 +4300,151 @@ html:has(.sk-fnav) { scroll-padding-top: 88px; }
 /* The matrix tile gets more of the row; the grid beside it uses the compact
    cell, which is sized for a column this wide. */
 .sk-diagbento { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); }
+
+
+/* ======================= ROUND 3 (2026-09-12) ============================
+   The founder's third pass: flat buttons, white floating nav, a lighter
+   yellow, petrol for every mark of the brand, and the fixes below. Decisions
+   in docs/DESIGN_DECISIONS.md, "Ronda 3". */
+
+/* ---- the brand's marks are the brand's colour ---------------------------- */
+/* Round 2 set icons and list dots in the mid tone (--accent). The founder
+   asked why they were lighter than the main colour: they should not be. The
+   mid tone stays only where it has to differ from black text — the brand line
+   of a heading and the large figures. */
+.sk-band .sk-tile,
+.sk-lhero .sk-tile,
+.sk-strip--chips .sk-tile,
+.sk-ind__ico,
+.sk-orgs__lock,
+.sk-screen__note > span:first-child { color: var(--ink); }
+.sk-band--ink .sk-tile,
+.sk-hero .sk-tile,
+.sk-tile-ink .sk-tile { color: #fff; }
+.sk-band--ink .sk-card .sk-tile,
+.sk-hero .sk-card .sk-tile,
+.sk-hero .sk-ind__ico { color: var(--ink); }
+.sk-band .sk-list li::before,
+.sk-lhero .sk-list li::before { background: var(--ink); }
+
+/* ---- plan features: a petrol disc with a white tick --------------------- */
+.sokndall-neo .sk-list.sk-plan__feats { gap: var(--s-3); }
+.sokndall-neo .sk-list.sk-plan__feats li { padding-left: 30px; }
+.sokndall-neo .sk-list.sk-plan__feats li::before {
+  content: "\2713";
+  top: 0.05em;
+  width: 20px;
+  height: 20px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--ink);
+  color: #fff;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+/* ---- the highlighted plan is marked in petrol, not yellow --------------- */
+/* The trial button stays yellow on every plan; the highlight — the border and
+   the label on the top edge — moves to the main colour, so the yellow is the
+   action and nothing else on the card. */
+.sk-planrow--hi,
+.sk-plan--hi,
+.sk-plancard--hi { border: 2px solid var(--ink); }
+.sk-plan__tag { background: var(--ink); color: #fff; }
+.sk-plancard { position: relative; }
+.sk-plancard--hi { padding-top: clamp(32px, 3.4vw, 44px); }
+
+/* ---- figure cards: the range large, the unit under it ------------------- */
+.sk-figcard__l { font-size: 1rem; line-height: 1.3; font-weight: 600; letter-spacing: -0.01em; }
+.sk-figcard__v {
+  display: block;
+  font-size: clamp(1.75rem, 1rem + 1.7vw, 2.5rem);
+  line-height: 1.04;
+  letter-spacing: -0.035em;
+  font-variant-numeric: tabular-nums;
+}
+.sk-figcard__u { display: block; margin-top: var(--s-2); }
+.sk-figcard { gap: var(--s-4); }
+.sk-figcard__note { margin-top: auto; }
+
+/* ---- a photo that fills a cell never sets the cell's height ------------- */
+/* The section-2 photo is square: in flow it made the row as tall as it was
+   wide, and the three cards beside it stretched with empty middles. Set
+   absolutely, it takes the height the cards give it. */
+.sk-photoframe--fill { min-height: 240px; height: 100%; }
+.sk-photoframe--fill img { position: absolute; inset: 0; }
+
+/* ---- sticky heads below the floating nav -------------------------------- */
+/* The list beside its head (the template's tabs) holds its head in place while
+   the cards scroll, as the FAQ does — so the left column is never an empty
+   strip. Both clear the floating nav. */
+.sk-prose2--list .sk-prose2__head { position: sticky; top: 104px; align-self: start; }
+.sk-panelsplit__head { top: 104px; }
+@media (max-width: 900px) {
+  .sk-prose2--list .sk-prose2__head { position: static; }
+}
+
+/* ---- LayersSection: three things, three cards --------------------------- */
+.sk-layers {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--gap);
+  align-items: stretch;
+}
+.sk-layers__card { display: flex; flex-direction: column; gap: var(--s-5); }
+.sk-layers__top { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--s-3); }
+.sk-layers__top > .sk-tile { margin-bottom: var(--s-1); }
+.sk-layers__list { margin-top: var(--s-2); }
+.sk-layers__visual { margin-top: auto; }
+.sk-layers__card > .sk-photoframe {
+  margin: auto calc(var(--card-pad) * -1) calc(var(--card-pad) * -1);
+  border-radius: var(--r-card);
+}
+.sk-layers__detail {
+  margin-top: auto;
+  display: grid;
+  gap: var(--s-2);
+  padding: var(--s-4);
+  border-radius: var(--r-inner);
+  background: var(--paper);
+}
+.sk-layers__detail .sk-tile svg { width: 20px; height: 20px; }
+@media (max-width: 980px) {
+  .sk-layers { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .sk-layers > :first-child { grid-column: 1 / -1; }
+}
+@media (max-width: 640px) {
+  .sk-layers { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* The closing line under the figures, as their caption card (round 3). */
+.sk-figbento__side { display: flex; flex-direction: column; gap: var(--gap); min-width: 0; }
+.sk-figbento__side > .sk-figbento__figs { flex: 1; grid-auto-rows: 1fr; }
+.sokndall-neo .sk-figbento__closing {
+  margin: 0;
+  padding: var(--s-4) var(--s-5);
+  border-left: 3px solid var(--ink);
+  border-radius: var(--r-inner);
+  background: var(--paper);
+  color: var(--black);
+  font-weight: 500;
+}
+/* Balance the figure bento (round 3): the dark tile a little wider and its
+   aside a step smaller, so it stops out-growing the figure column; and the
+   full-row yellow card set horizontally, figure left and note right, instead
+   of a tall card with an empty middle. */
+.sk-figbento { grid-template-columns: minmax(0, 5.4fr) minmax(0, 6.6fr); }
+.sk-tile-ink .sk-figbento__aside { font-size: 1rem; line-height: 1.6; }
+@media (min-width: 561px) {
+  .sk-figbento--3 .sk-figcard--ours {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: end;
+    column-gap: var(--s-6);
+  }
+  .sk-figbento--3 .sk-figcard--ours .sk-figcard__note { margin-top: 0; }
+}
+.sk-tile-ink .sk-figbento__aside { margin-top: auto; }
+.sk-figbento__side > .sk-figbento__figs { grid-auto-rows: auto; }

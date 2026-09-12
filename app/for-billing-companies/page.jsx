@@ -41,6 +41,11 @@ const BILLING_PLAN = {
   period: PLAN_PERIOD,
 };
 
+// The label on the card's top edge, like the middle plan's on /pricing. Layout
+// microcopy, pending copy review (DESIGN_DECISIONS.md, round 3). It is not the
+// middle plan's label, which DESIGN_RULES §2 regla 8 fixes to one string.
+const BILLING_TAG = "The plan built for billing companies";
+
 export default function ForBillingCompaniesPage() {
   return (
     <Shell>
@@ -107,14 +112,14 @@ export default function ForBillingCompaniesPage() {
 
         <FigureBandSection head={ANCHOR.head} figures={ANCHOR.figures} closing={ANCHOR.closing} />
 
-        {/* The plan the page argues for, shown rather than described: the
-            Billing Co card from the price list, the section's one mustard
-            element (DESIGN_RULES §18). */}
+        {/* The plan the page argues for, shown rather than described, in the
+            price list's own style: white card, yellow trial button, and the
+            petrol-ink highlight and top-edge label (round 3). */}
         <ProseBandSection
           id="architecture"
           head={ARCHITECTURE.head}
           paras={ARCHITECTURE.paras}
-          media={<PlanCard plan={BILLING_PLAN} cta={{ label: "Start 14-day trial", href: "/login" }} ours />}
+          media={<PlanCard plan={BILLING_PLAN} cta={{ label: "Start 14-day trial", href: "/login" }} tag={BILLING_TAG} />}
         />
 
         <PanelSection id="faq" head={FAQ_HEAD} split>

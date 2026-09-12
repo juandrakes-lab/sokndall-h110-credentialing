@@ -7,7 +7,7 @@ import {
   IconSearch, IconRefresh, IconShield, IconUsers,
 } from "@/components/neo/icons";
 import LandingTemplate, {
-  SplitListSection, QuadSection, DiagramSection, FigureBandSection,
+  SplitListSection, LayersSection, DiagramSection, FigureBandSection,
   PlanListSection, CardGridSection, PanelSection, CtaSection, HeroStrip, ScreenSlot, Indicator, FactStrip,
 } from "@/components/neo/LandingTemplate";
 import { FAQ_HEAD, PLAN_PERIOD } from "@/components/neo/neoData";
@@ -85,16 +85,19 @@ export default function HomePage() {
           photo={PHOTOS.bindersDesk}
         />
 
-        <QuadSection
+        {/* "Three things" as three cards (round 3): applications, credentials
+            and the Monday follow-up, each with its visual; "One row per state"
+            sits inside the credentials card. Every string is the copy's. */}
+        <LayersSection
           head={LAYERS.head}
-          blocks={[
-            { ...LAYERS.wide, icon: <IconClock /> },
-            { ...LAYERS.tall, icon: <IconDoc /> },
-            { ...LAYERS.small1, icon: <IconMail /> },
-            { ...LAYERS.small2, icon: <IconGrid /> },
-          ]}
-          widePhoto={PHOTOS.phoneDesk}
-          labels={{ corner: SLOTS.quadCorner }}
+          blocks={{
+            applications: { ...LAYERS.wide, icon: <IconClock /> },
+            credentials: { ...LAYERS.tall, icon: <IconDoc /> },
+            detail: { ...LAYERS.small2, icon: <IconGrid /> },
+            followup: { ...LAYERS.small1, icon: <IconMail /> },
+          }}
+          photo={PHOTOS.phoneDesk}
+          screen={SLOTS.quadCorner}
         />
 
         <DiagramSection

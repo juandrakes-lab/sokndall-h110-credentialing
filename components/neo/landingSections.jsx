@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 import {
-  Band, SectionHead, ReservedSlot, RowCard, Lines, Pill, InkTile, PhotoFrame,
+  Band, SectionHead, ReservedSlot, ScreenSlot, RowCard, Lines, Pill, InkTile, PhotoFrame,
 } from "@/components/neo/landingPrimitives";
 import Rich from "@/components/neo/rich";
 
@@ -140,6 +140,80 @@ export function QuadSection({ head, blocks, imageRatio = "3:2", labels = {}, wid
   );
 }
 
+/**
+ * LayersSection — "Three things, tracked in one place", as three things.
+ * Added 2026-09-12 for the home's section 3, replacing QuadSection there.
+ *
+ * The approved copy heads the section "Three things" and then supplies four
+ * cards. Read against the rest of the copy, three are the things tracked —
+ * enrollment applications, credentials, the Monday follow-up — and the fourth,
+ * "One row per state", is a property of the second (a multi-state licence is a
+ * credential). So: three cards, each carrying its own visual at its foot — the
+ * applications card a photograph, the follow-up card the digest's screen
+ * frame — and "One row per state" set inside the credentials card as a detail.
+ * Every string is the copy's; only the grouping is a layout decision, flagged
+ * to the copywriter in DESIGN_DECISIONS.md.
+ *
+ * `blocks`: { applications, credentials, detail, followup } — each { title,
+ * body, points?, icon? }. `photo`: the applications card's picture.
+ * `screen`: the follow-up card's frame label.
+ */
+export function LayersSection({ head, blocks, photo, screen }) {
+  const { applications: a, credentials: c, detail: d, followup: f } = blocks;
+  return (
+    <Band>
+      <SectionHead {...head} />
+      <div className="sk-layers">
+        <article className="sk-card sk-card--soft sk-card--pad sk-layers__card">
+          <div className="sk-layers__top">
+            {a.icon ? <span className="sk-tile">{a.icon}</span> : null}
+            <h3 className="sk-h4">{a.title}</h3>
+            <p className="sk-body">
+              <Rich text={a.body} linkClassName="sk-link" />
+            </p>
+          </div>
+          {photo ? <PhotoFrame photo={photo} ratio="4x3" className="sk-layers__visual" /> : null}
+        </article>
+
+        <article className="sk-card sk-card--pad sk-layers__card">
+          <div className="sk-layers__top">
+            {c.icon ? <span className="sk-tile">{c.icon}</span> : null}
+            <h3 className="sk-h4">{c.title}</h3>
+            <p className="sk-body">
+              <Rich text={c.body} linkClassName="sk-link" />
+            </p>
+            {c.points ? (
+              <ul className="sk-list sk-layers__list">
+                {c.points.map((pt) => (
+                  <li key={pt}>{pt}</li>
+                ))}
+              </ul>
+            ) : null}
+          </div>
+          <div className="sk-layers__detail">
+            {d.icon ? <span className="sk-tile">{d.icon}</span> : null}
+            <h3 className="sk-h4">{d.title}</h3>
+            <p className="sk-body">
+              <Rich text={d.body} linkClassName="sk-link" />
+            </p>
+          </div>
+        </article>
+
+        <article className="sk-card sk-card--soft sk-card--pad sk-layers__card">
+          <div className="sk-layers__top">
+            {f.icon ? <span className="sk-tile">{f.icon}</span> : null}
+            <h3 className="sk-h4">{f.title}</h3>
+            <p className="sk-body">
+              <Rich text={f.body} linkClassName="sk-link" />
+            </p>
+          </div>
+          <ScreenSlot screen={screen} ratio="4:3" tone="white" className="sk-layers__visual" />
+        </article>
+      </div>
+    </Band>
+  );
+}
+
 /** The schematic, its legend, and the two cards beneath it. `diagram` is
  *  passed in whole — on the rebuilt pages it is a `ScreenSlot` holding the
  *  matrix and its "not a screenshot" note — so this file stays layout-only.
@@ -214,28 +288,22 @@ export function DiagramSection({ head, note, diagram, legend, points, aside, sur
   );
 }
 
-/** A dark band carrying a row of figures. `figures`: [{ value?, unit?, label,
- *  note, ours? }]. The unit sits on the figure's baseline, to its right.
- *
- *  `value` is optional: when the copy writes the figure into the label itself
- *  ("$600 to $2,400 per provider, per year"), the label carries it and nothing
- *  is split out or restated above it. `note` may carry the source link, which
- *  is where it has to be — in the same card as the figure it sources.
- *  Four figures lay out two by two rather than four across: four in a row puts
- *  a 50-character label on four lines at 1200px.
- *
- *  `ours` marks Sokndall's own figure. It is the one light card on the dark
- *  band — white against the band's ink-2 cards is the §3 hierarchy (white
- *  carries the main content), so the reader finds this product's number
- *  without a badge or an adjective (2026-09-11).
- *
- *  `layout="side"`: heading left, figures stacked right — for a band whose
- *  copy has no aside paragraph, so the head's right column is not left empty. */
+/** Split a figure label into its money range and the rest, for type only:
+ *  "$600 to $2,400 per provider, per year" → ["$600 to $2,400", "per provider,
+ *  per year"]. The words, their order and the sentence are untouched — the
+ *  range is set large, the unit under it (round 3: the founder found the cards
+ *  empty at large widths; the reference sets its figures big). A label that
+ *  does not open on a dollar figure renders whole. */
+function splitFigure(label) {
+  const m = label.match(/^(\$[\d,.]+(?:\s+to\s+\$[\d,.]+)?)\s*(.*)$/);
+  return m ? [m[1], m[2]] : [null, label];
+}
+
 export function FigureBandSection({ head, figures, closing, id }) {
-  // Rebuilt 2026-09-11 as a bento: a dark tile (ring texture) carries the pill,
-  // the heading, the aside and — pinned to its foot — the closing line; the
+  // A bento since 2026-09-11: a dark tile (ring texture) carries the pill, the
+  // heading, the aside and — pinned to its foot — the closing line; the
   // figures sit beside it as light cards, two per row. The one figure that is
-  // this product (`ours`) is the section's single mustard element (DESIGN_RULES
+  // this product (`ours`) is the section's single yellow element (DESIGN_RULES
   // §18) and spans the full row when the count is odd.
   if (!head.pill && process.env.NODE_ENV !== "production") {
     console.warn("FigureBandSection: head without a pill (DESIGN_RULES.md §13).");
@@ -249,23 +317,29 @@ export function FigureBandSection({ head, figures, closing, id }) {
             <Lines lines={head.title} />
           </h2>
           {head.aside ? <p className="sk-lead sk-figbento__aside">{head.aside}</p> : null}
-          {closing ? <p className="sk-body sk-body--lg sk-tile-foot sk-figbento__closing">{closing}</p> : null}
         </InkTile>
-        <div className="sk-figbento__figs">
-          {figures.map((f) => (
-            <div className={`sk-figcard${f.ours ? " sk-figcard--ours" : ""}`} key={f.label}>
-              {f.value ? (
-                <p className="sk-fig__v">
-                  <span className="sk-num">{f.value}</span>
-                  <span className="sk-fig__u">{f.unit}</span>
-                </p>
-              ) : null}
-              <p className="sk-figcard__l">{f.label}</p>
-              <p className="sk-small">
-                <Rich text={f.note} linkClassName="sk-link" />
-              </p>
-            </div>
-          ))}
+        {/* The closing line sits under the figures, not at the foot of the
+            dark tile (round 3): in the tile it made the tile — and so the
+            figure cards beside it — tall enough to leave the cards' middles
+            empty. Under the figures it reads as what it is, their caption. */}
+        <div className="sk-figbento__side">
+          <div className="sk-figbento__figs">
+            {figures.map((f) => {
+              const [range, rest] = splitFigure(f.label);
+              return (
+                <div className={`sk-figcard${f.ours ? " sk-figcard--ours" : ""}`} key={f.label}>
+                  <p className="sk-figcard__l">
+                    {range ? <span className="sk-figcard__v">{range}</span> : null}
+                    <span className="sk-figcard__u">{range ? ` ${rest}` : rest}</span>
+                  </p>
+                  <p className="sk-small sk-figcard__note">
+                    <Rich text={f.note} linkClassName="sk-link" />
+                  </p>
+                </div>
+              );
+            })}
+          </div>
+          {closing ? <p className="sk-body sk-body--lg sk-figbento__closing">{closing}</p> : null}
         </div>
       </div>
     </Band>
@@ -372,12 +446,15 @@ export function PlanList({ plans, cta }) {
 
 /** One plan as a card — for a page that talks about one plan and should show
  *  it rather than describe it (`/for-billing-companies`, "A different
- *  architecture"). Added 2026-09-11. `ours` makes it the section's one mustard
- *  element (DESIGN_RULES.md §18): it is this product's own offer. Figures come
- *  from the same data as the price list and the schema. */
-export function PlanCard({ plan, cta, ours = false }) {
+ *  architecture"). Added 2026-09-11; restyled 2026-09-12 to the price list's
+ *  own language, because a plan should look the same wherever it appears:
+ *  a white card, the trial button in yellow, and — when `tag` is given — the
+ *  petrol-ink border and the label on its top edge that mark the highlighted
+ *  plan on /pricing. Figures come from the same data as the list and schema. */
+export function PlanCard({ plan, cta, tag }) {
   return (
-    <article className={`sk-plancard${ours ? " sk-plancard--ours" : ""}`}>
+    <article className={`sk-card sk-plancard${tag ? " sk-plancard--hi" : ""}`}>
+      {tag ? <span className="sk-plan__tag">{tag}</span> : null}
       <p className="sk-plancard__name">{plan.name}</p>
       <p className="sk-plan__price">
         <span className="sk-num">{plan.price}</span>

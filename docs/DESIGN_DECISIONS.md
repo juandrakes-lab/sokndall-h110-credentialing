@@ -933,3 +933,87 @@ Decisión:
 Razón: pedido 5 de la ronda 2 (secciones planas) y la instrucción de llenar
 los huecos de imagen con Pexels.
 Regla de DESIGN_RULES.md que aplica: §4, §6, §18, §19.
+
+---
+
+# Ronda 3 (2026-09-12)
+
+## Hero de la home — se queda con las líneas, provisional
+Fecha: 2026-09-12
+Decisión: descartada la variante C (panel al lado de una tarjeta con foto; se
+borraron su código y su foto). Entre A (líneas) y B (foto detrás del panel) el
+fundador se queda con A de forma provisional: la foto de B no convence y el
+esquema del producto todavía no es definitivo. B sigue en `/styleguide/hero`.
+Las demás fotos de Pexels quedan provisionales hasta tener las definitivas
+(mejores fotos o generadas con IA).
+Regla de DESIGN_RULES.md que aplica: §19.
+
+## Amarillo más claro; bordes de estado en ocre; foco en petróleo
+Fecha: 2026-09-12
+Decisión: `--amber` pasa de #C88A2E a #F2C14E. `--amber-line` (#B38314)
+dibuja los bordes de los estados de acción, que un amarillo claro no podría
+marcar sobre blanco; el anillo de foco sobre claro pasa a petróleo.
+Razón: el fundador encontraba el mostaza apagado; el texto sobre él quedaba en
+5,1:1, ahora 12,5:1.
+Regla de DESIGN_RULES.md que aplica: §2 regla 4 (reescrita), §18.
+
+## Botones planos; barra flotante blanca
+Fecha: 2026-09-12
+Decisión: el botón deja la luz simulada (degradado, filos, brillo propio) y el
+disco de tinta: superficie plana amarilla, flecha directa sobre ella, sombra
+neutra. La barra flotante pasa a blanca, como en VELD, con una sombra que la
+separa de la página y nada más.
+Razón: pedido del fundador ("superficie lisa y moderna").
+Regla de DESIGN_RULES.md que aplica: §17 (enmendada).
+
+## Planes: destacado en petróleo, viñetas con tilde, tarjeta de Billing Co
+Fecha: 2026-09-12
+Decisión: el plan destacado lleva borde y etiqueta en petróleo; el botón sigue
+amarillo en todos. Las listas de un plan usan un disco petróleo con tilde
+blanca. La tarjeta de Billing Co en /for-billing-companies deja el relleno
+amarillo de la ronda 2 (error de criterio: un plan tiene que verse igual donde
+aparezca) y toma el estilo de /pricing, con borde petróleo y la etiqueta
+"The plan built for billing companies" (microcopy nuevo, pendiente de revisión
+del copy; no es la etiqueta fija del plan del medio, §2 regla 8).
+Regla de DESIGN_RULES.md que aplica: §2 reglas 4 y 8, §18, §20 (nueva).
+
+## Íconos y viñetas en el color principal
+Fecha: 2026-09-12
+Decisión: íconos y puntos de lista pasan de `--accent` a `--ink`. El tono medio
+queda en la línea de marca de los H2 y en las cifras grandes.
+Razón: el fundador preguntó por qué eran más claros que el color principal; no
+había una buena razón.
+Regla de DESIGN_RULES.md que aplica: §20.
+
+## Banda de cifras: el rango grande, el cierre bajo las cifras
+Fecha: 2026-09-12
+Decisión: cada etiqueta de cifra se compone en dos niveles tipográficos: el
+rango en dólares grande y la unidad debajo. Mismas palabras, mismo orden (la
+entrada del 2026-09-10 prohibía partir la frase en dos piezas de copy; esto es
+solo tamaño). La línea de cierre sale de la tarjeta oscura y va como leyenda
+bajo las cifras; el aparte de la oscura baja un paso y se ancla abajo. Nuestra
+cifra, cuando ocupa la fila entera, va en horizontal.
+Razón: en pantallas grandes las tarjetas de cifras tenían el centro vacío,
+estiradas por una tarjeta oscura demasiado alta (medido: 603 px de oscura
+contra 166 px de contenido por tarjeta).
+Regla de DESIGN_RULES.md que aplica: §4.
+
+## / — "What it tracks" en tres tarjetas (`LayersSection`, nuevo)
+Fecha: 2026-09-12
+Decisión: el H2 aprobado dice "Three things" y el copy trae cuatro tarjetas.
+Las tres cosas rastreadas son las solicitudes, las credenciales y el
+seguimiento del lunes; "One row per state" es una propiedad de las
+credenciales. Tres tarjetas, cada una con su visual al pie (foto en
+solicitudes, el hueco del correo del lunes en seguimiento) y "One row per
+state" dentro de credenciales como detalle. Ningún texto cambió.
+Para el copywriter: confirmar esta lectura, o decidir si el H2 debería decir
+otra cosa.
+Regla de DESIGN_RULES.md que aplica: §4, §5.
+
+## Foto de "Built for the small practice" y cabezas fijas
+Fecha: 2026-09-12
+Decisión: una foto que llena una celda va en posición absoluta y nunca fija la
+altura de la fila (la cuadrada hacía la fila tan alta como ancha y estiraba las
+tres tarjetas vecinas). La cabeza de la lista de pestañas de la plantilla queda
+fija al hacer scroll, como la del FAQ, y ambas despejan la barra flotante.
+Regla de DESIGN_RULES.md que aplica: §4, §14.

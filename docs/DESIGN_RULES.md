@@ -61,9 +61,13 @@ declarada, antes de usarse.
    Toda estimación se marca como estimación en el texto visible.
 3. **El estado nunca se comunica solo por color.** Siempre glifo + etiqueta de
    texto + cifra. Quitar el color no debe perder información.
-4. **El ámbar es señal, no decoración.** Solo CTA primario, estados que
-   requieren acción, y el anillo de foco. Nunca ordinal, viñeta, eyebrow,
-   marcador de página activa, ni texto sobre fondo claro (2,7:1, falla).
+4. **El amarillo es señal, no decoración.** Solo CTA primario, estados que
+   requieren acción y el único destacado por sección de §18. Nunca ordinal,
+   viñeta, eyebrow ni marcador de página activa. Desde el 12 sep 2026 es un
+   amarillo claro (`--amber` #F2C14E, antes el mostaza #C88A2E): lleva texto
+   negro a 12,5:1. Como no puede dibujar una línea sobre blanco, los bordes de
+   los estados de acción usan `--amber-line` (#B38314), y el anillo de foco
+   sobre claro es petróleo (sobre oscuro, amarillo).
 5. **Sin logos, capturas ni adjetivos peyorativos de competidores.**
 6. **Sin ubicación, credencial, certificación ni experiencia que no exista.**
 7. **Los precios de plan son $79 / $299 / $699** y coinciden exactamente con el
@@ -327,18 +331,22 @@ Solo el hero y el cierre siguen siendo bloques oscuros enteros.
 **11 sep 2026, aprobado por el fundador.** Reemplaza el "sin degradados en
 ninguna parte" de TOKENS.md.
 
-- **Botones:** degradado de un solo tono (ámbar claro → ámbar) para dar volumen.
+- ~~**Botones:** degradado de un solo tono.~~ **Retirado 12 sep 2026:** el
+  fundador pidió superficie plana y moderna. Los botones son planos, con una
+  sombra neutra que da profundidad; sin brillo propio ni luz simulada.
 - **Bloques y tarjetas oscuras:** un brillo suave de verde medio en una esquina,
   y las texturas de líneas de la familia del hero.
 - Nunca dos colores distintos en un degradado. Nunca en texto ni en tarjetas
   claras. El contraste del texto se mide sobre el tramo más oscuro.
 
-## 18. EL MOSTAZA COMO COLOR DE ELEMENTO — UNO POR SECCIÓN
+## 18. EL AMARILLO COMO COLOR DE ELEMENTO — UNO POR SECCIÓN
 
 **11 sep 2026, aprobado.** Amplía §2 regla 4 sin derogarla.
 
-- Ámbar sólido: los CTAs, y **como mucho un elemento por sección** que
-  represente nuestra oferta (nuestra cifra, el plan destacado, el paso final).
+- Amarillo sólido: los CTAs, y **como mucho un elemento por sección** que
+  represente nuestra oferta (nuestra cifra). El plan destacado **no** va en
+  amarillo: su borde y su etiqueta van en petróleo, y el amarillo queda para
+  el botón (12 sep 2026).
 - Nunca en datos ni en estados. El ámbar tintado (`--amber-tint` + borde) sigue
   siendo exclusivo de los estados que piden acción.
 - Nunca texto ámbar sobre fondo claro (2,7:1).
@@ -351,6 +359,13 @@ el hero de la home y los huecos de imagen que el fundador definió en la home
 Fuente: Pexels, vía `lib/pexels.js` del lado del servidor; archivos en
 `public/landing/` como WebP < 200 KB; crédito del fotógrafo visible junto a la
 imagen. Dirección de §5 sin cambios: documental, nadie mirando a cámara.
+
+## 20. LAS MARCAS DE LA MARCA VAN EN EL COLOR PRINCIPAL
+
+**12 sep 2026.** Íconos, viñetas y el disco con tilde de las listas de un plan
+van en petróleo (`--ink`), no en el tono medio. El tono medio (`--accent`)
+queda solo donde tiene que distinguirse del texto negro: la línea de marca de
+un H2 y las cifras grandes.
 
 ---
 

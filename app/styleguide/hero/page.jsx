@@ -6,8 +6,8 @@ import { IconBan, IconDoc, IconGrid, IconCalendar, IconBell, IconClock } from "@
 import { PHOTOS } from "@/components/neo/photos";
 import { HERO } from "@/app/homeData";
 
-// /styleguide/hero — the home hero in the three versions the founder asked to
-// compare before choosing (round 2, 2026-09-11). noindex, disallowed in
+// /styleguide/hero — the home hero in the two versions still in the running
+// (round 2 compared three; the split one was discarded in round 3). noindex, disallowed in
 // robots, out of the sitemap, like the rest of /styleguide. Delete once one is
 // chosen and the home carries it.
 export const metadata = {
@@ -17,7 +17,7 @@ export const metadata = {
 
 const STRIP_ICONS = [IconBan, IconDoc, IconGrid, IconCalendar];
 
-function Variant({ label, backdrop, layout, photo }) {
+function Variant({ label, backdrop, photo }) {
   return (
     <>
       <p className="sk-sgvar">{label}</p>
@@ -25,7 +25,6 @@ function Variant({ label, backdrop, layout, photo }) {
         variant="panel"
         current="/"
         backdrop={backdrop}
-        layout={layout}
         photo={photo}
         title={HERO.title}
         sub={HERO.sub}
@@ -66,7 +65,6 @@ export default function HeroVariants() {
     <Shell>
       <Variant label="A — Line texture (current)" />
       <Variant label="B — Photo behind the panel, under an ink scrim" backdrop="photo" photo={PHOTOS.formsHands} />
-      <Variant label="C — Panel beside a photo card (VELD)" layout="split" photo={PHOTOS.followupCall} />
     </Shell>
   );
 }

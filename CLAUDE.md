@@ -65,7 +65,9 @@ the homepage and all three product-ish landings go through it.
   `landingSections.jsx`. Every page is a `page.jsx` that only composes, and a
   sibling data file with the approved copy (`app/homeData.js` for `/`).
   `app/page.jsx` is the fullest example. Prices are `PlanListSection`, a
-  vertical list — never three cards. No photography on a landing.
+  vertical list — never three cards. Photography on a landing only where
+  DESIGN_RULES §19 allows it (the home's hero and its photo slots, Pexels via
+  `components/neo/photos.js`, credited) — never in a `ScreenSlot`.
 - *Editorial* (the six guides and the four comparison pages) —
   `components/neo/Editorial.jsx`, composed per page by
   `components/neo/EditorialPage.jsx` from the page's `data.js` (the old

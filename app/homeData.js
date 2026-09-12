@@ -218,7 +218,7 @@ export const CLOSING = {
 // photographs (components/neo/photos.js); the corner block stays a product
 // screen, because only the real digest email can fill it.
 export const SLOTS = {
-  quadCorner: "Screen: the Monday digest email",
+  quadCorner: "The Monday digest email",
 };
 
 // The fact row under the hero (FactStrip, 2026-09-11). Each value is stated in

@@ -19,14 +19,6 @@ export const PHOTOS = {
     photographer: "Mahyub Hamida",
     url: "https://www.pexels.com/photo/doctor-filling-out-medical-documents-in-tinduf-30313813/",
   },
-  followupCall: {
-    src: "/landing/px-followup-call.webp",
-    width: 960,
-    height: 1200,
-    alt: "A man on the phone taking notes at a desk, a laptop and folders beside him",
-    photographer: "Andrea Piacquadio",
-    url: "https://www.pexels.com/photo/photo-of-man-in-blue-suit-jacket-striped-shirt-and-eyeglasses-talking-on-the-phone-while-sitting-at-a-table-with-his-laptop-3760604/",
-  },
   bindersDesk: {
     src: "/landing/px-binders-desk.webp",
     width: 1000,

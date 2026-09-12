@@ -77,6 +77,7 @@ export default function LandingTemplate({ current, hero, heroSlot, navReveal = f
 export {
   SplitListSection,
   QuadSection,
+  LayersSection,
   DiagramSection,
   FigureBandSection,
   PlanSection,

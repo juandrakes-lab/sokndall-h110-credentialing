@@ -12,7 +12,7 @@ Scope: the marketing home. The authenticated app runs on its own Tailwind
 ## 1. Colour
 
 Text is binary — **black on a light surface, white on a dark one** — with one
-exception: `.sk-stat` ("60 days") keeps `--ink`. Gradients: one hue only, on buttons and as a glow on dark blocks (DESIGN_RULES §17, 2026-09-11).
+exception: `.sk-stat` ("60 days") keeps `--ink`. Gradients: only as a soft glow on dark blocks (DESIGN_RULES §17; buttons are flat since 2026-09-12).
 
 ### Grounds and surfaces
 
@@ -37,15 +37,15 @@ exception: `.sk-stat` ("60 days") keeps `--ink`. Gradients: one hue only, on but
 
 | Token | Value | Role |
 |---|---|---|
-| `--amber` | `#C88A2E` | Primary CTA, and states that need action |
+| `--amber` | `#F2C14E` (was `#C88A2E` until 2026-09-12) | Primary CTA fill, the one highlight per section, action-state fill. Black on it 12.5:1 |
+| `--amber-line` | `#B38314` | The same hue as a stroke on light: action-state borders (3.4:1 on white) |
 | `--line` | `rgba(14, 42, 46, 0.075)` at `--hairline: 1px` (was 0.03 / 0.25px until 2026-09-11) | Card outline on a light surface — meant to be seen |
 | `--line-strong` | `rgba(14, 42, 46, 0.22)` | Ghost-button border, dashed placeholder |
 | `--rule-dark` | `#3D6A6B` | Hairline on a dark surface |
 | `--rule-dark-2` | `rgba(61, 106, 107, 0.55)` | Softer hairline on a dark surface |
 | `--tint` | `rgba(14, 42, 46, 0.05)` | Nested light surface |
 | `--tint-2` | `rgba(14, 42, 46, 0.08)` | Reserved image ground inside a grey card |
-| `--amber-tint` | `rgba(200, 138, 46, 0.14)` | The only amber *tint* — action-state cells |
-| `--amber-hi` | `color-mix(--amber 72%, white)` | Light end of the CTA's one-hue gradient (2026-09-11) |
+| `--amber-tint` | `rgba(242, 193, 78, 0.26)` | The action-state fill |
 | `--accent` | → `--rule-dark` (`#3D6A6B`) | **Role, added 2026-09-11 — not a new colour.** The brand family's mid tone on light surfaces: icons, list dots, `.sk-stat`, the rule beside a section's closing line. 6.0:1 on white; never body text |
 
 ### Where amber is allowed
@@ -53,7 +53,9 @@ exception: `.sk-stat` ("60 days") keeps `--ink`. Gradients: one hue only, on but
 1. `.sk-btn--primary` and `.sk-nav__cta` — the same CTA, on any surface.
 2. Action states, as **fill and border only**: the matrix's `--action` /
    `--urgent` cells and their legend swatches. The text on them is `--ink`.
-3. The focus ring.
+3. The focus ring on a dark surface. On a light one the ring is `--ink` (a
+   light yellow ring would not show on white).
+4. The one highlight per section of DESIGN_RULES §18 (this product's figure).
 
 It is not an ordinal, a bullet, a wordmark accent, an eyebrow or a
 current-page marker. The eyebrow pill is `--ink` with a white label
@@ -81,8 +83,8 @@ Measured (WCAG 2.1 relative luminance), not estimated.
 | `#FFFFFF` on `--ink` | 15.1:1 | Text on the dark band |
 | `#FFFFFF` on `--ink-2` | 10.8:1 | Text on the second dark surface |
 | `--ink` on `--card` | 15.1:1 | `.sk-stat` |
-| `--ink` on `--amber` | 5.1:1 | **Why the CTA's label is ink, not white** |
-| `#FFFFFF` on `--amber` | 2.9:1 | Fails. Never used. |
+| `--black` on `--amber` (#F2C14E) | 12.5:1 | The CTA label (was 5.1:1 in ink on the old mustard) |
+| `#FFFFFF` on `--amber` | 1.7:1 | Fails. Never used. |
 | `--amber` as text on `--card` | 2.7:1 | Fails. **Amber is a fill, never text on light.** |
 
 That last row is a constraint, not a footnote: action states take an amber fill
