@@ -50,9 +50,12 @@ html:has(.sokndall-neo) { overflow-x: hidden; }
      0.75px/0.09 -> 0.5px/0.06 -> 0.25px/0.03. Move one without the other and
      only half the displays see it. At 0.03 the line is at the threshold of
      visibility — that is the intent, not a mistake. */
-  --line:        rgba(14, 42, 46, 0.03);
+  /* 2026-09-11: the outline is meant to be seen now. At 0.25px / 0.03 it sat
+     at the threshold of visibility, and a white card on white lost its top
+     edge (founder: "with white, from above, the depth does not show"). */
+  --line:        rgba(14, 42, 46, 0.075);
   --line-strong: rgba(14, 42, 46, 0.22);
-  --hairline:    0.25px;
+  --hairline:    1px;
   --tint:        rgba(14, 42, 46, 0.05);   /* ink at 5% — nested light surface */
   --tint-2:      rgba(14, 42, 46, 0.08);
   --amber-tint:  rgba(200, 138, 46, 0.14); /* the only amber fill */
@@ -65,6 +68,10 @@ html:has(.sokndall-neo) { overflow-x: hidden; }
      brand without a single word of body text changing colour. #3d6a6b on white
      measures 6.0:1, so it would pass as text; it is still never body text. */
   --accent:      var(--rule-dark);
+  /* The light end of the CTA's same-hue gradient (2026-09-11): amber mixed
+     toward white, not a new colour. Gradients are allowed on buttons and as a
+     soft glow on dark blocks only, and only within one hue (DESIGN_RULES §17). */
+  --amber-hi:    color-mix(in srgb, var(--amber) 72%, #ffffff);
 
   /* ---- legacy aliases (pages awaiting rebuild resolve through these) ---- */
   --page:        var(--card);   /* the page is white; paper is a card fill */
@@ -103,11 +110,15 @@ html:has(.sokndall-neo) { overflow-x: hidden; }
    * there is more shadow under the card than around its top.
    * Grey cards sit closer to their surface: a tight, even perimeter.
    * On the dark block the same light direction, read in black. ---- */
-  --sh-white: 0 1px 2px rgba(14, 42, 46, 0.035),
-              0 8px 16px -6px rgba(14, 42, 46, 0.08),
-              0 22px 40px -12px rgba(14, 42, 46, 0.115);
-  --sh-grey:  0 1px 3px rgba(14, 42, 46, 0.069),
-              0 0 10px rgba(14, 42, 46, 0.058);
+  /* One elevation for every light card, white or grey (2026-09-11). There
+     used to be two recipes — white lit from above, grey even — so the same
+     card changed depth with its colour. Now: a tight contact shadow, an even
+     ambient ring, and a soft drop below. */
+  --sh-white: 0 1px 2px rgba(14, 42, 46, 0.07),
+              0 0 0 1px rgba(14, 42, 46, 0.02),
+              0 4px 12px -2px rgba(14, 42, 46, 0.08),
+              0 16px 32px -14px rgba(14, 42, 46, 0.16);
+  --sh-grey:  var(--sh-white);
   --sh-on-ink: 0 2px 4px rgba(0, 0, 0, 0.207),
                0 10px 24px -8px rgba(0, 0, 0, 0.391);
   --sh-card:  var(--sh-white);
@@ -134,11 +145,13 @@ html:has(.sokndall-neo) { overflow-x: hidden; }
 
   /* ---- layout ---- */
   --maxw:   1200px;
-  --page-x: clamp(14px, 3.2vw, 44px);  /* the dark block's margin from the edge */
-  --pad-x:  clamp(20px, 4vw, 56px);    /* inner padding inside a block */
-  /* A light section insets by margin + padding so its copy lines up with the
-     copy inside a dark block, which only insets by padding. */
-  --light-x: calc(var(--page-x) + var(--pad-x));
+  /* 2026-09-11: the dark blocks' margin from the screen edge halved (it was
+     clamp(14px, 3.2vw, 44px)) at the founder's request. The copy did not move:
+     --light-x is fixed and --pad-x takes up what the margin gave back, so a
+     paragraph in a white section still lines up with one inside a block. */
+  --page-x: clamp(8px, 1.6vw, 22px);   /* the dark block's margin from the edge */
+  --light-x: clamp(34px, 7.2vw, 100px);
+  --pad-x:  calc(var(--light-x) - var(--page-x)); /* inner padding inside a block */
 
   /* legacy layout aliases, same reason as the colour aliases above */
   --card-pad:  clamp(20px, 2.4vw, 30px);  /* so a bleeding child can cancel it */
@@ -3794,3 +3807,135 @@ html:has(.sokndall-neo) { overflow-x: hidden; }
   .sk-lhero__inner--split .sk-lhero__strip { order: 2; }
   .sk-lhero__inner--split { row-gap: 0; }
 }
+
+
+/* ======================= STEP A — SYSTEM (2026-09-11) =====================
+   Round two of the landing polish. Buttons, pill, floating nav. Decisions in
+   docs/DESIGN_DECISIONS.md, "Ronda 2". */
+
+/* ---- the pill: the second ink ------------------------------------------- */
+/* Same family, one step lighter. A small patch of #0e2a2e reads darker than
+   the large panels in the same colour (and the hero carries a texture that
+   lifts it), so at #0e2a2e the pill looked like a different, darker green. */
+.sk-pill { background: var(--ink-2); }
+.sk-band--ink .sk-pill,
+.sk-hero .sk-pill,
+.sk-tile-ink .sk-pill { background: rgba(255, 255, 255, 0.1); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14); }
+
+/* ---- buttons: pill shape, one-hue gradient, the arrow in a dark disc ---- */
+/* The reference's CTA. The gradient runs inside amber only (amber-hi is amber
+   mixed toward white), the inset highlight gives it an edge, and the ink disc
+   carries the arrow — drawn by CSS, so every primary button on the site gets
+   it without a markup change. The label stays ink: 5.1:1 on amber, more on
+   the lighter top half. */
+.sk-btn { border-radius: var(--r-pill); }
+.sk-btn--primary,
+.sk-nav__cta {
+  background: linear-gradient(180deg, var(--amber-hi) 0%, var(--amber) 62%);
+  color: var(--black);
+  border: 0;
+  border-radius: var(--r-pill);
+  padding: 5px 5px 5px 20px;
+  gap: var(--s-3);
+  font-weight: 600;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.4),
+    inset 0 -1px 0 rgba(14, 42, 46, 0.12),
+    0 1px 2px rgba(14, 42, 46, 0.18),
+    0 10px 20px -10px rgba(200, 138, 46, 0.75);
+  transition: filter 0.16s ease, box-shadow 0.16s ease;
+}
+.sk-btn--primary::after,
+.sk-nav__cta::after {
+  content: "\2197";
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: linear-gradient(180deg, var(--ink-2), var(--ink));
+  color: #fff;
+  font-size: 0.8125rem;
+  line-height: 1;
+  transition: transform 0.2s ease;
+}
+.sk-btn--primary:hover,
+.sk-nav__cta:hover { filter: brightness(1.05); }
+.sk-btn--primary:hover::after,
+.sk-nav__cta:hover::after { transform: rotate(45deg); }
+.sk-btn--sm.sk-btn--primary { padding: 4px 4px 4px 16px; }
+.sk-btn--sm.sk-btn--primary::after { width: 26px; height: 26px; }
+.sk-nav__cta .sk-arr-ico { display: none; }
+.sk-nav__cta { padding: 4px 4px 4px 16px; }
+.sk-nav__cta::after { width: 28px; height: 28px; }
+
+/* The secondary action is a link, not a second button: underlined, with the
+   same arrow, no box (the reference's "Call Us Now"). */
+.sk-btn--ghost {
+  background: none;
+  border: 0;
+  padding: var(--s-3) var(--s-1);
+  color: var(--black);
+  text-decoration: underline;
+  text-underline-offset: 5px;
+  text-decoration-thickness: 1.5px;
+  gap: 4px;
+}
+.sk-btn--ghost::after { content: "\2197"; font-size: 0.9em; }
+.sk-btn--ghost:hover { background: none; text-decoration-thickness: 2px; }
+.sk-band--ink .sk-btn--ghost,
+.sk-hero .sk-btn--ghost,
+.sk-tile-ink .sk-btn--ghost { color: #fff; border: 0; }
+.sk-band--ink .sk-btn--ghost:hover,
+.sk-hero .sk-btn--ghost:hover { background: none; }
+.sk-hero__cta,
+.sk-cta__btns { align-items: center; column-gap: var(--s-5); }
+
+/* ---- the floating nav --------------------------------------------------- */
+.sk-fnav {
+  position: sticky;
+  top: 0;
+  z-index: 60;
+  padding: var(--s-3) var(--page-x) 0;
+  pointer-events: none;
+}
+.sk-fnav__bar {
+  pointer-events: auto;
+  max-width: calc(var(--maxw) + var(--s-8));
+  margin-inline: auto;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  min-height: 56px;
+  padding: 6px 6px 6px var(--s-5);
+  border-radius: var(--r-pill);
+  background-color: var(--ink);
+  background-image: radial-gradient(120% 180% at 100% 0%, rgba(61, 106, 107, 0.45), transparent 55%);
+  box-shadow: 0 2px 6px rgba(14, 42, 46, 0.22), 0 14px 30px -12px rgba(14, 42, 46, 0.5);
+  color: #fff;
+}
+.sokndall-neo .sk-fnav .sk-nav__brand { color: #fff; padding-right: var(--s-3); }
+.sk-fnav .sk-nav__mark { color: #fff; }
+.sk-fnav .sk-nav__links a { color: rgba(255, 255, 255, 0.78); }
+.sk-fnav .sk-nav__links a:hover,
+.sk-fnav .sk-nav__links a[aria-current="page"] { color: #fff; }
+/* The home: out of sight until the hero has gone. */
+.sk-fnav--reveal {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  transform: translateY(-130%);
+  opacity: 0;
+  transition: transform 0.35s ease, opacity 0.25s ease;
+}
+.sk-fnav--reveal.is-shown { transform: none; opacity: 1; }
+/* Anchored sections land below the bar, not under it. */
+html:has(.sk-fnav) { scroll-padding-top: 88px; }
+@media (max-width: 880px) {
+  .sk-fnav__bar { min-height: 50px; padding-left: var(--s-4); }
+}
+/* The light header no longer carries its own bar: it starts under the float. */
+.sk-lhero__inner { padding-top: var(--s-8); }
+.sk-lhero .sk-navm { padding-top: var(--s-4); }

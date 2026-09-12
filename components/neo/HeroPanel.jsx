@@ -63,9 +63,9 @@ export default function HeroPanel({
   if (variant === "light") {
     return (
       <section className="sk-lhero">
-        <div className="sk-wrap">
-          <NavBar current={current} variant="plain" />
-        </div>
+        {/* The nav bar itself is FloatingNav, rendered by LandingTemplate above
+            this section so it stays fixed for the whole page. Below 880px the
+            link row reappears here as the scrollable strip. */}
         <NavMobile current={current} />
 
         {/* With a `form`, the head splits: copy left, the box right, so the
@@ -92,7 +92,7 @@ export default function HeroPanel({
   const panel = variant === "panel";
 
   return (
-    <section className={`sk-hero sk-band--ink${panel ? " sk-hero--panel" : ""}`}>
+    <section className={`sk-hero sk-band--ink${panel ? " sk-hero--panel" : ""}`} data-hero="">
       {panel ? (
         <div className="sk-hero__bar">
           <div className="sk-hero__notch">

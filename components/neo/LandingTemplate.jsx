@@ -1,5 +1,6 @@
 import Footer from "@/components/neo/Footer";
 import HeroPanel from "@/components/neo/HeroPanel";
+import FloatingNav from "@/components/neo/FloatingNav";
 import { FOOTER_BLURB_V31, FOOTER_COLS_V31 } from "@/components/neo/neoData";
 
 /**
@@ -33,15 +34,20 @@ import { FOOTER_BLURB_V31, FOOTER_COLS_V31 } from "@/components/neo/neoData";
  * `hero={{...}}` for the standard panel, or `heroSlot` for a hero that needs
  * to be composed by hand — the home's, whose figure is the enrollment matrix.
  */
-export default function LandingTemplate({ current, hero, heroSlot, children }) {
+export default function LandingTemplate({ current, hero, heroSlot, navReveal = false, children }) {
   if (!hero && !heroSlot) {
     throw new Error(
       "LandingTemplate: a page needs either `hero` or `heroSlot`. Every page of this template opens on the blue panel; there is no variant without one."
     );
   }
 
+  // The floating nav sits before the hero, at the top level of the page, so
+  // `position: sticky` holds for the whole scroll rather than for the header
+  // it would otherwise be nested in. The home passes `navReveal`: its hero has
+  // its own nav in the notch, and the floating one waits until that is gone.
   return (
     <>
+      <FloatingNav current={current} reveal={navReveal || hero?.variant === "panel"} />
       {heroSlot || (
         <HeroPanel
           current={current}

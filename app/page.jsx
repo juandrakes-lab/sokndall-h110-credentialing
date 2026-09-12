@@ -74,7 +74,7 @@ export default function HomePage() {
       <JsonLd data={softwareSchema()} />
       <JsonLd data={faqSchema(FAQ)} />
 
-      <LandingTemplate heroSlot={<Hero />}>
+      <LandingTemplate heroSlot={<Hero />} current="/" navReveal>
         <SplitListSection
           head={PROBLEM.head}
           items={PROBLEM.items}

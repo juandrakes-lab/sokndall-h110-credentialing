@@ -12,7 +12,7 @@ Scope: the marketing home. The authenticated app runs on its own Tailwind
 ## 1. Colour
 
 Text is binary — **black on a light surface, white on a dark one** — with one
-exception: `.sk-stat` ("60 days") keeps `--ink`. There are no gradients.
+exception: `.sk-stat` ("60 days") keeps `--ink`. Gradients: one hue only, on buttons and as a glow on dark blocks (DESIGN_RULES §17, 2026-09-11).
 
 ### Grounds and surfaces
 
@@ -156,7 +156,7 @@ One 8px ramp. Sections take their rhythm from `--sec-y` and nothing else.
 | Token | Value | Role |
 |---|---|---|
 | `--maxw` | `1200px` | Measure, held by `.sk-wrap` |
-| `--page-x` | `clamp(14px, 3.2vw, 44px)` | A dark block's margin from the page edge |
+| `--page-x` | `clamp(8px, 1.6vw, 22px)` (halved 2026-09-11) | A dark block's margin from the page edge |
 | `--pad-x` | `clamp(20px, 4vw, 56px)` | Inner padding inside a block |
 | `--light-x` | `calc(var(--page-x) + var(--pad-x))` | Inset on a white section |
 

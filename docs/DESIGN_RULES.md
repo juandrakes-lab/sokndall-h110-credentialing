@@ -128,7 +128,9 @@ declarada, antes de usarse.
 Heredadas de `on-page-seo.md`, repetidas acá porque se olvidan al maquetar:
 
 - Componentes de servidor por defecto. `'use client'` solo en FAQ (acordeón),
-  TOC (scroll spy) y captura de email (form).
+  TOC (scroll spy), captura de email (form) y, desde el 11 sep 2026, la barra
+  flotante (`FloatingNav`: en la home aparece al pasar el hero). Sus links van
+  en el HTML del servidor; el script solo decide si se ve.
 - En esos tres, **el texto va en el HTML crudo**, no montado por JS.
 - El nivel de heading es una prop, nunca hardcodeado. Un solo `<h1>` por página.
 - Imágenes en WebP bajo 200 KB, con `width`/`height` explícitos y `alt`
@@ -310,6 +312,36 @@ de composición y se anota en DESIGN_DECISIONS.md.
 - Las páginas no se publican hasta que todos los huecos tengan su pantalla
   real (decisión del 11 sep 2026), así que las etiquetas quedan visibles: son
   la lista de producción de capturas.
+
+## 17. DEGRADADOS: SOLO DE UN TONO, SOLO EN DOS LUGARES
+
+**11 sep 2026, aprobado por el fundador.** Reemplaza el "sin degradados en
+ninguna parte" de TOKENS.md.
+
+- **Botones:** degradado de un solo tono (ámbar claro → ámbar) para dar volumen.
+- **Bloques y tarjetas oscuras:** un brillo suave de verde medio en una esquina,
+  y las texturas de líneas de la familia del hero.
+- Nunca dos colores distintos en un degradado. Nunca en texto ni en tarjetas
+  claras. El contraste del texto se mide sobre el tramo más oscuro.
+
+## 18. EL MOSTAZA COMO COLOR DE ELEMENTO — UNO POR SECCIÓN
+
+**11 sep 2026, aprobado.** Amplía §2 regla 4 sin derogarla.
+
+- Ámbar sólido: los CTAs, y **como mucho un elemento por sección** que
+  represente nuestra oferta (nuestra cifra, el plan destacado, el paso final).
+- Nunca en datos ni en estados. El ámbar tintado (`--amber-tint` + borde) sigue
+  siendo exclusivo de los estados que piden acción.
+- Nunca texto ámbar sobre fondo claro (2,7:1).
+
+## 19. FOTOGRAFÍA EN LANDINGS
+
+**11 sep 2026, aprobado.** Levanta el "sin fotografía en una landing" para:
+el hero de la home y los huecos de imagen que el fundador definió en la home
+(no los `ScreenSlot`, que son para pantallas del producto y nunca llevan stock).
+Fuente: Pexels, vía `lib/pexels.js` del lado del servidor; archivos en
+`public/landing/` como WebP < 200 KB; crédito del fotógrafo visible junto a la
+imagen. Dirección de §5 sin cambios: documental, nadie mirando a cámara.
 
 ---
 

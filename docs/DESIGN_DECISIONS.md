@@ -840,3 +840,35 @@ primera pantalla. `next build` (en un worktree aparte, para no pisar el `.next`
 del dev server) da las cinco landings como ○ (Static); los greps de §0 dan 0 en
 las cinco `page.jsx`.
 Regla de DESIGN_RULES.md que aplica: §0, §9.
+
+---
+
+# Ronda 2 de pulido (2026-09-11, tarde)
+
+El fundador aprobó las cinco propuestas: dos variantes del hero de la home para
+elegir, degradados de un tono (§17), mostaza como elemento uno por sección
+(§18), barra en azul petróleo (la tinta) y bloques gris claro redondeados como
+tercera superficie. Fotos de stock habilitadas vía Pexels (§19).
+
+## Paso A — sistema
+Fecha: 2026-09-11
+Decisión:
+- Margen de los bloques oscuros al borde de pantalla a la mitad
+  (`--page-x` 8→22px). `--light-x` queda fijo y `--pad-x` absorbe la
+  diferencia, así los textos no se mueven: los bloques se ensanchan.
+- Una sola sombra para toda tarjeta clara, blanca o gris, con borde visible
+  (1px al 7,5%). Antes la blanca se iluminaba desde arriba y casi no tenía
+  sombra arriba, y la gris era pareja: la misma tarjeta cambiaba de relieve
+  según el color.
+- Pastilla en `--ink-2`: el mismo verde que los paneles, un paso más claro,
+  porque a tamaño chico #0e2a2e se leía más oscuro que los paneles grandes.
+  Sobre fondo oscuro, pastilla de vidrio (blanco al 10% con filete).
+- Botones en pastilla con degradado de ámbar de un solo tono y la flecha en un
+  disco de tinta, dibujado por CSS para que lo tomen todos los botones del sitio
+  (incluidos los de las páginas editoriales). El secundario pasa a link
+  subrayado con flecha.
+- Barra flotante (`FloatingNav`, componente cliente nuevo): píldora de tinta
+  con brillo en una esquina, fija al hacer scroll. En la home aparece recién al
+  pasar el hero; en las páginas de encabezado claro, desde el principio.
+Razón: pedidos del fundador en la ronda 2; la referencia.
+Regla de DESIGN_RULES.md que aplica: §7 (cuarto componente cliente), §17.
