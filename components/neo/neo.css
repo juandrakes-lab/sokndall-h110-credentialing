@@ -4448,3 +4448,22 @@ html:has(.sk-fnav) { scroll-padding-top: 88px; }
 }
 .sk-tile-ink .sk-figbento__aside { margin-top: auto; }
 .sk-figbento__side > .sk-figbento__figs { grid-auto-rows: auto; }
+
+/* ---- offer blocks: a shadow that reads (2026-09-12) --------------------- */
+/* Every block that sells a plan — the price rows on / and /pricing, the plan
+   card on /for-billing-companies — takes one elevation, a clear step above a
+   content card's. The shared card shadow, with its drop pulled in by -14px,
+   all but vanished under the plan card's petrol border. */
+.sokndall-neo {
+  --sh-offer: 0 2px 4px rgba(14, 42, 46, 0.06),
+              0 14px 30px -10px rgba(14, 42, 46, 0.2),
+              0 32px 64px -28px rgba(14, 42, 46, 0.26);
+}
+.sk-planrow,
+.sk-plan,
+.sk-plancard { box-shadow: var(--sh-offer); }
+
+/* ---- the footer's trial button keeps its black label --------------------- */
+/* `.sk-footer__col a` (white links) outranked `.sk-btn--primary`, so the
+   button in the footer column wrote white on yellow. */
+.sk-footer .sk-btn--primary { color: var(--black); }

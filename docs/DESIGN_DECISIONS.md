@@ -1017,3 +1017,12 @@ altura de la fila (la cuadrada hacía la fila tan alta como ancha y estiraba las
 tres tarjetas vecinas). La cabeza de la lista de pestañas de la plantilla queda
 fija al hacer scroll, como la del FAQ, y ambas despejan la barra flotante.
 Regla de DESIGN_RULES.md que aplica: §4, §14.
+
+## Bloques de oferta con sombra propia; botón del pie en negro
+Fecha: 2026-09-12
+Decisión: todo bloque que vende un plan (filas de precio en / y /pricing, la
+tarjeta de /for-billing-companies) toma `--sh-offer`, un escalón de relieve
+sobre el de una tarjeta de contenido. El botón de prueba del pie recupera el
+texto negro: la regla de links blancos del footer le ganaba en especificidad.
+Razón: bajo el borde petróleo, la sombra común de tarjeta casi no se veía.
+Regla de DESIGN_RULES.md que aplica: §3 (profundidad como jerarquía), §2 regla 4.
