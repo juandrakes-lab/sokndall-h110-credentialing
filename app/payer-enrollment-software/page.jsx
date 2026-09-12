@@ -1,7 +1,7 @@
 import Shell from "@/components/neo/Shell";
 import Faq from "@/components/neo/Faq";
 import Matrix, { MatrixLegend } from "@/components/neo/Matrix";
-import { StatusTrack } from "@/components/neo/Schematics";
+import { StatusTrack, StageCompare } from "@/components/neo/Schematics";
 import { IconGrid, IconClock, IconDoc, IconCalendar, IconBan, IconRefresh, IconUsers } from "@/components/neo/icons";
 import LandingTemplate, {
   ProseBandSection, StatusTableSection, IconRowSection, DiagramSection, CardGridSection,
@@ -12,15 +12,16 @@ import { JsonLd, faqSchema } from "@/components/neo/schema";
 import { pageMeta } from "@/lib/seo";
 import {
   META, HERO, TWO_STEPS, TIMELINE, STATUSES, EFFECTIVE, MISMATCH, MATRIX, SCOPE, FAQ, CLOSING,
-  TRACK, EFFECTIVE_SCREEN,
+  TRACK, EFFECTIVE_SCREEN, STAGES,
 } from "./data";
 
 // `/payer-enrollment-software` — page 9 of the v3.1 map, on LandingTemplate.
 // Recomposed 2026-09-11 (DESIGN_DECISIONS.md):
 //   light header with the status track as its object (not the home's matrix);
-//   two steps (split) → the wait (dark, with the 90–120 figure) → statuses
-//   (table) → effective date (text + screen frame) → mismatches (list beside
-//   its head) → the matrix (dark) → scope (three cards) → FAQ → close.
+//   two steps (text + the two stages) → the wait (dark tile + text card, with
+//   the 90–120 figure) → statuses (table, grey block) → effective date (text +
+//   screen frame) → mismatches (list beside its head) → the matrix (dark tile
+//   beside the screen) → scope (bento) → FAQ → close. Round 2, 2026-09-11.
 // No more than three white sections in a row (DESIGN_RULES.md §15).
 //
 // The hero CTA pair reuses the home's approved labels ("Start 14-day trial",
@@ -65,7 +66,13 @@ export default function PayerEnrollmentSoftwarePage() {
           ),
         }}
       >
-        <ProseBandSection id="two-steps" head={TWO_STEPS.head} paras={TWO_STEPS.paras} closing={TWO_STEPS.closing} />
+        <ProseBandSection
+          id="two-steps"
+          head={TWO_STEPS.head}
+          paras={TWO_STEPS.paras}
+          closing={TWO_STEPS.closing}
+          media={<StageCompare stages={STAGES} />}
+        />
 
         <ProseBandSection
           id="timeline"
@@ -76,6 +83,7 @@ export default function PayerEnrollmentSoftwarePage() {
         />
 
         <StatusTableSection
+          surface="block"
           id="statuses"
           head={STATUSES.head}
           columns={STATUSES.columns}
@@ -101,14 +109,14 @@ export default function PayerEnrollmentSoftwarePage() {
         />
 
         <DiagramSection
-          surface="ink"
+          layout="bento"
           head={MATRIX.head}
           // Six providers by five payers, six cells needing action — the copy
           // says "the six" twice, so the grid shows six. The home's 5 x 5 is a
           // different density.
           diagram={
             <ScreenSlot screen="Provider × payer matrix" ratio="16:9" tone="white" note={MATRIX.note}>
-              <Matrix rows={6} cols={5} infoCount={3} quietCount={3} reviewCount={5} />
+              <Matrix compact rows={6} cols={5} infoCount={3} quietCount={3} reviewCount={5} />
             </ScreenSlot>
           }
           legend={<MatrixLegend />}
@@ -117,6 +125,8 @@ export default function PayerEnrollmentSoftwarePage() {
         />
 
         <CardGridSection
+          layout="bento"
+          featured={0}
           id="scope"
           head={SCOPE.head}
           items={SCOPE.items.map((s, i) => {

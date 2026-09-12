@@ -99,10 +99,18 @@ The earlier `ComparisonTemplate.jsx` (its own 780px column) and `Comparison.jsx`
 (an `Article` wrapper) both did this job before and are **deleted** — there is
 one comparison mould now, not three.
 
-**Client components, and only these two:** `Faq` (the accordion — every answer
+**Client components, and only these four:** `Faq` (the accordion — every answer
 is in the SSR HTML whether open or not, `hidden` rather than absent, so the copy
-stays crawlable) and `Toc` (the scroll-spy). Everything else renders on the
-server.
+stays crawlable), `Toc` / `EditorialToc` (the scroll-spy), `EmailCapture` (the
+form) and `FloatingNav` (the sticky petrol-ink nav bar; on the home it appears
+once the hero has scrolled away). Everything else renders on the server.
+
+**Round 2 of the landing polish (2026-09-11)** added: `HeroPanel` variants
+(`panel` for the home, `light` for the product pages), `ScreenSlot` (closed
+frame for a product screen), `InkTile` (dark tile inside a light section),
+`PhotoFrame` + `components/neo/photos.js` (Pexels photos with credits),
+`Schematics.jsx`, and the `surface="block"` grey band. The rules they carry are
+DESIGN_RULES.md §13-§19.
 
 **Diagrams stay diagrams.** The matrix, timeline, follow-up log, cadence chart,
 alert ladder, digest and portal-check are deliberately real HTML/CSS at low

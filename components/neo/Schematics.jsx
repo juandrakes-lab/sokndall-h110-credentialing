@@ -139,3 +139,30 @@ export function CountDiagram({ rows, caption }) {
     </div>
   );
 }
+
+/**
+ * StageCompare — the two stages the copy separates, side by side, each with
+ * what it is and what it stalls on. `/payer-enrollment-software`, "two steps".
+ * Every string is lifted from that section's approved note and paragraph; the
+ * stage names are the copy's own nouns. Not a product screen, so it sits in the
+ * section's media column without a ScreenSlot. Added 2026-09-11.
+ *
+ * `stages`: [{ name, is, stalls }].
+ */
+export function StageCompare({ stages }) {
+  return (
+    <ol className="sk-stages">
+      {stages.map((st, i) => (
+        <li className={`sk-stage${i === stages.length - 1 ? " sk-stage--last" : ""}`} key={st.name}>
+          <p className="sk-stage__n">Stage {String(i + 1).padStart(2, "0")}</p>
+          <p className="sk-stage__name">{st.name}</p>
+          <p className="sk-body">{st.is}</p>
+          <p className="sk-stage__stall">
+            <span className="sk-mark sk-mark--calm">Stalls on</span>
+            <span>{st.stalls}</span>
+          </p>
+        </li>
+      ))}
+    </ol>
+  );
+}

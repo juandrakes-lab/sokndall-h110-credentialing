@@ -214,8 +214,20 @@ export const CLOSING = {
 // copy: the pages are not published until every block is filled with a real
 // product screen (decision of 2026-09-11), so the labels stay visible until
 // then and tell whoever captures the screens what goes where.
+// Since 2026-09-11 the section-2 block and the quad's wide card hold Pexels
+// photographs (components/neo/photos.js); the corner block stays a product
+// screen, because only the real digest email can fill it.
 export const SLOTS = {
-  problem: "Screen: one credential record and its expiry alerts",
-  quadWide: "Screen: one enrollment application and its follow-up log",
   quadCorner: "Screen: the Monday digest email",
 };
+
+// The fact row under the hero (FactStrip, 2026-09-11). Each value is stated in
+// the approved copy: the price list and the 1-50 range (hero subhead), the
+// trial (pricing, "14 days, full product"), no PHI and no BAA (Section 7).
+// Labels are layout microcopy, pending copy review.
+export const FACTS = [
+  { value: "$79", label: "a month to start, on a published price list" },
+  { value: "14 days", label: "of trial, with every feature" },
+  { value: "1–50", label: "providers, from a solo practice to a billing company" },
+  { value: "0", label: "patient records: no PHI, so no BAA" },
+];

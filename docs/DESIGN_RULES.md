@@ -73,7 +73,10 @@ declarada, antes de usarse.
 
 ## 3. SUPERFICIES
 
-- La página es blanca y de ancho completo. **Ninguna sección tiene fondo gris.**
+- La página es blanca y de ancho completo. **Ninguna sección tiene fondo gris de
+  canto a canto.** Desde el 11 sep 2026 existe una tercera superficie: el
+  **bloque gris** (`surface="block"`), redondeado y con margen lateral como los
+  bloques oscuros. El ritmo es blanco → bloque gris → bloque o tarjeta oscura.
 - Ninguna línea divisoria entre secciones. La separación es el margen vertical.
 - El gris (`--paper`) existe solo como relleno de tarjeta.
 - **Blanco vs. gris es jerarquía, no decoración.** La tarjeta blanca lleva el
@@ -300,6 +303,12 @@ correcta para un argumento.
 Una landing no pone más de tres secciones blancas seguidas entre el hero y el
 cierre. La cuarta pasa a bloque oscuro (`surface="ink"`). Cuál pasa es criterio
 de composición y se anota en DESIGN_DECISIONS.md.
+
+Desde el 11 sep 2026 una sección con una tarjeta oscura (`InkTile`) de al menos
+un tercio del ancho cuenta como oscura, y un bloque gris corta la serie de
+blancas. Las secciones oscuras ya no son cajas de canto a canto con contenido
+adentro: son una tarjeta oscura al lado de tarjetas claras (la referencia VELD).
+Solo el hero y el cierre siguen siendo bloques oscuros enteros.
 
 ## 16. LOS HUECOS DE PANTALLA (`ScreenSlot`)
 

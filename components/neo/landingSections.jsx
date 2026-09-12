@@ -1,6 +1,8 @@
 import Link from "next/link";
 
-import { Band, SectionHead, ReservedSlot, RowCard, Lines, Pill } from "@/components/neo/landingPrimitives";
+import {
+  Band, SectionHead, ReservedSlot, RowCard, Lines, Pill, InkTile, PhotoFrame,
+} from "@/components/neo/landingPrimitives";
 import Rich from "@/components/neo/rich";
 
 // The section kit of LandingTemplate. Every section takes its content as
@@ -17,10 +19,11 @@ import Rich from "@/components/neo/rich";
 // Layout only. Copy lives in each page's own data file; the character budgets
 // each slot tolerates are in COPY_LIMITS.md.
 //
-// IMAGE POLICY, for the whole kit: no photography of people on a landing page
-// (decision already taken; DESIGN_DECISIONS.md). The image-bearing slots are
-// the home's declared `ReservedSlot`s and, since 2026-09-11, `ScreenSlot` —
-// the closed frame a product screen will fill (landingPrimitives.jsx).
+// IMAGE POLICY, for the whole kit (revised 2026-09-11, DESIGN_RULES §19):
+// photographs only in the home's hero and in the photo slots the founder
+// defined on the home (`PhotoFrame`, sourced from components/neo/photos.js,
+// credited). A `ScreenSlot` holds a product screen or a schematic and never
+// stock. Everything else carries no image.
 //
 // LAYOUT VOCABULARY (2026-09-11). No section leaves the right half of the
 // measure empty. A text section takes one of four distributions, chosen per
@@ -35,13 +38,17 @@ import Rich from "@/components/neo/rich";
  *  right. `items`: [{ title, body }]. `closing` renders as plain text under
  *  the block — deliberately not a card. `reservedLabel` names what the block
  *  will hold. */
-export function SplitListSection({ head, items, closing, reservedLabel }) {
+export function SplitListSection({ head, items, closing, reservedLabel, photo }) {
   return (
     <Band>
       <SectionHead {...head} />
 
       <div className="sk-split">
-        <ReservedSlot variant="grey" label={reservedLabel} />
+        {photo ? (
+          <PhotoFrame photo={photo} ratio="fill" />
+        ) : (
+          <ReservedSlot variant="grey" label={reservedLabel} />
+        )}
         <div className="sk-stack">
           {items.map((it) => (
             <RowCard key={it.title} title={it.title} body={it.body} />
@@ -67,7 +74,7 @@ export function SplitListSection({ head, items, closing, reservedLabel }) {
  *  reserved visual keeps the second row, so the slot is not given up to fit
  *  the copy (DESIGN_DECISIONS.md, 2026-09-10). `labels` names the two reserved
  *  visuals: { wide, corner }. */
-export function QuadSection({ head, blocks, imageRatio = "3:2", labels = {} }) {
+export function QuadSection({ head, blocks, imageRatio = "3:2", labels = {}, widePhoto }) {
   const [wide, tall, small, small2] = blocks;
   const Small = ({ b }) => (
     <article className="sk-card sk-card--pad sk-layer">
@@ -89,7 +96,11 @@ export function QuadSection({ head, blocks, imageRatio = "3:2", labels = {} }) {
           <p className="sk-body">
             <Rich text={wide.body} linkClassName="sk-link" />
           </p>
-          <ReservedSlot ratio={imageRatio} className="sk-quad__img" label={labels.wide} />
+          {widePhoto ? (
+            <PhotoFrame photo={widePhoto} ratio="3x2" className="sk-quad__img sk-quad__photo" />
+          ) : (
+            <ReservedSlot ratio={imageRatio} className="sk-quad__img" label={labels.wide} />
+          )}
         </article>
 
         <article className="sk-card sk-card--soft sk-card--pad sk-quad__b">
@@ -138,7 +149,43 @@ export function QuadSection({ head, blocks, imageRatio = "3:2", labels = {} }) {
  *  The two cards keep their own heights (DESIGN_RULES.md §4 — height matching
  *  was repealed on 2026-09-06; the aside card used to stretch to the list
  *  beside it and float its body in the middle). */
-export function DiagramSection({ head, note, diagram, legend, points, aside, surface = "card" }) {
+export function DiagramSection({ head, note, diagram, legend, points, aside, surface = "card", layout }) {
+  // `layout="bento"` (2026-09-11): the heading, the points and the aside go in
+  // a dark tile with the dot-grid texture, beside the screen frame and its
+  // legend. The full-width dark block this replaces was the emptiest section
+  // on the site (founder, round 2).
+  if (layout === "bento") {
+    return (
+      <Band>
+        <div className="sk-diagbento">
+          <InkTile texture="dots" className="sk-diagbento__head">
+            {head.pill ? <Pill>{head.pill}</Pill> : null}
+            <h2 className="sk-h2">
+              <Lines lines={head.title} />
+            </h2>
+            <ul className="sk-list sk-diagbento__points">
+              {points.map((p) => (
+                <li key={p}>
+                  <Rich text={p} linkClassName="sk-link" />
+                </li>
+              ))}
+            </ul>
+            <div className="sk-glass sk-tile-foot">
+              {aside.kicker ? <p className="sk-micro">{aside.kicker}</p> : null}
+              <p className="sk-h4">{aside.title}</p>
+              <p className="sk-body">{aside.body}</p>
+            </div>
+          </InkTile>
+          <div className="sk-diagbento__screen">
+            {note}
+            {diagram}
+            {legend}
+          </div>
+        </div>
+      </Band>
+    );
+  }
+
   return (
     <Band surface={surface}>
       <SectionHead {...head} />
@@ -184,60 +231,43 @@ export function DiagramSection({ head, note, diagram, legend, points, aside, sur
  *
  *  `layout="side"`: heading left, figures stacked right — for a band whose
  *  copy has no aside paragraph, so the head's right column is not left empty. */
-export function FigureBandSection({ head, figures, closing, layout }) {
-  const four = figures.length === 4;
-  const side = layout === "side";
-  if (!head.pill) {
-    if (process.env.NODE_ENV !== "production") console.warn("FigureBandSection: head without a pill (DESIGN_RULES.md §13).");
+export function FigureBandSection({ head, figures, closing, id }) {
+  // Rebuilt 2026-09-11 as a bento: a dark tile (ring texture) carries the pill,
+  // the heading, the aside and — pinned to its foot — the closing line; the
+  // figures sit beside it as light cards, two per row. The one figure that is
+  // this product (`ours`) is the section's single mustard element (DESIGN_RULES
+  // §18) and spans the full row when the count is odd.
+  if (!head.pill && process.env.NODE_ENV !== "production") {
+    console.warn("FigureBandSection: head without a pill (DESIGN_RULES.md §13).");
   }
-
-  const figs = (
-    <div
-      className={`sk-bento sk-figures${four ? " sk-figures--4" : ""}${side ? " sk-figures--side" : ""}`}
-    >
-      {figures.map((f) => (
-        <div className={`sk-fig${f.value ? "" : " sk-fig--label"}${f.ours ? " sk-fig--ours" : ""}`} key={f.label}>
-          {f.value ? (
-            <p className="sk-fig__v">
-              <span className="sk-num">{f.value}</span>
-              <span className="sk-fig__u">{f.unit}</span>
-            </p>
-          ) : null}
-          <p className="sk-fig__l">{f.label}</p>
-          <p className="sk-small">
-            <Rich text={f.note} linkClassName={f.ours ? "sk-link" : "sk-link sk-link--on-ink"} />
-          </p>
-        </div>
-      ))}
-    </div>
-  );
-
   return (
-    <Band surface="ink">
-      {head.pill ? <Pill>{head.pill}</Pill> : null}
-
-      {side ? (
-        <div className="sk-figside">
-          <div className="sk-figside__head">
-            <h2 className="sk-h2">
-              <Lines lines={head.title} />
-            </h2>
-            {closing ? <p className="sk-lead sk-anchor__closing">{closing}</p> : null}
-          </div>
-          {figs}
+    <Band id={id}>
+      <div className={`sk-figbento sk-figbento--${figures.length}`}>
+        <InkTile texture="rings" className="sk-figbento__head">
+          {head.pill ? <Pill>{head.pill}</Pill> : null}
+          <h2 className="sk-h2">
+            <Lines lines={head.title} />
+          </h2>
+          {head.aside ? <p className="sk-lead sk-figbento__aside">{head.aside}</p> : null}
+          {closing ? <p className="sk-body sk-body--lg sk-tile-foot sk-figbento__closing">{closing}</p> : null}
+        </InkTile>
+        <div className="sk-figbento__figs">
+          {figures.map((f) => (
+            <div className={`sk-figcard${f.ours ? " sk-figcard--ours" : ""}`} key={f.label}>
+              {f.value ? (
+                <p className="sk-fig__v">
+                  <span className="sk-num">{f.value}</span>
+                  <span className="sk-fig__u">{f.unit}</span>
+                </p>
+              ) : null}
+              <p className="sk-figcard__l">{f.label}</p>
+              <p className="sk-small">
+                <Rich text={f.note} linkClassName="sk-link" />
+              </p>
+            </div>
+          ))}
         </div>
-      ) : (
-        <>
-          <div className="sk-head__row sk-head__row--top">
-            <h2 className="sk-h2">
-              <Lines lines={head.title} />
-            </h2>
-            {head.aside ? <p className="sk-lead sk-head__aside">{head.aside}</p> : null}
-          </div>
-          {figs}
-          {closing ? <p className="sk-lead sk-anchor__closing">{closing}</p> : null}
-        </>
-      )}
+      </div>
     </Band>
   );
 }
@@ -337,6 +367,34 @@ export function PlanList({ plans, cta }) {
         </li>
       ))}
     </ol>
+  );
+}
+
+/** One plan as a card — for a page that talks about one plan and should show
+ *  it rather than describe it (`/for-billing-companies`, "A different
+ *  architecture"). Added 2026-09-11. `ours` makes it the section's one mustard
+ *  element (DESIGN_RULES.md §18): it is this product's own offer. Figures come
+ *  from the same data as the price list and the schema. */
+export function PlanCard({ plan, cta, ours = false }) {
+  return (
+    <article className={`sk-plancard${ours ? " sk-plancard--ours" : ""}`}>
+      <p className="sk-plancard__name">{plan.name}</p>
+      <p className="sk-plan__price">
+        <span className="sk-num">{plan.price}</span>
+        <span className="sk-plan__per">{plan.period}</span>
+      </p>
+      <p className="sk-body sk-plancard__desc">
+        <Rich text={plan.desc} linkClassName="sk-link" />
+      </p>
+      <ul className="sk-list sk-plan__feats">
+        {(plan.features || []).map((f) => (
+          <li key={f}>{f}</li>
+        ))}
+      </ul>
+      <Link href={cta.href} className="sk-btn sk-btn--primary sk-plancard__cta">
+        {cta.label}
+      </Link>
+    </article>
   );
 }
 
@@ -447,6 +505,22 @@ export function ProseBandSection({ head, paras = [], closing, id, media, flip = 
     </div>
   );
 
+  // A dark prose section is a bento since 2026-09-11: the pill, heading and
+  // figure in a dark tile (contour texture), the text in a light card beside
+  // it. The full-width dark block read as a box with a heading in its corner.
+  if (surface === "ink") {
+    return (
+      <Band id={id}>
+        <div className="sk-prosebento">
+          <InkTile texture="contours" className="sk-prosebento__head">
+            {headEl}
+          </InkTile>
+          <div className="sk-card sk-card--pad sk-prosebento__text">{textEl}</div>
+        </div>
+      </Band>
+    );
+  }
+
   if (media) {
     return (
       <Band id={id} surface={surface}>
@@ -492,10 +566,10 @@ export function ProseBandSection({ head, paras = [], closing, id, media, flip = 
  * `rows`: [{ glyph, status, meaning, action, needsAction? }].
  * Image policy: none.
  */
-export function StatusTableSection({ head, rows, closing, columns, id }) {
+export function StatusTableSection({ head, rows, closing, columns, id, surface = "card" }) {
   const [c1, c2, c3] = columns;
   return (
-    <Band id={id}>
+    <Band id={id} surface={surface}>
       <SectionHead {...head} />
       <div className="sk-tablewrap sk-statustable">
         <table className="sk-table">
@@ -539,7 +613,7 @@ export function StatusTableSection({ head, rows, closing, columns, id }) {
  *  `layout="split"` (2026-09-11): pill, heading and note in the left column,
  *  the cards stacked in the right one with title above text — the home's
  *  section-2 distribution, for a list short enough to sit beside its head. */
-export function IconRowSection({ head, items, closing, id, layout }) {
+export function IconRowSection({ head, items, closing, id, layout, surface = "card" }) {
   const cards = items.map((s) => (
     <article className="sk-card sk-card--pad" key={s.title}>
       <div className={`sk-row-card${layout === "split" ? " sk-row-card--stacked" : ""}`}>
@@ -594,7 +668,7 @@ export function IconRowSection({ head, items, closing, id, layout }) {
   }
 
   return (
-    <Band id={id}>
+    <Band id={id} surface={surface}>
       <SectionHead {...head} />
       <div className="sk-stack">{cards}</div>
       {closingEl}
@@ -613,20 +687,44 @@ export function IconRowSection({ head, items, closing, id, layout }) {
  *
  * `items`: [{ icon, title, body }]. Image policy: none.
  */
-export function CardGridSection({ head, items, closing, id }) {
+export function CardGridSection({ head, items, closing, id, layout, featured, surface = "card" }) {
+  // `layout="bento"` (2026-09-11): the same cards at mixed sizes, one of them
+  // (`featured`, an index) a dark tile — the reference's "How we work". The
+  // pattern is fixed per count so no page improvises a grid: 3 = the dark card
+  // tall on the left, two beside it; 4 = dark tall left, two, then one wide;
+  // 5 = dark wide over two columns, one beside it, three below. An item's
+  // `fact` is a short value from the copy set large (the reference's numbers).
+  const bento = layout === "bento";
+  const card = (s, i) => {
+    const dark = bento && i === featured;
+    const inner = (
+      <>
+        {s.kicker ? <p className="sk-cardgrid__kicker">{s.kicker}</p> : null}
+        {s.icon ? <span className="sk-tile sk-cardgrid__ico">{s.icon}</span> : null}
+        {s.fact ? <p className="sk-cardgrid__fact">{s.fact}</p> : null}
+        <h3 className="sk-h4">{s.title}</h3>
+        <p className="sk-body">
+          <Rich text={s.body} linkClassName="sk-link" />
+        </p>
+      </>
+    );
+    return dark ? (
+      <InkTile texture="contours" className={`sk-cardgrid__item sk-cardgrid__item--${i}`} as="article" key={s.title}>
+        {inner}
+      </InkTile>
+    ) : (
+      <article className={`sk-card sk-card--pad sk-cardgrid__item sk-cardgrid__item--${i}`} key={s.title}>
+        {inner}
+      </article>
+    );
+  };
   return (
-    <Band id={id}>
+    <Band id={id} surface={surface}>
       <SectionHead {...head} />
-      <div className={`sk-cardgrid sk-cardgrid--${items.length}`}>
-        {items.map((s) => (
-          <article className="sk-card sk-card--pad sk-cardgrid__item" key={s.title}>
-            {s.icon ? <span className="sk-tile sk-cardgrid__ico">{s.icon}</span> : null}
-            <h3 className="sk-h4">{s.title}</h3>
-            <p className="sk-body">
-              <Rich text={s.body} linkClassName="sk-link" />
-            </p>
-          </article>
-        ))}
+      <div
+        className={`sk-cardgrid sk-cardgrid--${items.length}${bento ? ` sk-cgb sk-cgb--${items.length} sk-cgb--f${featured ?? 0}` : ""}`}
+      >
+        {items.map(card)}
       </div>
       {closing ? (
         <p className="sk-body sk-body--lg sk-scope__closing">

@@ -2,7 +2,6 @@ import Shell from "@/components/neo/Shell";
 import Faq from "@/components/neo/Faq";
 import Rich from "@/components/neo/rich";
 import { CountDiagram } from "@/components/neo/Schematics";
-import { IconCalendar, IconCard, IconBan } from "@/components/neo/icons";
 import LandingTemplate, {
   PlanList, ProseBandSection, FigureBandSection, CardGridSection, PanelSection, CtaSection,
 } from "@/components/neo/LandingTemplate";
@@ -23,7 +22,6 @@ import { META, HERO, PLANS, UNITS, UNITS_DIAGRAM, ANCHOR, TRIAL, FAQ, CLOSING } 
 export const metadata = pageMeta({ title: META.title, description: META.description, path: "/pricing" });
 
 const TRIAL_CTA = { label: "Start 14-day trial", href: "/login" };
-const TRIAL_ICONS = [IconCalendar, IconCard, IconBan];
 
 export default function PricingPage() {
   const plans = PLANS.plans.map((p, i) => ({ ...p, price: `$${PLAN_PRICES[i].price}`, period: PLAN_PERIOD }));
@@ -59,14 +57,10 @@ export default function PricingPage() {
 
         <FigureBandSection head={ANCHOR.head} figures={ANCHOR.figures} closing={ANCHOR.closing} />
 
-        <CardGridSection
-          id="trial"
-          head={TRIAL.head}
-          items={TRIAL.items.map((it, i) => {
-            const Icon = TRIAL_ICONS[i];
-            return { ...it, icon: <Icon /> };
-          })}
-        />
+        {/* The trial as three steps, the reference's "How we work": step label
+            and a large fact on each, the last step a dark tile. One
+            enumeration system (the step numbers), so no icons (§6). */}
+        <CardGridSection id="trial" surface="block" layout="bento" featured={2} head={TRIAL.head} items={TRIAL.items} />
 
         <PanelSection id="faq" head={FAQ_HEAD} split>
           <Faq items={FAQ} openFirst />

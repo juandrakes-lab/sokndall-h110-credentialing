@@ -38,13 +38,14 @@ exception: `.sk-stat` ("60 days") keeps `--ink`. Gradients: one hue only, on but
 | Token | Value | Role |
 |---|---|---|
 | `--amber` | `#C88A2E` | Primary CTA, and states that need action |
-| `--line` | `rgba(14, 42, 46, 0.03)` | Card hairline on a light surface |
+| `--line` | `rgba(14, 42, 46, 0.075)` at `--hairline: 1px` (was 0.03 / 0.25px until 2026-09-11) | Card outline on a light surface — meant to be seen |
 | `--line-strong` | `rgba(14, 42, 46, 0.22)` | Ghost-button border, dashed placeholder |
 | `--rule-dark` | `#3D6A6B` | Hairline on a dark surface |
 | `--rule-dark-2` | `rgba(61, 106, 107, 0.55)` | Softer hairline on a dark surface |
 | `--tint` | `rgba(14, 42, 46, 0.05)` | Nested light surface |
 | `--tint-2` | `rgba(14, 42, 46, 0.08)` | Reserved image ground inside a grey card |
-| `--amber-tint` | `rgba(200, 138, 46, 0.14)` | The only amber fill — action-state cells |
+| `--amber-tint` | `rgba(200, 138, 46, 0.14)` | The only amber *tint* — action-state cells |
+| `--amber-hi` | `color-mix(--amber 72%, white)` | Light end of the CTA's one-hue gradient (2026-09-11) |
 | `--accent` | → `--rule-dark` (`#3D6A6B`) | **Role, added 2026-09-11 — not a new colour.** The brand family's mid tone on light surfaces: icons, list dots, `.sk-stat`, the rule beside a section's closing line. 6.0:1 on white; never body text |
 
 ### Where amber is allowed
@@ -157,8 +158,8 @@ One 8px ramp. Sections take their rhythm from `--sec-y` and nothing else.
 |---|---|---|
 | `--maxw` | `1200px` | Measure, held by `.sk-wrap` |
 | `--page-x` | `clamp(8px, 1.6vw, 22px)` (halved 2026-09-11) | A dark block's margin from the page edge |
-| `--pad-x` | `clamp(20px, 4vw, 56px)` | Inner padding inside a block |
-| `--light-x` | `calc(var(--page-x) + var(--pad-x))` | Inset on a white section |
+| `--light-x` | `clamp(34px, 7.2vw, 100px)` (fixed since 2026-09-11) | Inset on a white section |
+| `--pad-x` | `calc(var(--light-x) - var(--page-x))` | Inner padding inside a block — absorbs what the smaller margin gave back, so copy does not move |
 
 A dark block insets by `--page-x` then pads by `--pad-x`; a light section has
 no block, so it insets by the sum. That is what keeps a paragraph in a white
@@ -213,7 +214,7 @@ kind of surface the card is.
 | Token | Value | Applied to |
 |---|---|---|
 | `--sh-white` | `0 1px 2px rgba(14,42,46,.035), 0 8px 16px -6px rgba(14,42,46,.08), 0 22px 40px -12px rgba(14,42,46,.115)` | White cards — lit from above: the offset drops and the blur widens, so there is more shadow beneath the card than around its top |
-| `--sh-grey` | `0 1px 3px rgba(14,42,46,.069), 0 0 10px rgba(14,42,46,.058)` | Grey cards — tighter and even around the whole perimeter, sitting closer to their surface |
+| `--sh-grey` | → `--sh-white` (2026-09-11) | Grey cards take the same elevation as white ones: the same card no longer changes depth with its colour |
 | `--sh-on-ink` | `0 2px 4px rgba(0,0,0,.207), 0 10px 24px -8px rgba(0,0,0,.391)` | Cards inside a dark block — same light direction, read in black |
 
 `--sh-card` and `--sh-float` are aliases of `--sh-white`, kept for the pages

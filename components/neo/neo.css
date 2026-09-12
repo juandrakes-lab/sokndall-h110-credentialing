@@ -3939,3 +3939,397 @@ html:has(.sk-fnav) { scroll-padding-top: 88px; }
 /* The light header no longer carries its own bar: it starts under the float. */
 .sk-lhero__inner { padding-top: var(--s-8); }
 .sk-lhero .sk-navm { padding-top: var(--s-4); }
+
+
+/* ===================== STEP B — DARK SURFACES (2026-09-11) ================
+   The hero's line texture was the one thing on the dark blocks the founder
+   liked; the other dark blocks read flat. One family, three drawings — the
+   hero keeps its waves; rings for the figure tiles (the alert ladder's
+   rings), a dot grid for the matrix tile, rising contours for the close — all
+   white at 7-10%. Plus a soft glow of the mid ink in one corner: a one-hue
+   gradient, which DESIGN_RULES §17 allows on dark blocks only. */
+.sokndall-neo {
+  --tex-rings: url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 1000 700%27 preserveAspectRatio=%27xMaxYMin slice%27%3E%3Cg fill=%27none%27 stroke=%27white%27 stroke-opacity=%270.10%27 stroke-width=%271.2%27%3E%3Ccircle cx=%271000%27 cy=%27-40%27 r=%2790%27 stroke-dasharray=%271 7%27/%3E%3Ccircle cx=%271000%27 cy=%27-40%27 r=%27160%27 stroke-dasharray=%273 8%27/%3E%3Ccircle cx=%271000%27 cy=%27-40%27 r=%27230%27 stroke-dasharray=%271 9%27/%3E%3Ccircle cx=%271000%27 cy=%27-40%27 r=%27300%27 stroke-dasharray=%273 10%27/%3E%3Ccircle cx=%271000%27 cy=%27-40%27 r=%27370%27 stroke-dasharray=%271 11%27/%3E%3Ccircle cx=%271000%27 cy=%27-40%27 r=%27440%27 stroke-dasharray=%273 12%27/%3E%3Ccircle cx=%271000%27 cy=%27-40%27 r=%27510%27 stroke-dasharray=%271 13%27/%3E%3Ccircle cx=%271000%27 cy=%27-40%27 r=%27580%27 stroke-dasharray=%273 14%27/%3E%3Ccircle cx=%271000%27 cy=%27-40%27 r=%27650%27 stroke-dasharray=%271 15%27/%3E%3Ccircle cx=%271000%27 cy=%27-40%27 r=%27720%27 stroke-dasharray=%273 16%27/%3E%3Ccircle cx=%271000%27 cy=%27-40%27 r=%27790%27 stroke-dasharray=%271 17%27/%3E%3Ccircle cx=%271000%27 cy=%27-40%27 r=%27860%27 stroke-dasharray=%273 18%27/%3E%3Ccircle cx=%271000%27 cy=%27-40%27 r=%27930%27 stroke-dasharray=%271 19%27/%3E%3Ccircle cx=%271000%27 cy=%27-40%27 r=%271000%27 stroke-dasharray=%273 20%27/%3E%3Ccircle cx=%271000%27 cy=%27-40%27 r=%271070%27 stroke-dasharray=%271 21%27/%3E%3Ccircle cx=%271000%27 cy=%27-40%27 r=%271140%27 stroke-dasharray=%273 22%27/%3E%3C/g%3E%3C/svg%3E");
+  --tex-dots: url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27384%27 height=%27384%27 viewBox=%270 0 384 384%27%3E%3Cg fill=%27white%27 fill-opacity=%270.09%27%3E%3Ccircle cx=%2712%27 cy=%2712%27 r=%271.3%27/%3E%3Ccircle cx=%2712%27 cy=%2736%27 r=%271.3%27/%3E%3Ccircle cx=%2712%27 cy=%2760%27 r=%271.3%27/%3E%3Ccircle cx=%2712%27 cy=%2784%27 r=%271.3%27/%3E%3Ccircle cx=%2712%27 cy=%27108%27 r=%271.3%27/%3E%3Ccircle cx=%2712%27 cy=%27132%27 r=%271.3%27/%3E%3Ccircle cx=%2712%27 cy=%27156%27 r=%271.3%27/%3E%3Ccircle cx=%2712%27 cy=%27180%27 r=%271.3%27/%3E%3Ccircle cx=%2712%27 cy=%27204%27 r=%271.3%27/%3E%3Ccircle cx=%2712%27 cy=%27228%27 r=%271.3%27/%3E%3Ccircle cx=%2712%27 cy=%27252%27 r=%271.3%27/%3E%3Ccircle cx=%2712%27 cy=%27276%27 r=%271.3%27/%3E%3Ccircle cx=%2712%27 cy=%27300%27 r=%271.3%27/%3E%3Ccircle cx=%2712%27 cy=%27324%27 r=%271.3%27/%3E%3Ccircle cx=%2712%27 cy=%27348%27 r=%271.3%27/%3E%3Ccircle cx=%2712%27 cy=%27372%27 r=%271.3%27/%3E%3Ccircle cx=%2736%27 cy=%2712%27 r=%271.3%27/%3E%3Ccircle cx=%2736%27 cy=%2736%27 r=%271.3%27/%3E%3Ccircle cx=%2736%27 cy=%2760%27 r=%271.3%27/%3E%3Ccircle cx=%2736%27 cy=%2784%27 r=%271.3%27/%3E%3Ccircle cx=%2736%27 cy=%27108%27 r=%271.3%27/%3E%3Ccircle cx=%2736%27 cy=%27132%27 r=%271.3%27/%3E%3Ccircle cx=%2736%27 cy=%27156%27 r=%271.3%27/%3E%3Ccircle cx=%2736%27 cy=%27180%27 r=%271.3%27/%3E%3Ccircle cx=%2736%27 cy=%27204%27 r=%271.3%27/%3E%3Ccircle cx=%2736%27 cy=%27228%27 r=%271.3%27/%3E%3Ccircle cx=%2736%27 cy=%27252%27 r=%271.3%27/%3E%3Ccircle cx=%2736%27 cy=%27276%27 r=%271.3%27/%3E%3Ccircle cx=%2736%27 cy=%27300%27 r=%271.3%27/%3E%3Ccircle cx=%2736%27 cy=%27324%27 r=%271.3%27/%3E%3Ccircle cx=%2736%27 cy=%27348%27 r=%271.3%27/%3E%3Ccircle cx=%2736%27 cy=%27372%27 r=%271.3%27/%3E%3Ccircle cx=%2760%27 cy=%2712%27 r=%271.3%27/%3E%3Ccircle cx=%2760%27 cy=%2736%27 r=%271.3%27/%3E%3Ccircle cx=%2760%27 cy=%2760%27 r=%271.3%27/%3E%3Ccircle cx=%2760%27 cy=%2784%27 r=%271.3%27/%3E%3Ccircle cx=%2760%27 cy=%27108%27 r=%271.3%27/%3E%3Ccircle cx=%2760%27 cy=%27132%27 r=%271.3%27/%3E%3Ccircle cx=%2760%27 cy=%27156%27 r=%271.3%27/%3E%3Ccircle cx=%2760%27 cy=%27180%27 r=%271.3%27/%3E%3Ccircle cx=%2760%27 cy=%27204%27 r=%271.3%27/%3E%3Ccircle cx=%2760%27 cy=%27228%27 r=%271.3%27/%3E%3Ccircle cx=%2760%27 cy=%27252%27 r=%271.3%27/%3E%3Ccircle cx=%2760%27 cy=%27276%27 r=%271.3%27/%3E%3Ccircle cx=%2760%27 cy=%27300%27 r=%271.3%27/%3E%3Ccircle cx=%2760%27 cy=%27324%27 r=%271.3%27/%3E%3Ccircle cx=%2760%27 cy=%27348%27 r=%271.3%27/%3E%3Ccircle cx=%2760%27 cy=%27372%27 r=%271.3%27/%3E%3Ccircle cx=%2784%27 cy=%2712%27 r=%271.3%27/%3E%3Ccircle cx=%2784%27 cy=%2736%27 r=%271.3%27/%3E%3Ccircle cx=%2784%27 cy=%2760%27 r=%271.3%27/%3E%3Ccircle cx=%2784%27 cy=%2784%27 r=%271.3%27/%3E%3Ccircle cx=%2784%27 cy=%27108%27 r=%271.3%27/%3E%3Ccircle cx=%2784%27 cy=%27132%27 r=%271.3%27/%3E%3Ccircle cx=%2784%27 cy=%27156%27 r=%271.3%27/%3E%3Ccircle cx=%2784%27 cy=%27180%27 r=%271.3%27/%3E%3Ccircle cx=%2784%27 cy=%27204%27 r=%271.3%27/%3E%3Ccircle cx=%2784%27 cy=%27228%27 r=%271.3%27/%3E%3Ccircle cx=%2784%27 cy=%27252%27 r=%271.3%27/%3E%3Ccircle cx=%2784%27 cy=%27276%27 r=%271.3%27/%3E%3Ccircle cx=%2784%27 cy=%27300%27 r=%271.3%27/%3E%3Ccircle cx=%2784%27 cy=%27324%27 r=%271.3%27/%3E%3Ccircle cx=%2784%27 cy=%27348%27 r=%271.3%27/%3E%3Ccircle cx=%2784%27 cy=%27372%27 r=%271.3%27/%3E%3Ccircle cx=%27108%27 cy=%2712%27 r=%271.3%27/%3E%3Ccircle cx=%27108%27 cy=%2736%27 r=%271.3%27/%3E%3Ccircle cx=%27108%27 cy=%2760%27 r=%271.3%27/%3E%3Ccircle cx=%27108%27 cy=%2784%27 r=%271.3%27/%3E%3Ccircle cx=%27108%27 cy=%27108%27 r=%271.3%27/%3E%3Ccircle cx=%27108%27 cy=%27132%27 r=%271.3%27/%3E%3Ccircle cx=%27108%27 cy=%27156%27 r=%271.3%27/%3E%3Ccircle cx=%27108%27 cy=%27180%27 r=%271.3%27/%3E%3Ccircle cx=%27108%27 cy=%27204%27 r=%271.3%27/%3E%3Ccircle cx=%27108%27 cy=%27228%27 r=%271.3%27/%3E%3Ccircle cx=%27108%27 cy=%27252%27 r=%271.3%27/%3E%3Ccircle cx=%27108%27 cy=%27276%27 r=%271.3%27/%3E%3Ccircle cx=%27108%27 cy=%27300%27 r=%271.3%27/%3E%3Ccircle cx=%27108%27 cy=%27324%27 r=%271.3%27/%3E%3Ccircle cx=%27108%27 cy=%27348%27 r=%271.3%27/%3E%3Ccircle cx=%27108%27 cy=%27372%27 r=%271.3%27/%3E%3Ccircle cx=%27132%27 cy=%2712%27 r=%271.3%27/%3E%3Ccircle cx=%27132%27 cy=%2736%27 r=%271.3%27/%3E%3Ccircle cx=%27132%27 cy=%2760%27 r=%271.3%27/%3E%3Ccircle cx=%27132%27 cy=%2784%27 r=%271.3%27/%3E%3Ccircle cx=%27132%27 cy=%27108%27 r=%271.3%27/%3E%3Ccircle cx=%27132%27 cy=%27132%27 r=%271.3%27/%3E%3Ccircle cx=%27132%27 cy=%27156%27 r=%271.3%27/%3E%3Ccircle cx=%27132%27 cy=%27180%27 r=%271.3%27/%3E%3Ccircle cx=%27132%27 cy=%27204%27 r=%271.3%27/%3E%3Ccircle cx=%27132%27 cy=%27228%27 r=%271.3%27/%3E%3Ccircle cx=%27132%27 cy=%27252%27 r=%271.3%27/%3E%3Ccircle cx=%27132%27 cy=%27276%27 r=%271.3%27/%3E%3Ccircle cx=%27132%27 cy=%27300%27 r=%271.3%27/%3E%3Ccircle cx=%27132%27 cy=%27324%27 r=%271.3%27/%3E%3Ccircle cx=%27132%27 cy=%27348%27 r=%271.3%27/%3E%3Ccircle cx=%27132%27 cy=%27372%27 r=%271.3%27/%3E%3Ccircle cx=%27156%27 cy=%2712%27 r=%271.3%27/%3E%3Ccircle cx=%27156%27 cy=%2736%27 r=%271.3%27/%3E%3Ccircle cx=%27156%27 cy=%2760%27 r=%271.3%27/%3E%3Ccircle cx=%27156%27 cy=%2784%27 r=%271.3%27/%3E%3Ccircle cx=%27156%27 cy=%27108%27 r=%271.3%27/%3E%3Ccircle cx=%27156%27 cy=%27132%27 r=%271.3%27/%3E%3Ccircle cx=%27156%27 cy=%27156%27 r=%271.3%27/%3E%3Ccircle cx=%27156%27 cy=%27180%27 r=%271.3%27/%3E%3Ccircle cx=%27156%27 cy=%27204%27 r=%271.3%27/%3E%3Ccircle cx=%27156%27 cy=%27228%27 r=%271.3%27/%3E%3Ccircle cx=%27156%27 cy=%27252%27 r=%271.3%27/%3E%3Ccircle cx=%27156%27 cy=%27276%27 r=%271.3%27/%3E%3Ccircle cx=%27156%27 cy=%27300%27 r=%271.3%27/%3E%3Ccircle cx=%27156%27 cy=%27324%27 r=%271.3%27/%3E%3Ccircle cx=%27156%27 cy=%27348%27 r=%271.3%27/%3E%3Ccircle cx=%27156%27 cy=%27372%27 r=%271.3%27/%3E%3Ccircle cx=%27180%27 cy=%2712%27 r=%271.3%27/%3E%3Ccircle cx=%27180%27 cy=%2736%27 r=%271.3%27/%3E%3Ccircle cx=%27180%27 cy=%2760%27 r=%271.3%27/%3E%3Ccircle cx=%27180%27 cy=%2784%27 r=%271.3%27/%3E%3Ccircle cx=%27180%27 cy=%27108%27 r=%271.3%27/%3E%3Ccircle cx=%27180%27 cy=%27132%27 r=%271.3%27/%3E%3Ccircle cx=%27180%27 cy=%27156%27 r=%271.3%27/%3E%3Ccircle cx=%27180%27 cy=%27180%27 r=%271.3%27/%3E%3Ccircle cx=%27180%27 cy=%27204%27 r=%271.3%27/%3E%3Ccircle cx=%27180%27 cy=%27228%27 r=%271.3%27/%3E%3Ccircle cx=%27180%27 cy=%27252%27 r=%271.3%27/%3E%3Ccircle cx=%27180%27 cy=%27276%27 r=%271.3%27/%3E%3Ccircle cx=%27180%27 cy=%27300%27 r=%271.3%27/%3E%3Ccircle cx=%27180%27 cy=%27324%27 r=%271.3%27/%3E%3Ccircle cx=%27180%27 cy=%27348%27 r=%271.3%27/%3E%3Ccircle cx=%27180%27 cy=%27372%27 r=%271.3%27/%3E%3Ccircle cx=%27204%27 cy=%2712%27 r=%271.3%27/%3E%3Ccircle cx=%27204%27 cy=%2736%27 r=%271.3%27/%3E%3Ccircle cx=%27204%27 cy=%2760%27 r=%271.3%27/%3E%3Ccircle cx=%27204%27 cy=%2784%27 r=%271.3%27/%3E%3Ccircle cx=%27204%27 cy=%27108%27 r=%271.3%27/%3E%3Ccircle cx=%27204%27 cy=%27132%27 r=%271.3%27/%3E%3Ccircle cx=%27204%27 cy=%27156%27 r=%271.3%27/%3E%3Ccircle cx=%27204%27 cy=%27180%27 r=%271.3%27/%3E%3Ccircle cx=%27204%27 cy=%27204%27 r=%271.3%27/%3E%3Ccircle cx=%27204%27 cy=%27228%27 r=%271.3%27/%3E%3Ccircle cx=%27204%27 cy=%27252%27 r=%271.3%27/%3E%3Ccircle cx=%27204%27 cy=%27276%27 r=%271.3%27/%3E%3Ccircle cx=%27204%27 cy=%27300%27 r=%271.3%27/%3E%3Ccircle cx=%27204%27 cy=%27324%27 r=%271.3%27/%3E%3Ccircle cx=%27204%27 cy=%27348%27 r=%271.3%27/%3E%3Ccircle cx=%27204%27 cy=%27372%27 r=%271.3%27/%3E%3Ccircle cx=%27228%27 cy=%2712%27 r=%271.3%27/%3E%3Ccircle cx=%27228%27 cy=%2736%27 r=%271.3%27/%3E%3Ccircle cx=%27228%27 cy=%2760%27 r=%271.3%27/%3E%3Ccircle cx=%27228%27 cy=%2784%27 r=%271.3%27/%3E%3Ccircle cx=%27228%27 cy=%27108%27 r=%271.3%27/%3E%3Ccircle cx=%27228%27 cy=%27132%27 r=%271.3%27/%3E%3Ccircle cx=%27228%27 cy=%27156%27 r=%271.3%27/%3E%3Ccircle cx=%27228%27 cy=%27180%27 r=%271.3%27/%3E%3Ccircle cx=%27228%27 cy=%27204%27 r=%271.3%27/%3E%3Ccircle cx=%27228%27 cy=%27228%27 r=%271.3%27/%3E%3Ccircle cx=%27228%27 cy=%27252%27 r=%271.3%27/%3E%3Ccircle cx=%27228%27 cy=%27276%27 r=%271.3%27/%3E%3Ccircle cx=%27228%27 cy=%27300%27 r=%271.3%27/%3E%3Ccircle cx=%27228%27 cy=%27324%27 r=%271.3%27/%3E%3Ccircle cx=%27228%27 cy=%27348%27 r=%271.3%27/%3E%3Ccircle cx=%27228%27 cy=%27372%27 r=%271.3%27/%3E%3Ccircle cx=%27252%27 cy=%2712%27 r=%271.3%27/%3E%3Ccircle cx=%27252%27 cy=%2736%27 r=%271.3%27/%3E%3Ccircle cx=%27252%27 cy=%2760%27 r=%271.3%27/%3E%3Ccircle cx=%27252%27 cy=%2784%27 r=%271.3%27/%3E%3Ccircle cx=%27252%27 cy=%27108%27 r=%271.3%27/%3E%3Ccircle cx=%27252%27 cy=%27132%27 r=%271.3%27/%3E%3Ccircle cx=%27252%27 cy=%27156%27 r=%271.3%27/%3E%3Ccircle cx=%27252%27 cy=%27180%27 r=%271.3%27/%3E%3Ccircle cx=%27252%27 cy=%27204%27 r=%271.3%27/%3E%3Ccircle cx=%27252%27 cy=%27228%27 r=%271.3%27/%3E%3Ccircle cx=%27252%27 cy=%27252%27 r=%271.3%27/%3E%3Ccircle cx=%27252%27 cy=%27276%27 r=%271.3%27/%3E%3Ccircle cx=%27252%27 cy=%27300%27 r=%271.3%27/%3E%3Ccircle cx=%27252%27 cy=%27324%27 r=%271.3%27/%3E%3Ccircle cx=%27252%27 cy=%27348%27 r=%271.3%27/%3E%3Ccircle cx=%27252%27 cy=%27372%27 r=%271.3%27/%3E%3Ccircle cx=%27276%27 cy=%2712%27 r=%271.3%27/%3E%3Ccircle cx=%27276%27 cy=%2736%27 r=%271.3%27/%3E%3Ccircle cx=%27276%27 cy=%2760%27 r=%271.3%27/%3E%3Ccircle cx=%27276%27 cy=%2784%27 r=%271.3%27/%3E%3Ccircle cx=%27276%27 cy=%27108%27 r=%271.3%27/%3E%3Ccircle cx=%27276%27 cy=%27132%27 r=%271.3%27/%3E%3Ccircle cx=%27276%27 cy=%27156%27 r=%271.3%27/%3E%3Ccircle cx=%27276%27 cy=%27180%27 r=%271.3%27/%3E%3Ccircle cx=%27276%27 cy=%27204%27 r=%271.3%27/%3E%3Ccircle cx=%27276%27 cy=%27228%27 r=%271.3%27/%3E%3Ccircle cx=%27276%27 cy=%27252%27 r=%271.3%27/%3E%3Ccircle cx=%27276%27 cy=%27276%27 r=%271.3%27/%3E%3Ccircle cx=%27276%27 cy=%27300%27 r=%271.3%27/%3E%3Ccircle cx=%27276%27 cy=%27324%27 r=%271.3%27/%3E%3Ccircle cx=%27276%27 cy=%27348%27 r=%271.3%27/%3E%3Ccircle cx=%27276%27 cy=%27372%27 r=%271.3%27/%3E%3Ccircle cx=%27300%27 cy=%2712%27 r=%271.3%27/%3E%3Ccircle cx=%27300%27 cy=%2736%27 r=%271.3%27/%3E%3Ccircle cx=%27300%27 cy=%2760%27 r=%271.3%27/%3E%3Ccircle cx=%27300%27 cy=%2784%27 r=%271.3%27/%3E%3Ccircle cx=%27300%27 cy=%27108%27 r=%271.3%27/%3E%3Ccircle cx=%27300%27 cy=%27132%27 r=%271.3%27/%3E%3Ccircle cx=%27300%27 cy=%27156%27 r=%271.3%27/%3E%3Ccircle cx=%27300%27 cy=%27180%27 r=%271.3%27/%3E%3Ccircle cx=%27300%27 cy=%27204%27 r=%271.3%27/%3E%3Ccircle cx=%27300%27 cy=%27228%27 r=%271.3%27/%3E%3Ccircle cx=%27300%27 cy=%27252%27 r=%271.3%27/%3E%3Ccircle cx=%27300%27 cy=%27276%27 r=%271.3%27/%3E%3Ccircle cx=%27300%27 cy=%27300%27 r=%271.3%27/%3E%3Ccircle cx=%27300%27 cy=%27324%27 r=%271.3%27/%3E%3Ccircle cx=%27300%27 cy=%27348%27 r=%271.3%27/%3E%3Ccircle cx=%27300%27 cy=%27372%27 r=%271.3%27/%3E%3Ccircle cx=%27324%27 cy=%2712%27 r=%271.3%27/%3E%3Ccircle cx=%27324%27 cy=%2736%27 r=%271.3%27/%3E%3Ccircle cx=%27324%27 cy=%2760%27 r=%271.3%27/%3E%3Ccircle cx=%27324%27 cy=%2784%27 r=%271.3%27/%3E%3Ccircle cx=%27324%27 cy=%27108%27 r=%271.3%27/%3E%3Ccircle cx=%27324%27 cy=%27132%27 r=%271.3%27/%3E%3Ccircle cx=%27324%27 cy=%27156%27 r=%271.3%27/%3E%3Ccircle cx=%27324%27 cy=%27180%27 r=%271.3%27/%3E%3Ccircle cx=%27324%27 cy=%27204%27 r=%271.3%27/%3E%3Ccircle cx=%27324%27 cy=%27228%27 r=%271.3%27/%3E%3Ccircle cx=%27324%27 cy=%27252%27 r=%271.3%27/%3E%3Ccircle cx=%27324%27 cy=%27276%27 r=%271.3%27/%3E%3Ccircle cx=%27324%27 cy=%27300%27 r=%271.3%27/%3E%3Ccircle cx=%27324%27 cy=%27324%27 r=%271.3%27/%3E%3Ccircle cx=%27324%27 cy=%27348%27 r=%271.3%27/%3E%3Ccircle cx=%27324%27 cy=%27372%27 r=%271.3%27/%3E%3Ccircle cx=%27348%27 cy=%2712%27 r=%271.3%27/%3E%3Ccircle cx=%27348%27 cy=%2736%27 r=%271.3%27/%3E%3Ccircle cx=%27348%27 cy=%2760%27 r=%271.3%27/%3E%3Ccircle cx=%27348%27 cy=%2784%27 r=%271.3%27/%3E%3Ccircle cx=%27348%27 cy=%27108%27 r=%271.3%27/%3E%3Ccircle cx=%27348%27 cy=%27132%27 r=%271.3%27/%3E%3Ccircle cx=%27348%27 cy=%27156%27 r=%271.3%27/%3E%3Ccircle cx=%27348%27 cy=%27180%27 r=%271.3%27/%3E%3Ccircle cx=%27348%27 cy=%27204%27 r=%271.3%27/%3E%3Ccircle cx=%27348%27 cy=%27228%27 r=%271.3%27/%3E%3Ccircle cx=%27348%27 cy=%27252%27 r=%271.3%27/%3E%3Ccircle cx=%27348%27 cy=%27276%27 r=%271.3%27/%3E%3Ccircle cx=%27348%27 cy=%27300%27 r=%271.3%27/%3E%3Ccircle cx=%27348%27 cy=%27324%27 r=%271.3%27/%3E%3Ccircle cx=%27348%27 cy=%27348%27 r=%271.3%27/%3E%3Ccircle cx=%27348%27 cy=%27372%27 r=%271.3%27/%3E%3Ccircle cx=%27372%27 cy=%2712%27 r=%271.3%27/%3E%3Ccircle cx=%27372%27 cy=%2736%27 r=%271.3%27/%3E%3Ccircle cx=%27372%27 cy=%2760%27 r=%271.3%27/%3E%3Ccircle cx=%27372%27 cy=%2784%27 r=%271.3%27/%3E%3Ccircle cx=%27372%27 cy=%27108%27 r=%271.3%27/%3E%3Ccircle cx=%27372%27 cy=%27132%27 r=%271.3%27/%3E%3Ccircle cx=%27372%27 cy=%27156%27 r=%271.3%27/%3E%3Ccircle cx=%27372%27 cy=%27180%27 r=%271.3%27/%3E%3Ccircle cx=%27372%27 cy=%27204%27 r=%271.3%27/%3E%3Ccircle cx=%27372%27 cy=%27228%27 r=%271.3%27/%3E%3Ccircle cx=%27372%27 cy=%27252%27 r=%271.3%27/%3E%3Ccircle cx=%27372%27 cy=%27276%27 r=%271.3%27/%3E%3Ccircle cx=%27372%27 cy=%27300%27 r=%271.3%27/%3E%3Ccircle cx=%27372%27 cy=%27324%27 r=%271.3%27/%3E%3Ccircle cx=%27372%27 cy=%27348%27 r=%271.3%27/%3E%3Ccircle cx=%27372%27 cy=%27372%27 r=%271.3%27/%3E%3C/g%3E%3C/svg%3E");
+  --tex-contours: url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 1200 720%27 preserveAspectRatio=%27none%27%3E%3Cg fill=%27none%27 stroke=%27white%27 stroke-opacity=%270.07%27 stroke-width=%271%27%3E%3Cpath d=%27M-40 740 C 240 668.0 520 780 780 716.0 S 1100 684.0 1240 724.0%27/%3E%3Cpath d=%27M-40 678 C 240 598.8 520 722 780 651.6 S 1100 616.4 1240 660.4%27/%3E%3Cpath d=%27M-40 616 C 240 529.6 520 664 780 587.2 S 1100 548.8 1240 596.8%27/%3E%3Cpath d=%27M-40 554 C 240 460.4 520 606 780 522.8 S 1100 481.2 1240 533.2%27/%3E%3Cpath d=%27M-40 492 C 240 391.2 520 548 780 458.4 S 1100 413.6 1240 469.6%27/%3E%3Cpath d=%27M-40 430 C 240 322.0 520 490 780 394.0 S 1100 346.0 1240 406.0%27/%3E%3Cpath d=%27M-40 368 C 240 252.8 520 432 780 329.6 S 1100 278.4 1240 342.4%27/%3E%3Cpath d=%27M-40 306 C 240 183.6 520 374 780 265.2 S 1100 210.8 1240 278.8%27/%3E%3Cpath d=%27M-40 244 C 240 114.4 520 316 780 200.8 S 1100 143.2 1240 215.2%27/%3E%3Cpath d=%27M-40 182 C 240 45.19999999999999 520 258 780 136.4 S 1100 75.60000000000001 1240 151.6%27/%3E%3C/g%3E%3C/svg%3E");
+  --glow: radial-gradient(90% 120% at 100% 0%, rgba(61, 106, 107, 0.5), transparent 60%);
+}
+/* `.sk-band.sk-band--ink`, not bare `.sk-band--ink`: the hero shares the
+   latter and keeps its own waves. */
+.sk-band.sk-band--ink { background-color: var(--ink); background-image: var(--tex-contours), var(--glow); background-size: 100% 100%, 100% 100%; background-repeat: no-repeat; }
+.sokndall-neo .sk-tex-rings { background-image: var(--tex-rings), var(--glow); background-size: cover, 100% 100%; background-position: top right, center; background-repeat: no-repeat; }
+.sokndall-neo .sk-tex-dots { background-image: var(--tex-dots), var(--glow); background-size: 384px 384px, 100% 100%; background-repeat: repeat, no-repeat; }
+.sokndall-neo .sk-tex-contours { background-image: var(--tex-contours), var(--glow); background-size: 100% 100%, 100% 100%; background-repeat: no-repeat; }
+
+/* ---- InkTile: a dark tile inside a light section ------------------------- */
+.sk-tile-ink {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+  background-color: var(--ink);
+  color: #fff;
+  border-radius: var(--r-block);
+  padding: clamp(24px, 3vw, 44px);
+  box-shadow: 0 2px 6px rgba(14, 42, 46, 0.18), 0 24px 48px -24px rgba(14, 42, 46, 0.6);
+  overflow: hidden;
+  isolation: isolate;
+}
+.sk-tile-ink :is(.sk-h2, .sk-h3, .sk-h4, .sk-stat, .sk-display) { color: #fff; }
+.sk-tile-ink :is(.sk-body, .sk-body--lg, .sk-lead, .sk-small, .sk-micro) { color: rgba(255, 255, 255, 0.86); }
+.sk-tile-ink .sk-list li { color: rgba(255, 255, 255, 0.9); }
+.sk-tile-ink .sk-list li::before { background: rgba(255, 255, 255, 0.7); }
+.sk-tile-ink .sk-link { color: #fff; }
+.sk-tile-ink .sk-tile { color: #fff; }
+.sk-tile-ink .sk-head__pill { margin-bottom: 0; }
+/* The foot of a tile: pushed to the bottom when the tile stretches. */
+.sk-tile-foot { margin-top: auto; }
+/* The nested surface on ink — glass, not a light card. */
+.sk-glass {
+  display: grid;
+  gap: var(--s-2);
+  padding: var(--s-5);
+  border-radius: var(--r-card);
+  background: rgba(255, 255, 255, 0.07);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(2px);
+}
+
+/* ---- the grey block: the third surface (DESIGN_RULES §3, amended) -------- */
+.sk-band--block {
+  background: var(--paper);
+  margin-inline: var(--page-x);
+  border-radius: var(--r-block);
+  padding-inline: var(--pad-x);
+}
+.sk-band--block + .sk-band--block,
+.sk-band--block + .sk-band--ink,
+.sk-band--ink + .sk-band--block { margin-top: var(--s-4); }
+
+/* ---- FigureBandSection as a bento ---------------------------------------- */
+.sk-figbento {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  gap: var(--gap);
+  align-items: stretch;
+}
+.sk-figbento__aside { max-width: 44ch; }
+.sk-figbento__closing {
+  padding-left: var(--s-4);
+  border-left: 2px solid rgba(255, 255, 255, 0.45);
+  font-weight: 500;
+}
+.sk-figbento__figs {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-auto-flow: dense;
+  gap: var(--gap);
+  align-content: stretch;
+}
+.sk-figcard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+  padding: clamp(20px, 2.4vw, 30px);
+  border-radius: var(--r-card);
+  background: var(--card);
+  border: var(--hairline) solid var(--line);
+  box-shadow: var(--sh-white);
+}
+.sk-figcard__l {
+  font-size: clamp(1.25rem, 1rem + 0.8vw, 1.625rem);
+  line-height: 1.12;
+  font-weight: 600;
+  letter-spacing: -0.028em;
+}
+.sk-figcard .sk-small { margin-top: auto; }
+/* The one mustard element of the section: this product's own figure. */
+.sk-figcard--ours {
+  background: var(--amber);
+  border-color: transparent;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 12px 28px -14px rgba(200, 138, 46, 0.8);
+}
+.sk-figcard--ours,
+.sk-figcard--ours .sk-small,
+.sk-figcard--ours .sk-link { color: var(--black); }
+.sk-figbento--3 .sk-figcard--ours { grid-column: 1 / -1; }
+@media (max-width: 980px) {
+  .sk-figbento { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 560px) {
+  .sk-figbento__figs { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* ---- ProseBandSection on ink, as a bento --------------------------------- */
+.sk-prosebento {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--gap);
+  align-items: stretch;
+}
+.sk-prosebento__head .sk-prose2__head { display: flex; flex-direction: column; gap: var(--s-4); height: 100%; }
+.sk-prosebento__head .sk-prose2__stat { margin-top: auto; padding-top: var(--s-6); }
+.sk-prosebento__head .sk-prose2__statcap { color: rgba(255, 255, 255, 0.86); }
+.sk-prosebento__text { display: flex; align-items: center; }
+.sk-prosebento__text .sk-prose2__text { max-width: 60ch; padding-top: 0; }
+@media (max-width: 900px) {
+  .sk-prosebento { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* ---- DiagramSection as a bento (the matrix beside its dark tile) -------- */
+.sk-diagbento {
+  display: grid;
+  grid-template-columns: minmax(0, 4.4fr) minmax(0, 7.6fr);
+  gap: var(--gap);
+  align-items: stretch;
+}
+.sk-diagbento__points { margin-top: var(--s-2); }
+.sk-diagbento__screen { display: grid; gap: var(--s-5); align-content: start; }
+.sk-diagbento__screen .sk-matrix__grid { min-width: 0; }
+.sk-diagbento__screen .sk-matrix__legend { grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: 0; }
+.sk-diagbento .sk-glass .sk-h4 { color: #fff; }
+@media (max-width: 1080px) {
+  .sk-diagbento { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* ---- CardGridSection as a bento: fixed patterns per count --------------- */
+.sk-cgb { display: grid; gap: var(--gap); align-items: stretch; }
+.sk-cgb .sk-cardgrid__item { height: 100%; }
+.sk-cgb--3 { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr); }
+.sk-cgb--3 > :nth-child(1) { grid-row: span 1; }
+.sk-cgb--4 { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr) minmax(0, 1fr); }
+.sk-cgb--4 > :nth-child(1) { grid-column: 1; grid-row: 1 / span 2; }
+.sk-cgb--4 > :nth-child(4) { grid-column: 2 / span 2; }
+.sk-cgb--5 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.sk-cgb--5 > :nth-child(1) { grid-column: 1 / span 2; }
+.sk-cardgrid__kicker {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--accent);
+}
+.sk-tile-ink .sk-cardgrid__kicker { color: rgba(255, 255, 255, 0.72); }
+.sk-cardgrid__fact {
+  font-size: clamp(2.25rem, 1.5rem + 2.2vw, 3.25rem);
+  line-height: 1;
+  font-weight: 400;
+  letter-spacing: -0.04em;
+  color: var(--accent);
+  margin: var(--s-3) 0 var(--s-4);
+  font-variant-numeric: tabular-nums;
+}
+.sk-tile-ink .sk-cardgrid__fact { color: #fff; }
+.sk-cgb .sk-cardgrid__item { display: flex; flex-direction: column; gap: var(--s-3); }
+.sk-cgb .sk-cardgrid__item > .sk-h4 { margin-top: auto; }
+@media (max-width: 980px) {
+  .sk-cgb--3,
+  .sk-cgb--4,
+  .sk-cgb--5 { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .sk-cgb--4 > :nth-child(1),
+  .sk-cgb--4 > :nth-child(4),
+  .sk-cgb--5 > :nth-child(1) { grid-column: 1 / -1; grid-row: auto; }
+}
+@media (max-width: 600px) {
+  .sk-cgb--3,
+  .sk-cgb--4,
+  .sk-cgb--5 { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* ---- PhotoFrame and the credit ------------------------------------------ */
+.sk-photoframe {
+  position: relative;
+  margin: 0;
+  overflow: hidden;
+  border-radius: var(--r-card);
+  background: var(--paper);
+  box-shadow: var(--sh-white);
+}
+.sk-photoframe img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.sk-photoframe--fill { min-height: 280px; height: 100%; }
+.sk-photoframe__over { position: absolute; left: var(--s-4); bottom: var(--s-4); right: var(--s-4); display: flex; }
+.sk-photoframe figcaption { position: absolute; right: var(--s-3); top: var(--s-3); }
+.sk-credit {
+  font-size: 0.625rem;
+  line-height: 1.3;
+  padding: 3px var(--s-2);
+  border-radius: var(--r-pill);
+  background: rgba(14, 42, 46, 0.55);
+  color: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(4px);
+}
+.sk-credit a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+.sk-quad__photo { margin: var(--s-5) calc(var(--card-pad) * -1) calc(var(--card-pad) * -1); }
+
+/* ---- hero variant B: the photo behind the panel ------------------------- */
+/* In place of the line texture, never with it. The photo sits under an ink
+   scrim at 86-94% (a one-hue gradient, DESIGN_RULES §17) and is desaturated a
+   little, so it reads as a room behind the copy and never competes with it.
+   `clip-path` rounds the photo to the panel without clipping the tongue. */
+.sk-hero.sk-hero--photo { background-image: none; }
+.sk-hero__bgimg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 40%;
+  clip-path: inset(0 round var(--r-block));
+  filter: grayscale(0.35) contrast(1.05);
+  z-index: 0;
+}
+.sk-hero--photo::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: var(--r-block);
+  background: linear-gradient(100deg, rgba(14, 42, 46, 0.94) 0%, rgba(14, 42, 46, 0.86) 40%, rgba(14, 42, 46, 0.58) 100%);
+  z-index: 0;
+  pointer-events: none;
+}
+.sk-hero--photo .sk-wrap,
+.sk-hero--photo .sk-hero__navm { position: relative; z-index: 2; }
+.sk-hero--photo .sk-hero__bar { z-index: 3; }
+.sk-hero__credit { position: absolute; right: var(--pad-x); bottom: var(--s-4); z-index: 3; }
+
+/* ---- hero variant C: the panel beside a photo card ---------------------- */
+.sk-hero-pair {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+  gap: var(--gap);
+  margin: var(--page-x) var(--page-x) calc(22px + var(--s-4));
+  align-items: stretch;
+}
+.sk-hero-pair .sk-hero.sk-band--ink.sk-hero--panel { margin: 0; }
+.sk-hero-pair .sk-hero__top--solo .sk-hero__copy { max-width: 40rem; }
+.sk-hero-pair__photo { border-radius: var(--r-block); min-height: 560px; }
+.sk-hero-pair__photo .sk-photoframe__over { left: var(--s-4); right: var(--s-4); bottom: var(--s-4); }
+.sk-hero-pair__fig { display: grid; gap: var(--s-3); justify-items: start; width: 100%; }
+.sk-hero-pair__ind { display: flex; }
+.sk-hero-pair__fig .sk-screen { box-shadow: 0 16px 40px -16px rgba(14, 42, 46, 0.6); }
+@media (max-width: 980px) {
+  .sk-hero-pair { grid-template-columns: minmax(0, 1fr); }
+  .sk-hero-pair__photo { min-height: 520px; }
+}
+.sk-sgvar { font: 600 0.8125rem/1 var(--sans); padding: var(--s-6) var(--light-x) 0; }
+/* A panel with no figure column (variant C keeps its figure on the photo card)
+   is one column; the panel's two-column split outranks the base rule. */
+.sk-hero--panel .sk-hero__top--solo { grid-template-columns: minmax(0, 1fr); }
+
+/* ---- CardGridSection bento, 3 items with the dark tile first ------------ */
+/* The dark tile tall on the left, the other two stacked beside it. With the
+   dark tile last (the trial's steps), three equal columns: steps read left to
+   right. */
+.sk-cgb--3.sk-cgb--f0 { grid-template-columns: minmax(0, 1fr) minmax(0, 1.35fr); }
+.sk-cgb--3.sk-cgb--f0 > :nth-child(1) { grid-row: 1 / span 2; }
+@media (max-width: 980px) {
+  .sk-cgb--3.sk-cgb--f0 { grid-template-columns: minmax(0, 1fr); }
+  .sk-cgb--3.sk-cgb--f0 > :nth-child(1) { grid-row: auto; }
+}
+.sk-cgb .sk-tile-ink { border-radius: var(--r-card); padding: var(--card-pad); }
+.sk-band--block .sk-cgb .sk-card { background: var(--card); }
+
+/* ---- PlanCard ----------------------------------------------------------- */
+.sk-plancard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+  padding: clamp(24px, 3vw, 40px);
+  border-radius: var(--r-block);
+  background: var(--card);
+  border: var(--hairline) solid var(--line);
+  box-shadow: var(--sh-white);
+}
+.sk-plancard__name { font-size: 1.125rem; font-weight: 700; letter-spacing: -0.02em; }
+.sk-plancard .sk-plan__price { margin: 0; }
+.sk-plancard__desc { font-weight: 600; }
+.sk-plancard__cta { align-self: flex-start; margin-top: var(--s-2); }
+/* The one mustard element of its section: this product's own plan. The CTA on
+   it turns ink, since amber on amber would vanish. */
+.sk-plancard--ours {
+  background: var(--amber);
+  border-color: transparent;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 18px 36px -18px rgba(200, 138, 46, 0.85);
+}
+.sk-plancard--ours .sk-list li::before { background: var(--ink); }
+.sk-plancard--ours .sk-btn--primary {
+  background: linear-gradient(180deg, var(--ink-2), var(--ink));
+  color: #fff;
+  box-shadow: 0 1px 2px rgba(14, 42, 46, 0.3), 0 10px 20px -10px rgba(14, 42, 46, 0.6);
+}
+.sk-plancard--ours .sk-btn--primary::after { background: var(--card); color: var(--ink); }
+
+/* ---- StageCompare ------------------------------------------------------- */
+.sk-stages { list-style: none; padding: 0; display: grid; gap: var(--gap); }
+.sk-stage {
+  position: relative;
+  display: grid;
+  gap: var(--s-2);
+  padding: var(--card-pad);
+  border-radius: var(--r-card);
+  background: var(--paper);
+  box-shadow: var(--sh-grey);
+}
+.sk-stage--last { background: var(--card); box-shadow: var(--sh-white); }
+/* The arrow between the two stages. */
+.sk-stage:not(.sk-stage--last)::after {
+  content: "\2193";
+  position: absolute;
+  left: 50%;
+  bottom: calc(var(--gap) * -1 - 12px);
+  transform: translateX(-50%);
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--ink);
+  color: #fff;
+  font-size: 0.875rem;
+  z-index: 1;
+}
+.sk-stage__n { font-size: 0.75rem; font-weight: 600; color: var(--accent); }
+.sk-stage__name { font-size: clamp(1.375rem, 1.1rem + 0.9vw, 1.75rem); font-weight: 600; letter-spacing: -0.026em; }
+.sk-stage__stall { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-2); margin-top: var(--s-2); font-size: 0.875rem; font-weight: 600; }
+
+
+/* ---- the brand line in a section heading --------------------------------- */
+.sk-h2 .sk-em { color: var(--accent); }
+.sk-band--ink .sk-h2 .sk-em,
+.sk-tile-ink .sk-h2 .sk-em,
+.sk-hero .sk-h2 .sk-em { color: color-mix(in srgb, var(--rule-dark) 42%, #ffffff); }
+.sk-display .sk-em { color: inherit; }
+
+/* ---- the fact row under the home's hero ---------------------------------- */
+.sk-facts { padding: var(--s-8) var(--light-x) 0; }
+.sk-facts__row {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--gap);
+}
+.sk-facts__item { display: grid; gap: var(--s-2); padding-left: var(--s-5); border-left: 2px solid var(--accent); }
+.sk-facts__v {
+  font-size: clamp(2.25rem, 1.4rem + 2.6vw, 3.5rem);
+  line-height: 1;
+  letter-spacing: -0.04em;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+.sk-facts__l { font-size: 0.875rem; line-height: 1.4; max-width: 22ch; }
+@media (max-width: 900px) { .sk-facts__row { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: var(--s-6); } }
+
+/* ---- the light header: a faint version of the hero's lines -------------- */
+.sk-lhero {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 1200 620%27 preserveAspectRatio=%27none%27%3E%3Cg fill=%27none%27 stroke=%27rgb(14,42,46)%27 stroke-opacity=%270.06%27 stroke-width=%271%27%3E%3Cpath d=%27M-20 60 C 300 30 520 108.0 800 66.0 S 1100 30 1220 78.0%27/%3E%3Cpath d=%27M-20 130 C 300 96 520 184.4 800 136.8 S 1100 96 1220 150.4%27/%3E%3Cpath d=%27M-20 200 C 300 162 520 260.8 800 207.6 S 1100 162 1220 222.8%27/%3E%3Cpath d=%27M-20 270 C 300 228 520 337.2 800 278.4 S 1100 228 1220 295.2%27/%3E%3Cpath d=%27M-20 340 C 300 294 520 413.6 800 349.2 S 1100 294 1220 367.6%27/%3E%3Cpath d=%27M-20 410 C 300 360 520 490.0 800 420.0 S 1100 360 1220 440.0%27/%3E%3Cpath d=%27M-20 480 C 300 426 520 566.4 800 490.8 S 1100 426 1220 512.4%27/%3E%3Cpath d=%27M-20 550 C 300 492 520 642.8 800 561.6 S 1100 492 1220 584.8%27/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 100% 620px;
+  background-repeat: no-repeat;
+  background-position: top center;
+}
+/* Bento cards are flex columns: without this the icon tile stretches to the
+   card's width and centres its glyph. */
+.sk-cgb .sk-cardgrid__item { align-items: flex-start; }
+.sk-cgb .sk-cardgrid__item > * { max-width: 100%; }
+/* The matrix tile gets more of the row; the grid beside it uses the compact
+   cell, which is sized for a column this wide. */
+.sk-diagbento { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); }

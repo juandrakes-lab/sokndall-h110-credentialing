@@ -8,13 +8,14 @@ import {
 } from "@/components/neo/icons";
 import LandingTemplate, {
   SplitListSection, QuadSection, DiagramSection, FigureBandSection,
-  PlanListSection, IconRowSection, PanelSection, CtaSection, HeroStrip, ScreenSlot, Indicator,
+  PlanListSection, CardGridSection, PanelSection, CtaSection, HeroStrip, ScreenSlot, Indicator, FactStrip,
 } from "@/components/neo/LandingTemplate";
 import { FAQ_HEAD, PLAN_PERIOD } from "@/components/neo/neoData";
+import { PHOTOS } from "@/components/neo/photos";
 import { JsonLd, faqSchema, softwareSchema, PLAN_PRICES } from "@/components/neo/schema";
 import { pageMeta } from "@/lib/seo";
 import {
-  META, HERO, PROBLEM, LAYERS, MATRIX, ANCHOR, PRICING, SCOPE, FAQ, CLOSING, SLOTS,
+  META, HERO, PROBLEM, LAYERS, MATRIX, ANCHOR, PRICING, SCOPE, FAQ, CLOSING, SLOTS, FACTS,
 } from "./homeData";
 
 // `/` — page 1 of the v3.1 map, on LandingTemplate. Composition only: which
@@ -75,11 +76,13 @@ export default function HomePage() {
       <JsonLd data={faqSchema(FAQ)} />
 
       <LandingTemplate heroSlot={<Hero />} current="/" navReveal>
+        <FactStrip items={FACTS} />
+
         <SplitListSection
           head={PROBLEM.head}
           items={PROBLEM.items}
           closing={PROBLEM.closing}
-          reservedLabel={SLOTS.problem}
+          photo={PHOTOS.bindersDesk}
         />
 
         <QuadSection
@@ -90,7 +93,8 @@ export default function HomePage() {
             { ...LAYERS.small1, icon: <IconMail /> },
             { ...LAYERS.small2, icon: <IconGrid /> },
           ]}
-          labels={{ wide: SLOTS.quadWide, corner: SLOTS.quadCorner }}
+          widePhoto={PHOTOS.phoneDesk}
+          labels={{ corner: SLOTS.quadCorner }}
         />
 
         <DiagramSection
@@ -119,7 +123,10 @@ export default function HomePage() {
           note={PRICING.note}
         />
 
-        <IconRowSection
+        <CardGridSection
+          surface="block"
+          layout="bento"
+          featured={0}
           head={SCOPE.head}
           items={SCOPE.items.map((s, i) => {
             const Icon = SCOPE_ICONS[i];

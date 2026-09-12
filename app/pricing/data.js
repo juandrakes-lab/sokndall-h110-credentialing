@@ -106,12 +106,24 @@ export const ANCHOR = {
 export const TRIAL = {
   head: { pill: "The trial", title: "How the trial works" },
   items: [
-    { title: "14 days, full product", body: "Every feature from day one. Nothing is held back for the trial." },
+    // `kicker` and `fact` (2026-09-11): the step label and a short value set
+    // large, each lifted from this item or from FAQ Q3 ("the first charge
+    // lands on day 15"). Layout microcopy, pending copy review.
     {
+      kicker: "Step 01",
+      fact: "14 days",
+      title: "14 days, full product",
+      body: "Every feature from day one. Nothing is held back for the trial.",
+    },
+    {
+      kicker: "Step 02",
+      fact: "Day 15",
       title: "Card up front",
       body: "So you are not re-entering it when the trial ends and you decide to stay.",
     },
     {
+      kicker: "Step 03",
+      fact: "Self-serve",
       title: "Cancel from Settings",
       body: "Self-serve, no email required. The card is charged on day 15 if you do not.",
     },

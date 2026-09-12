@@ -81,6 +81,7 @@ export {
   FigureBandSection,
   PlanSection,
   PlanList,
+  PlanCard,
   PlanListSection,
   ProseBandSection,
   StatusTableSection,
@@ -100,4 +101,8 @@ export {
   HeroStrip,
   Lines,
   Pill,
+  InkTile,
+  FactStrip,
+  PhotoFrame,
+  PhotoCredit,
 } from "@/components/neo/landingPrimitives";

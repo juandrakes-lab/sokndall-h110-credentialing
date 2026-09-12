@@ -5,7 +5,7 @@ import {
   IconUsers, IconGrid, IconDoc, IconMail, IconShield, IconCalendar, IconBell, IconRefresh, IconSearch,
 } from "@/components/neo/icons";
 import LandingTemplate, {
-  IconRowSection, ProseBandSection, PanelSection, CtaSection, HeroStrip, ScreenSlot,
+  IconRowSection, CardGridSection, ProseBandSection, PanelSection, CtaSection, HeroStrip, ScreenSlot,
 } from "@/components/neo/LandingTemplate";
 import { FAQ_HEAD } from "@/components/neo/neoData";
 import { TEMPLATE_CTA } from "@/components/neo/templateCta";
@@ -18,9 +18,10 @@ import { META, HERO, FIELDS, LIMITS, ENOUGH, FAQ, CLOSING, FILE_SCREEN } from ".
 // offer is above the fold: the light header splits, copy left and the email
 // box right, with a frame for a real capture of the file under both. The box
 // is this page's one template CTA; the file arrives by email and there is no
-// direct download anywhere on the page (DESIGN_RULES.md §9). Recomposed 2026-09-11 (DESIGN_DECISIONS.md):
-// tabs (list beside its head) → limits (rows with icons) → when to switch
-// (dark, split) → FAQ → close.
+// direct download anywhere on the page (DESIGN_RULES.md §9). Recomposed
+// 2026-09-11 (DESIGN_DECISIONS.md): tabs (list beside its head) → limits
+// (bento on a grey block) → when to switch (dark tile + text card) → FAQ →
+// close.
 export const metadata = pageMeta({
   title: META.title,
   description: META.description,
@@ -67,8 +68,11 @@ export default function SpreadsheetTemplatePage() {
           })}
         />
 
-        <IconRowSection
+        <CardGridSection
           id="limits"
+          surface="block"
+          layout="bento"
+          featured={0}
           head={LIMITS.head}
           items={LIMITS.items.map((it, i) => {
             const Icon = LIMIT_ICONS[i];

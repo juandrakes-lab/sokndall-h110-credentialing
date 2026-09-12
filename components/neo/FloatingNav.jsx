@@ -16,7 +16,7 @@ import { Wordmark } from "@/components/neo/icons";
  *     on a white header, and the floating ink bar is what decorates it.
  *   - `reveal`: the home. Its hero already carries the nav inside the notch,
  *     so this bar stays out of sight until the hero has scrolled away, then
- *     slides in. The only client-side logic is that one observer.
+ *     slides in. The only client-side logic is that one scroll check.
  *
  * Why this is a client component (DESIGN_RULES.md §7 lists the four): the
  * reveal needs to know where the hero is. Every link is in the server HTML
@@ -29,18 +29,26 @@ export default function FloatingNav({ current, reveal = false }) {
   useEffect(() => {
     if (!reveal) return undefined;
     const hero = document.querySelector("[data-hero]");
-    if (!hero || typeof IntersectionObserver === "undefined") {
+    if (!hero) {
       setShown(true);
       return undefined;
     }
-    const io = new IntersectionObserver(([entry]) => setShown(!entry.isIntersecting), {
-      rootMargin: "-96px 0px 0px 0px",
-    });
-    io.observe(hero);
-    return () => io.disconnect();
+    // A passive scroll check rather than an IntersectionObserver: it also
+    // settles the state on load when the page opens mid-scroll (a reload, a
+    // back-navigation), and it costs one rect read per scroll event.
+    const check = () => setShown(hero.getBoundingClientRect().bottom < 96);
+    check();
+    window.addEventListener("scroll", check, { passive: true });
+    window.addEventListener("resize", check);
+    return () => {
+      window.removeEventListener("scroll", check);
+      window.removeEventListener("resize", check);
+    };
   }, [reveal]);
 
-  const hiddenProps = shown ? {} : { inert: "", "aria-hidden": "true" };
+  // `inert` is a boolean attribute to the React the App Router ships (19): an
+  // empty string would read as false and leave the hidden bar tabbable.
+  const hiddenProps = shown ? {} : { inert: true, "aria-hidden": "true" };
 
   return (
     <div className={`sk-fnav${reveal ? " sk-fnav--reveal" : ""}${shown ? " is-shown" : ""}`} {...hiddenProps}>

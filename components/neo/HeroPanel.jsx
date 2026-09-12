@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 import { NavBar, NavMobile, Brand, NavLinks } from "@/components/neo/Nav";
-import { Lines, Pill } from "@/components/neo/landingPrimitives";
+import { Lines, Pill, PhotoCredit, PhotoFrame } from "@/components/neo/landingPrimitives";
 
 // The hero of every landing, in three variants. Rebuilt 2026-09-11.
 //
@@ -45,6 +45,9 @@ export default function HeroPanel({
   figure,
   form,
   indicators,
+  backdrop = "lines",
+  layout = "inline",
+  photo,
   children,
 }) {
   const ctas = primary ? (
@@ -90,9 +93,38 @@ export default function HeroPanel({
   }
 
   const panel = variant === "panel";
+  // Two ways a photograph can enter the home's panel (founder, round 2 —
+  // the three are compared on /styleguide/hero before one is chosen):
+  //   backdrop="photo" — the photo behind the panel, under an ink scrim, in
+  //     place of the line texture (a photo and the lines on one surface
+  //     compete; it is one or the other).
+  //   layout="split"   — the reference's (VELD) pairing: the ink panel with the
+  //     copy, and beside it a separate photo card with the indicator chips
+  //     floating over its lower edge. The figure is not used in this layout.
+  const photoBack = panel && backdrop === "photo" && photo;
+  const split = panel && layout === "split" && photo;
 
-  return (
-    <section className={`sk-hero sk-band--ink${panel ? " sk-hero--panel" : ""}`} data-hero="">
+  const section = (
+    <section
+      className={`sk-hero sk-band--ink${panel ? " sk-hero--panel" : ""}${photoBack ? " sk-hero--photo" : ""}${split ? " sk-hero--inpair" : ""}`}
+      data-hero={split ? undefined : ""}
+    >
+      {photoBack ? (
+        <>
+          <img
+            className="sk-hero__bgimg"
+            src={photo.src}
+            width={photo.width}
+            height={photo.height}
+            alt=""
+            loading="eager"
+            decoding="async"
+          />
+          <div className="sk-hero__credit">
+            <PhotoCredit photo={photo} />
+          </div>
+        </>
+      ) : null}
       {panel ? (
         <div className="sk-hero__bar">
           <div className="sk-hero__notch">
@@ -112,7 +144,7 @@ export default function HeroPanel({
       </div>
 
       <div className="sk-wrap sk-hero__inner">
-        <div className={`sk-hero__top${figure || form ? "" : " sk-hero__top--solo"}`}>
+        <div className={`sk-hero__top${(figure || form) && !split ? "" : " sk-hero__top--solo"}`}>
           <div className="sk-hero__copy">
             {eyebrow ? <Pill>{eyebrow}</Pill> : null}
 
@@ -125,7 +157,7 @@ export default function HeroPanel({
             {ctas}
           </div>
 
-          {figure ? (
+          {figure && !split ? (
             <div className="sk-hero__media">
               {figure}
               {indicators ? <div className="sk-hero__inds">{indicators}</div> : null}
@@ -144,5 +176,19 @@ export default function HeroPanel({
 
       {panel ? <span className="sk-hero__tongue" aria-hidden="true" /> : null}
     </section>
+  );
+
+  if (!split) return section;
+
+  return (
+    <div className="sk-hero-pair" data-hero="">
+      {section}
+      <PhotoFrame photo={photo} ratio="fill" eager className="sk-hero-pair__photo">
+        {/* Only the small facts float on the photo, as the reference floats a
+            balance card: the full matrix over a photo covers the person and
+            does not fit. The matrix has its own section further down. */}
+        <div className="sk-hero-pair__fig">{indicators}</div>
+      </PhotoFrame>
+    </div>
   );
 }

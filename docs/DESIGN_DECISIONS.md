@@ -872,3 +872,64 @@ Decisión:
   pasar el hero; en las páginas de encabezado claro, desde el principio.
 Razón: pedidos del fundador en la ronda 2; la referencia.
 Regla de DESIGN_RULES.md que aplica: §7 (cuarto componente cliente), §17.
+
+## Paso B — superficies oscuras
+Fecha: 2026-09-11
+Decisión:
+- Una familia de texturas para lo oscuro, blanco al 7-10%: el hero conserva sus
+  ondas; las tarjetas de cifras llevan anillos punteados (eco de la escalera de
+  alertas), la de la matriz una grilla de puntos, las demás curvas de nivel. Más
+  un brillo suave de verde medio en una esquina (§17).
+- Las secciones oscuras dejan de ser una caja de canto a canto con contenido
+  adentro: pasan a un bento con una tarjeta oscura (`InkTile`) al lado de
+  tarjetas claras, como el hero y "Your money, locked down" de VELD.
+  `FigureBandSection`: la oscura con pastilla, titular, aparte y el cierre al
+  pie; al lado las cifras en tarjetas blancas, la propia en mostaza (§18, única
+  por sección). `ProseBandSection surface="ink"`: la oscura con titular y cifra,
+  el texto en una tarjeta blanca. `DiagramSection layout="bento"`: la oscura con
+  titular, puntos y el aparte en vidrio, al lado de la matriz (compacta) y su
+  leyenda. El cierre (`CtaSection`) sigue siendo un bloque entero, ahora con
+  textura.
+- Hero de la home en tres variantes para elegir, en `/styleguide/hero`
+  (noindex): A las líneas de hoy; B la foto detrás del panel bajo un velo de
+  petróleo al 86-94% y desaturada (en lugar de las líneas: foto y líneas en la
+  misma superficie compiten); C el panel al lado de una tarjeta con foto y los
+  dos indicadores encima (la matriz sobre la foto tapaba a la persona y no
+  entraba; tiene su propia sección más abajo). La home sigue en A hasta que el
+  fundador elija.
+Razón: pedidos 2-4 de la ronda 2. "The matrix" en /payer-enrollment-software
+era el caso más vacío del sitio.
+Regla de DESIGN_RULES.md que aplica: §3 y §15 (enmendadas), §17, §18.
+
+## Paso C — secciones planas y fotos
+Fecha: 2026-09-11
+Decisión:
+- `CardGridSection layout="bento"` con patrones fijos por cantidad (3: oscura
+  alta a la izquierda o, si es la última, tres pasos en fila; 4: oscura alta y
+  una ancha; 5: oscura ancha arriba) y un `fact` grande por tarjeta cuando el
+  copy lo da. Se usa en: "What Sokndall does not do" (home, bloque gris), los
+  pasos del trial (/pricing, "Step 01-03" con "14 days", "Day 15",
+  "Self-serve", bloque gris; sin íconos por §6), "What it does not do"
+  (/payer-enrollment-software), la estructura (/for-billing-companies, bloque
+  gris) y los límites (plantilla, bloque gris).
+- `StageCompare` (nuevo, Schematics.jsx): las dos etapas de "two steps" con qué
+  son y en qué se traban, textos del propio copy.
+- `PlanCard` (nuevo): la tarjeta del plan Billing Co al lado de "A different
+  architecture", el mostaza de esa sección; su botón pasa a tinta sobre el
+  mostaza.
+- `FactStrip` (nuevo): fila de cuatro cifras bajo el hero de la home, todas
+  hechos del copy ("$79", "14 days", "1–50", "0" registros de pacientes).
+- La última línea autoral de cada H2 va en el tono medio de la marca (`.sk-em`);
+  sobre oscuro, un verde claro de la misma familia. Los H1 no.
+- Líneas tenues de tinta al 6% arriba de los encabezados claros.
+- Fotos de Pexels (vía `lib/pexels.js`, del lado del servidor) en los dos huecos
+  de imagen de la home: la sección 2 ("px-binders-desk", Anna Tarazevich) y la
+  tarjeta ancha del quad ("px-phone-desk", Karolina Grabowska); más las del
+  hero B ("px-forms-hands", Mahyub Hamida) y C ("px-followup-call", Andrea
+  Piacquadio). Todas WebP < 200 KB en public/landing/, crédito visible sobre la
+  foto. El hueco "Monday digest email" sigue siendo pantalla de producto.
+- Pastillas y microcopy nuevos pendientes de revisión del copy: los facts del
+  trial y de la fila de la home, y "Stage 01/02" / "Stalls on".
+Razón: pedido 5 de la ronda 2 (secciones planas) y la instrucción de llenar
+los huecos de imagen con Pexels.
+Regla de DESIGN_RULES.md que aplica: §4, §6, §18, §19.

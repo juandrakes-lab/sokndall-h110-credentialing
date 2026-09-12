@@ -27,14 +27,36 @@ export function Band({ surface = "card", id, className = "", children }) {
  *  honour it. `.sk-br` is `display: none` below 900px, so on a phone the
  *  headline wraps naturally instead of stranding a word on its own line
  *  ("one of them is / your / problem right now" at 390px, 2026-09-11). */
+// The last authored line of a multi-line heading carries `.sk-em`: section
+// headings set it in the brand's mid tone, the reference's coloured second
+// line ("TRUSTED AT SCALE"). Display headings (the H1s) ignore it.
 export function Lines({ lines }) {
   const arr = Array.isArray(lines) ? lines : [lines];
   return arr.map((line, i) => (
-    <span key={line}>
+    <span key={line} className={arr.length > 1 && i === arr.length - 1 ? "sk-em" : undefined}>
       {line}
       {i < arr.length - 1 ? <>{" "}<br className="sk-br" /></> : null}
     </span>
   ));
+}
+
+/** A row of large facts under the home's hero, the reference's "10M+ · 99.99%"
+ *  row — with the difference that every value is a stated product fact from
+ *  the approved copy, never a metric. `items`: [{ value, label }]. Not a
+ *  section head, so no pill. Added 2026-09-11. */
+export function FactStrip({ items }) {
+  return (
+    <section className="sk-facts" aria-label="Sokndall in figures">
+      <ul className="sk-wrap sk-facts__row">
+        {items.map((f) => (
+          <li className="sk-facts__item" key={f.label}>
+            <span className="sk-facts__v">{f.value}</span>
+            <span className="sk-facts__l">{f.label}</span>
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
 }
 
 /** The eyebrow pill. Every section head carries one (DESIGN_RULES.md §13,
@@ -278,5 +300,61 @@ export function RowCard({ title, body, icon, headingLevel = "h3", stacked = fals
         </p>
       </div>
     </article>
+  );
+}
+
+/**
+ * InkTile — a dark tile that shares a row with light ones. Added 2026-09-11.
+ *
+ * The founder found the full-width dark blocks empty: one big box with a
+ * heading in a corner and nothing to balance it. The reference (VELD) never
+ * does that — its dark surfaces are tiles in a bento, beside light tiles or a
+ * photo. This is that tile: ink, rounded, carrying one of the texture family
+ * (`texture`: "rings" | "dots" | "contours") and the corner glow. Text inside
+ * is white; a `.sk-glass` box inside it is the nested surface.
+ *
+ * It stretches to its row by design: it is a surface, not a card of content,
+ * so the §4 rule against stretched cards does not reach it. What it holds sits
+ * at the top, and a `foot` child sits at the bottom.
+ */
+export function InkTile({ texture = "contours", className = "", children, as: Tag = "div" }) {
+  return <Tag className={`sk-tile-ink sk-tex-${texture}${className ? ` ${className}` : ""}`}>{children}</Tag>;
+}
+
+/** The visible Pexels credit. Small, on the image's corner. */
+export function PhotoCredit({ photo, tone = "dark" }) {
+  return (
+    <p className={`sk-credit sk-credit--${tone}`}>
+      Photo:{" "}
+      <a href={photo.url} target="_blank" rel="noopener nofollow">
+        {photo.photographer} / Pexels
+      </a>
+    </p>
+  );
+}
+
+/**
+ * PhotoFrame — a photograph in a rounded frame at a fixed ratio, with its
+ * credit. For the photo slots the founder defined; never for a ScreenSlot.
+ * `ratio` is one of the `.sk-ar-*` classes ("3x2", "1x1", "4x5"…), or
+ * "fill" to take the height of the grid cell it sits in. `children` float
+ * over the photo (an indicator chip, as in the reference).
+ */
+export function PhotoFrame({ photo, ratio = "3x2", eager = false, className = "", children }) {
+  return (
+    <figure className={`sk-photoframe${ratio === "fill" ? " sk-photoframe--fill" : ` sk-ar-${ratio}`}${className ? ` ${className}` : ""}`}>
+      <img
+        src={photo.src}
+        width={photo.width}
+        height={photo.height}
+        alt={photo.alt}
+        loading={eager ? "eager" : "lazy"}
+        decoding="async"
+      />
+      {children ? <div className="sk-photoframe__over">{children}</div> : null}
+      <figcaption>
+        <PhotoCredit photo={photo} />
+      </figcaption>
+    </figure>
   );
 }

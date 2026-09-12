@@ -208,3 +208,18 @@ export const TRACK = {
 
 // What the empty screen frame beside the effective-date section will hold.
 export const EFFECTIVE_SCREEN = "One application's confirmed effective date";
+
+// The two stages beside the "two steps" section, every string lifted from
+// that section's note and paragraph (the stage names are its own nouns).
+export const STAGES = [
+  {
+    name: "Credentialing",
+    is: "The verification: the payer confirms you are who you say you are.",
+    stalls: "A document",
+  },
+  {
+    name: "Enrollment",
+    is: "Being accepted into the network and switched on for billing.",
+    stalls: "A contract, a network adequacy decision, or a queue",
+  },
+];
