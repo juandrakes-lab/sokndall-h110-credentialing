@@ -3,12 +3,12 @@ import Faq from "@/components/neo/Faq";
 import Rich from "@/components/neo/rich";
 import { CountDiagram } from "@/components/neo/Schematics";
 import LandingTemplate, {
-  PlanList, ProseBandSection, FigureBandSection, CardGridSection, PanelSection, CtaSection,
+  PlanList, PlanFeatureMatrix, ProseBandSection, FigureBandSection, CardGridSection, PanelSection, CtaSection,
 } from "@/components/neo/LandingTemplate";
 import { FAQ_HEAD, PLAN_PERIOD } from "@/components/neo/neoData";
 import { JsonLd, faqSchema, softwareSchema, PLAN_PRICES } from "@/components/neo/schema";
 import { pageMeta } from "@/lib/seo";
-import { META, HERO, PLANS, UNITS, UNITS_DIAGRAM, ANCHOR, TRIAL, FAQ, CLOSING } from "./data";
+import { META, HERO, PLANS, MATRIX, UNITS, UNITS_DIAGRAM, ANCHOR, TRIAL, FAQ, CLOSING } from "./data";
 
 // `/pricing` — page 2 of the v3.1 map, on LandingTemplate.
 //
@@ -16,7 +16,8 @@ import { META, HERO, PLANS, UNITS, UNITS_DIAGRAM, ANCHOR, TRIAL, FAQ, CLOSING } 
 // three plans sit inside the header, under the page's first H2 (the exact
 // keyword, on-page-seo.md §4), so a price is on screen without scrolling. The
 // H2 is set at card-title size there — it is the list's label, not a second
-// headline under the H1. Then the provider-vs-user argument beside its
+// headline under the H1. Then the plan matrix and the security line (copy
+// brief 2026-09-09), the provider-vs-user argument beside its
 // diagram, the four sourced anchors on the dark band, the trial terms as three
 // cards, FAQ, close. Recomposed 2026-09-11 (DESIGN_DECISIONS.md).
 export const metadata = pageMeta({ title: META.title, description: META.description, path: "/pricing" });
@@ -47,6 +48,26 @@ export default function PricingPage() {
           ),
         }}
       >
+        {/* What changes between the plans, then the security line under it —
+            where someone comparing vendors is looking (copy brief 2026-09-09).
+            On a grey block so the table reads as its own object after the
+            white price list. The Practice column carries the petrol rule of
+            the highlighted plan, so the table and the list agree. */}
+        <PlanFeatureMatrix
+          id="compare"
+          surface="block"
+          head={MATRIX.head}
+          plans={MATRIX.plans}
+          highlight={1}
+          rows={[
+            { label: "Providers tracked", cells: PLAN_PRICES.map((p) => String(p.providers)) },
+            { label: "Users included", cells: PLAN_PRICES.map((p) => String(p.users)) },
+            ...MATRIX.rows,
+          ]}
+          caption={MATRIX.caption}
+          after={MATRIX.security}
+        />
+
         <ProseBandSection
           id="provider-vs-user"
           head={UNITS.head}

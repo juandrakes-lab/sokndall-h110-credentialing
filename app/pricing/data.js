@@ -163,6 +163,43 @@ export const CLOSING = {
   primary: { label: "Start 14-day trial", href: "/login" },
 };
 
+// PlanFeatureMatrix and the security line — copywriting brief of 2026-09-09,
+// added to Page 2 without replacing anything in the Tanda A copy. Placed after
+// the price list and before the provider-vs-user section: the table shows,
+// that section explains.
+// Two decisions on the brief (DESIGN_DECISIONS.md, 2026-09-12):
+//   - rows 5 and 6 consolidated into "Aggregate and scoped client views", as
+//     the copywriter recommended, so the caption's "two rows" is true as
+//     written (the multi-client rows are the organizations row and this one);
+//   - the "Document storage" row is left out: its figures are [PEND] and no
+//     storage limit exists in the product config, and the brief says a row
+//     without them does not ship.
+// The providers and users rows are not written here: page.jsx builds them from
+// PLAN_PRICES, the same data the list and the Offer schema read.
+// `pill` is a structural label written by design, pending copy review.
+export const MATRIX = {
+  head: {
+    pill: "Plan comparison",
+    title: ["What changes between", "the three plans"],
+    note:
+      "Three plans, one product. What changes is how many providers you track and whether you track them for clients.",
+  },
+  plans: ["Solo", "Practice", "Billing Co"],
+  rows: [
+    { label: "Separate client organizations", cells: ["Not included", "Not included", "Included"] },
+    { label: "Aggregate and scoped client views", cells: ["Not included", "Not included", "Included"] },
+    { label: "Every tracking feature", cells: ["Included", "Included", "Included"] },
+  ],
+  caption:
+    "The only two rows where a plan is missing something are the multi-client rows, and those are the Billing Co structure rather than a feature held back.",
+  // The security line, stated as a fact rather than as an answer to SOC 2
+  // (the brief's reasoning). No badge, shield or seal may be added beside it:
+  // that would imply an accreditation that does not exist (DESIGN_RULES §2
+  // regla 6). Pending the same legal review as home Section 7, item 3.
+  security:
+    "No patient data enters the system at any point, so there is no PHI to expose. Each client organization's data is isolated at the database level.",
+};
+
 // The provider-versus-user diagram beside the UNITS section: the copy's own
 // example, drawn. Counts and wording come from UNITS.paras[0]; nothing here is
 // a customer figure.

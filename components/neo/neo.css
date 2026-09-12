@@ -4467,3 +4467,87 @@ html:has(.sk-fnav) { scroll-padding-top: 88px; }
 /* `.sk-footer__col a` (white links) outranked `.sk-btn--primary`, so the
    button in the footer column wrote white on yellow. */
 .sk-footer .sk-btn--primary { color: var(--black); }
+
+/* ---- PlanFeatureMatrix (/pricing, 2026-09-12) --------------------------- */
+/* The table in a white card on the section's grey block. The row label column
+   takes a third; the three plans share the rest. The highlighted plan's
+   column carries the same petrol rule as its row in the price list. */
+.sk-pfm {
+  border-radius: var(--r-panel);
+  background: var(--card);
+  border: var(--hairline) solid var(--line);
+  box-shadow: var(--sh-white);
+  overflow: hidden;
+}
+.sk-pfm__table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+.sk-pfm__corner { width: 34%; }
+.sk-pfm__table th,
+.sk-pfm__table td {
+  padding: var(--s-4) var(--s-5);
+  text-align: left;
+  vertical-align: middle;
+  border-bottom: 1px solid var(--line);
+}
+.sk-pfm__table tbody tr:last-child th,
+.sk-pfm__table tbody tr:last-child td { border-bottom: 0; }
+.sk-pfm__table thead th {
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  padding-top: var(--s-5);
+}
+.sk-pfm__table thead th.is-hi { box-shadow: inset 0 3px 0 var(--ink); }
+.sk-pfm__table td.is-hi,
+.sk-pfm__table th.is-hi { background: rgba(14, 42, 46, 0.03); }
+.sk-pfm__table tbody th { font-size: 0.9375rem; font-weight: 600; }
+.sk-pfm__v {
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+.sk-pfm__mark { display: inline-flex; align-items: center; gap: var(--s-2); font-size: 0.9375rem; }
+.sk-pfm__g {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  line-height: 1;
+}
+.sk-pfm__mark--yes .sk-pfm__g { background: var(--ink); color: #fff; }
+.sk-pfm__mark--no .sk-pfm__g { box-shadow: inset 0 0 0 1.5px var(--line-strong); color: var(--black); }
+.sk-pfm__mark--no { font-weight: 400; }
+.sk-pfm__mark--yes { font-weight: 600; }
+.sk-pfm__cap { padding: var(--s-4) var(--s-5); border-top: 1px solid var(--line); background: var(--card); }
+
+/* A phone: one card per row, the plan's name beside each value. */
+@media (max-width: 640px) {
+  .sk-pfm { background: none; border: 0; box-shadow: none; overflow: visible; }
+  .sk-pfm__table,
+  .sk-pfm__table tbody,
+  .sk-pfm__table tr,
+  .sk-pfm__table th,
+  .sk-pfm__table td { display: block; width: 100%; }
+  .sk-pfm__table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  .sk-pfm__table tbody tr {
+    background: var(--card);
+    border-radius: var(--r-card);
+    border: var(--hairline) solid var(--line);
+    box-shadow: var(--sh-white);
+    padding: var(--s-4);
+    margin-bottom: var(--s-3);
+  }
+  .sk-pfm__table th,
+  .sk-pfm__table td { padding: 0; border: 0; background: none; }
+  .sk-pfm__table td.is-hi,
+  .sk-pfm__table th.is-hi { background: none; }
+  .sk-pfm__table tbody th { margin-bottom: var(--s-3); }
+  .sk-pfm__table td { display: flex; justify-content: space-between; align-items: center; padding: var(--s-2) 0; border-top: 1px solid var(--line); }
+  .sk-pfm__table td::before { content: attr(data-label); font-size: 0.8125rem; font-weight: 600; }
+  .sk-pfm__v { font-size: 1rem; }
+  .sk-pfm__cap { padding: var(--s-2) 0 0; border: 0; background: none; }
+}

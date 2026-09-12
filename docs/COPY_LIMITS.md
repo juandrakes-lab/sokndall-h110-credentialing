@@ -461,3 +461,25 @@ real photograph lands, that text stops rendering and the limit stops applying.
 2. **Portrait direction** — clipped silently past the 4:5 box.
 3. **SourcedPricingDisclosure provenance** — at its 90-character floor, and it
    has to carry a source link the component will not let you omit.
+
+
+---
+
+# Copy limits — PlanFeatureMatrix (`/pricing`)
+
+Added 2026-09-12. Measured at 1280px on the rendered page, text widths read
+with the page's own font, so these replace the brief's `[SIN MEDIR]`. Same ±10
+characters of noise as everything above.
+
+| Slot | Now | Range | Notes |
+|---|---|---|---|
+| **H2** (authored lines) | 20 · 15 | **≤ 21 per line** | 2 lines, the standard section head. |
+| **Intro note** | 110 | **92 – 179** | 2 lines, the standard note. |
+| **Row label** | 14 – 33 | **≤ 43** for one line | A 319px column at 15px semibold. The longest now, "Aggregate and scoped client views", is 33. Past 43 the row grows one line; nothing breaks. |
+| **Value cell** | 1 – 2 digits | **≤ 12** | 189px per plan column. A count is set at 20px; the status words ("Not included", 12, is 115px with its glyph) fit with room. |
+| **Column head** | 4 – 10 | **≤ 18** | One line per plan name. |
+| **Caption** | 150 | **≤ 175** for one line | Full table width. |
+| **Security line** | 144 | **≤ 104 per line** · 2 lines up to ~208 | The standard closing line, 757px after its accent rule. |
+| **Row count** | 5 | **4 – 7** *(judgment)* | The brief's argument: parity said once, the differing rows shown. Past 7 the table becomes the feature list it was designed not to be. |
+
+Below 640px each row is a card and every limit above grows.

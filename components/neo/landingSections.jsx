@@ -476,6 +476,93 @@ export function PlanCard({ plan, cta, tag }) {
 }
 
 /**
+ * PlanFeatureMatrix — what changes between the plans, as a table. Added
+ * 2026-09-12 for `/pricing`, on the copywriter's brief of 2026-09-09.
+ *
+ * Deliberately short. The three plans carry the same product except the
+ * multi-client layer, so the table does not list every feature with a tick in
+ * each column (that invites the reader to hunt for the catch); parity is one
+ * row, "Every tracking feature", and the rows that differ are the ones shown.
+ *
+ * Cells are either a value (a count) or one of two fixed words, "Included" /
+ * "Not included", which render with a glyph beside them — never the glyph
+ * alone, so removing colour loses nothing (DESIGN_RULES.md §2 regla 3). Any
+ * other word in a status cell throws. The glyphs are petrol, never yellow: a
+ * parity row asks nothing of the reader (§2 regla 4). No row numbers (§6).
+ *
+ * Below 640px each row becomes a card: the row label, then one line per plan
+ * with the plan's name beside its value (`data-label`).
+ *
+ * `plans`: column names. `rows`: [{ label, cells: [value | "Included" |
+ * "Not included"] }]. `caption` renders under the table as its caption.
+ * `highlight`: the column index carrying the petrol top rule of the
+ * highlighted plan (the middle one), so the table and the list agree.
+ * Image policy: none — no slot, no decorative icon.
+ */
+const MATRIX_WORDS = { Included: "yes", "Not included": "no" };
+export function PlanFeatureMatrix({ head, plans, rows, caption, highlight, id, surface = "card", after }) {
+  rows.forEach((r) => {
+    if (r.cells.length !== plans.length) {
+      throw new Error(`PlanFeatureMatrix: row "${r.label}" has ${r.cells.length} cells for ${plans.length} plans.`);
+    }
+    r.cells.forEach((c) => {
+      if (typeof c === "boolean") {
+        throw new Error(
+          `PlanFeatureMatrix: row "${r.label}" passes a bare boolean. Write "Included" or "Not included" — a status is never a glyph alone (DESIGN_RULES.md §2 regla 3).`
+        );
+      }
+    });
+  });
+  return (
+    <Band id={id} surface={surface}>
+      <SectionHead {...head} />
+      <div className="sk-pfm">
+        <table className="sk-pfm__table">
+          <thead>
+            <tr>
+              <td className="sk-pfm__corner" />
+              {plans.map((p, i) => (
+                <th scope="col" key={p} className={i === highlight ? "is-hi" : undefined}>
+                  {p}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((r) => (
+              <tr key={r.label}>
+                <th scope="row">{r.label}</th>
+                {r.cells.map((c, i) => {
+                  const kind = MATRIX_WORDS[c];
+                  return (
+                    <td key={plans[i]} data-label={plans[i]} className={i === highlight ? "is-hi" : undefined}>
+                      {kind ? (
+                        <span className={`sk-pfm__mark sk-pfm__mark--${kind}`}>
+                          <span className="sk-pfm__g" aria-hidden="true">{kind === "yes" ? "✓" : "–"}</span>
+                          {c}
+                        </span>
+                      ) : (
+                        <span className="sk-pfm__v">{c}</span>
+                      )}
+                    </td>
+                  );
+                })}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        {caption ? <p className="sk-small sk-pfm__cap">{caption}</p> : null}
+      </div>
+      {after ? (
+        <p className="sk-body sk-body--lg sk-closing">
+          <Rich text={after} linkClassName="sk-link" />
+        </p>
+      ) : null}
+    </Band>
+  );
+}
+
+/**
  * PlanListSection — the price list as a vertical list, one plan per row.
  *
  * Added 2026-09-10. The rule for this site is that prices are a list read top

@@ -18,11 +18,12 @@ import { plainText } from "@/components/neo/rich";
  */
 
 /** The published plan prices. The visible price list and the schema both read
- *  from this, so the two cannot disagree (DESIGN_RULES.md §2 regla 7). */
+ *  from this, so the two cannot disagree (DESIGN_RULES.md §2 regla 7). The
+ *  provider and user limits feed the plan matrix on /pricing (2026-09-12). */
 export const PLAN_PRICES = [
-  { name: "Solo", price: "79", providers: 3 },
-  { name: "Practice", price: "299", providers: 15 },
-  { name: "Billing Co", price: "699", providers: 50 },
+  { name: "Solo", price: "79", providers: 3, users: 1 },
+  { name: "Practice", price: "299", providers: 15, users: 3 },
+  { name: "Billing Co", price: "699", providers: 50, users: 10 },
 ];
 
 export function JsonLd({ data }) {

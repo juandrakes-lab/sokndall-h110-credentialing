@@ -1026,3 +1026,34 @@ sobre el de una tarjeta de contenido. El botón de prueba del pie recupera el
 texto negro: la regla de links blancos del footer le ganaba en especificidad.
 Razón: bajo el borde petróleo, la sombra común de tarjeta casi no se veía.
 Regla de DESIGN_RULES.md que aplica: §3 (profundidad como jerarquía), §2 regla 4.
+
+## /pricing — `PlanFeatureMatrix` (componente nuevo) y la línea de seguridad
+Fecha: 2026-09-12
+Decisión: el encargo de copy del 2026-09-09 entra en /pricing como una sección
+nueva entre la lista de precios (dentro del encabezado) y la sección
+proveedor/usuario: la tabla muestra, esa sección explica. Va sobre bloque gris
+para que la tabla se lea como un objeto propio después de la lista blanca. La
+línea de seguridad va debajo, como línea de cierre con la regla de acento.
+- Filas 5 y 6 consolidadas en "Aggregate and scoped client views", como
+  recomendó el copywriter: el caption ("the only two rows…") queda cierto tal
+  como está escrito.
+- La fila "Document storage" no entra: sus cifras están [PEND] y no hay ningún
+  límite de almacenamiento en la configuración del producto; el encargo dice
+  que sin cifras la fila no sale.
+- Proveedores y usuarios no se escriben en el copy de la página: salen de
+  `PLAN_PRICES` (schema.jsx), que ganó el campo `users`, así la tabla, la lista
+  y el schema `Offer` leen el mismo dato.
+- Las celdas de estado imprimen glifo y texto ("✓ Included", "– Not
+  included"); el componente tira error ante un booleano suelto. Glifos en
+  petróleo, nunca amarillo; sin números de fila. La columna Practice lleva la
+  regla petróleo del plan destacado.
+- En la línea de seguridad no va sello, escudo ni badge: implicaría una
+  acreditación inexistente (§2 regla 6). Sigue pendiente de la misma revisión
+  legal que el ítem 3 de la sección 7 de la home.
+- Pastilla "Plan comparison": etiqueta estructural escrita por diseño,
+  pendiente de revisión del copy.
+- Sin cambios: precios, costo por proveedor, etiqueta del plan del medio, H1 de
+  premisa, keyword en el primer H2 (verificado en el HTML: la matriz es el
+  segundo H2), un solo H1.
+Política de imagen: ninguna. Sin hueco reservado, sin ícono decorativo.
+Regla de DESIGN_RULES.md que aplica: §1, §2 reglas 3, 4, 6 y 7, §6, §13.
