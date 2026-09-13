@@ -214,6 +214,90 @@ async function main() {
     check("Credential status is derived, not taken from the app", data?.status === "expired", data?.status);
   }
 
+  // --- Fase 2: payers, enrollments, history, communications ---------------
+  const { data: aetna } = await admin.from("cred_payers_global").select("id, revalidation_months").eq("name", "Aetna").single();
+  const payerFor = async (user, orgId) =>
+    (await user.client.from("cred_payers_org").insert({ org_id: orgId, payer_global_id: aetna.id }).select("id").single()).data;
+  const payerA = await payerFor(a, A.orgId);
+  const payerB = await payerFor(b, B.orgId);
+  check("Each organization can put a catalog payer on its list", !!payerA && !!payerB);
+
+  {
+    const { error } = await a.client.from("cred_payers_global").insert({ name: "Fake payer", payer_type: "other", revalidation_months: 12 });
+    check("Customers cannot edit the payer catalog", !!error, error?.message);
+  }
+  {
+    const { error } = await a.client.from("cred_payers_org").insert({ org_id: B.orgId, payer_global_id: aetna.id });
+    check("A cannot add payers to B's list", !!error, error?.message);
+  }
+
+  const { data: enrA, error: enrErr } = await a.client
+    .from("cred_enrollments")
+    .insert({ provider_id: A.providerId, payer_id: payerA.id, status: "submitted", next_follow_up_date: "2026-09-20" })
+    .select("id")
+    .single();
+  const { data: enrB } = await b.client
+    .from("cred_enrollments")
+    .insert({ provider_id: B.providerId, payer_id: payerB.id, status: "submitted" })
+    .select("id")
+    .single();
+  check("A enrolls its provider with its payer", !enrErr && !!enrA, enrErr?.message);
+
+  {
+    const { data: events } = await a.client.from("cred_enrollment_events").select("to_status, changed_by").eq("enrollment_id", enrA.id);
+    check("Opening an enrollment writes history automatically, with who did it", events?.length === 1 && events[0].changed_by === a.id);
+    await a.client.from("cred_enrollments").update({ status: "in_review" }).eq("id", enrA.id);
+    const { data: after } = await a.client.from("cred_enrollment_events").select("from_status, to_status").eq("enrollment_id", enrA.id);
+    check("A status change adds a from → to history row", after?.some((e) => e.from_status === "submitted" && e.to_status === "in_review"));
+  }
+  {
+    const { error } = await a.client
+      .from("cred_enrollment_events")
+      .insert({ org_id: A.orgId, client_org_id: A.clientId, enrollment_id: enrA.id, to_status: "approved" });
+    check("Nobody can write or forge history rows directly", !!error, error?.message);
+  }
+  {
+    const { error } = await a.client.from("cred_enrollments").insert({ provider_id: A.providerId, payer_id: payerB.id });
+    check("A cannot enroll against a payer from B's list", !!error, error?.message);
+  }
+  {
+    const { error } = await a.client.from("cred_enrollments").update({ assigned_user_id: b.id }).eq("id", enrA.id);
+    check("An enrollment can't be assigned to someone outside the account", !!error, error?.message);
+  }
+  {
+    const { error } = await a.client
+      .from("cred_communications")
+      .insert({ enrollment_id: enrB.id, channel: "phone", outcome: "snooping" });
+    check("A cannot log calls on B's enrollment", !!error, error?.message);
+    const { error: ownErr } = await a.client
+      .from("cred_communications")
+      .insert({ enrollment_id: enrA.id, channel: "phone", reference_number: "REF-1" });
+    check("A logs a call on its own enrollment", !ownErr, ownErr?.message);
+  }
+  for (const table of ["cred_payers_org", "cred_enrollments", "cred_enrollment_events", "cred_communications"]) {
+    const { data } = await a.client.from(table).select("org_id");
+    check(`A lists ${table} and sees nothing of B`, (data ?? []).length > 0 && data.every((r) => r.org_id === A.orgId));
+  }
+  {
+    const { data } = await a.client
+      .from("cred_enrollments")
+      .update({ effective_date: "2026-01-15", status: "approved" })
+      .eq("id", enrA.id)
+      .select("revalidation_due_date, next_follow_up_date")
+      .single();
+    check("Revalidation due = effective date + the payer's cycle (36 months)", data?.revalidation_due_date === "2029-01-15", data?.revalidation_due_date);
+    check("Approving clears the follow-up date", data?.next_follow_up_date === null);
+  }
+  {
+    const { error } = await a.client.from("cred_payers_org").delete().eq("id", payerA.id);
+    const { data: still } = await admin.from("cred_payers_org").select("id").eq("id", payerA.id);
+    check("A payer with enrollments can't be deleted (no silent cascade)", !!error && still?.length === 1, error?.message);
+  }
+  {
+    const { data } = await a.client.rpc("cred_org_directory");
+    check("The member directory lists only A's own people", data?.length === 1 && data[0].user_id === a.id);
+  }
+
   // --- Billing Co: a member limited to one client sees only that client -----
   {
     await admin.from("cred_organizations").update({ plan: "billing_co" }).eq("id", B.orgId);
@@ -256,6 +340,19 @@ async function main() {
 
     const { data: bSeen } = await b.client.from("cred_providers").select("id");
     check("The owner sees every client", (bSeen ?? []).some((r) => r.id === provider2.id) && bSeen.some((r) => r.id === B.providerId));
+
+    const { data: enr2 } = await b.client
+      .from("cred_enrollments")
+      .insert({ provider_id: provider2.id, payer_id: payerB.id, status: "submitted" })
+      .select("id")
+      .single();
+    const { data: mEnr } = await m.client.from("cred_enrollments").select("id");
+    const mIds = (mEnr ?? []).map((r) => r.id);
+    check("Restricted member sees their client's enrollment, not the other client's", mIds.includes(enrB.id) && !mIds.includes(enr2.id));
+    const { error: mComm } = await m.client.from("cred_communications").insert({ enrollment_id: enr2.id, channel: "email", outcome: "x" });
+    check("Restricted member cannot log calls on the other client's enrollment", !!mComm, mComm?.message);
+    const { data: mDir } = await m.client.rpc("cred_org_directory");
+    check("A member can see who is on the account (for assignment)", (mDir ?? []).length === 2);
   }
 }
 

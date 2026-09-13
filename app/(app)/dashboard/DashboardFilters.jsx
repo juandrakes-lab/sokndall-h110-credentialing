@@ -5,7 +5,7 @@ import { inputClass } from "@/components/app/ui";
 
 // Filters live in the URL, so a filtered dashboard can be bookmarked and the
 // page itself stays a server render.
-export default function DashboardFilters({ providers, types }) {
+export default function DashboardFilters({ selects }) {
   const router = useRouter();
   const pathname = usePathname();
   const params = useSearchParams();
@@ -14,43 +14,35 @@ export default function DashboardFilters({ providers, types }) {
     const next = new URLSearchParams(params.toString());
     if (value) next.set(key, value);
     else next.delete(key);
+    next.delete("open");
     const qs = next.toString();
     router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
   }
 
-  const active = params.get("provider") || params.get("type") || params.get("bucket");
+  const active = ["provider", "payer", "type", "status", "bucket"].some((k) => params.get(k));
 
   return (
-    <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-      <label className="sr-only" htmlFor="filter-provider">Provider</label>
-      <select
-        id="filter-provider"
-        value={params.get("provider") ?? ""}
-        onChange={(e) => update("provider", e.target.value)}
-        className={`${inputClass} sm:w-56`}
-      >
-        <option value="">All providers</option>
-        {providers.map((p) => (
-          <option key={p.id} value={p.id}>
-            {p.last_name}, {p.first_name}
-          </option>
-        ))}
-      </select>
-
-      <label className="sr-only" htmlFor="filter-type">Credential type</label>
-      <select
-        id="filter-type"
-        value={params.get("type") ?? ""}
-        onChange={(e) => update("type", e.target.value)}
-        className={`${inputClass} sm:w-56`}
-      >
-        <option value="">All credential types</option>
-        {types.map(([key, label]) => (
-          <option key={key} value={key}>
-            {label}
-          </option>
-        ))}
-      </select>
+    <div className="flex flex-col flex-wrap gap-3 sm:flex-row sm:items-center">
+      {selects.map((s) => (
+        <div key={s.key}>
+          <label className="sr-only" htmlFor={`filter-${s.key}`}>
+            {s.label}
+          </label>
+          <select
+            id={`filter-${s.key}`}
+            value={params.get(s.key) ?? ""}
+            onChange={(e) => update(s.key, e.target.value)}
+            className={`${inputClass} sm:w-52`}
+          >
+            <option value="">{s.all}</option>
+            {s.options.map(([value, label]) => (
+              <option key={value} value={value}>
+                {label}
+              </option>
+            ))}
+          </select>
+        </div>
+      ))}
 
       {active && (
         <button

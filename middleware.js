@@ -7,7 +7,7 @@ import { updateSession } from "@/lib/supabase/middleware";
 const APP_PREFIXES = [
   "/dashboard",
   "/providers",
-  "/payers",
+  "/follow-ups",
   "/enrollments",
   "/settings",
   "/onboarding",
@@ -53,7 +53,7 @@ export const config = {
     "/",
     "/dashboard/:path*",
     "/providers/:path*",
-    "/payers/:path*",
+    "/follow-ups/:path*",
     "/enrollments/:path*",
     "/settings/:path*",
     "/onboarding/:path*",

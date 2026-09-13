@@ -51,6 +51,7 @@ const TONES = {
   red: "bg-status-expired-bg text-status-expired ring-status-expired/20",
   neutral: "bg-status-neutral-bg text-status-neutral ring-ink-200",
   brand: "bg-brand-50 text-brand-600 ring-brand-100",
+  blue: "bg-sky-50 text-sky-800 ring-sky-200",
 };
 
 export function Badge({ tone = "neutral", children }) {
