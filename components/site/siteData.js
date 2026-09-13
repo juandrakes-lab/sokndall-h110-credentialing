@@ -1,7 +1,7 @@
 // Shared chrome for every marketing page: nav, footer, and the one href the
 // trial CTA points at. Changing TRIAL_HREF changes it everywhere.
 
-export const TRIAL_HREF = "/login";
+export const TRIAL_HREF = "/start";
 
 export const NAV_LINKS = [
   { label: "Payer Enrollment", href: "/payer-enrollment-software" },

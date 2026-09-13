@@ -1,16 +1,36 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { Suspense, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { buttonClass, inputClass } from "@/components/app/ui";
 
-export default function LoginPage() {
-  const router = useRouter();
-  const supabase = createClient();
+// Only same-site paths: never bounce a login to another origin.
+function safeNext(value) {
+  return value && value.startsWith("/") && !value.startsWith("//") ? value : null;
+}
 
-  const [mode, setMode] = useState("sign-in"); // "sign-in" | "sign-up"
-  const [email, setEmail] = useState("");
+export default function LoginPage() {
+  return (
+    <Suspense>
+      <Login />
+    </Suspense>
+  );
+}
+
+// Sign in or create a login. A new login has no account yet: it goes on to
+// choose a plan (/start), unless it came from an invitation (?next=/invite/…).
+function Login() {
+  const router = useRouter();
+  const params = useSearchParams();
+  const supabase = createClient();
+  const next = safeNext(params.get("next"));
+  const afterSignUp = next ?? "/start";
+  const afterSignIn = next ?? "/dashboard";
+  const callback = (path) => `${window.location.origin}/auth/callback?next=${encodeURIComponent(path)}`;
+
+  const [mode, setMode] = useState(params.get("mode") === "signup" ? "sign-up" : "sign-in"); // "sign-in" | "sign-up"
+  const [email, setEmail] = useState(params.get("email") ?? "");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
   const [notice, setNotice] = useState(null);
@@ -20,7 +40,7 @@ export default function LoginPage() {
     setError(null);
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
-      options: { redirectTo: `${window.location.origin}/auth/callback` },
+      options: { redirectTo: callback(mode === "sign-up" ? afterSignUp : afterSignIn) },
     });
     if (error) setError(error.message);
   }
@@ -37,7 +57,7 @@ export default function LoginPage() {
         : await supabase.auth.signUp({
             email,
             password,
-            options: { emailRedirectTo: `${window.location.origin}/auth/callback` },
+            options: { emailRedirectTo: callback(afterSignUp) },
           });
 
     setLoading(false);
@@ -54,7 +74,7 @@ export default function LoginPage() {
       return;
     }
 
-    router.push("/dashboard");
+    router.push(mode === "sign-up" ? afterSignUp : afterSignIn);
     router.refresh();
   }
 

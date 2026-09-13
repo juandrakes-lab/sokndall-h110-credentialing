@@ -103,7 +103,7 @@ export const PRICE = {
 
 export const CTA = {
   body: "No demo required to see the price, because the price is already on the page. Fourteen days, and you cancel it yourself.",
-  primary: { label: "Start the fourteen-day trial", href: "/login" },
+  primary: { label: "Start the fourteen-day trial", href: "/start" },
   secondary: { label: "See all three plans", href: "/pricing" },
 };
 

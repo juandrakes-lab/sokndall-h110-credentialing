@@ -4,7 +4,7 @@ import { businessDate, formatDate } from "@/lib/credentials";
 
 // Documents with a download link (a short-lived signed URL, issued on click)
 // and a two-step delete. `showProvider` for the cross-provider Documents page.
-export default function DocumentList({ documents, showProvider = false, emptyText = "No documents yet." }) {
+export default function DocumentList({ documents, showProvider = false, emptyText = "No documents yet.", readOnly = false }) {
   if (documents.length === 0) return <p className="px-5 py-5 text-sm text-ink-500">{emptyText}</p>;
 
   return (
@@ -28,6 +28,7 @@ export default function DocumentList({ documents, showProvider = false, emptyTex
               {` · ${formatBytes(doc.size_bytes)} · ${formatDate(businessDate(doc.created_at))}`}
             </p>
           </div>
+          {!readOnly && (
           <details className="shrink-0 text-xs text-ink-500">
             <summary className="cursor-pointer list-none hover:text-ink-900 [&::-webkit-details-marker]:hidden">Delete</summary>
             <form action={deleteDocument.bind(null, doc.id)} className="mt-1">
@@ -36,6 +37,7 @@ export default function DocumentList({ documents, showProvider = false, emptyTex
               </button>
             </form>
           </details>
+          )}
         </li>
       ))}
     </ul>

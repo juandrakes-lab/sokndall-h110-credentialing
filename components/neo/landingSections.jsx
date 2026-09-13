@@ -434,7 +434,8 @@ export function PlanList({ plans, cta }) {
             </ul>
           </div>
           <div className="sk-planrow__cta">
-            <Link href={cta.href} className="sk-btn sk-btn--primary">
+            {/* A plan's own href (/start?plan=…) preselects it at signup. */}
+            <Link href={p.href ?? cta.href} className="sk-btn sk-btn--primary">
               {cta.label}
             </Link>
           </div>

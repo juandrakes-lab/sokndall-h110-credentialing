@@ -160,7 +160,7 @@ export const FAQ = [
 export const CLOSING = {
   title: "Start the fourteen-day trial",
   body: "Card up front, cancel yourself from Settings before day 15. Nothing on this page changes after you sign up.",
-  primary: { label: "Start 14-day trial", href: "/login" },
+  primary: { label: "Start 14-day trial", href: "/start" },
 };
 
 // PlanFeatureMatrix and the security line — copywriting brief of 2026-09-09,

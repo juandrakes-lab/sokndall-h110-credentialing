@@ -1,10 +1,13 @@
 import Link from "next/link";
 import { PLANS, nextPlan } from "@/lib/plans";
+import { getAppContext } from "@/lib/org";
 import { buttonClass } from "@/components/app/ui";
 
 // Inline upsell shown where the provider limit stops a new provider
 // (alcance §4.3). Reading, editing and exporting what's loaded never stop.
-export default function LimitNotice({ org }) {
+// The owner goes straight to the plan change; a member is told who can.
+export default async function LimitNotice({ org }) {
+  const { role } = await getAppContext();
   const plan = PLANS[org.plan];
   const next = nextPlan(org.plan);
 
@@ -17,12 +20,13 @@ export default function LimitNotice({ org }) {
         {next && (
           <p className="mt-0.5 text-ink-700">
             {next.label} holds up to {next.providerLimit} providers for ${next.price}/month (${next.perProvider} per provider).
+            {role !== "owner" && " The account owner can upgrade."}
           </p>
         )}
       </div>
-      {next && (
-        <Link href="/pricing" className={`${buttonClass("primary", "sm")} shrink-0`}>
-          Compare plans
+      {next && role === "owner" && (
+        <Link href="/settings#billing" className={`${buttonClass("primary", "sm")} shrink-0`}>
+          Upgrade to {next.label}
         </Link>
       )}
     </div>

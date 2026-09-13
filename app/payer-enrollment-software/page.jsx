@@ -48,7 +48,7 @@ export default function PayerEnrollmentSoftwarePage() {
           eyebrow: HERO.eyebrow,
           title: HERO.title,
           sub: HERO.sub,
-          primary: { label: "Start 14-day trial", href: "/login" },
+          primary: { label: "Start 14-day trial", href: "/start" },
           secondary: { label: "See all three plans", href: "/pricing" },
           children: (
             <HeroStrip

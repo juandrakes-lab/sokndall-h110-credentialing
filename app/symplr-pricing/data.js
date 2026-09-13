@@ -93,7 +93,7 @@ export const PRICE = {
 // Button labels are not given for this page; they are page 12's approved pair.
 export const CTA = {
   body: "A different product for a different size of organisation, with the price on the page instead of behind a form.",
-  primary: { label: "Start the fourteen-day trial", href: "/login" },
+  primary: { label: "Start the fourteen-day trial", href: "/start" },
   secondary: { label: "See all three plans", href: "/pricing" },
 };
 

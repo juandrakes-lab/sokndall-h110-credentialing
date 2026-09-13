@@ -184,7 +184,7 @@ export const PRICE = {
 
 export const CTA = {
   body: "Fourteen-day trial, card up front, cancel yourself before day 15. Nothing on the pricing page changes after you sign up.",
-  primary: { label: "Start the fourteen-day trial", href: "/login" },
+  primary: { label: "Start the fourteen-day trial", href: "/start" },
   secondary: { label: "See the full price list", href: "/pricing" },
 };
 

@@ -120,7 +120,7 @@ export const FAQ = [
 export const CLOSING = {
   title: "Start the fourteen-day trial",
   body: "Card up front, cancel yourself from Settings before day 15. Full plan details on [the pricing page](/pricing).",
-  primary: { label: "Start 14-day trial", href: "/login" },
+  primary: { label: "Start 14-day trial", href: "/start" },
 };
 
 // The hero's schematic: the structure the copy describes — one login, separate

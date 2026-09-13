@@ -22,7 +22,7 @@ const endpoint = await polar.webhooks.createWebhookEndpoint({
   url: `${siteUrl}/api/webhooks/polar`,
   name: "Sokndall production",
   format: "raw",
-  events: ["subscription.created", "subscription.updated", "subscription.revoked"],
+  events: ["subscription.created", "subscription.active", "subscription.updated", "subscription.canceled", "subscription.uncanceled", "subscription.revoked"],
 });
 
 console.log("id:", endpoint.id);

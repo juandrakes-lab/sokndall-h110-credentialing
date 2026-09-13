@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getAppContext } from "@/lib/org";
 import AppNav from "@/components/app/AppNav";
+import { accountAccess } from "@/lib/billing";
 import { signOut } from "./actions";
 
 // The entire authenticated app is per-user and behind a redirect — never index it.
@@ -11,12 +12,19 @@ export const metadata = {
 };
 
 export default async function AppLayout({ children }) {
-  const { user, org, practice } = await getAppContext();
+  const { user, org, role, practice } = await getAppContext();
 
   if (!user) redirect("/login");
-  // No organization, or an organization whose practice isn't set up yet:
-  // finish onboarding before anything else.
-  if (!org || !practice) redirect("/onboarding");
+  // A login without an account chooses a plan first; an account without its
+  // practice finishes onboarding.
+  if (!org) redirect("/start");
+  if (!practice) redirect("/onboarding");
+
+  const access = accountAccess(org);
+  const banner =
+    access.state === "trial" || access.state === "active"
+      ? null
+      : { tone: access.writable ? "amber" : "red", text: access.message };
 
   return (
     <div className="min-h-screen bg-ink-50 lg:flex">
@@ -35,6 +43,7 @@ export default async function AppLayout({ children }) {
         </div>
 
         <div className="hidden border-t border-ink-100 px-6 py-4 lg:block">
+          {access.state === "trial" && <p className="mb-2 text-xs text-ink-500">{access.message}</p>}
           <p className="truncate text-xs text-ink-500" title={user.email}>
             {user.email}
           </p>
@@ -47,6 +56,25 @@ export default async function AppLayout({ children }) {
       </aside>
 
       <main className="min-w-0 flex-1 lg:pl-60">
+        {banner && (
+          <div
+            role="status"
+            className={`border-b px-5 py-3 text-sm sm:px-8 ${
+              banner.tone === "red"
+                ? "border-status-expired/30 bg-status-expired-bg text-status-expired"
+                : "border-status-expiring/30 bg-status-expiring-bg text-status-expiring"
+            }`}
+          >
+            <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-2">
+              <span>{banner.text}</span>
+              {role === "owner" && (
+                <Link href="/settings#billing" className="font-medium underline">
+                  {access.writable ? "Billing" : "Choose a plan"}
+                </Link>
+              )}
+            </div>
+          </div>
+        )}
         <div className="mx-auto max-w-6xl px-5 py-8 sm:px-8 lg:py-10">{children}</div>
         <div className="border-t border-ink-200 px-5 py-4 text-center lg:hidden">
           <form action={signOut}>

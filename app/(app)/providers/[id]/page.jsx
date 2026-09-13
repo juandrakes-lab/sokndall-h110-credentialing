@@ -9,6 +9,8 @@ import DocumentList from "@/components/app/DocumentList";
 import DocumentUploader from "@/components/app/DocumentUploader";
 import { checklistFor } from "@/lib/checklist";
 import { PAYER_SELECT, resolvePayer } from "@/lib/enrollments";
+import { accountAccess } from "@/lib/billing";
+import ReadOnlyNotice from "@/components/app/ReadOnlyNotice";
 import {
   createCredential,
   deleteCredential,
@@ -25,9 +27,9 @@ const TYPE_ORDER = ["state_license", "dea", "malpractice", "board_cert", "caqh_a
 
 export default async function ProviderPage({ params }) {
   const { id } = await params;
-  const { supabase, org, practice } = await getAppContext();
+  const { supabase, org, role, practice } = await getAppContext();
 
-  const [{ data: provider }, { data: credentials }, { data: siblings }, { data: docRows }, { data: members }] = await Promise.all([
+  const [{ data: provider }, { data: credentials }, { data: siblings }, { data: docRows }, { data: members }, { data: writable }] = await Promise.all([
     supabase.from("cred_providers").select("*").eq("id", id).maybeSingle(),
     supabase.from("cred_credentials").select("*").eq("provider_id", id).order("expiration_date", { ascending: true, nullsFirst: false }),
     supabase.from("cred_providers").select("id, first_name, last_name, npi"),
@@ -37,9 +39,13 @@ export default async function ProviderPage({ params }) {
       .eq("provider_id", id)
       .order("created_at", { ascending: false }),
     supabase.rpc("cred_org_directory"),
+    // Same rule the database enforces on every write (plan limit, subscription).
+    supabase.rpc("cred_provider_writable", { p_provider_id: id }),
   ]);
 
   if (!provider) notFound();
+  const readOnly = writable === false;
+  const accountEnded = !accountAccess(org).writable;
 
   const issues = providerIssues(provider, practice, siblings ?? []);
   const documents = (docRows ?? []).map((d) => ({
@@ -61,8 +67,24 @@ export default async function ProviderPage({ params }) {
         }
         title={`${provider.first_name} ${provider.last_name}`}
         description={[provider.specialty, provider.npi && `NPI ${provider.npi}`].filter(Boolean).join(" · ") || null}
-        actions={provider.status === "inactive" && <Badge tone="neutral">Inactive</Badge>}
+        actions={
+          <>
+            {provider.status === "inactive" && <Badge tone="neutral">Inactive</Badge>}
+            {readOnly && <Badge tone="amber">Read-only</Badge>}
+          </>
+        }
       />
+
+      {readOnly && (
+        <ReadOnlyNotice
+          owner={role === "owner"}
+          text={
+            accountEnded
+              ? "Your subscription has ended, so this provider is read-only. You can still view and export everything."
+              : `Your plan covers ${org.provider_limit} providers and this one was added after the first ${org.provider_limit}, so it's read-only. Delete providers you no longer need, or upgrade — nothing is deleted for you.`
+          }
+        />
+      )}
 
       <div className="grid gap-8 lg:grid-cols-3">
         <div className="flex flex-col gap-8 lg:col-span-2">
@@ -86,34 +108,40 @@ export default async function ProviderPage({ params }) {
                     deleteAction={deleteCredential.bind(null, c.id, id)}
                     caqhIntervalDays={org.caqh_reattestation_interval_days}
                     members={members ?? []}
+                    readOnly={readOnly}
                   />
                 ))}
               </ul>
             )}
-            <div className="border-t border-ink-100 bg-ink-50/60 px-5 py-5">
-              <h3 className="mb-4 text-sm font-semibold text-ink-900">Add a credential</h3>
-              <CredentialForm
-                action={createCredential.bind(null, id)}
-                caqhIntervalDays={org.caqh_reattestation_interval_days}
-                members={members ?? []}
-                submitLabel="Add credential"
-              />
-            </div>
+            {!readOnly && (
+              <div className="border-t border-ink-100 bg-ink-50/60 px-5 py-5">
+                <h3 className="mb-4 text-sm font-semibold text-ink-900">Add a credential</h3>
+                <CredentialForm
+                  action={createCredential.bind(null, id)}
+                  caqhIntervalDays={org.caqh_reattestation_interval_days}
+                  members={members ?? []}
+                  submitLabel="Add credential"
+                />
+              </div>
+            )}
           </Card>
 
           <Card>
             <CardHeader title="Documents" description="License copies, certificates, W-9, CV — attached to this provider." />
-            <DocumentList documents={documents} emptyText="No documents yet. Upload the license, W-9, malpractice certificate and CV below." />
-            <div className="border-t border-ink-100 bg-ink-50/60 px-5 py-5">
-              <h3 className="mb-4 text-sm font-semibold text-ink-900">Upload a document</h3>
-              <DocumentUploader providerId={id} defaultCategory={checklist.find((i) => !i.done && ["license", "w9", "malpractice", "cv"].includes(i.key))?.key ?? "license"} />
-            </div>
+            <DocumentList documents={documents} readOnly={readOnly} emptyText="No documents yet. Upload the license, W-9, malpractice certificate and CV below." />
+            {!readOnly && (
+              <div className="border-t border-ink-100 bg-ink-50/60 px-5 py-5">
+                <h3 className="mb-4 text-sm font-semibold text-ink-900">Upload a document</h3>
+                <DocumentUploader providerId={id} defaultCategory={checklist.find((i) => !i.done && ["license", "w9", "malpractice", "cv"].includes(i.key))?.key ?? "license"} />
+              </div>
+            )}
           </Card>
 
           <Card>
             <CardHeader title="Profile" />
             <div className="px-5 py-5">
               <ProviderForm
+                readOnly={readOnly}
                 action={updateProvider.bind(null, id)}
                 initial={Object.fromEntries(Object.entries(provider).map(([k, v]) => [k, v ?? ""]))}
                 practiceAddress={practiceServiceAddress(practice)}
@@ -130,10 +158,11 @@ export default async function ProviderPage({ params }) {
           <DataCheck
             issues={issues}
             checkedAt={provider.nppes_checked_at}
-            recheckAction={provider.npi ? recheckProviderNppes.bind(null, id) : null}
+            recheckAction={provider.npi && !readOnly ? recheckProviderNppes.bind(null, id) : null}
             subject="this provider"
           />
 
+          {!accountEnded && (
           <Card className="px-5 py-4">
             <details>
               <summary className="cursor-pointer text-sm font-medium text-ink-700">Delete this provider</summary>
@@ -148,6 +177,7 @@ export default async function ProviderPage({ params }) {
               </form>
             </details>
           </Card>
+          )}
         </div>
       </div>
     </div>

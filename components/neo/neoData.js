@@ -2,7 +2,7 @@
 // CTA everywhere. Nav/footer sets are deliberately the same as the forest
 // skin's siteData.js so the two never disagree about what routes exist.
 
-export const TRIAL_HREF = "/login";
+export const TRIAL_HREF = "/start";
 
 export const NAV_LINKS = [
   { label: "Payer enrollment", href: "/payer-enrollment-software" },

@@ -22,10 +22,11 @@ import { META, HERO, PLANS, MATRIX, UNITS, UNITS_DIAGRAM, ANCHOR, TRIAL, FAQ, CL
 // cards, FAQ, close. Recomposed 2026-09-11 (DESIGN_DECISIONS.md).
 export const metadata = pageMeta({ title: META.title, description: META.description, path: "/pricing" });
 
-const TRIAL_CTA = { label: "Start 14-day trial", href: "/login" };
+const TRIAL_CTA = { label: "Start 14-day trial", href: "/start" };
+const PLAN_KEYS = ["solo", "practice", "billing_co"];
 
 export default function PricingPage() {
-  const plans = PLANS.plans.map((p, i) => ({ ...p, price: `$${PLAN_PRICES[i].price}`, period: PLAN_PERIOD }));
+  const plans = PLANS.plans.map((p, i) => ({ ...p, price: `$${PLAN_PRICES[i].price}`, period: PLAN_PERIOD, href: `/start?plan=${PLAN_KEYS[i]}` }));
 
   return (
     <Shell>

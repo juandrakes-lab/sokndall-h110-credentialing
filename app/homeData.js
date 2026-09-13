@@ -16,7 +16,7 @@ export const HERO = {
   title: ["Credentialing that", "tells you what went quiet"],
   sub:
     "Sokndall tracks the credentials that expire and the payer applications that go quiet, for practices and billing companies with 1 to 50 providers. $79 to $699 a month, published.",
-  primary: { label: "Start 14-day trial", href: "/login" },
+  primary: { label: "Start 14-day trial", href: "/start" },
   secondary: { label: "See all three plans", href: "/pricing" },
   strip: ["No demo call", "No quote request", "Price list published", "Cancel before day 15"],
   caption:
@@ -206,7 +206,7 @@ export const FAQ = [
 export const CLOSING = {
   title: "Fourteen days. No call, no quote.",
   body: "Card up front, cancel yourself before day 15. The price you see here is the price on the invoice.",
-  primary: { label: "Start 14-day trial", href: "/login" },
+  primary: { label: "Start 14-day trial", href: "/start" },
   secondary: { label: "See all three plans", href: "/pricing" },
 };
 

@@ -71,16 +71,31 @@ async function newUser(tag) {
   const client = createClient(URL_, ANON, opts);
   const { error: signInError } = await client.auth.signInWithPassword({ email, password });
   if (signInError) throw new Error(`signIn ${tag}: ${signInError.message}`);
-  return { id: data.user.id, client };
+  return { id: data.user.id, email, client };
 }
 
-// Bootstraps an org (temporary Fase 1 path) plus its practice, a provider and
-// a credential, all as that user through RLS.
-async function seedTenant(user, name) {
-  const { data: orgId, error } = await user.client.rpc("cred_bootstrap_organization", {
-    p_name: name,
+// What the Polar webhook does on subscription.created (service role only).
+async function subscribe(userId, { plan = "solo", status = "trialing", subscriptionId, name = "Test", modifiedAt = new Date().toISOString(), periodEnd = null } = {}) {
+  const { data, error } = await admin.rpc("cred_sync_subscription", {
+    p_user_id: userId,
+    p_account_name: name,
+    p_customer_id: `cus_${userId.slice(0, 8)}`,
+    p_subscription_id: subscriptionId ?? `sub_${userId}`,
+    p_plan: plan,
+    p_status: status,
+    p_trial_ends_at: null,
+    p_current_period_end: periodEnd,
+    p_cancel_at_period_end: false,
+    p_modified_at: modifiedAt,
   });
-  if (error) throw new Error(`bootstrap ${name}: ${error.message}`);
+  if (error) throw new Error(`subscribe: ${error.message}`);
+  return data;
+}
+
+// An org as the webhook creates it, plus its practice, a provider and a
+// credential, all written as that user through RLS.
+async function seedTenant(user, name) {
+  const orgId = await subscribe(user.id, { name });
 
   const { data: client } = await user.client
     .from("cred_client_orgs")
@@ -456,6 +471,115 @@ async function main() {
     check("Restricted member cannot log calls on the other client's enrollment", !!mComm, mComm?.message);
     const { data: mDir } = await m.client.rpc("cred_org_directory");
     check("A member can see who is on the account (for assignment)", (mDir ?? []).length === 2);
+  }
+
+  // --- Fase 5: subscriptions, read-only states, seats ------------------------
+  {
+    const c = await newUser("c");
+    const { error: forgeErr } = await c.client.rpc("cred_sync_subscription", {
+      p_user_id: c.id, p_account_name: "Free ride", p_customer_id: null, p_subscription_id: "sub_forged",
+      p_plan: "billing_co", p_status: "active", p_trial_ends_at: null, p_current_period_end: null,
+      p_cancel_at_period_end: false, p_modified_at: null,
+    });
+    check("Nobody can create an account without a subscription", !!forgeErr, forgeErr?.message);
+
+    const t0 = Date.now();
+    const at = (s) => new Date(t0 + s * 1000).toISOString();
+    const C = await subscribe(c.id, { plan: "practice", name: "Org C", subscriptionId: `sub_c_${run}`, modifiedAt: at(0) });
+    const { data: cOrg } = await admin.from("cred_organizations").select("plan, provider_limit, user_limit").eq("id", C).single();
+    check("A new subscription creates the account with its plan's limits", cOrg.plan === "practice" && cOrg.provider_limit === 15 && cOrg.user_limit === 3);
+
+    const { data: cClient } = await c.client.from("cred_client_orgs").select("id").eq("org_id", C).single();
+    const { data: cPractice } = await c.client.from("cred_practices").insert({ client_org_id: cClient.id, legal_name: "Org C PLLC" }).select("id").single();
+    const provIds = [];
+    for (const n of [1, 2, 3, 4]) {
+      const { data } = await c.client.from("cred_providers").insert({ practice_id: cPractice.id, first_name: "P", last_name: `C${n}` }).select("id").single();
+      provIds.push(data.id);
+      await new Promise((r) => setTimeout(r, 20)); // distinct created_at
+    }
+
+    // Seats: Practice = 3 users (owner + 2 invitations).
+    const { createHash, randomBytes } = await import("node:crypto");
+    const token = () => randomBytes(18).toString("base64url");
+    const hash = (t) => createHash("sha256").update(t).digest("hex");
+    const x = await newUser("x");
+    const tokX = token();
+    const { error: inv1 } = await c.client.from("cred_invitations").insert({ org_id: C, email: x.email, token_hash: hash(tokX) });
+    const { error: inv2 } = await c.client.from("cred_invitations").insert({ org_id: C, email: `other-${run}@example.com`, token_hash: hash(token()) });
+    const { error: inv3 } = await c.client.from("cred_invitations").insert({ org_id: C, email: `third-${run}@example.com`, token_hash: hash(token()) });
+    check("Practice: owner can invite up to the 3-user limit", !inv1 && !inv2, inv1?.message ?? inv2?.message);
+    check("Practice: the 4th user is refused", !!inv3 && inv3.message.includes("USER_LIMIT_REACHED"), inv3?.message);
+
+    const { data: preview } = await createClient(URL_, ANON, opts).rpc("cred_invitation_preview", { p_token: tokX });
+    check("An invitation link shows its account name before signing in", preview?.[0]?.org_name === "Org C PLLC" && preview?.[0]?.status === "pending");
+
+    const y = await newUser("y");
+    const { error: wrongEmail } = await y.client.rpc("cred_accept_invitation", { p_token: tokX });
+    check("An invitation can't be accepted by a different login", !!wrongEmail && wrongEmail.message.includes("INVITATION_OTHER_EMAIL"), wrongEmail?.message);
+    const { error: acceptErr } = await x.client.rpc("cred_accept_invitation", { p_token: tokX });
+    check("The invited person joins as a member", !acceptErr, acceptErr?.message);
+    const { error: again } = await x.client.rpc("cred_accept_invitation", { p_token: tokX });
+    check("An invitation works once", !!again, again?.message);
+
+    const { data: xSees } = await x.client.from("cred_providers").select("id");
+    check("The new member sees the account's providers", (xSees ?? []).length === 4);
+    const { error: memberInvite } = await x.client.from("cred_invitations").insert({ org_id: C, email: `nope-${run}@example.com`, token_hash: hash(token()) });
+    check("Members cannot invite people", !!memberInvite, memberInvite?.message);
+    const { error: memberRemove } = await x.client.rpc("cred_remove_member", { p_user_id: c.id });
+    check("Members cannot remove people", !!memberRemove, memberRemove?.message);
+    const { data: memberSeesLog } = await x.client.from("cred_invitations").select("id");
+    check("Members cannot see invitations", (memberSeesLog ?? []).length === 0);
+
+    // Downgrade to Solo: 3 providers; the most recent (4th) turns read-only.
+    await subscribe(c.id, { plan: "solo", subscriptionId: `sub_c_${run}`, modifiedAt: at(10) });
+    const { data: first, error: firstErr } = await c.client.from("cred_providers").update({ notes: "still editable" }).eq("id", provIds[0]).select("id");
+    check("After a downgrade, providers within the limit stay editable", !firstErr && first?.length === 1, firstErr?.message);
+    const { error: fourthErr } = await c.client.from("cred_providers").update({ notes: "should fail" }).eq("id", provIds[3]);
+    check("After a downgrade, the newest provider over the limit is read-only", !!fourthErr, fourthErr?.message);
+    const { error: credErr } = await c.client.from("cred_credentials").insert({ provider_id: provIds[3], type: "dea", number: "X1", expiration_date: "2027-01-01" });
+    check("…including adding credentials to it", !!credErr, credErr?.message);
+    const { data: seeAll } = await c.client.from("cred_providers").select("id");
+    check("…but it's still visible", (seeAll ?? []).length === 4);
+
+    // A late, older webhook must not undo the downgrade.
+    await subscribe(c.id, { plan: "practice", subscriptionId: `sub_c_${run}`, modifiedAt: at(5) });
+    const { data: stillSolo } = await admin.from("cred_organizations").select("plan").eq("id", C).single();
+    check("An out-of-order older webhook is ignored", stillSolo.plan === "solo", stillSolo.plan);
+
+    const { error: delFourth } = await c.client.from("cred_providers").delete().eq("id", provIds[3]);
+    const { count: leftCount } = await admin.from("cred_providers").select("id", { count: "exact", head: true }).eq("org_id", C);
+    check("A read-only provider can still be deleted to get under the limit", !delFourth && leftCount === 3, delFourth?.message);
+
+    // Canceled: writable until the paid period ends, read-only after.
+    await subscribe(c.id, { plan: "solo", status: "canceled", subscriptionId: `sub_c_${run}`, modifiedAt: at(20), periodEnd: new Date(Date.now() + 5 * 86400000).toISOString() });
+    const { error: cancelWrite } = await c.client.from("cred_providers").update({ notes: "canceled but paid" }).eq("id", provIds[0]);
+    check("Canceled: still writable until the end of the paid period", !cancelWrite, cancelWrite?.message);
+    const cFile = `${C}/${cClient.id}/${provIds[0]}/${run}-cv.pdf`;
+    const { error: cUpErr } = await c.client.storage.from("cred-documents").upload(cFile, Buffer.from("%PDF-1.4\n%%EOF\n"), { contentType: "application/pdf" });
+    check("(fixture) the owner stores a file before the account ends", !cUpErr, cUpErr?.message);
+
+    await subscribe(c.id, { plan: "solo", status: "revoked", subscriptionId: `sub_c_${run}`, modifiedAt: at(30) });
+    const { error: revokedWrite } = await c.client.from("cred_providers").update({ notes: "after revoke" }).eq("id", provIds[0]);
+    const { error: revokedPayer } = await c.client.from("cred_payers_org").insert({ org_id: C, name: "Late payer", payer_type: "other", revalidation_months: 12 });
+    const { error: revokedDelete } = await c.client.from("cred_providers").delete().eq("id", provIds[0]);
+    const { data: revokedRead } = await c.client.from("cred_providers").select("id, cred_credentials(id)");
+    check("Revoked: nothing can be edited", !!revokedWrite && !!revokedPayer, revokedWrite?.message);
+    check("Revoked: nothing can be deleted either", (await admin.from("cred_providers").select("id").eq("id", provIds[0])).data?.length === 1, revokedDelete?.message);
+    check("Revoked: everything can still be read (and exported)", (revokedRead ?? []).length === 3);
+
+    // Deleting a read-only account must take its files with it.
+    const fileExists = async () =>
+      ((await admin.storage.from("cred-documents").list(`${C}/${cClient.id}/${provIds[0]}`)).data ?? []).some((f) => cFile.endsWith(f.name));
+    await x.client.storage.from("cred-documents").remove([cFile]);
+    check("Revoked: a member cannot delete the account's files", await fileExists());
+    const { error: ownerFileErr } = await c.client.storage.from("cred-documents").remove([cFile]);
+    check("Revoked: the owner can still remove the files (account deletion)", !ownerFileErr && !(await fileExists()), ownerFileErr?.message);
+
+    const { error: memberDelete } = await x.client.rpc("cred_delete_organization");
+    check("Members cannot delete the account", !!memberDelete, memberDelete?.message);
+    const { error: ownerDelete } = await c.client.rpc("cred_delete_organization");
+    const { data: gone } = await admin.from("cred_organizations").select("id").eq("id", C);
+    check("The owner can delete the account, and everything goes with it", !ownerDelete && gone?.length === 0, ownerDelete?.message);
   }
 }
 

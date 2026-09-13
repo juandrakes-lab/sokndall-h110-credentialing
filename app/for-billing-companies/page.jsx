@@ -58,7 +58,7 @@ export default function ForBillingCompaniesPage() {
           eyebrow: HERO.eyebrow,
           title: HERO.title,
           sub: HERO.sub,
-          primary: { label: "Start 14-day trial", href: "/login" },
+          primary: { label: "Start 14-day trial", href: "/start?plan=billing_co" },
           secondary: { label: "See all three plans", href: "/pricing" },
           children: (
             <HeroStrip
@@ -119,7 +119,7 @@ export default function ForBillingCompaniesPage() {
           id="architecture"
           head={ARCHITECTURE.head}
           paras={ARCHITECTURE.paras}
-          media={<PlanCard plan={BILLING_PLAN} cta={{ label: "Start 14-day trial", href: "/login" }} tag={BILLING_TAG} />}
+          media={<PlanCard plan={BILLING_PLAN} cta={{ label: "Start 14-day trial", href: "/start?plan=billing_co" }} tag={BILLING_TAG} />}
         />
 
         <PanelSection id="faq" head={FAQ_HEAD} split>

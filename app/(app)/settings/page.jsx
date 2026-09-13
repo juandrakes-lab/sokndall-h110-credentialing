@@ -9,17 +9,26 @@ import PracticeForm from "@/components/app/PracticeForm";
 import { updateAlertDays, updateOrganization } from "./actions";
 import OrganizationForm from "./OrganizationForm";
 import AlertDaysForm from "./AlertDaysForm";
+import BillingCard from "./BillingCard";
+import TeamCard from "./TeamCard";
+import { DeleteAccountForm } from "./TeamForms";
+import { deleteAccount } from "@/lib/billing-actions";
+import { accountAccess } from "@/lib/billing";
 
 function sentAt(iso) {
   return new Date(iso).toLocaleString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit", timeZone: "America/New_York" });
 }
 
-export default async function SettingsPage() {
+export default async function SettingsPage({ searchParams }) {
+  const sp = await searchParams;
   const { supabase, org, role, practice } = await getAppContext();
-  const [used, { data: log }] = await Promise.all([
+  const owner = role === "owner";
+  const [used, { data: log }, { data: members }, { data: invitations }] = await Promise.all([
     providerCount(supabase, org.id),
-    // RLS: only the owner can read the log.
+    // RLS: only the owner can read the log and the invitations.
     supabase.from("cred_notification_log").select("*").eq("org_id", org.id).order("created_at", { ascending: false }).limit(40),
+    supabase.rpc("cred_org_directory"),
+    supabase.from("cred_invitations").select("*").eq("org_id", org.id).order("created_at", { ascending: false }),
   ]);
   // One email covers several items (several log rows); show each email once.
   const emails = [];
@@ -62,7 +71,7 @@ export default async function SettingsPage() {
               {[
                 ["Plan", `${plan.label} · $${plan.price}/month`],
                 ["Providers", `${used} of ${org.provider_limit} in use`],
-                ["Users", `${org.user_limit}`],
+                ["Users", `${(members ?? []).length} of ${org.user_limit}`],
                 ["Document storage", plan.storageLabel],
               ].map(([label, value]) => (
                 <div key={label} className="flex justify-between gap-4 px-5 py-3">
@@ -123,12 +132,32 @@ export default async function SettingsPage() {
         </div>
       </Card>
 
+      {owner && <BillingCard org={org} providersUsed={used} changeRequested={sp.plan_change === "requested"} resubscribed={sp.resubscribed === "1"} />}
+
+      {owner && (
+        <TeamCard
+          org={org}
+          members={members ?? []}
+          invitations={invitations ?? []}
+          writable={accountAccess(org).writable}
+        />
+      )}
+
       <Card>
         <CardHeader title="Account" />
         <div className="px-5 py-6">
-          <OrganizationForm action={updateOrganization} org={org} canEdit={role === "owner"} />
+          <OrganizationForm action={updateOrganization} org={org} canEdit={owner} />
         </div>
       </Card>
+
+      {owner && (
+        <Card className="border-status-expired/30">
+          <CardHeader title="Delete account" />
+          <div className="px-5 py-5">
+            <DeleteAccountForm action={deleteAccount} orgName={org.name} />
+          </div>
+        </Card>
+      )}
     </div>
   );
 }

@@ -14,6 +14,9 @@ const APP_PREFIXES = [
   "/import-export",
   "/export",
   "/onboarding",
+  "/start",
+  "/welcome",
+  "/invite",
 ];
 
 function isAppPath(pathname) {
@@ -63,6 +66,9 @@ export const config = {
     "/import-export/:path*",
     "/export/:path*",
     "/onboarding/:path*",
+    "/start/:path*",
+    "/welcome/:path*",
+    "/invite/:path*",
     "/auth/:path*",
   ],
 };

@@ -37,7 +37,7 @@ function when(iso) {
 export default async function EnrollmentPanel({ providerId, payerId, closeHref }) {
   const { supabase, user } = await getAppContext();
 
-  const [{ data: provider }, { data: payerRow }, { data: enrollment }, { data: members }, { data: credentials }, { data: documents }] =
+  const [{ data: provider }, { data: payerRow }, { data: enrollment }, { data: members }, { data: credentials }, { data: documents }, { data: writable }] =
     await Promise.all([
       supabase.from("cred_providers").select("id, first_name, last_name, npi, nppes_data").eq("id", providerId).maybeSingle(),
       supabase.from("cred_payers_org").select(PAYER_SELECT).eq("id", payerId).maybeSingle(),
@@ -45,7 +45,9 @@ export default async function EnrollmentPanel({ providerId, payerId, closeHref }
       supabase.rpc("cred_org_directory"),
       supabase.from("cred_credentials").select("type, expiration_date").eq("provider_id", providerId),
       supabase.from("cred_documents").select("*").eq("provider_id", providerId).order("created_at", { ascending: false }),
+      supabase.rpc("cred_provider_writable", { p_provider_id: providerId }),
     ]);
+  const readOnly = writable === false;
 
   if (!provider || !payerRow) return null;
   const payer = resolvePayer(payerRow);
@@ -104,7 +106,14 @@ export default async function EnrollmentPanel({ providerId, payerId, closeHref }
         <div className="flex flex-col gap-8 px-6 py-6">
           <section>
             <h3 className="mb-3 text-sm font-semibold text-ink-900">Status</h3>
+            {readOnly && (
+              <p className="mb-3 rounded-lg border border-status-expiring/30 bg-status-expiring-bg px-4 py-3 text-sm text-ink-900">
+                Read-only: this provider is over your plan&apos;s limit, or the subscription has ended. You can still see
+                everything here.
+              </p>
+            )}
             <form action={statusAction} className="flex flex-wrap gap-2">
+              <fieldset disabled={readOnly} className="contents">
               {ENROLLMENT_STATUSES.map((s) => (
                 <button
                   key={s}
@@ -119,6 +128,7 @@ export default async function EnrollmentPanel({ providerId, payerId, closeHref }
                   {ENROLLMENT_STATUS_LABELS[s]}
                 </button>
               ))}
+              </fieldset>
             </form>
             <p className="mt-2 text-xs text-ink-500">Every change is saved to the history below with your name and the time.</p>
             {missing.length > 0 && ["not_started", "denied"].includes(status) && (
@@ -132,13 +142,16 @@ export default async function EnrollmentPanel({ providerId, payerId, closeHref }
             )}
           </section>
 
+          {!readOnly && (
           <section className="rounded-xl border border-ink-200 bg-ink-50/60 p-5">
             <h3 className="mb-4 text-sm font-semibold text-ink-900">Log a follow-up</h3>
             <FollowUpForm key={`${providerId}.${payerId}`} action={logFollowUp.bind(null, providerId, payerId)} today={todayISO()} proposed={proposedFollowUp()} />
           </section>
+          )}
 
           <section>
             <h3 className="mb-4 text-sm font-semibold text-ink-900">Application details</h3>
+            <fieldset disabled={readOnly} className="contents">
             <DetailsForm
               key={`${providerId}.${payerId}:${status}:${(comms ?? []).length}`}
               action={updateEnrollmentDetails.bind(null, providerId, payerId)}
@@ -147,6 +160,7 @@ export default async function EnrollmentPanel({ providerId, payerId, closeHref }
               ownerEmail={owner?.email ?? user.email}
               payerMonths={payer.revalidation_months}
             />
+            </fieldset>
             {enrollment?.revalidation_due_date && (
               <p className="mt-3 text-sm text-ink-700">
                 Revalidation due <span className="font-medium">{formatDate(enrollment.revalidation_due_date)}</span>
@@ -158,9 +172,9 @@ export default async function EnrollmentPanel({ providerId, payerId, closeHref }
             <h3 className="mb-1 text-sm font-semibold text-ink-900">Documents for this application</h3>
             <p className="mb-3 text-xs text-ink-500">Signed contracts, approval letters and anything the payer sent or asked for.</p>
             <div className="-mx-5 rounded-lg">
-              <DocumentList documents={enrollmentDocs} emptyText="Nothing attached to this application yet." />
+              <DocumentList documents={enrollmentDocs} readOnly={readOnly} emptyText="Nothing attached to this application yet." />
             </div>
-            {enrollment ? (
+            {readOnly ? null : enrollment ? (
               <div className="mt-3">
                 <DocumentUploader key={enrollment.id} providerId={providerId} enrollmentId={enrollment.id} defaultCategory="contract" />
               </div>

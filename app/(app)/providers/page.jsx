@@ -4,6 +4,7 @@ import { providerIssues } from "@/lib/consistency";
 import { daysUntil } from "@/lib/credentials";
 import { Badge, Card, EmptyState, PageHeader, buttonClass } from "@/components/app/ui";
 import LimitNotice from "@/components/app/LimitNotice";
+import { accountAccess, readOnlyProviderIds } from "@/lib/billing";
 
 function credentialStanding(credentials) {
   if (credentials.length === 0) return <Badge tone="neutral">None yet</Badge>;
@@ -38,6 +39,8 @@ export default async function ProvidersPage() {
   }
 
   const atLimit = providers.length >= org.provider_limit;
+  const readOnly = readOnlyProviderIds(providers, org);
+  const writable = accountAccess(org).writable;
 
   return (
     <div className="flex flex-col gap-6">
@@ -50,10 +53,12 @@ export default async function ProvidersPage() {
             <a href="/export/providers" className={buttonClass("secondary")}>
               Export CSV
             </a>
-            <Link href="/import-export/providers" className={buttonClass("secondary")}>
-              Import CSV
-            </Link>
-            {!atLimit && (
+            {writable && (
+              <Link href="/import-export/providers" className={buttonClass("secondary")}>
+                Import CSV
+              </Link>
+            )}
+            {writable && !atLimit && (
               <Link href="/providers/new" className={buttonClass("primary")}>
                 New provider
               </Link>
@@ -62,7 +67,7 @@ export default async function ProvidersPage() {
         }
       />
 
-      {atLimit && <LimitNotice org={org} />}
+      {writable && atLimit && <LimitNotice org={org} />}
 
       <Card className="overflow-hidden">
         {providers.length === 0 ? (
@@ -96,6 +101,7 @@ export default async function ProvidersPage() {
                       <div className="flex items-center gap-2 text-xs text-ink-500">
                         {p.specialty ?? "No specialty"}
                         {p.status === "inactive" && <Badge tone="neutral">Inactive</Badge>}
+                        {readOnly.has(p.id) && <Badge tone="amber">Read-only</Badge>}
                       </div>
                     </td>
                     <td className="px-5 py-3 font-mono text-xs text-ink-700">{p.npi ?? "—"}</td>

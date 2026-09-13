@@ -184,7 +184,7 @@ export const CLOSING = {
   title: "See the whole price list, published",
   body: "Three plans, published, no quote process. Fourteen-day trial and you cancel yourself before day 15.",
   primary: { label: "See all three plans", href: "/pricing" },
-  secondary: { label: "Start 14-day trial", href: "/login" },
+  secondary: { label: "Start 14-day trial", href: "/start" },
 };
 
 // The hero's schematic: one application's statuses in order, from the status

@@ -21,7 +21,7 @@ const EMPTY = {
   notes: "",
 };
 
-export default function ProviderForm({ action, initial, submitLabel, cancelHref, editing = false, limitNotice, practiceAddress }) {
+export default function ProviderForm({ action, initial, submitLabel, cancelHref, editing = false, limitNotice, practiceAddress, readOnly = false }) {
   const [state, formAction, pending] = useActionState(action, {});
   const [values, setValues] = useState({ ...EMPTY, ...initial });
   const set = (key) => (e) => setValues((v) => ({ ...v, [key]: e.target.value }));
@@ -39,6 +39,7 @@ export default function ProviderForm({ action, initial, submitLabel, cancelHref,
 
   return (
     <form action={formAction} className="flex flex-col gap-8">
+      <fieldset disabled={readOnly} className="contents">
       <FormError message={state?.error} />
       {state?.limit && limitNotice}
       <FormNotice message={state?.notice} />
@@ -116,6 +117,8 @@ export default function ProviderForm({ action, initial, submitLabel, cancelHref,
         </Field>
       </fieldset>
 
+      </fieldset>
+      {!readOnly && (
       <div className="flex flex-wrap gap-3 border-t border-ink-100 pt-6">
         <button type="submit" disabled={pending} className={buttonClass("primary")}>
           {pending ? "Saving…" : submitLabel}
@@ -126,6 +129,7 @@ export default function ProviderForm({ action, initial, submitLabel, cancelHref,
           </Link>
         )}
       </div>
+      )}
     </form>
   );
 }

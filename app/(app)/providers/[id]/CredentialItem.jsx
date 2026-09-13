@@ -6,7 +6,7 @@ import { buttonClass } from "@/components/app/ui";
 import { CREDENTIAL_TYPES, credentialSummary, formatDate } from "@/lib/credentials";
 import CredentialForm from "./CredentialForm";
 
-export default function CredentialItem({ credential, updateAction, deleteAction, caqhIntervalDays, members = [] }) {
+export default function CredentialItem({ credential, updateAction, deleteAction, caqhIntervalDays, members = [], readOnly = false }) {
   const [mode, setMode] = useState("view"); // "view" | "edit" | "confirm-delete"
   const close = useCallback(() => setMode("view"), []);
   const config = CREDENTIAL_TYPES[credential.type];
@@ -35,7 +35,7 @@ export default function CredentialItem({ credential, updateAction, deleteAction,
           {credential.notes && <p className="mt-1 text-sm text-ink-500">{credential.notes}</p>}
         </div>
 
-        {mode === "view" && (
+        {mode === "view" && !readOnly && (
           <div className="flex shrink-0 gap-2">
             <button type="button" onClick={() => setMode("edit")} className={buttonClass("secondary", "sm")}>
               Edit

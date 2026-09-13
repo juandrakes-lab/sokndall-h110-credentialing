@@ -93,7 +93,7 @@ export const PRICE = {
 // Button labels are not given for this page; they are page 12's approved pair.
 export const CTA = {
   body: "The same size of buyer, without the demo. The price is on the page and the trial starts when you decide it does.",
-  primary: { label: "Start the fourteen-day trial", href: "/login" },
+  primary: { label: "Start the fourteen-day trial", href: "/start" },
   secondary: { label: "See all three plans", href: "/pricing" },
 };
 
