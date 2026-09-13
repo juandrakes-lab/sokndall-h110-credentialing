@@ -385,6 +385,22 @@ async function main() {
     keep.A = { ...A, userId: a.id, docPath: aPath };
   }
 
+  // --- Fase 4: the email log is written only by the cron --------------------
+  {
+    const { error: claimErr } = await a.client.rpc("cred_claim_notifications", {
+      p_rows: [{ org_id: A.orgId, kind: "alert", subject_key: "forged", recipient: "x@example.com" }],
+    });
+    check("Users cannot claim or forge notification rows", !!claimErr, claimErr?.message);
+    const { error: logErr } = await a.client
+      .from("cred_notification_log")
+      .insert({ org_id: A.orgId, kind: "alert", subject_key: "forged", recipient: "x@example.com", status: "sent" });
+    check("Users cannot write the email log", !!logErr, logErr?.message);
+    const { error: daysErr } = await a.client.from("cred_organizations").update({ alert_days: [45, 15] }).eq("id", A.orgId);
+    check("The owner can set the alert days", !daysErr, daysErr?.message);
+    const { error: badDays } = await a.client.from("cred_organizations").update({ alert_days: [0, 900] }).eq("id", A.orgId);
+    check("Alert days outside 1–365 are refused", !!badDays, badDays?.message);
+  }
+
   // --- Billing Co: a member limited to one client sees only that client -----
   {
     await admin.from("cred_organizations").update({ plan: "billing_co" }).eq("id", B.orgId);

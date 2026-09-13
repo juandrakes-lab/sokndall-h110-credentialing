@@ -27,3 +27,25 @@ export async function updateOrganization(_prev, formData) {
   revalidatePath("/", "layout");
   return { notice: "Saved. CAQH due dates were recalculated." };
 }
+
+// The alert ladder (alcance §3.11): days before a deadline when an email goes
+// out. Expired items always alert once on top of these.
+export async function updateAlertDays(_prev, formData) {
+  const { supabase, org, role } = await getAppContext();
+  if (role !== "owner") return { error: "Only the account owner can change these settings." };
+
+  const raw = formData.get("alert_days")?.toString() ?? "";
+  const parts = raw.split(/[\s,;]+/).filter(Boolean);
+  const days = [...new Set(parts.map(Number))].sort((a, b) => b - a);
+
+  if (parts.length === 0 || days.some((d) => !Number.isInteger(d) || d < 1 || d > 365)) {
+    return { fieldErrors: { alert_days: "Enter whole numbers of days between 1 and 365, separated by commas." } };
+  }
+  if (days.length > 8) return { fieldErrors: { alert_days: "Up to 8 alert days." } };
+
+  const { error } = await supabase.from("cred_organizations").update({ alert_days: days }).eq("id", org.id);
+  if (error) return { error: `Couldn't save: ${error.message}` };
+
+  revalidatePath("/settings");
+  return { notice: `Saved. Alerts go out ${days.join(", ")} days before each deadline, and once when it's passed.`, value: days.join(", ") };
+}

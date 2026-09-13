@@ -17,7 +17,7 @@ export async function GET(request, { params }) {
 
   const { data, error } = await supabase.storage
     .from(BUCKET)
-    .createSignedUrl(doc.storage_path, 60, { download: doc.file_name });
+    .createSignedUrl(doc.storage_path, 60);
   if (error || !data?.signedUrl) return new NextResponse("Not found", { status: 404 });
 
   return NextResponse.redirect(data.signedUrl);

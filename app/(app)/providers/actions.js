@@ -153,6 +153,8 @@ function readCredential(type, formData) {
   for (const field of config.fields) values[field] = text(formData, field);
   if (values.state) values.state = values.state.toUpperCase();
   values.notes = text(formData, "notes");
+  // Only sent when the account has more than one person (the field is hidden otherwise).
+  if (formData.has("assigned_user_id")) values.assigned_user_id = text(formData, "assigned_user_id");
   return values;
 }
 
@@ -181,7 +183,10 @@ export async function createCredential(providerId, _prev, formData) {
     .from("cred_credentials")
     .insert({ ...values, type, provider_id: providerId });
 
-  if (error) return { error: `Couldn't save the credential: ${error.message}` };
+  if (error) {
+    if (error.message.includes("ASSIGNEE_NOT_MEMBER")) return { error: "That person can't see this provider." };
+    return { error: `Couldn't save the credential: ${error.message}` };
+  }
 
   revalidatePath(`/providers/${providerId}`);
   revalidatePath("/providers");

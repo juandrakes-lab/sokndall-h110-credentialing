@@ -6,7 +6,7 @@ import { US_STATES } from "@/lib/us-states";
 import { Field, FormError, buttonClass, inputClass } from "@/components/app/ui";
 
 function blank(initial) {
-  return Object.fromEntries([...CREDENTIAL_FIELDS, "notes"].map((f) => [f, initial?.[f] ?? ""]));
+  return Object.fromEntries([...CREDENTIAL_FIELDS, "notes", "assigned_user_id"].map((f) => [f, initial?.[f] ?? ""]));
 }
 
 // Add or edit one credential. The fields shown follow the chosen type — a DEA
@@ -16,7 +16,7 @@ function blank(initial) {
 //   caqhIntervalDays  shown next to the CAQH date so the computed due date is
 //                     never a surprise
 //   onDone            called after a successful save (the edit panel closes)
-export default function CredentialForm({ action, initial, caqhIntervalDays, submitLabel, onDone }) {
+export default function CredentialForm({ action, initial, caqhIntervalDays, submitLabel, onDone, members = [] }) {
   const [state, formAction, pending] = useActionState(action, {});
   const editing = Boolean(initial?.type);
   const [type, setType] = useState(initial?.type ?? "state_license");
@@ -92,9 +92,24 @@ export default function CredentialForm({ action, initial, caqhIntervalDays, subm
         ))}
       </div>
 
-      <Field label="Notes" htmlFor={idFor("notes")}>
-        <input id={idFor("notes")} name="notes" value={values.notes} onChange={set("notes")} className={inputClass} />
-      </Field>
+      <div className="grid gap-5 sm:grid-cols-2">
+        <Field label="Notes" htmlFor={idFor("notes")} className={members.length > 1 ? "" : "sm:col-span-2"}>
+          <input id={idFor("notes")} name="notes" value={values.notes} onChange={set("notes")} className={inputClass} />
+        </Field>
+        {/* Only worth asking once there's more than one person on the account. */}
+        {members.length > 1 && (
+          <Field label="Responsible" htmlFor={idFor("assigned_user_id")} hint="Gets the renewal alerts. The account owner is always copied.">
+            <select id={idFor("assigned_user_id")} name="assigned_user_id" value={values.assigned_user_id} onChange={set("assigned_user_id")} className={inputClass}>
+              <option value="">Account owner</option>
+              {members.filter((m) => m.role !== "owner").map((m) => (
+                <option key={m.user_id} value={m.user_id}>
+                  {m.email}
+                </option>
+              ))}
+            </select>
+          </Field>
+        )}
+      </div>
 
       <div>
         <button type="submit" disabled={pending} className={buttonClass("primary")}>

@@ -27,7 +27,7 @@ export default async function ProviderPage({ params }) {
   const { id } = await params;
   const { supabase, org, practice } = await getAppContext();
 
-  const [{ data: provider }, { data: credentials }, { data: siblings }, { data: docRows }] = await Promise.all([
+  const [{ data: provider }, { data: credentials }, { data: siblings }, { data: docRows }, { data: members }] = await Promise.all([
     supabase.from("cred_providers").select("*").eq("id", id).maybeSingle(),
     supabase.from("cred_credentials").select("*").eq("provider_id", id).order("expiration_date", { ascending: true, nullsFirst: false }),
     supabase.from("cred_providers").select("id, first_name, last_name, npi"),
@@ -36,6 +36,7 @@ export default async function ProviderPage({ params }) {
       .select(`*, cred_enrollments(cred_payers_org(${PAYER_SELECT}))`)
       .eq("provider_id", id)
       .order("created_at", { ascending: false }),
+    supabase.rpc("cred_org_directory"),
   ]);
 
   if (!provider) notFound();
@@ -84,6 +85,7 @@ export default async function ProviderPage({ params }) {
                     updateAction={updateCredential.bind(null, c.id, id)}
                     deleteAction={deleteCredential.bind(null, c.id, id)}
                     caqhIntervalDays={org.caqh_reattestation_interval_days}
+                    members={members ?? []}
                   />
                 ))}
               </ul>
@@ -93,6 +95,7 @@ export default async function ProviderPage({ params }) {
               <CredentialForm
                 action={createCredential.bind(null, id)}
                 caqhIntervalDays={org.caqh_reattestation_interval_days}
+                members={members ?? []}
                 submitLabel="Add credential"
               />
             </div>

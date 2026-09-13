@@ -6,7 +6,7 @@ import { buttonClass } from "@/components/app/ui";
 import { CREDENTIAL_TYPES, credentialSummary, formatDate } from "@/lib/credentials";
 import CredentialForm from "./CredentialForm";
 
-export default function CredentialItem({ credential, updateAction, deleteAction, caqhIntervalDays }) {
+export default function CredentialItem({ credential, updateAction, deleteAction, caqhIntervalDays, members = [] }) {
   const [mode, setMode] = useState("view"); // "view" | "edit" | "confirm-delete"
   const close = useCallback(() => setMode("view"), []);
   const config = CREDENTIAL_TYPES[credential.type];
@@ -65,6 +65,7 @@ export default function CredentialItem({ credential, updateAction, deleteAction,
             action={updateAction}
             initial={credential}
             caqhIntervalDays={caqhIntervalDays}
+            members={members}
             submitLabel="Save changes"
             onDone={close}
           />

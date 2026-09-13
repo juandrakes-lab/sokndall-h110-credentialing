@@ -5,12 +5,31 @@ import { recheckPracticeNppes, savePractice } from "@/lib/practice-actions";
 import { Card, CardHeader, PageHeader } from "@/components/app/ui";
 import DataCheck from "@/components/app/DataCheck";
 import PracticeForm from "@/components/app/PracticeForm";
-import { updateOrganization } from "./actions";
+import { updateAlertDays, updateOrganization } from "./actions";
 import OrganizationForm from "./OrganizationForm";
+import AlertDaysForm from "./AlertDaysForm";
+
+function sentAt(iso) {
+  return new Date(iso).toLocaleString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit", timeZone: "America/New_York" });
+}
 
 export default async function SettingsPage() {
   const { supabase, org, role, practice } = await getAppContext();
-  const used = await providerCount(supabase, org.id);
+  const [used, { data: log }] = await Promise.all([
+    providerCount(supabase, org.id),
+    // RLS: only the owner can read the log.
+    supabase.from("cred_notification_log").select("*").eq("org_id", org.id).order("created_at", { ascending: false }).limit(40),
+  ]);
+  // One email covers several items (several log rows); show each email once.
+  const emails = [];
+  for (const row of log ?? []) {
+    const last = emails[emails.length - 1];
+    if (last && last.kind === row.kind && last.recipient === row.recipient && last.status === row.status && Math.abs(new Date(last.created_at) - new Date(row.created_at)) < 60000) {
+      last.items += 1;
+    } else {
+      emails.push({ ...row, items: 1 });
+    }
+  }
   const plan = PLANS[org.plan];
 
   return (
@@ -54,6 +73,54 @@ export default async function SettingsPage() {
           </Card>
         </div>
       </div>
+
+      <Card>
+        <CardHeader
+          title="Email alerts"
+          description="Deadline alerts go to whoever is responsible for the item, with the account owner copied on all of them. A digest of the week goes out every Monday."
+        />
+        <div className="grid gap-8 px-5 py-6 lg:grid-cols-2">
+          <div className="flex flex-col gap-5">
+            <AlertDaysForm action={updateAlertDays} initial={org.alert_days.join(", ")} canEdit={role === "owner"} />
+            {role === "owner" && (
+              <div className="flex flex-wrap gap-x-5 gap-y-2 text-sm">
+                <a href="/settings/email-preview/alert" target="_blank" rel="noopener noreferrer" className="font-medium text-brand-600 hover:underline">
+                  Preview today&apos;s alert email
+                </a>
+                <a href="/settings/email-preview/digest" target="_blank" rel="noopener noreferrer" className="font-medium text-brand-600 hover:underline">
+                  Preview this week&apos;s digest
+                </a>
+              </div>
+            )}
+          </div>
+          {role === "owner" && (
+            <div>
+              <h3 className="mb-2 text-sm font-semibold text-ink-900">Recently sent</h3>
+              {emails.length === 0 ? (
+                <p className="text-sm text-ink-500">No emails sent yet. Alerts go out each morning when something reaches one of your alert days.</p>
+              ) : (
+                <ul className="divide-y divide-ink-100 rounded-lg border border-ink-200 text-sm">
+                  {emails.slice(0, 10).map((e) => (
+                    <li key={e.id} className="flex items-start justify-between gap-3 px-3 py-2">
+                      <div className="min-w-0">
+                        <p className="text-ink-900">
+                          {e.kind === "digest" ? "Weekly digest" : `Alert · ${e.items} item${e.items === 1 ? "" : "s"}`}
+                        </p>
+                        <p className="truncate text-xs text-ink-500">
+                          To {e.recipient}
+                          {e.cc && ` · copy to ${e.cc}`}
+                        </p>
+                        {e.status === "failed" && <p className="text-xs text-status-expired">Not delivered — will retry tomorrow.</p>}
+                      </div>
+                      <span className="shrink-0 text-xs text-ink-500">{sentAt(e.created_at)}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          )}
+        </div>
+      </Card>
 
       <Card>
         <CardHeader title="Account" />
