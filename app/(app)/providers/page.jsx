@@ -45,11 +45,20 @@ export default async function ProvidersPage() {
         title="Providers"
         description={`${providers.length} of ${org.provider_limit} providers on your plan.`}
         actions={
-          !atLimit && (
-            <Link href="/providers/new" className={buttonClass("primary")}>
-              New provider
+          <>
+            {/* eslint-disable-next-line @next/next/no-html-link-for-pages -- file download, not a page */}
+            <a href="/export/providers" className={buttonClass("secondary")}>
+              Export CSV
+            </a>
+            <Link href="/import-export/providers" className={buttonClass("secondary")}>
+              Import CSV
             </Link>
-          )
+            {!atLimit && (
+              <Link href="/providers/new" className={buttonClass("primary")}>
+                New provider
+              </Link>
+            )}
+          </>
         }
       />
 

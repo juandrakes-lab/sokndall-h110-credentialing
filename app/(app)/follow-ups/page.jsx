@@ -20,6 +20,12 @@ export default async function FollowUpsPage({ searchParams }) {
       <PageHeader
         title="Follow-ups"
         description={`Applications to chase this week — through Sunday, ${formatDate(weekEndISO())}. Open one to log the call and set the next date.`}
+        actions={
+          // eslint-disable-next-line @next/next/no-html-link-for-pages -- file download, not a page
+          <a href="/export/follow-ups" className={buttonClass("secondary")}>
+            Export CSV
+          </a>
+        }
       />
 
       <Card className="overflow-hidden">

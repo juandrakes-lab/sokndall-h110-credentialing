@@ -6,6 +6,7 @@ import { getAppContext } from "@/lib/org";
 import { fetchNppes, isValidNpi } from "@/lib/nppes";
 import { snapshotFromLookup } from "@/lib/consistency";
 import { CREDENTIAL_FIELDS, CREDENTIAL_TYPES } from "@/lib/credentials";
+import { BUCKET } from "@/lib/documents";
 
 function text(formData, key) {
   const value = formData.get(key)?.toString().trim();
@@ -127,6 +128,15 @@ export async function recheckProviderNppes(providerId) {
 
 export async function deleteProvider(providerId) {
   const { supabase } = await getAppContext();
+
+  // Stored files don't cascade with the provider row, so they go first.
+  const { data: docs } = await supabase.from("cred_documents").select("storage_path").eq("provider_id", providerId);
+  const paths = (docs ?? []).map((d) => d.storage_path);
+  if (paths.length) {
+    const { error: storageError } = await supabase.storage.from(BUCKET).remove(paths);
+    if (storageError) throw new Error(storageError.message);
+  }
+
   const { error } = await supabase.from("cred_providers").delete().eq("id", providerId);
   if (error) throw new Error(error.message);
 

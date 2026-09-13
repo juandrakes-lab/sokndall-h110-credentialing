@@ -1,9 +1,23 @@
 "use client";
 
+import Link from "next/link";
 import { useState, useTransition } from "react";
 import { parseCsv } from "@/lib/csv";
+import { Card, FormError, buttonClass, inputClass } from "@/components/app/ui";
 
-export default function ImportWizard({ title, description, targetFields, onImport, doneHref, doneLabel }) {
+const norm = (s) => s.toLowerCase().replace(/[^a-z0-9]/g, "");
+
+// Excel's "CSV UTF-8" starts the file with a byte-order mark.
+const stripBom = (text) => (text.charCodeAt(0) === 0xfeff ? text.slice(1) : text);
+
+// CSV import in three steps: pick a file → check the column mapping against a
+// preview → import, with a per-row report of anything skipped (alcance §3.14).
+//
+//   targetFields  [{ key, label, required?, aliases? }] — aliases are other
+//                 header spellings recognised automatically ("Last Name", "Surname")
+//   onImport      server action receiving the mapped rows; returns
+//                 { inserted, errors: [string], notice? }
+export default function ImportWizard({ targetFields, onImport, doneHref, doneLabel, templateHref }) {
   const [step, setStep] = useState("upload"); // upload | map | result
   const [fileName, setFileName] = useState("");
   const [headers, setHeaders] = useState([]);
@@ -16,34 +30,40 @@ export default function ImportWizard({ title, description, targetFields, onImpor
   function handleFile(e) {
     const file = e.target.files?.[0];
     if (!file) return;
-
     setError(null);
     setFileName(file.name);
+    e.target.value = "";
 
     const reader = new FileReader();
     reader.onload = () => {
-      const { headers: parsedHeaders, rows } = parseCsv(String(reader.result));
-      if (parsedHeaders.length === 0) {
-        setError("Couldn't find any columns in that file.");
+      const { headers: parsedHeaders, rows } = parseCsv(stripBom(String(reader.result)));
+      if (parsedHeaders.length === 0 || rows.length === 0) {
+        setError("That file has no rows to import. The first row must be the column names.");
         return;
       }
 
-      const guessedMapping = {};
+      const guessed = {};
+      const taken = new Set();
       for (const header of parsedHeaders) {
-        const normalized = header.toLowerCase().replace(/[^a-z0-9]/g, "_");
-        const match = targetFields.find((f) => f.key === normalized);
-        if (match) guessedMapping[header] = match.key;
+        const h = norm(header);
+        const match = targetFields.find(
+          (f) => !taken.has(f.key) && (norm(f.key) === h || norm(f.label) === h || (f.aliases ?? []).some((a) => norm(a) === h))
+        );
+        if (match) {
+          guessed[header] = match.key;
+          taken.add(match.key);
+        }
       }
 
       setHeaders(parsedHeaders);
       setDataRows(rows);
-      setMapping(guessedMapping);
+      setMapping(guessed);
       setStep("map");
     };
     reader.readAsText(file);
   }
 
-  function buildMappedRows() {
+  function mappedRows() {
     return dataRows.map((row) => {
       const obj = {};
       headers.forEach((header, i) => {
@@ -58,11 +78,10 @@ export default function ImportWizard({ title, description, targetFields, onImpor
   }
 
   function handleImport() {
-    const mappedRows = buildMappedRows();
+    const rows = mappedRows();
     startTransition(async () => {
       try {
-        const outcome = await onImport(mappedRows);
-        setResult(outcome);
+        setResult(await onImport(rows));
         setStep("result");
       } catch (err) {
         setError(err.message);
@@ -70,131 +89,138 @@ export default function ImportWizard({ title, description, targetFields, onImpor
     });
   }
 
-  const mappedPreview = step === "map" ? buildMappedRows().slice(0, 5) : [];
-  const requiredFields = targetFields.filter((f) => f.required);
+  const mappedKeys = new Set(Object.values(mapping).filter(Boolean));
+  const missingRequired = targetFields.filter((f) => f.required && !mappedKeys.has(f.key));
+  const preview = step === "map" ? mappedRows().slice(0, 5) : [];
+  const shownFields = targetFields.filter((f) => mappedKeys.has(f.key));
 
   return (
     <div className="flex flex-col gap-6">
-      <div>
-        <h1 className="text-xl font-semibold text-ink-900">{title}</h1>
-        <p className="mt-1 text-sm text-ink-500">{description}</p>
-      </div>
-
-      {error && <p className="text-sm text-status-expired">{error}</p>}
+      <FormError message={error} />
 
       {step === "upload" && (
-        <div className="rounded-lg border border-dashed border-ink-200 bg-white p-8 text-center">
-          <input type="file" accept=".csv" onChange={handleFile} className="text-sm" />
-          <p className="mt-2 text-xs text-ink-500">CSV files only. First row must be column headers.</p>
-        </div>
+        <Card className="px-6 py-10 text-center">
+          <label className="mx-auto flex max-w-md cursor-pointer flex-col items-center gap-3">
+            <span className={buttonClass("primary")}>Choose a CSV file</span>
+            <input type="file" accept=".csv,text/csv" onChange={handleFile} className="sr-only" />
+            <span className="text-sm text-ink-500">
+              Save your spreadsheet as CSV first (in Excel: File → Save As → CSV). The first row must be the column names.
+            </span>
+          </label>
+          {templateHref && (
+            // eslint-disable-next-line @next/next/no-html-link-for-pages -- file download, not a page
+            <a href={templateHref} className={`${buttonClass("link")} mt-4 inline-block text-sm`}>
+              Download an example file
+            </a>
+          )}
+        </Card>
       )}
 
       {step === "map" && (
-        <div className="flex flex-col gap-6">
-          <div className="rounded-lg border border-ink-200 bg-white p-4">
-            <h2 className="mb-3 text-sm font-semibold text-ink-900">
-              Map columns from {fileName} ({dataRows.length} rows)
+        <>
+          <Card className="px-5 py-5">
+            <h2 className="text-sm font-semibold text-ink-900">
+              {fileName} · {dataRows.length} row{dataRows.length === 1 ? "" : "s"}
             </h2>
-            <div className="flex flex-col gap-2">
+            <p className="mt-1 text-sm text-ink-500">Match each of your columns to a Sokndall field. We guessed where we could.</p>
+            <div className="mt-4 flex flex-col divide-y divide-ink-100">
               {headers.map((header) => (
-                <div key={header} className="grid grid-cols-2 items-center gap-3">
+                <div key={header} className="grid items-center gap-3 py-2 sm:grid-cols-2">
                   <span className="truncate text-sm text-ink-700">{header}</span>
                   <select
                     value={mapping[header] ?? ""}
                     onChange={(e) => setMapping({ ...mapping, [header]: e.target.value })}
-                    className="rounded-md border border-ink-200 px-2 py-1.5 text-sm outline-none focus:border-brand-600"
+                    className={inputClass}
+                    aria-label={`Field for column ${header}`}
                   >
-                    <option value="">Don&apos;t import</option>
+                    <option value="">Don&apos;t import this column</option>
                     {targetFields.map((f) => (
-                      <option key={f.key} value={f.key}>
+                      <option key={f.key} value={f.key} disabled={mappedKeys.has(f.key) && mapping[header] !== f.key}>
                         {f.label}
-                        {f.required ? " *" : ""}
+                        {f.required ? " (required)" : ""}
                       </option>
                     ))}
                   </select>
                 </div>
               ))}
             </div>
-            {requiredFields.length > 0 && (
-              <p className="mt-3 text-xs text-ink-500">
-                * Required: {requiredFields.map((f) => f.label).join(", ")}. Rows missing a required
-                value are skipped and reported after import.
+            {missingRequired.length > 0 && (
+              <p className="mt-3 text-sm text-status-expired">
+                Still to match: {missingRequired.map((f) => f.label).join(", ")}.
               </p>
             )}
-          </div>
+          </Card>
 
-          <div className="overflow-auto rounded-lg border border-ink-200 bg-white">
-            <table className="w-full text-left text-xs">
-              <thead className="bg-ink-100 text-ink-500">
-                <tr>
-                  {targetFields.map((f) => (
-                    <th key={f.key} className="px-3 py-2 font-medium">
-                      {f.label}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-ink-200">
-                {mappedPreview.map((row, i) => (
-                  <tr key={i}>
-                    {targetFields.map((f) => (
-                      <td key={f.key} className="px-3 py-2 text-ink-700">
-                        {row[f.key] ?? "—"}
-                      </td>
+          {shownFields.length > 0 && (
+            <Card className="overflow-hidden">
+              <div className="border-b border-ink-100 px-5 py-3 text-sm font-semibold text-ink-900">
+                Preview{dataRows.length > 5 ? ` — first 5 of ${dataRows.length}` : ""}
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs">
+                  <thead className="bg-ink-50 text-ink-500">
+                    <tr>
+                      {shownFields.map((f) => (
+                        <th key={f.key} className="whitespace-nowrap px-3 py-2 font-medium">
+                          {f.label}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-ink-100">
+                    {preview.map((row, i) => (
+                      <tr key={i}>
+                        {shownFields.map((f) => (
+                          <td key={f.key} className="whitespace-nowrap px-3 py-2 text-ink-700">
+                            {row[f.key] ?? "—"}
+                          </td>
+                        ))}
+                      </tr>
                     ))}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-            {dataRows.length > 5 && (
-              <p className="px-3 py-2 text-xs text-ink-500">
-                Showing first 5 of {dataRows.length} rows.
-              </p>
-            )}
-          </div>
+                  </tbody>
+                </table>
+              </div>
+            </Card>
+          )}
 
-          <div className="flex gap-3">
-            <button
-              type="button"
-              onClick={handleImport}
-              disabled={isPending}
-              className="rounded-md bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700 disabled:opacity-60"
-            >
-              {isPending ? "Importing..." : `Import ${dataRows.length} rows`}
+          <div className="flex flex-wrap gap-3">
+            <button type="button" onClick={handleImport} disabled={isPending || missingRequired.length > 0} className={buttonClass("primary")}>
+              {isPending ? "Importing…" : `Import ${dataRows.length} row${dataRows.length === 1 ? "" : "s"}`}
             </button>
-            <button
-              type="button"
-              onClick={() => setStep("upload")}
-              className="rounded-md border border-ink-200 px-4 py-2 text-sm font-medium text-ink-700 hover:bg-ink-50"
-            >
+            <button type="button" onClick={() => setStep("upload")} className={buttonClass("secondary")}>
               Choose a different file
             </button>
           </div>
-        </div>
+        </>
       )}
 
       {step === "result" && result && (
-        <div className="rounded-lg border border-ink-200 bg-white p-5">
-          <p className="text-sm text-ink-900">
-            Imported <strong>{result.inserted}</strong> row{result.inserted === 1 ? "" : "s"}.
+        <Card className="px-5 py-5">
+          <p className="text-base font-semibold text-ink-900">
+            Imported {result.inserted} row{result.inserted === 1 ? "" : "s"}.
           </p>
+          {result.notice && <p className="mt-1 text-sm text-ink-700">{result.notice}</p>}
           {result.errors?.length > 0 && (
-            <div className="mt-3">
-              <p className="text-sm text-status-expired">{result.errors.length} row(s) skipped:</p>
-              <ul className="mt-1 list-inside list-disc text-xs text-ink-500">
-                {result.errors.slice(0, 20).map((e, i) => (
+            <div className="mt-4">
+              <p className="text-sm font-medium text-status-expired">
+                {result.errors.length} row{result.errors.length === 1 ? " was" : "s were"} skipped:
+              </p>
+              <ul className="mt-2 max-h-72 list-inside list-disc overflow-y-auto text-sm text-ink-700">
+                {result.errors.map((e, i) => (
                   <li key={i}>{e}</li>
                 ))}
               </ul>
             </div>
           )}
-          <a
-            href={doneHref}
-            className="mt-4 inline-block rounded-md bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700"
-          >
-            {doneLabel}
-          </a>
-        </div>
+          <div className="mt-5 flex gap-3">
+            <Link href={doneHref} className={buttonClass("primary")}>
+              {doneLabel}
+            </Link>
+            <button type="button" onClick={() => setStep("upload")} className={buttonClass("secondary")}>
+              Import another file
+            </button>
+          </div>
+        </Card>
       )}
     </div>
   );

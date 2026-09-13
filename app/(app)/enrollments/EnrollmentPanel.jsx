@@ -13,6 +13,9 @@ import {
   stalledDays,
 } from "@/lib/enrollments";
 import { Badge } from "@/components/app/ui";
+import DocumentList from "@/components/app/DocumentList";
+import DocumentUploader from "@/components/app/DocumentUploader";
+import { checklistFor } from "@/lib/checklist";
 import { deleteCommunication, logFollowUp, setEnrollmentStatus, updateEnrollmentDetails } from "./actions";
 import { DetailsForm, FollowUpForm } from "./EnrollmentForms";
 
@@ -34,12 +37,15 @@ function when(iso) {
 export default async function EnrollmentPanel({ providerId, payerId, closeHref }) {
   const { supabase, user } = await getAppContext();
 
-  const [{ data: provider }, { data: payerRow }, { data: enrollment }, { data: members }] = await Promise.all([
-    supabase.from("cred_providers").select("id, first_name, last_name, npi").eq("id", providerId).maybeSingle(),
-    supabase.from("cred_payers_org").select(PAYER_SELECT).eq("id", payerId).maybeSingle(),
-    supabase.from("cred_enrollments").select("*").eq("provider_id", providerId).eq("payer_id", payerId).maybeSingle(),
-    supabase.rpc("cred_org_directory"),
-  ]);
+  const [{ data: provider }, { data: payerRow }, { data: enrollment }, { data: members }, { data: credentials }, { data: documents }] =
+    await Promise.all([
+      supabase.from("cred_providers").select("id, first_name, last_name, npi, nppes_data").eq("id", providerId).maybeSingle(),
+      supabase.from("cred_payers_org").select(PAYER_SELECT).eq("id", payerId).maybeSingle(),
+      supabase.from("cred_enrollments").select("*").eq("provider_id", providerId).eq("payer_id", payerId).maybeSingle(),
+      supabase.rpc("cred_org_directory"),
+      supabase.from("cred_credentials").select("type, expiration_date").eq("provider_id", providerId),
+      supabase.from("cred_documents").select("*").eq("provider_id", providerId).order("created_at", { ascending: false }),
+    ]);
 
   if (!provider || !payerRow) return null;
   const payer = resolvePayer(payerRow);
@@ -63,6 +69,8 @@ export default async function EnrollmentPanel({ providerId, payerId, closeHref }
   ].sort((a, b) => b.at.localeCompare(a.at));
 
   const statusAction = setEnrollmentStatus.bind(null, providerId, payerId);
+  const missing = checklistFor(provider, credentials ?? [], documents ?? []).filter((i) => !i.done);
+  const enrollmentDocs = enrollment ? (documents ?? []).filter((d) => d.enrollment_id === enrollment.id) : [];
 
   return (
     <div className="fixed inset-0 z-40 flex justify-end">
@@ -113,6 +121,15 @@ export default async function EnrollmentPanel({ providerId, payerId, closeHref }
               ))}
             </form>
             <p className="mt-2 text-xs text-ink-500">Every change is saved to the history below with your name and the time.</p>
+            {missing.length > 0 && ["not_started", "denied"].includes(status) && (
+              <div className="mt-4 rounded-lg border border-status-expiring/30 bg-status-expiring-bg px-4 py-3 text-sm">
+                <p className="font-medium text-ink-900">Before you submit, this provider is missing:</p>
+                <p className="mt-0.5 text-ink-700">{missing.map((i) => i.label).join(" · ")}</p>
+                <Link href={`/providers/${providerId}`} className="mt-1 inline-block font-medium text-brand-600 hover:underline">
+                  Complete the provider&apos;s file →
+                </Link>
+              </div>
+            )}
           </section>
 
           <section className="rounded-xl border border-ink-200 bg-ink-50/60 p-5">
@@ -134,6 +151,21 @@ export default async function EnrollmentPanel({ providerId, payerId, closeHref }
               <p className="mt-3 text-sm text-ink-700">
                 Revalidation due <span className="font-medium">{formatDate(enrollment.revalidation_due_date)}</span>
               </p>
+            )}
+          </section>
+
+          <section>
+            <h3 className="mb-1 text-sm font-semibold text-ink-900">Documents for this application</h3>
+            <p className="mb-3 text-xs text-ink-500">Signed contracts, approval letters and anything the payer sent or asked for.</p>
+            <div className="-mx-5 rounded-lg">
+              <DocumentList documents={enrollmentDocs} emptyText="Nothing attached to this application yet." />
+            </div>
+            {enrollment ? (
+              <div className="mt-3">
+                <DocumentUploader key={enrollment.id} providerId={providerId} enrollmentId={enrollment.id} defaultCategory="contract" />
+              </div>
+            ) : (
+              <p className="text-xs text-ink-500">Set a status first, then attach documents here.</p>
             )}
           </section>
 
@@ -177,7 +209,7 @@ export default async function EnrollmentPanel({ providerId, payerId, closeHref }
                           {item.created_by ? emailOf(item.created_by) : "—"} · {when(item.created_at)}
                         </span>
                         <details>
-                          <summary className="cursor-pointer hover:text-ink-900">Delete</summary>
+                          <summary className="cursor-pointer list-none hover:text-ink-900 [&::-webkit-details-marker]:hidden">Delete</summary>
                           <form action={deleteCommunication.bind(null, item.id)} className="mt-1">
                             <button type="submit" className="font-medium text-status-expired hover:underline">
                               Yes, delete this entry

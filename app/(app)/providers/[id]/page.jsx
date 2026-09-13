@@ -4,6 +4,11 @@ import { getAppContext } from "@/lib/org";
 import { practiceServiceAddress, providerIssues } from "@/lib/consistency";
 import { Badge, Card, CardHeader, PageHeader, buttonClass } from "@/components/app/ui";
 import DataCheck from "@/components/app/DataCheck";
+import ChecklistCard from "@/components/app/ChecklistCard";
+import DocumentList from "@/components/app/DocumentList";
+import DocumentUploader from "@/components/app/DocumentUploader";
+import { checklistFor } from "@/lib/checklist";
+import { PAYER_SELECT, resolvePayer } from "@/lib/enrollments";
 import {
   createCredential,
   deleteCredential,
@@ -22,15 +27,25 @@ export default async function ProviderPage({ params }) {
   const { id } = await params;
   const { supabase, org, practice } = await getAppContext();
 
-  const [{ data: provider }, { data: credentials }, { data: siblings }] = await Promise.all([
+  const [{ data: provider }, { data: credentials }, { data: siblings }, { data: docRows }] = await Promise.all([
     supabase.from("cred_providers").select("*").eq("id", id).maybeSingle(),
     supabase.from("cred_credentials").select("*").eq("provider_id", id).order("expiration_date", { ascending: true, nullsFirst: false }),
     supabase.from("cred_providers").select("id, first_name, last_name, npi"),
+    supabase
+      .from("cred_documents")
+      .select(`*, cred_enrollments(cred_payers_org(${PAYER_SELECT}))`)
+      .eq("provider_id", id)
+      .order("created_at", { ascending: false }),
   ]);
 
   if (!provider) notFound();
 
   const issues = providerIssues(provider, practice, siblings ?? []);
+  const documents = (docRows ?? []).map((d) => ({
+    ...d,
+    payerName: d.cred_enrollments?.cred_payers_org ? resolvePayer(d.cred_enrollments.cred_payers_org).name : null,
+  }));
+  const checklist = checklistFor(provider, credentials ?? [], documents);
   const sorted = [...(credentials ?? [])].sort(
     (a, b) => TYPE_ORDER.indexOf(a.type) - TYPE_ORDER.indexOf(b.type)
   );
@@ -84,6 +99,15 @@ export default async function ProviderPage({ params }) {
           </Card>
 
           <Card>
+            <CardHeader title="Documents" description="License copies, certificates, W-9, CV — attached to this provider." />
+            <DocumentList documents={documents} emptyText="No documents yet. Upload the license, W-9, malpractice certificate and CV below." />
+            <div className="border-t border-ink-100 bg-ink-50/60 px-5 py-5">
+              <h3 className="mb-4 text-sm font-semibold text-ink-900">Upload a document</h3>
+              <DocumentUploader providerId={id} defaultCategory={checklist.find((i) => !i.done && ["license", "w9", "malpractice", "cv"].includes(i.key))?.key ?? "license"} />
+            </div>
+          </Card>
+
+          <Card>
             <CardHeader title="Profile" />
             <div className="px-5 py-5">
               <ProviderForm
@@ -98,6 +122,8 @@ export default async function ProviderPage({ params }) {
         </div>
 
         <div className="flex flex-col gap-8">
+          <ChecklistCard items={checklist} />
+
           <DataCheck
             issues={issues}
             checkedAt={provider.nppes_checked_at}
@@ -109,7 +135,7 @@ export default async function ProviderPage({ params }) {
             <details>
               <summary className="cursor-pointer text-sm font-medium text-ink-700">Delete this provider</summary>
               <p className="mt-3 text-sm text-ink-500">
-                This removes {provider.first_name} {provider.last_name} and all of their credentials. It can&apos;t be
+                This removes {provider.first_name} {provider.last_name} with all of their credentials, enrollments and documents. It can&apos;t be
                 undone. If they just left the practice, mark them Inactive instead.
               </p>
               <form action={deleteProvider.bind(null, id)} className="mt-3">

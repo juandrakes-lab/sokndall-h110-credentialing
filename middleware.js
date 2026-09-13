@@ -10,6 +10,9 @@ const APP_PREFIXES = [
   "/follow-ups",
   "/enrollments",
   "/settings",
+  "/documents",
+  "/import-export",
+  "/export",
   "/onboarding",
 ];
 
@@ -56,6 +59,9 @@ export const config = {
     "/follow-ups/:path*",
     "/enrollments/:path*",
     "/settings/:path*",
+    "/documents/:path*",
+    "/import-export/:path*",
+    "/export/:path*",
     "/onboarding/:path*",
     "/auth/:path*",
   ],

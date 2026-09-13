@@ -87,6 +87,9 @@ export async function logFollowUp(providerId, payerId, _prev, formData) {
     fieldErrors.outcome = "Write what happened, or at least the reference number.";
   }
   if (nextFollowUp && !isDate(nextFollowUp)) fieldErrors.next_follow_up_date = "Enter a date.";
+  else if (nextFollowUp && isDate(values.contact_date) && nextFollowUp < values.contact_date) {
+    fieldErrors.next_follow_up_date = "The next follow-up can't be before this contact.";
+  }
   if (Object.keys(fieldErrors).length) return { fieldErrors };
 
   const { supabase } = await getAppContext();

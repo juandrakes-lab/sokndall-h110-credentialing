@@ -1,34 +1,23 @@
 import Link from "next/link";
 import { Suspense } from "react";
 import { getAppContext } from "@/lib/org";
-import {
-  BUCKETS,
-  CREDENTIAL_TYPES,
-  CREDENTIAL_TYPE_KEYS,
-  addDays,
-  bucketFor,
-  credentialLabel,
-  credentialSummary,
-  formatDate,
-  todayISO,
-} from "@/lib/credentials";
+import { BUCKETS, CREDENTIAL_TYPES, CREDENTIAL_TYPE_KEYS, bucketFor, formatDate } from "@/lib/credentials";
 import {
   ENROLLMENT_STATUSES,
   ENROLLMENT_STATUS_LABELS,
   PAYER_SELECT,
-  cellKey,
   parseCellKey,
   resolvePayer,
   sortPayers,
 } from "@/lib/enrollments";
-import { loadFollowUps, loadRevalidations } from "@/lib/follow-ups";
+import { loadFollowUps } from "@/lib/follow-ups";
+import { REVALIDATION, loadExpirations } from "@/lib/expirations";
 import { Card, CardHeader, EmptyState, PageHeader, buttonClass } from "@/components/app/ui";
 import ExpiryBadge from "@/components/app/ExpiryBadge";
 import FollowUpList from "@/components/app/FollowUpList";
 import EnrollmentPanel from "../enrollments/EnrollmentPanel";
 import DashboardFilters from "./DashboardFilters";
 
-const REVALIDATION = "revalidation";
 const PREVIEW_ROWS = 5;
 
 const TILE_TONE = {
@@ -80,26 +69,12 @@ export default async function DashboardPage({ searchParams }) {
 
   const { supabase } = await getAppContext();
 
-  // Credentials belong to no payer or enrollment, so a payer or enrollment
-  // status filter shows only matching payer revalidations (which exist only
-  // for approved enrollments); a credential-type filter hides revalidations.
-  const wantCredentials = !filters.payer && !filters.status && filters.type !== REVALIDATION;
-  const wantRevalidations =
-    (!filters.type || filters.type === REVALIDATION) && (!filters.status || filters.status === "approved");
-
-  let credQuery = supabase
-    .from("cred_credentials")
-    .select("id, type, state, number, issuer, coverage, expiration_date, provider_id, cred_providers!inner(id, first_name, last_name, status)")
-    // Providers marked inactive have left the practice; their renewals aren't work.
-    .eq("cred_providers.status", "active")
-    .not("expiration_date", "is", null)
-    .lte("expiration_date", addDays(todayISO(), 90));
-  if (filters.provider) credQuery = credQuery.eq("provider_id", filters.provider);
-  if (filters.type && filters.type !== REVALIDATION) credQuery = credQuery.eq("type", filters.type);
-
-  const [{ data: credentials, error }, revalidations, followUps, { data: providers }, { data: payerRows }] = await Promise.all([
-    wantCredentials ? credQuery : Promise.resolve({ data: [] }),
-    wantRevalidations ? loadRevalidations(supabase, filters) : Promise.resolve([]),
+  let error = null;
+  const [expirations, followUps, { data: providers }, { data: payerRows }] = await Promise.all([
+    loadExpirations(supabase, filters).catch((e) => {
+      error = e;
+      return [];
+    }),
     loadFollowUps(supabase, filters),
     supabase.from("cred_providers").select("id, first_name, last_name").eq("status", "active").order("last_name"),
     supabase.from("cred_payers_org").select(PAYER_SELECT),
@@ -124,22 +99,10 @@ export default async function DashboardPage({ searchParams }) {
     );
   }
 
-  const items = [
-    ...(credentials ?? []).map((c) => ({
-      id: `c-${c.id}`,
-      date: c.expiration_date,
-      who: `${c.cred_providers.first_name} ${c.cred_providers.last_name}`,
-      what: [credentialLabel(c.type), credentialSummary(c)].filter(Boolean).join(" · "),
-      href: `/providers/${c.provider_id}`,
-    })),
-    ...revalidations.map((e) => ({
-      id: `r-${e.id}`,
-      date: e.revalidation_due_date,
-      who: `${e.provider.first_name} ${e.provider.last_name}`,
-      what: `Payer revalidation · ${e.payer.name}`,
-      href: hrefWith(params, "open", cellKey(e.provider_id, e.payer_id)),
-    })),
-  ].sort((a, b) => a.date.localeCompare(b.date));
+  const items = expirations.map((item) => ({
+    ...item,
+    href: item.href ?? hrefWith(params, "open", item.cell),
+  }));
 
   const grouped = Object.fromEntries(BUCKETS.map((b) => [b.key, []]));
   for (const item of items) {
@@ -154,7 +117,16 @@ export default async function DashboardPage({ searchParams }) {
 
   return (
     <div className="flex flex-col gap-6">
-      <PageHeader title="Dashboard" description="What expires in the next 90 days, and what to chase this week." />
+      <PageHeader
+        title="Dashboard"
+        description="What expires in the next 90 days, and what to chase this week."
+        actions={
+          // eslint-disable-next-line @next/next/no-html-link-for-pages -- file download, not a page
+          <a href={`/export/expirations${Object.keys(params).length ? `?${new URLSearchParams(params)}` : ""}`} className={buttonClass("secondary")}>
+            Export CSV
+          </a>
+        }
+      />
 
       <div className="grid gap-6 lg:grid-cols-3">
         <div className="lg:col-span-2">

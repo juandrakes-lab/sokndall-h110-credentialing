@@ -30,6 +30,27 @@ const admin = createClient(URL_, env.SUPABASE_SERVICE_ROLE_KEY, opts);
 const run = Date.now();
 const createdUsers = [];
 const results = [];
+// KEEP=1 leaves the fixtures in place and prints their ids, for checks that
+// need SQL (the storage quota); run `node scripts/verify-rls.mjs --cleanup
+// <user-id>...` afterwards.
+const keep = {};
+
+if (process.argv[2] === "--cleanup") {
+  for (const id of process.argv.slice(3)) {
+    // Storage files first: deleting the organization doesn't remove them.
+    const { data: orgs } = await admin.from("cred_organizations").select("id").eq("owner_user_id", id);
+    for (const org of orgs ?? []) await removeOrgFiles(org.id);
+    await admin.auth.admin.deleteUser(id);
+  }
+  console.log("cleaned up");
+  process.exit(0);
+}
+
+async function removeOrgFiles(orgId) {
+  const { data: docs } = await admin.from("cred_documents").select("storage_path").eq("org_id", orgId);
+  const paths = (docs ?? []).map((d) => d.storage_path);
+  if (paths.length) await admin.storage.from("cred-documents").remove(paths);
+}
 
 function check(name, ok, detail = "") {
   results.push({ name, ok });
@@ -298,6 +319,72 @@ async function main() {
     check("The member directory lists only A's own people", data?.length === 1 && data[0].user_id === a.id);
   }
 
+  // --- Fase 3: documents in private storage ---------------------------------
+  {
+    const pdf = Buffer.from("%PDF-1.4\n% verify-rls test document\n%%EOF\n");
+    const pathFor = (T, name) => `${T.orgId}/${T.clientId}/${T.providerId}/${run}-${name}`;
+    const bucket = (user) => user.client.storage.from("cred-documents");
+
+    const aPath = pathFor(A, "license.pdf");
+    const { error: upErr } = await bucket(a).upload(aPath, pdf, { contentType: "application/pdf" });
+    check("A uploads a document under its own provider", !upErr, upErr?.message);
+
+    const { data: doc, error: docErr } = await a.client
+      .from("cred_documents")
+      .insert({ provider_id: A.providerId, category: "license", file_name: "license.pdf", storage_path: aPath, size_bytes: 1 })
+      .select("id, size_bytes, uploaded_by")
+      .single();
+    check("The document's size comes from storage, not from the app", !docErr && doc?.size_bytes === pdf.length, docErr?.message ?? String(doc?.size_bytes));
+    check("The uploader is recorded by the database", doc?.uploaded_by === a.id);
+
+    const bPath = pathFor(B, "w9.pdf");
+    await bucket(b).upload(bPath, pdf, { contentType: "application/pdf" });
+    await b.client.from("cred_documents").insert({ provider_id: B.providerId, category: "w9", file_name: "w9.pdf", storage_path: bPath, size_bytes: 1 });
+
+    const { error: crossUp } = await bucket(a).upload(`${B.orgId}/${B.clientId}/${B.providerId}/${run}-evil.pdf`, pdf, { contentType: "application/pdf" });
+    check("A cannot upload into B's folder", !!crossUp, crossUp?.message);
+
+    const { data: signed } = await bucket(a).createSignedUrl(bPath, 60);
+    check("A cannot get a download link for B's file", !signed?.signedUrl);
+
+    const { data: anonSigned } = await createClient(URL_, ANON, opts).storage.from("cred-documents").createSignedUrl(aPath, 60);
+    check("Anonymous visitors cannot get a download link", !anonSigned?.signedUrl);
+
+    const { data: ownSigned } = await bucket(a).createSignedUrl(aPath, 60);
+    const fetched = ownSigned?.signedUrl ? await fetch(ownSigned.signedUrl) : null;
+    check("A downloads its own file through a signed link", fetched?.ok && (await fetched.text()).includes("verify-rls"));
+
+    const { data: usedB } = await a.client.rpc("cred_storage_used_bytes", { p_org_id: B.orgId });
+    const { data: usedA } = await a.client.rpc("cred_storage_used_bytes", { p_org_id: A.orgId });
+    check("A sees its own storage use, not B's", usedA === pdf.length && usedB === null, `${usedA} / ${usedB}`);
+
+    const { data: aDocs } = await a.client.from("cred_documents").select("org_id");
+    check("A lists documents and sees nothing of B", aDocs?.length === 1 && aDocs[0].org_id === A.orgId);
+
+    const { error: hijack } = await a.client
+      .from("cred_documents")
+      .insert({ provider_id: A.providerId, category: "w9", file_name: "w9.pdf", storage_path: bPath, size_bytes: 1 });
+    check("A cannot register B's file as its own document", !!hijack, hijack?.message);
+
+    const { error: ghost } = await a.client
+      .from("cred_documents")
+      .insert({ provider_id: A.providerId, category: "cv", file_name: "cv.pdf", storage_path: pathFor(A, "never-uploaded.pdf"), size_bytes: 1 });
+    check("A document row needs a real uploaded file", !!ghost, ghost?.message);
+
+    await bucket(b).remove([bPath]);
+    const { data: stillThere } = await bucket(b).list(`${B.orgId}/${B.clientId}/${B.providerId}`);
+    await bucket(a).remove([bPath]);
+    check("B can delete its own file", !(stillThere ?? []).some((o) => bPath.endsWith(o.name)));
+
+    const { error: bigErr } = await bucket(a).upload(pathFor(A, "big.pdf"), Buffer.alloc(10 * 1024 * 1024 + 1, 1), { contentType: "application/pdf" });
+    check("Files over 10 MB are refused by storage", !!bigErr, bigErr?.message);
+
+    const { error: typeErr } = await bucket(a).upload(pathFor(A, "script.html"), Buffer.from("<script>"), { contentType: "text/html" });
+    check("Only document and image file types are accepted", !!typeErr, typeErr?.message);
+
+    keep.A = { ...A, userId: a.id, docPath: aPath };
+  }
+
   // --- Billing Co: a member limited to one client sees only that client -----
   {
     await admin.from("cred_organizations").update({ plan: "billing_co" }).eq("id", B.orgId);
@@ -361,7 +448,20 @@ try {
 } catch (err) {
   check("script ran to completion", false, err.message);
 } finally {
-  // Organizations cascade from their owner; members from their user.
+  if (process.env.KEEP) {
+    console.log(`\nKEEP: fixtures left in place — ${JSON.stringify(keep)}`);
+    console.log(`clean up with: node scripts/verify-rls.mjs --cleanup ${createdUsers.join(" ")}`);
+    const failed = results.filter((r) => !r.ok).length;
+    console.log(`${results.length - failed}/${results.length} checks passed`);
+    process.exit(failed ? 1 : 0);
+  }
+  // Storage files first (they don't cascade), then the users: organizations
+  // cascade from their owner, members from their user.
+  const { data: orgs } = await admin
+    .from("cred_organizations")
+    .select("id")
+    .in("owner_user_id", createdUsers.length ? createdUsers : ["00000000-0000-0000-0000-000000000000"]);
+  for (const org of orgs ?? []) await removeOrgFiles(org.id);
   for (const id of createdUsers) await admin.auth.admin.deleteUser(id);
   const { count } = await admin
     .from("cred_organizations")
