@@ -3,14 +3,17 @@ import { PLANS, PLAN_ORDER } from "@/lib/plans";
 import { accountAccess } from "@/lib/billing";
 import { formatDate } from "@/lib/credentials";
 import { changePlan, openBillingPortal, resubscribe } from "@/lib/billing-actions";
+import RefreshUntilConfirmed from "./RefreshUntilConfirmed";
 
 const day = (iso) => (iso ? formatDate(new Date(iso).toISOString().slice(0, 10)) : null);
 
 // Owner only (alcance §4.3): plan, trial or renewal date, plan changes, and the
 // Polar portal for card, invoices and cancellation.
-export default function BillingCard({ org, providersUsed, changeRequested, resubscribed }) {
+export default function BillingCard({ org, providersUsed, requestedPlan, resubscribed }) {
   const access = accountAccess(org);
   const current = PLANS[org.plan];
+  const target = PLANS[requestedPlan];
+  const linkPending = resubscribed && (access.state === "ended" || !org.polar_subscription_id);
 
   return (
     <Card>
@@ -37,15 +40,24 @@ export default function BillingCard({ org, providersUsed, changeRequested, resub
             {access.message ??
               (org.current_period_end ? `Renews on ${day(org.current_period_end)}.` : "Active.")}
           </p>
-          {resubscribed && (access.state === "ended" || !org.polar_subscription_id) && (
-            <p className="mt-2 text-sm text-status-active">
-              Checkout complete. Your subscription is linked as soon as Polar confirms it — usually within seconds. Reload
-              this page to see it.
-            </p>
+          {linkPending && (
+            <RefreshUntilConfirmed
+              waiting="Checkout complete. Waiting for Polar to confirm it…"
+              late="Polar hasn't confirmed yet. This page updates when you reload it; if it doesn't within a few minutes, check the billing portal."
+            />
           )}
-          {changeRequested && (
+          {resubscribed && !linkPending && (
+            <p className="mt-2 text-sm text-status-active">Your subscription is active again.</p>
+          )}
+          {target && requestedPlan !== org.plan && (
+            <RefreshUntilConfirmed
+              waiting={`Changing to ${target.label}. Waiting for Polar to confirm it…`}
+              late={`Polar hasn't confirmed the change to ${target.label} yet. Reload this page in a minute; if nothing changed, check the billing portal.`}
+            />
+          )}
+          {target && requestedPlan === org.plan && (
             <p className="mt-2 text-sm text-status-active">
-              Plan change sent to Polar. Your new limits apply as soon as it&apos;s confirmed — usually within seconds.
+              Done — you&apos;re now on {target.label}. Your new limits apply right away.
             </p>
           )}
         </div>
@@ -68,7 +80,7 @@ export default function BillingCard({ org, providersUsed, changeRequested, resub
             </button>
             <span className="text-sm text-ink-500">Everything you had is still here and becomes editable again.</span>
           </form>
-        ) : (
+        ) : target && requestedPlan !== org.plan ? null : (
           <div className="grid gap-3 sm:grid-cols-2">
             {PLAN_ORDER.filter((k) => k !== org.plan).map((key) => {
               const plan = PLANS[key];

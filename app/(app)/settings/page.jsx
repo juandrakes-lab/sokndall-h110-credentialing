@@ -132,7 +132,7 @@ export default async function SettingsPage({ searchParams }) {
         </div>
       </Card>
 
-      {owner && <BillingCard org={org} providersUsed={used} changeRequested={sp.plan_change === "requested"} resubscribed={sp.resubscribed === "1"} />}
+      {owner && <BillingCard org={org} providersUsed={used} requestedPlan={sp.plan_change} resubscribed={sp.resubscribed === "1"} />}
 
       {owner && (
         <TeamCard
