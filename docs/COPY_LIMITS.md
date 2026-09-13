@@ -473,13 +473,14 @@ characters of noise as everything above.
 
 | Slot | Now | Range | Notes |
 |---|---|---|---|
-| **H2** (authored lines) | 20 · 15 | **≤ 21 per line** | 2 lines, the standard section head. |
-| **Intro note** | 110 | **92 – 179** | 2 lines, the standard note. |
-| **Row label** | 14 – 33 | **≤ 43** for one line | A 319px column at 15px semibold. The longest now, "Aggregate and scoped client views", is 33. Past 43 the row grows one line; nothing breaks. |
-| **Value cell** | 1 – 2 digits | **≤ 12** | 189px per plan column. A count is set at 20px; the status words ("Not included", 12, is 115px with its glyph) fit with room. |
-| **Column head** | 4 – 10 | **≤ 18** | One line per plan name. |
-| **Caption** | 150 | **≤ 175** for one line | Full table width. |
-| **Security line** | 144 | **≤ 104 per line** · 2 lines up to ~208 | The standard closing line, 757px after its accent rule. |
+| **H2** (one line, card-title size) | 35 | **≤ 70** for one line | Since 2026-09-12 the table sits under the price list, inside the header, and its H2 is set at 28px like the list's own. The authored two-line break is joined into one line. |
+| **Intro note** | 110 | **≤ 120** for 2 lines | Centred, capped at 60ch (559px). |
+| **Row label** | 14 – 33 | **≤ 50** for one line | A 387px column at 15px semibold, left-aligned. Past 50 the row grows one line; nothing breaks. |
+| **Value cell** | 1 – 2 digits | **≤ 15** | 250px per plan column, centred. Status cells print no word any more (symbol only, the word is screen-reader text), so they have no limit. |
+| **Column head** | 4 – 10 | **≤ 22** | White on the petrol head row, centred. |
+| **Caption** | 150 | **≤ 200** for one line | Full table width, 13px. |
+| **Security line** | 144 | **≤ 90 per line** · 2 lines up to ~180 | Closing line with its accent rule, 671px. |
 | **Row count** | 5 | **4 – 7** *(judgment)* | The brief's argument: parity said once, the differing rows shown. Past 7 the table becomes the feature list it was designed not to be. |
 
-Below 640px each row is a card and every limit above grows.
+Re-measured 2026-09-12 at a 1348px viewport after the move under the plans
+(the numbers at 1280 are a few characters lower). Below 640px each row is a card and every limit above grows.

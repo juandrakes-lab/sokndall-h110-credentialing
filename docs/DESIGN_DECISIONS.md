@@ -1057,3 +1057,36 @@ línea de seguridad va debajo, como línea de cierre con la regla de acento.
   segundo H2), un solo H1.
 Política de imagen: ninguna. Sin hueco reservado, sin ícono decorativo.
 Regla de DESIGN_RULES.md que aplica: §1, §2 reglas 3, 4, 6 y 7, §6, §13.
+
+## /pricing — la matriz de planes, bajo los planes y solo con símbolo
+Fecha: 2026-09-12
+Decisión: a pedido del fundador, sobre su referencia, `PlanFeatureMatrix` deja
+de ser una sección propia y va dentro del encabezado de /pricing, debajo de la
+lista de precios y su nota (modo `embedded`: sin banda, sin pastilla, H2 a
+tamaño de título de card como el de la lista). La tabla lleva la fila de
+encabezados en petróleo con los nombres de plan en blanco y centrados; las
+celdas de los planes centradas.
+- Celdas de estado solo con símbolo: ✓ blanco en disco petróleo (Included) y
+  × en círculo gris (Not included). La palabra queda como texto para lectores
+  de pantalla (`.sk-sr`, clase nueva). Requirió enmendar §2 regla 3 para
+  celdas binarias; los estados de seguimiento no cambian.
+- El tick en petróleo, no amarillo (decisión del fundador): significa lo mismo
+  que los ticks de la lista de planes, y el amarillo sigue siendo la acción.
+- Las etiquetas de fila quedan alineadas a la izquierda aunque el pedido decía
+  "filas centradas": se leen de arriba abajo como lista y centradas pierden el
+  borde de lectura. Centrarlas es una línea de CSS si el fundador lo prefiere.
+- El plan destacado (Practice): encabezado en un petróleo más claro
+  (`--ink-2`) y su columna con tinte suave, en vez de la regla superior.
+- La pastilla "Plan comparison" ya no se muestra (el modo embebido no lleva
+  pastilla); queda en `data.js` por si la tabla vuelve a ser sección.
+- Al salir el bloque gris de la matriz, /pricing queda: encabezado claro →
+  proveedor/usuario (blanco) → anclas (oscuro) → trial (gris) → FAQ → CTA.
+  §15 se cumple.
+- Nota para el copywriter: las celdas "Included" / "Not included" siguen
+  escritas así en `data.js` y se leen en voz alta, pero no se ven. El H2 se
+  imprime en una línea (el corte autoral de dos líneas se une). COPY_LIMITS
+  re-medido.
+- Sin cambios: precios, schema, un solo H1, keyword en el primer H2 (la
+  matriz sigue siendo el segundo H2).
+Política de imagen: ninguna.
+Regla de DESIGN_RULES.md que aplica: §2 reglas 3 (enmendada) y 4, §6, §13, §15, §18.

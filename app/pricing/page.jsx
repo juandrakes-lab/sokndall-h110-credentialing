@@ -16,9 +16,9 @@ import { META, HERO, PLANS, MATRIX, UNITS, UNITS_DIAGRAM, ANCHOR, TRIAL, FAQ, CL
 // three plans sit inside the header, under the page's first H2 (the exact
 // keyword, on-page-seo.md §4), so a price is on screen without scrolling. The
 // H2 is set at card-title size there — it is the list's label, not a second
-// headline under the H1. Then the plan matrix and the security line (copy
-// brief 2026-09-09), the provider-vs-user argument beside its
-// diagram, the four sourced anchors on the dark band, the trial terms as three
+// headline under the H1. Under the list, still in the header, the plan
+// matrix and the security line (copy brief 2026-09-09; placed there by the
+// founder 2026-09-12). Then the provider-vs-user argument beside its diagram, the four sourced anchors on the dark band, the trial terms as three
 // cards, FAQ, close. Recomposed 2026-09-11 (DESIGN_DECISIONS.md).
 export const metadata = pageMeta({ title: META.title, description: META.description, path: "/pricing" });
 
@@ -44,30 +44,30 @@ export default function PricingPage() {
               <p className="sk-small sk-plans__note">
                 <Rich text={PLANS.note} linkClassName="sk-link" />
               </p>
+              {/* What changes between the plans, straight under them and not
+                  as a section of its own (founder, 2026-09-12): the list gives
+                  the price, the table what the price buys. The security line
+                  closes it, where someone comparing vendors is looking (copy
+                  brief 2026-09-09). The Practice column is tinted like the
+                  highlighted plan above it. */}
+              <PlanFeatureMatrix
+                embedded
+                id="compare"
+                head={MATRIX.head}
+                plans={MATRIX.plans}
+                highlight={1}
+                rows={[
+                  { label: "Providers tracked", cells: PLAN_PRICES.map((p) => String(p.providers)) },
+                  { label: "Users included", cells: PLAN_PRICES.map((p) => String(p.users)) },
+                  ...MATRIX.rows,
+                ]}
+                caption={MATRIX.caption}
+                after={MATRIX.security}
+              />
             </div>
           ),
         }}
       >
-        {/* What changes between the plans, then the security line under it —
-            where someone comparing vendors is looking (copy brief 2026-09-09).
-            On a grey block so the table reads as its own object after the
-            white price list. The Practice column carries the petrol rule of
-            the highlighted plan, so the table and the list agree. */}
-        <PlanFeatureMatrix
-          id="compare"
-          surface="block"
-          head={MATRIX.head}
-          plans={MATRIX.plans}
-          highlight={1}
-          rows={[
-            { label: "Providers tracked", cells: PLAN_PRICES.map((p) => String(p.providers)) },
-            { label: "Users included", cells: PLAN_PRICES.map((p) => String(p.users)) },
-            ...MATRIX.rows,
-          ]}
-          caption={MATRIX.caption}
-          after={MATRIX.security}
-        />
-
         <ProseBandSection
           id="provider-vs-user"
           head={UNITS.head}

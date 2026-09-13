@@ -61,6 +61,12 @@ declarada, antes de usarse.
    Toda estimación se marca como estimación en el texto visible.
 3. **El estado nunca se comunica solo por color.** Siempre glifo + etiqueta de
    texto + cifra. Quitar el color no debe perder información.
+   *Enmienda 12 sep 2026 (celdas binarias):* en una tabla comparativa donde la
+   celda solo puede ser "Included" o "Not included", alcanza con el símbolo si
+   los dos difieren por forma y no solo por color (✓ en disco petróleo / × en
+   círculo gris) y la palabra queda como texto para lectores de pantalla
+   (`.sk-sr`). No aplica a estados de seguimiento (los seis de enrollment, los
+   cinco de credencial): esos siguen con glifo + etiqueta visible + cifra.
 4. **El amarillo es señal, no decoración.** Solo CTA primario, estados que
    requieren acción y el único destacado por sección de §18. Nunca ordinal,
    viñeta, eyebrow ni marcador de página activa. Desde el 12 sep 2026 es un

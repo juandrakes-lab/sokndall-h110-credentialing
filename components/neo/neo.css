@@ -4469,9 +4469,12 @@ html:has(.sk-fnav) { scroll-padding-top: 88px; }
 .sk-footer .sk-btn--primary { color: var(--black); }
 
 /* ---- PlanFeatureMatrix (/pricing, 2026-09-12) --------------------------- */
-/* The table in a white card on the section's grey block. The row label column
-   takes a third; the three plans share the rest. The highlighted plan's
-   column carries the same petrol rule as its row in the price list. */
+/* The table in a white card. Restyled the same day on the founder's reference:
+   the head row is petrol with white names, the plans' cells are centred, and a
+   status cell is its symbol alone — a petrol disc with a tick or a grey ring
+   with a cross, the word kept for screen readers (`.sk-sr`). The row labels
+   stay left: they are read down the column as a list. The highlighted plan's
+   column is tinted, its head a lighter petrol. */
 .sk-pfm {
   border-radius: var(--r-panel);
   background: var(--card);
@@ -4484,45 +4487,74 @@ html:has(.sk-fnav) { scroll-padding-top: 88px; }
 .sk-pfm__table th,
 .sk-pfm__table td {
   padding: var(--s-4) var(--s-5);
-  text-align: left;
+  text-align: center;
   vertical-align: middle;
   border-bottom: 1px solid var(--line);
 }
+.sk-pfm__table tbody th { text-align: left; font-size: 0.9375rem; font-weight: 600; }
 .sk-pfm__table tbody tr:last-child th,
 .sk-pfm__table tbody tr:last-child td { border-bottom: 0; }
+.sk-pfm__table thead th,
+.sk-pfm__table thead td {
+  background: var(--ink);
+  color: #fff;
+  border-bottom: 0;
+}
 .sk-pfm__table thead th {
   font-size: 1rem;
   font-weight: 700;
   letter-spacing: -0.015em;
-  padding-top: var(--s-5);
 }
-.sk-pfm__table thead th.is-hi { box-shadow: inset 0 3px 0 var(--ink); }
-.sk-pfm__table td.is-hi,
-.sk-pfm__table th.is-hi { background: rgba(14, 42, 46, 0.03); }
-.sk-pfm__table tbody th { font-size: 0.9375rem; font-weight: 600; }
+.sk-pfm__table thead th.is-hi { background: var(--ink-2); }
+.sk-pfm__table td.is-hi { background: rgba(14, 42, 46, 0.035); }
 .sk-pfm__v {
   font-size: 1.25rem;
   font-weight: 600;
   letter-spacing: -0.02em;
   font-variant-numeric: tabular-nums;
 }
-.sk-pfm__mark { display: inline-flex; align-items: center; gap: var(--s-2); font-size: 0.9375rem; }
+.sk-pfm__mark { display: inline-flex; align-items: center; justify-content: center; vertical-align: middle; }
 .sk-pfm__g {
   display: grid;
   place-items: center;
   flex: none;
-  width: 20px;
-  height: 20px;
+  width: 26px;
+  height: 26px;
   border-radius: 50%;
-  font-size: 0.6875rem;
+  font-size: 0.8125rem;
   font-weight: 700;
   line-height: 1;
 }
 .sk-pfm__mark--yes .sk-pfm__g { background: var(--ink); color: #fff; }
-.sk-pfm__mark--no .sk-pfm__g { box-shadow: inset 0 0 0 1.5px var(--line-strong); color: var(--black); }
-.sk-pfm__mark--no { font-weight: 400; }
-.sk-pfm__mark--yes { font-weight: 600; }
+.sk-pfm__mark--no .sk-pfm__g { background: rgba(14, 42, 46, 0.07); color: rgba(14, 42, 46, 0.55); font-size: 0.6875rem; }
 .sk-pfm__cap { padding: var(--s-4) var(--s-5); border-top: 1px solid var(--line); background: var(--card); }
+
+/* Visually hidden, still read: the word behind a status symbol. */
+.sokndall-neo .sk-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Embedded under the price list, inside the /pricing header: its H2 at the
+   list's card-title size, centred like the list's, and a clear gap from the
+   plans' note so the two read as list, then table. */
+.sk-pfm-embed { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--s-5); margin-top: var(--s-7); }
+.sk-pfm-embed__t { text-align: center; }
+.sk-pfm-embed__note { text-align: center; max-width: 60ch; margin: 0 auto; }
+.sk-pfm-embed .sk-pfm__after {
+  margin-top: 0;
+  padding-left: var(--s-4);
+  border-left: 2px solid var(--accent);
+  font-weight: 500;
+  max-width: 72ch;
+}
 
 /* A phone: one card per row, the plan's name beside each value. */
 @media (max-width: 640px) {
@@ -4548,6 +4580,8 @@ html:has(.sk-fnav) { scroll-padding-top: 88px; }
   .sk-pfm__table tbody th { margin-bottom: var(--s-3); }
   .sk-pfm__table td { display: flex; justify-content: space-between; align-items: center; padding: var(--s-2) 0; border-top: 1px solid var(--line); }
   .sk-pfm__table td::before { content: attr(data-label); font-size: 0.8125rem; font-weight: 600; }
+  .sk-pfm__table tbody th { text-align: left; }
   .sk-pfm__v { font-size: 1rem; }
+  .sk-pfm__g { width: 22px; height: 22px; }
   .sk-pfm__cap { padding: var(--s-2) 0 0; border: 0; background: none; }
 }
