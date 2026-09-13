@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { getAppContext, providerCount } from "@/lib/org";
 import { practiceIssues } from "@/lib/consistency";
 import { PLANS } from "@/lib/plans";
@@ -84,12 +85,12 @@ export default async function SettingsPage() {
             <AlertDaysForm action={updateAlertDays} initial={org.alert_days.join(", ")} canEdit={role === "owner"} />
             {role === "owner" && (
               <div className="flex flex-wrap gap-x-5 gap-y-2 text-sm">
-                <a href="/settings/email-preview/alert" target="_blank" rel="noopener noreferrer" className="font-medium text-brand-600 hover:underline">
+                <Link href="/settings/email-preview/alert" className="font-medium text-brand-600 hover:underline">
                   Preview today&apos;s alert email
-                </a>
-                <a href="/settings/email-preview/digest" target="_blank" rel="noopener noreferrer" className="font-medium text-brand-600 hover:underline">
+                </Link>
+                <Link href="/settings/email-preview/digest" className="font-medium text-brand-600 hover:underline">
                   Preview this week&apos;s digest
-                </a>
+                </Link>
               </div>
             )}
           </div>
