@@ -164,16 +164,23 @@ Shared marketing-page components live in `components/site/`: `SiteNav`/`SiteFoot
 
 Diagrams and schematics on these pages (the enrollment matrix, timelines, follow-up logs, digest previews, alert ladders) are deliberately real HTML/CSS at low fidelity, not styled to look like product screenshots — they get replaced with actual screenshots once the corresponding feature exists in the product UI, not with better-drawn mockups now.
 
-### Authenticated app: data model and access control
+### Authenticated app: data model and access control (v3, `cred_*` tables)
 
-RLS is the only access-control layer — there is no service-role bypass anywhere in normal request paths. `lib/supabase/admin.js` (the service-role client) is imported *only* by `app/api/cron/*`; never import it from a page, layout, or Server Action that runs inside a logged-in user's request.
+The source of truth for scope is the founder's `H110_ALCANCE_FUNCIONAL.md` (v3). The
+v3 app reads **only `cred_*` tables**; the pre-v3 tables (`organizations`,
+`providers`, `credentials`, `payers`, `enrollments`, …) are still in the database,
+untouched and unread — do not delete them, do not read them.
 
-- Org membership is granted exclusively through the `create_organization()` Postgres function (`security definer`) — there's no direct insert policy on `org_members`. A future invite flow needs its own `security definer` function rather than opening that table up.
-- `credentials.status` (`active`/`expiring`/`expired`) and CAQH `expiration_date` are computed by a `before insert or update` trigger (`compute_credential_fields`) — never set from application code. `organizations.caqh_reattestation_interval_days` (default 120) drives that computation.
-- `enrollments` has a unique `(provider_id, payer_id)` constraint; the matrix has at most one row per cell, created via upsert on first status change. Every insert/update is written to `enrollment_events` automatically by the `log_enrollment_event()` trigger — application code never writes history rows directly.
-- `organizations.plan`/`provider_limit` are the source of truth the app reads; they're kept in sync with Polar by the webhook handler (`app/api/webhooks/polar/route.js`), not read live from Polar per-request. The org ↔ Polar link is `customerExternalId = organizations.id` (see `lib/plans.js` for the plan-key → Polar-product-ID map), so there's no separate customer-mapping table.
-- Migrations live in `supabase/migrations/`, applied in filename order — there's no migration tool wired up, they're pasted into the Supabase SQL editor by hand (see README's Setup section).
+RLS is the only access-control layer — there is no service-role bypass anywhere in normal request paths. `lib/supabase/admin.js` (the service-role client) is imported *only* by `app/api/cron/*` (and, from the billing phase, the Polar webhook); never import it from a page, layout, or Server Action that runs inside a logged-in user's request.
+
+- **Tenancy:** `cred_organizations` (the paying account: plan + limits) → `cred_client_orgs` (one for Solo/Practice, one per client for Billing Co) → `cred_practices` (1:1 with a client org) → `cred_providers` → `cred_credentials`. Every data row carries `client_org_id`, and every data policy goes through `cred_can_access_client(client_org_id)` — owner sees all clients, a member sees all unless `cred_org_members.client_ids` narrows them. `org_id`/`client_org_id` on child rows are derived by trigger from the parent; never trust them from the app.
+- **Plan rules live in the database:** limits are derived from `plan` by `cred_apply_plan_limits`; the provider limit is a hard stop in `cred_providers_before_write` (so CSV import can't bypass it); a second client org on a non-Billing-Co plan is refused by `cred_enforce_single_client`. Customers can only update `name` and `caqh_reattestation_interval_days` on their organization (column privileges) — never plan or limits.
+- Membership is never written directly (no insert policy on `cred_org_members`). Until the billing phase, `cred_bootstrap_organization()` creates org + owner + client; the billing phase drops it and the Polar webhook becomes the only way an organization is born.
+- `cred_credentials.status` and the CAQH due date are computed by `cred_compute_credential_fields` — never set from app code — and refreshed nightly by the pg_cron job `cred-refresh-credential-statuses` (05:00 UTC). App-side "today" is US Eastern (`todayISO()` in `lib/credentials.js`).
+- NPPES: `lib/nppes.js` calls CMS's public NPI Registry API (allowed by alcance §3.9 — it is an official API, not scraping). The snapshot is stored in `nppes_data` on providers/practices; `lib/consistency.js` flags mismatches from it. The registry proposes, the user confirms — never auto-overwrite.
+- `scripts/verify-rls.mjs` proves tenant isolation, client-subset isolation and the plan rules against the real project with throwaway users, and cleans up after itself. Run it (and extend it) before closing every phase.
+- Migrations live in `supabase/migrations/`, applied in filename order (v3 ones were applied through the Supabase MCP `apply_migration`).
 
 ### Known live discrepancy
 
-`lib/plans.js` (and the actual Polar sandbox products) price the three plans at $49/$99/$199, but the public marketing pages (`/pricing` and others) publish $79/$299/$699 — a pricing change that was applied to the marketing copy but not yet propagated to the checkout config. Reconcile before treating either number as authoritative.
+`lib/plans.js` now carries the v3 prices ($79/$299/$699), but the Polar sandbox products behind `POLAR_PRODUCT_*` are still the old $49/$99/$199 ones. The billing phase creates new products; until then `app/pricing/actions.js` would open a checkout at the old price.

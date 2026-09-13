@@ -1,94 +1,41 @@
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/server";
-import { getCurrentOrg, remainingProviderSlots } from "@/lib/org";
+import { getAppContext, providerCount } from "@/lib/org";
+import { practiceServiceAddress } from "@/lib/consistency";
+import { Card, PageHeader } from "@/components/app/ui";
+import LimitNotice from "@/components/app/LimitNotice";
 import { createProvider } from "../actions";
+import ProviderForm from "../ProviderForm";
 
 export default async function NewProviderPage() {
-  const supabase = await createClient();
-  const org = await getCurrentOrg();
-  const remaining = await remainingProviderSlots(supabase, org);
-
-  if (remaining <= 0) {
-    return (
-      <div className="mx-auto flex max-w-lg flex-col gap-4">
-        <h1 className="text-xl font-semibold text-ink-900">New provider</h1>
-        <div className="rounded-lg border border-ink-200 bg-white p-5">
-          <p className="text-sm text-ink-700">
-            You&apos;ve reached your plan&apos;s limit of {org.provider_limit} providers.
-          </p>
-          <Link
-            href="/pricing"
-            className="mt-3 inline-block rounded-md bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700"
-          >
-            Upgrade your plan
-          </Link>
-        </div>
-      </div>
-    );
-  }
+  const { supabase, org, practice } = await getAppContext();
+  const used = await providerCount(supabase, org.id);
+  const atLimit = used >= org.provider_limit;
 
   return (
-    <div className="mx-auto flex max-w-lg flex-col gap-6">
-      <h1 className="text-xl font-semibold text-ink-900">New provider</h1>
-
-      <form action={createProvider} className="flex flex-col gap-3">
-        <div className="grid grid-cols-2 gap-3">
-          <input
-            name="first_name"
-            required
-            placeholder="First name"
-            className="rounded-md border border-ink-200 px-3 py-2 text-sm outline-none focus:border-brand-600"
-          />
-          <input
-            name="last_name"
-            required
-            placeholder="Last name"
-            className="rounded-md border border-ink-200 px-3 py-2 text-sm outline-none focus:border-brand-600"
-          />
-        </div>
-        <input
-          name="npi"
-          placeholder="NPI"
-          className="rounded-md border border-ink-200 px-3 py-2 text-sm outline-none focus:border-brand-600"
-        />
-        <input
-          name="caqh_id"
-          placeholder="CAQH ID"
-          className="rounded-md border border-ink-200 px-3 py-2 text-sm outline-none focus:border-brand-600"
-        />
-        <input
-          name="specialty"
-          placeholder="Specialty"
-          className="rounded-md border border-ink-200 px-3 py-2 text-sm outline-none focus:border-brand-600"
-        />
-        <input
-          name="email"
-          type="email"
-          placeholder="Email"
-          className="rounded-md border border-ink-200 px-3 py-2 text-sm outline-none focus:border-brand-600"
-        />
-        <textarea
-          name="notes"
-          placeholder="Notes"
-          rows={3}
-          className="rounded-md border border-ink-200 px-3 py-2 text-sm outline-none focus:border-brand-600"
-        />
-
-        <div className="flex gap-3">
-          <button
-            type="submit"
-            className="rounded-md bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700"
-          >
-            Create provider
-          </button>
-          <Link
-            href="/providers"
-            className="rounded-md border border-ink-200 px-4 py-2 text-sm font-medium text-ink-700 hover:bg-ink-50"
-          >
-            Cancel
+    <div className="mx-auto flex max-w-3xl flex-col">
+      <PageHeader
+        eyebrow={
+          <Link href="/providers" className="hover:text-ink-900">
+            ← Providers
           </Link>
-        </div>
-      </form>
+        }
+        title="New provider"
+        description={`${used} of ${org.provider_limit} providers on your plan are in use.`}
+      />
+
+      {atLimit ? (
+        <LimitNotice org={org} />
+      ) : (
+        <Card className="px-5 py-6 sm:px-8">
+          <ProviderForm
+            action={createProvider}
+            practiceAddress={practiceServiceAddress(practice)}
+            limitNotice={<LimitNotice org={org} />}
+            submitLabel="Create provider"
+            cancelHref="/providers"
+          />
+        </Card>
+      )}
     </div>
   );
 }

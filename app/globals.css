@@ -8,16 +8,22 @@
   --color-ink-100: #f1f5f9;
   --color-ink-50: #f8fafc;
 
-  --color-brand-600: #2563eb;
-  --color-brand-700: #1d4ed8;
-  --color-brand-50: #eff6ff;
+  /* App brand = the marketing site's petrol ink, so the product and the
+   * site read as one thing. */
+  --color-brand-700: #0e2a2e;
+  --color-brand-600: #1b4348;
+  --color-brand-500: #2c5f64;
+  --color-brand-100: #d9e6e4;
+  --color-brand-50: #edf4f3;
 
-  --color-status-active: #16a34a;
+  --color-status-active: #15803d;
   --color-status-active-bg: #f0fdf4;
-  --color-status-expiring: #d97706;
+  --color-status-expiring: #b45309;
   --color-status-expiring-bg: #fffbeb;
-  --color-status-expired: #dc2626;
+  --color-status-expired: #b91c1c;
   --color-status-expired-bg: #fef2f2;
+  --color-status-neutral: #475569;
+  --color-status-neutral-bg: #f1f5f9;
 
   --color-enroll-purple: #7c3aed;
   --color-enroll-purple-bg: #f5f3ff;

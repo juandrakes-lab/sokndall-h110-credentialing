@@ -1,229 +1,126 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
-import { CREDENTIAL_TYPE_LABELS, CREDENTIAL_TYPES, STATUS_STYLES } from "@/lib/credentials";
+import { getAppContext } from "@/lib/org";
+import { practiceServiceAddress, providerIssues } from "@/lib/consistency";
+import { Badge, Card, CardHeader, PageHeader, buttonClass } from "@/components/app/ui";
+import DataCheck from "@/components/app/DataCheck";
 import {
-  updateProvider,
-  deleteProvider,
   createCredential,
   deleteCredential,
+  deleteProvider,
+  recheckProviderNppes,
+  updateCredential,
+  updateProvider,
 } from "../actions";
+import ProviderForm from "../ProviderForm";
+import CredentialForm from "./CredentialForm";
+import CredentialItem from "./CredentialItem";
 
-export default async function ProviderDetailPage({ params }) {
+const TYPE_ORDER = ["state_license", "dea", "malpractice", "board_cert", "caqh_attestation"];
+
+export default async function ProviderPage({ params }) {
   const { id } = await params;
-  const supabase = await createClient();
+  const { supabase, org, practice } = await getAppContext();
 
-  const { data: provider } = await supabase
-    .from("providers")
-    .select("*")
-    .eq("id", id)
-    .maybeSingle();
+  const [{ data: provider }, { data: credentials }, { data: siblings }] = await Promise.all([
+    supabase.from("cred_providers").select("*").eq("id", id).maybeSingle(),
+    supabase.from("cred_credentials").select("*").eq("provider_id", id).order("expiration_date", { ascending: true, nullsFirst: false }),
+    supabase.from("cred_providers").select("id, first_name, last_name, npi"),
+  ]);
 
   if (!provider) notFound();
 
-  const { data: credentials } = await supabase
-    .from("credentials")
-    .select("*")
-    .eq("provider_id", id)
-    .order("expiration_date", { ascending: true, nullsFirst: false });
-
-  const updateProviderWithId = updateProvider.bind(null, id);
-  const deleteProviderWithId = deleteProvider.bind(null, id);
-  const createCredentialWithId = createCredential.bind(null, id);
+  const issues = providerIssues(provider, practice, siblings ?? []);
+  const sorted = [...(credentials ?? [])].sort(
+    (a, b) => TYPE_ORDER.indexOf(a.type) - TYPE_ORDER.indexOf(b.type)
+  );
 
   return (
-    <div className="flex flex-col gap-10">
-      <div>
-        <Link href="/providers" className="text-sm text-brand-600 hover:underline">
-          ← Back to providers
-        </Link>
-      </div>
+    <div className="flex flex-col gap-8">
+      <PageHeader
+        eyebrow={
+          <Link href="/providers" className="hover:text-ink-900">
+            ← Providers
+          </Link>
+        }
+        title={`${provider.first_name} ${provider.last_name}`}
+        description={[provider.specialty, provider.npi && `NPI ${provider.npi}`].filter(Boolean).join(" · ") || null}
+        actions={provider.status === "inactive" && <Badge tone="neutral">Inactive</Badge>}
+      />
 
-      <section className="rounded-lg border border-ink-200 bg-white p-5">
-        <h1 className="mb-4 text-xl font-semibold text-ink-900">
-          {provider.first_name} {provider.last_name}
-        </h1>
+      <div className="grid gap-8 lg:grid-cols-3">
+        <div className="flex flex-col gap-8 lg:col-span-2">
+          <Card>
+            <CardHeader
+              title="Credentials"
+              description="Status is worked out from each expiration date — never set by hand."
+            />
+            {sorted.length === 0 ? (
+              <p className="px-5 py-6 text-sm text-ink-500">
+                No credentials yet. Add the provider&apos;s license, DEA, malpractice policy, board
+                certification and CAQH attestation below.
+              </p>
+            ) : (
+              <ul className="divide-y divide-ink-100">
+                {sorted.map((c) => (
+                  <CredentialItem
+                    key={c.id}
+                    credential={c}
+                    updateAction={updateCredential.bind(null, c.id, id)}
+                    deleteAction={deleteCredential.bind(null, c.id, id)}
+                    caqhIntervalDays={org.caqh_reattestation_interval_days}
+                  />
+                ))}
+              </ul>
+            )}
+            <div className="border-t border-ink-100 bg-ink-50/60 px-5 py-5">
+              <h3 className="mb-4 text-sm font-semibold text-ink-900">Add a credential</h3>
+              <CredentialForm
+                action={createCredential.bind(null, id)}
+                caqhIntervalDays={org.caqh_reattestation_interval_days}
+                submitLabel="Add credential"
+              />
+            </div>
+          </Card>
 
-        <form action={updateProviderWithId} className="flex flex-col gap-3">
-          <div className="grid grid-cols-2 gap-3">
-            <input
-              name="first_name"
-              defaultValue={provider.first_name}
-              required
-              className="rounded-md border border-ink-200 px-3 py-2 text-sm outline-none focus:border-brand-600"
-            />
-            <input
-              name="last_name"
-              defaultValue={provider.last_name}
-              required
-              className="rounded-md border border-ink-200 px-3 py-2 text-sm outline-none focus:border-brand-600"
-            />
-          </div>
-          <div className="grid grid-cols-2 gap-3">
-            <input
-              name="npi"
-              defaultValue={provider.npi ?? ""}
-              placeholder="NPI"
-              className="rounded-md border border-ink-200 px-3 py-2 text-sm outline-none focus:border-brand-600"
-            />
-            <input
-              name="caqh_id"
-              defaultValue={provider.caqh_id ?? ""}
-              placeholder="CAQH ID"
-              className="rounded-md border border-ink-200 px-3 py-2 text-sm outline-none focus:border-brand-600"
-            />
-          </div>
-          <div className="grid grid-cols-2 gap-3">
-            <input
-              name="specialty"
-              defaultValue={provider.specialty ?? ""}
-              placeholder="Specialty"
-              className="rounded-md border border-ink-200 px-3 py-2 text-sm outline-none focus:border-brand-600"
-            />
-            <input
-              name="email"
-              type="email"
-              defaultValue={provider.email ?? ""}
-              placeholder="Email"
-              className="rounded-md border border-ink-200 px-3 py-2 text-sm outline-none focus:border-brand-600"
-            />
-          </div>
-          <select
-            name="status"
-            defaultValue={provider.status}
-            className="rounded-md border border-ink-200 px-3 py-2 text-sm outline-none focus:border-brand-600"
-          >
-            <option value="active">Active</option>
-            <option value="inactive">Inactive</option>
-          </select>
-          <textarea
-            name="notes"
-            defaultValue={provider.notes ?? ""}
-            placeholder="Notes"
-            rows={3}
-            className="rounded-md border border-ink-200 px-3 py-2 text-sm outline-none focus:border-brand-600"
+          <Card>
+            <CardHeader title="Profile" />
+            <div className="px-5 py-5">
+              <ProviderForm
+                action={updateProvider.bind(null, id)}
+                initial={Object.fromEntries(Object.entries(provider).map(([k, v]) => [k, v ?? ""]))}
+                practiceAddress={practiceServiceAddress(practice)}
+                submitLabel="Save changes"
+                editing
+              />
+            </div>
+          </Card>
+        </div>
+
+        <div className="flex flex-col gap-8">
+          <DataCheck
+            issues={issues}
+            checkedAt={provider.nppes_checked_at}
+            recheckAction={provider.npi ? recheckProviderNppes.bind(null, id) : null}
+            subject="this provider"
           />
 
-          <div className="flex items-center justify-between">
-            <button
-              type="submit"
-              className="rounded-md bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700"
-            >
-              Save changes
-            </button>
-          </div>
-        </form>
-
-        <form action={deleteProviderWithId} className="mt-3">
-          <button type="submit" className="text-sm text-status-expired hover:underline">
-            Delete provider
-          </button>
-        </form>
-      </section>
-
-      <section>
-        <h2 className="mb-3 text-lg font-semibold text-ink-900">Credentials</h2>
-
-        <div className="mb-6 overflow-hidden rounded-lg border border-ink-200 bg-white">
-          {!credentials || credentials.length === 0 ? (
-            <p className="p-4 text-sm text-ink-500">No credentials yet.</p>
-          ) : (
-            <table className="w-full text-left text-sm">
-              <thead className="bg-ink-100 text-ink-500">
-                <tr>
-                  <th className="px-4 py-2 font-medium">Type</th>
-                  <th className="px-4 py-2 font-medium">Identifier</th>
-                  <th className="px-4 py-2 font-medium">State</th>
-                  <th className="px-4 py-2 font-medium">Issued</th>
-                  <th className="px-4 py-2 font-medium">Expires</th>
-                  <th className="px-4 py-2 font-medium">Status</th>
-                  <th className="px-4 py-2 font-medium" />
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-ink-200">
-                {credentials.map((c) => {
-                  const deleteCredentialWithId = deleteCredential.bind(null, id, c.id);
-                  return (
-                    <tr key={c.id}>
-                      <td className="px-4 py-2">{CREDENTIAL_TYPE_LABELS[c.type]}</td>
-                      <td className="px-4 py-2 text-ink-500">{c.identifier ?? "—"}</td>
-                      <td className="px-4 py-2 text-ink-500">{c.state ?? "—"}</td>
-                      <td className="px-4 py-2 text-ink-500">{c.issue_date ?? "—"}</td>
-                      <td className="px-4 py-2 text-ink-500">{c.expiration_date ?? "—"}</td>
-                      <td className="px-4 py-2">
-                        <span className={`rounded-full px-2 py-0.5 text-xs ${STATUS_STYLES[c.status]}`}>
-                          {c.status}
-                        </span>
-                      </td>
-                      <td className="px-4 py-2 text-right">
-                        <form action={deleteCredentialWithId}>
-                          <button type="submit" className="text-status-expired hover:underline">
-                            Delete
-                          </button>
-                        </form>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          )}
+          <Card className="px-5 py-4">
+            <details>
+              <summary className="cursor-pointer text-sm font-medium text-ink-700">Delete this provider</summary>
+              <p className="mt-3 text-sm text-ink-500">
+                This removes {provider.first_name} {provider.last_name} and all of their credentials. It can&apos;t be
+                undone. If they just left the practice, mark them Inactive instead.
+              </p>
+              <form action={deleteProvider.bind(null, id)} className="mt-3">
+                <button type="submit" className={buttonClass("danger", "sm")}>
+                  Delete permanently
+                </button>
+              </form>
+            </details>
+          </Card>
         </div>
-
-        <div className="rounded-lg border border-ink-200 bg-white p-4">
-          <h3 className="mb-3 text-sm font-semibold text-ink-900">Add credential</h3>
-          <form action={createCredentialWithId} className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-            <select
-              name="type"
-              required
-              className="rounded-md border border-ink-200 px-3 py-2 text-sm outline-none focus:border-brand-600"
-            >
-              {CREDENTIAL_TYPES.map((type) => (
-                <option key={type} value={type}>
-                  {CREDENTIAL_TYPE_LABELS[type]}
-                </option>
-              ))}
-            </select>
-            <input
-              name="identifier"
-              placeholder="Identifier / license #"
-              className="rounded-md border border-ink-200 px-3 py-2 text-sm outline-none focus:border-brand-600"
-            />
-            <input
-              name="state"
-              placeholder="State"
-              className="rounded-md border border-ink-200 px-3 py-2 text-sm outline-none focus:border-brand-600"
-            />
-            <label className="flex flex-col gap-1 text-xs text-ink-500">
-              Issue date
-              <input
-                name="issue_date"
-                type="date"
-                className="rounded-md border border-ink-200 px-3 py-2 text-sm outline-none focus:border-brand-600"
-              />
-            </label>
-            <label className="flex flex-col gap-1 text-xs text-ink-500">
-              Expiration date
-              <input
-                name="expiration_date"
-                type="date"
-                className="rounded-md border border-ink-200 px-3 py-2 text-sm outline-none focus:border-brand-600"
-              />
-            </label>
-            <input
-              name="notes"
-              placeholder="Notes"
-              className="rounded-md border border-ink-200 px-3 py-2 text-sm outline-none focus:border-brand-600"
-            />
-            <button
-              type="submit"
-              className="col-span-2 rounded-md bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700 sm:col-span-3"
-            >
-              Add credential
-            </button>
-          </form>
-        </div>
-      </section>
+      </div>
     </div>
   );
 }

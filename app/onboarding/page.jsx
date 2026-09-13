@@ -1,46 +1,33 @@
 import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
-import { getCurrentOrg } from "@/lib/org";
-import { createOrganization } from "./actions";
+import { getAppContext } from "@/lib/org";
+import { savePractice } from "@/lib/practice-actions";
+import PracticeForm from "@/components/app/PracticeForm";
 
 export const metadata = {
+  title: "Set up your practice — Sokndall",
   robots: { index: false, follow: false },
 };
 
 export default async function OnboardingPage() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { user, org, practice } = await getAppContext();
 
   if (!user) redirect("/login");
-
-  const org = await getCurrentOrg();
-  if (org) redirect("/dashboard");
+  if (org && practice) redirect("/dashboard");
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-sm flex-col justify-center gap-6 px-6">
-      <div>
-        <h1 className="text-xl font-semibold text-ink-900">Name your organization</h1>
-        <p className="mt-1 text-sm text-ink-500">
-          This is your practice or billing company. You can invite teammates later.
+    <main className="min-h-screen bg-ink-50 px-5 py-12">
+      <div className="mx-auto max-w-3xl">
+        <p className="text-lg font-semibold tracking-tight text-brand-700">Sokndall</p>
+        <h1 className="mt-8 text-2xl font-semibold tracking-tight text-ink-900">Set up your practice</h1>
+        <p className="mt-1 max-w-xl text-sm text-ink-500">
+          Payers match these details against the NPI Registry and the IRS on every application. Enter
+          the group NPI first and check it — Sokndall fills in the rest from the registry.
         </p>
-      </div>
 
-      <form action={createOrganization} className="flex flex-col gap-3">
-        <input
-          name="name"
-          required
-          placeholder="e.g. Riverside Family Medicine"
-          className="rounded-md border border-ink-200 px-3 py-2 text-sm outline-none focus:border-brand-600"
-        />
-        <button
-          type="submit"
-          className="rounded-md bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700"
-        >
-          Create organization
-        </button>
-      </form>
+        <div className="mt-8 rounded-xl border border-ink-200 bg-white px-5 py-6 shadow-sm sm:px-8">
+          <PracticeForm action={savePractice} submitLabel="Save and continue" />
+        </div>
+      </div>
     </main>
   );
 }

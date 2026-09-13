@@ -9,7 +9,7 @@ const APP_PREFIXES = [
   "/providers",
   "/payers",
   "/enrollments",
-  "/credentials",
+  "/settings",
   "/onboarding",
 ];
 
@@ -55,7 +55,7 @@ export const config = {
     "/providers/:path*",
     "/payers/:path*",
     "/enrollments/:path*",
-    "/credentials/:path*",
+    "/settings/:path*",
     "/onboarding/:path*",
     "/auth/:path*",
   ],
