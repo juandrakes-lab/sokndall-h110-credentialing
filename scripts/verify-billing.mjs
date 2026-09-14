@@ -6,7 +6,9 @@
 //      checks the account is created, kept in sync, deduplicated, and that
 //      unsigned or unknown events change nothing.
 //
-// Usage: node scripts/verify-billing.mjs [base-url]   (dev server running; default http://localhost:3100)
+// Usage: node scripts/verify-billing.mjs [base-url] [--live <sandbox subscription id>]   (dev server running; default http://localhost:3100)
+// --live also moves a real sandbox Billing Co subscription to 11 users and back
+// (charge now, decrease at renewal), then leaves it at 10 with nothing pending.
 
 import { readFileSync } from "node:fs";
 import { createClient } from "@supabase/supabase-js";
@@ -23,7 +25,8 @@ const env = Object.fromEntries(
     })
 );
 
-const BASE = process.argv[2] ?? "http://localhost:3100";
+const BASE = process.argv.find((a) => a.startsWith("http")) ?? "http://localhost:3100";
+const LIVE = process.argv.includes("--live") ? process.argv[process.argv.indexOf("--live") + 1] : null;
 const admin = createClient(env.NEXT_PUBLIC_SUPABASE_URL, env.SUPABASE_SERVICE_ROLE_KEY, {
   auth: { persistSession: false, autoRefreshToken: false },
 });
@@ -41,7 +44,7 @@ const PRODUCTS = { solo: env.POLAR_PRODUCT_SOLO, practice: env.POLAR_PRODUCT_PRA
 const PRICES = { solo: 7900, practice: 29900, billing_co: 69900 };
 
 // A subscription object in Polar's wire format (what validateEvent parses).
-function subscription({ plan, status = "trialing", modifiedAt, cancelAtPeriodEnd = false, productId }) {
+function subscription({ plan, status = "trialing", modifiedAt, cancelAtPeriodEnd = false, productId, seats = null, amount }) {
   const now = new Date().toISOString();
   const end = new Date(Date.now() + 14 * 86400000).toISOString();
   const customer = {
@@ -56,7 +59,7 @@ function subscription({ plan, status = "trialing", modifiedAt, cancelAtPeriodEnd
     metadata: {}, prices: [], benefits: [], medias: [], attached_custom_fields: [],
   };
   return {
-    created_at: now, modified_at: modifiedAt, id: `sub_${run}`, amount: PRICES[plan] ?? 0, currency: "usd",
+    created_at: now, modified_at: modifiedAt, id: `sub_${run}`, amount: amount ?? PRICES[plan] ?? 0, currency: "usd", seats,
     recurring_interval: "month", recurring_interval_count: 1, status, current_period_start: now, current_period_end: end,
     current_meter_period_start: null, current_meter_period_end: null, trial_start: now, trial_end: end,
     cancel_at_period_end: cancelAtPeriodEnd, canceled_at: null, started_at: now, ends_at: null, ended_at: null,
@@ -102,6 +105,7 @@ async function main() {
       customerEmail: `delivered+billing-${run}@resend.dev`,
       metadata: { plan, user_id: userId },
       successUrl: `${BASE}/welcome?checkout_id={CHECKOUT_ID}`,
+      ...(plan === "billing_co" ? { seats: 10, minSeats: 10, maxSeats: 10 } : {}),
     });
     const amount = checkout.productPrice?.priceAmount ?? checkout.amount;
     check(
@@ -109,6 +113,13 @@ async function main() {
       checkout.url?.startsWith("https://") && amount === PRICES[plan] && checkout.activeTrialIntervalCount === 14 && checkout.externalCustomerId === userId,
       `amount ${amount}, trial ${checkout.activeTrialIntervalCount} ${checkout.activeTrialInterval}, url ${checkout.url?.slice(0, 40)}…`
     );
+  }
+
+  // Billing Co extra users: Polar itself prices users 11 and 12 at $39 each on
+  // the same product (seats 1–10 at $0 on top of the $699).
+  for (const [seats, cents] of [[11, 73800], [12, 77700]]) {
+    const c = await polar.checkouts.create({ products: [PRODUCTS.billing_co], externalCustomerId: userId, seats });
+    check(`Billing Co with ${seats} users costs $${cents / 100}/month (Polar's own total)`, c.amount === cents, `amount ${c.amount}`);
   }
 
   // --- 2. Webhooks -----------------------------------------------------------
@@ -132,6 +143,13 @@ async function main() {
   await deliver("subscription.updated", subscription({ plan: "billing_co", status: "active", modifiedAt: new Date(run + 2000).toISOString() }));
   const o2 = await org();
   check("subscription.updated applies an upgrade's limits", o2.plan === "billing_co" && o2.provider_limit === 50 && o2.user_limit === 10 && o2.storage_limit_mb === 20480);
+
+  await deliver("subscription.updated", subscription({ plan: "billing_co", status: "active", seats: 11, amount: 73800, modifiedAt: new Date(run + 2100).toISOString() }));
+  check("An 11th user on the subscription raises the account to 11 users", (await org()).user_limit === 11, String((await org()).user_limit));
+  await deliver("subscription.updated", subscription({ plan: "billing_co", status: "active", seats: 10, modifiedAt: new Date(run + 2200).toISOString() }));
+  check("Removing it (at renewal) brings the account back to the 10 included", (await org()).user_limit === 10, String((await org()).user_limit));
+  await deliver("subscription.updated", subscription({ plan: "billing_co", status: "active", seats: 3, modifiedAt: new Date(run + 2300).toISOString() }));
+  check("Billing Co never drops below its 10 included users", (await org()).user_limit === 10, String((await org()).user_limit));
 
   await deliver("subscription.canceled", subscription({ plan: "billing_co", status: "active", cancelAtPeriodEnd: true, modifiedAt: new Date(run + 3000).toISOString() }));
   const o3 = await org();
@@ -160,6 +178,21 @@ async function main() {
   check("A revoke arriving after the account was deleted creates nothing", late.status === 200 && !(await org()), JSON.stringify(late.body));
   const lateActive = await deliver("subscription.updated", subscription({ plan: "practice", status: "active", modifiedAt: new Date(run + 7000).toISOString() }));
   check("…nor does a late event from before the deletion", lateActive.status === 200 && !(await org()), JSON.stringify(lateActive.body));
+
+  // --- 3. (--live) A real sandbox subscription: the same moves lib/seats.js makes.
+  if (LIVE) {
+    const up = await polar.subscriptions.update({ id: LIVE, subscriptionUpdate: { seats: 11, prorationBehavior: "invoice" } });
+    check("Live: the 11th user is charged on the same subscription at once ($738/month)", up.seats === 11 && up.amount === 73800, `${up.seats} seats, ${up.amount}`);
+    const down = await polar.subscriptions.update({ id: LIVE, subscriptionUpdate: { seats: 10, prorationBehavior: "next_period" } });
+    check(
+      "Live: removing it schedules the drop for the renewal, keeping the paid seat until then",
+      down.seats === 11 && down.pendingUpdate?.seats === 10 && !!down.pendingUpdate?.appliesAt,
+      `${down.seats} now, ${down.pendingUpdate?.seats} from ${down.pendingUpdate?.appliesAt?.toISOString?.()}`
+    );
+    await polar.subscriptions.update({ id: LIVE, subscriptionUpdate: { clearPendingUpdate: true } });
+    const reset = await polar.subscriptions.update({ id: LIVE, subscriptionUpdate: { seats: 10, prorationBehavior: "prorate" } });
+    check("Live: subscription left as found (10 users, nothing pending)", reset.seats === 10 && !reset.pendingUpdate, `${reset.seats} seats`);
+  }
 }
 
 try {

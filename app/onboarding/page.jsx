@@ -11,11 +11,11 @@ export const metadata = {
 // Step 3 of signup, right after payment: the practice record. For Billing Co
 // this is the first client's practice.
 export default async function OnboardingPage() {
-  const { user, org, practice, clients } = await getAppContext();
+  const { user, org, role, practice, clients } = await getAppContext();
 
   if (!user) redirect("/login");
   if (!org) redirect("/start");
-  if (practice) redirect("/dashboard");
+  if (practice || (role !== "owner" && clients.length === 0)) redirect("/dashboard");
 
   const billingCo = org.plan === "billing_co";
   // Only when adding a client stopped halfway: the client exists, its practice doesn't.

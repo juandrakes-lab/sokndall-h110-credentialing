@@ -13,7 +13,7 @@ export const metadata = { title: "Choose your plan — Sokndall", robots: { inde
 const FEATURES = {
   solo: ["1 user", "1 GB of documents"],
   practice: ["Up to 3 users", "5 GB of documents"],
-  billing_co: ["10 users included", "20 GB of documents", "Separate workspace per client"],
+  billing_co: ["10 users included, $39/month each after that", "20 GB of documents", "Separate workspace per client"],
 };
 
 // Step 2 of signup (alcance §10.1): signed in, no account yet. Choosing a plan

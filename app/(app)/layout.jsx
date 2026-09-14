@@ -13,6 +13,24 @@ export const metadata = {
   robots: { index: false, follow: false },
 };
 
+function NoClients({ email }) {
+  return (
+    <main className="flex min-h-screen items-center justify-center bg-ink-50 px-5">
+      <div className="max-w-md text-center">
+        <p className="text-lg font-semibold tracking-tight text-brand-700">Sokndall</p>
+        <h1 className="mt-6 text-xl font-semibold text-ink-900">No clients to work on right now</h1>
+        <p className="mt-2 text-sm text-ink-500">
+          The clients you had access to were archived or removed from the account. Ask the account owner to give you
+          access to a client — you&apos;ll see it here as soon as they do.
+        </p>
+        <form action={signOut} className="mt-6">
+          <SubmitButton className="text-sm text-ink-500 hover:text-ink-900">Sign out ({email})</SubmitButton>
+        </form>
+      </div>
+    </main>
+  );
+}
+
 export default async function AppLayout({ children }) {
   const { user, org, role, practice, clients, client, multiClient } = await getAppContext();
 
@@ -20,6 +38,9 @@ export default async function AppLayout({ children }) {
   // A login without an account chooses a plan first; an account without its
   // practice finishes onboarding.
   if (!org) redirect("/start");
+  // A member whose clients were all archived or deleted: nothing to work on,
+  // said plainly instead of an error.
+  if (role !== "owner" && clients.length === 0) return <NoClients email={user.email} />;
   if (!practice) redirect("/onboarding");
 
   const access = accountAccess(org);

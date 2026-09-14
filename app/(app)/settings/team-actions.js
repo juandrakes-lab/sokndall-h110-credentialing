@@ -2,9 +2,11 @@
 
 import { createHash, randomBytes } from "node:crypto";
 import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { getAppContext } from "@/lib/org";
 import { sendEmail } from "@/lib/resend";
+import { EXTRA_USER_PRICE, monthlyPrice, seatsFor, seatsInUse, setSeats } from "@/lib/seats";
 
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 
@@ -25,9 +27,37 @@ function readClientAccess(formData, org, clients) {
   return { clientIds };
 }
 
+async function usedSeats(supabase, orgId) {
+  const [{ data: members }, { data: invitations }] = await Promise.all([
+    supabase.rpc("cred_org_directory"),
+    supabase.from("cred_invitations").select("accepted_at, expires_at").eq("org_id", orgId),
+  ]);
+  return seatsInUse(members ?? [], invitations ?? []);
+}
+
+// Billing Co: after someone leaves (or an invitation is withdrawn) the plan
+// drops back to what's in use at the next renewal. True when a decrease is
+// now scheduled (Settings then shows when and to what).
+async function shrinkSeats(supabase, org) {
+  if (org.plan !== "billing_co" || !org.polar_subscription_id) return false;
+  const target = seatsFor(await usedSeats(supabase, org.id));
+  try {
+    const { pendingSeats } = await setSeats(org.polar_subscription_id, target);
+    return pendingSeats !== null;
+  } catch (err) {
+    console.error(`seat decrease failed: ${err.message}`);
+    return false;
+  }
+}
+
 // Owner invites a teammate (alcance §4.3: blocked at the plan's user N+1).
 // The link carries a random token; only its hash is stored. The link is also
 // shown to the owner, so an invitation works even if the email is missed.
+//
+// Billing Co beyond its users: the first submit only answers with the cost;
+// confirming (confirm_extra) adds a seat on the Polar subscription and
+// answers `waitingForSeat` — the form then waits for the new limit to land
+// (webhook or /api/billing/sync) and submits itself again.
 export async function inviteMember(_prev, formData) {
   const { supabase, org, role, user, clients } = await getAppContext();
   if (role !== "owner") return { error: "Only the account owner can invite people." };
@@ -37,6 +67,24 @@ export async function inviteMember(_prev, formData) {
   if (email === user.email.toLowerCase()) return { fieldErrors: { email: "That's you — you're already on the account." } };
   const access = readClientAccess(formData, org, clients);
   if (access.fieldErrors) return { fieldErrors: access.fieldErrors };
+
+  if (org.plan === "billing_co") {
+    const used = await usedSeats(supabase, org.id);
+    if (used >= org.user_limit) {
+      const target = used + 1;
+      if (!formData.get("confirm_extra")) {
+        return { needsExtraSeat: { price: EXTRA_USER_PRICE, from: monthlyPrice(org.user_limit), to: monthlyPrice(target), users: target } };
+      }
+      if (!org.polar_subscription_id) return { error: "This account has no subscription to add a user to." };
+      try {
+        await setSeats(org.polar_subscription_id, target);
+      } catch (err) {
+        console.error(`seat increase failed for ${org.id}: ${err.message}`);
+        return { error: "Polar couldn't add the user to your plan, so nobody was invited and nothing was charged. Try again in a minute; if it keeps failing, check your card in the billing portal." };
+      }
+      return { waitingForSeat: target };
+    }
+  }
 
   const token = randomBytes(24).toString("base64url");
   const { error } = await supabase.from("cred_invitations").insert({
@@ -72,11 +120,19 @@ export async function inviteMember(_prev, formData) {
   return { saved: Date.now(), link, email, emailed };
 }
 
+// Whether the plan already holds `target` users (the extra-user flow polls it).
+export async function seatReady(target) {
+  const { org, role } = await getAppContext();
+  return role === "owner" && org?.user_limit >= target;
+}
+
 export async function revokeInvitation(invitationId) {
-  const { supabase, role } = await getAppContext();
+  const { supabase, role, org } = await getAppContext();
   if (role !== "owner") return;
   await supabase.from("cred_invitations").delete().eq("id", invitationId);
+  const scheduled = await shrinkSeats(supabase, org);
   revalidatePath("/settings");
+  if (scheduled) redirect("/settings?seats=scheduled#team");
 }
 
 // Billing Co: the owner changes which clients a member works on.
@@ -93,9 +149,11 @@ export async function setMemberClients(userId, _prev, formData) {
 }
 
 export async function removeMember(userId) {
-  const { supabase, role } = await getAppContext();
+  const { supabase, role, org } = await getAppContext();
   if (role !== "owner") return;
   const { error } = await supabase.rpc("cred_remove_member", { p_user_id: userId });
   if (error) throw new Error(error.message);
+  const scheduled = await shrinkSeats(supabase, org);
   revalidatePath("/settings");
+  if (scheduled) redirect("/settings?seats=scheduled#team");
 }

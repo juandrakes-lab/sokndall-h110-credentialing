@@ -14,6 +14,7 @@ import TeamCard from "./TeamCard";
 import { DeleteAccountForm } from "./TeamForms";
 import { deleteAccount } from "@/lib/billing-actions";
 import { accountAccess } from "@/lib/billing";
+import { pendingSeatChange } from "@/lib/seats";
 
 function sentAt(iso) {
   return new Date(iso).toLocaleString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit", timeZone: "America/New_York" });
@@ -31,6 +32,11 @@ export default async function SettingsPage({ searchParams }) {
     supabase.from("cred_org_members").select("user_id, client_ids").eq("org_id", org.id),
     supabase.from("cred_invitations").select("*").eq("org_id", org.id).order("created_at", { ascending: false }),
   ]);
+  // Billing Co with extra users: a decrease may be scheduled for the renewal.
+  const seatChange =
+    owner && org.plan === "billing_co" && org.user_limit > 10 && org.polar_subscription_id
+      ? await pendingSeatChange(org.polar_subscription_id).catch(() => null)
+      : null;
   const clientIdsOf = new Map((access ?? []).map((m) => [m.user_id, m.client_ids]));
   const members = (directory ?? []).map((m) => ({ ...m, client_ids: clientIdsOf.get(m.user_id) ?? null }));
   // One email covers several items (several log rows); show each email once.
@@ -149,6 +155,7 @@ export default async function SettingsPage({ searchParams }) {
           invitations={invitations ?? []}
           writable={accountAccess(org).writable}
           clients={multiClient ? clients.map((c) => ({ id: c.id, name: c.name })) : null}
+          seatChange={seatChange}
         />
       )}
 

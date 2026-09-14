@@ -3,10 +3,13 @@ import { forbidden } from "next/navigation";
 import { getAppContext } from "@/lib/org";
 import { loadFollowUps } from "@/lib/follow-ups";
 import { loadExpirations } from "@/lib/expirations";
-import { addDays, todayISO } from "@/lib/credentials";
-import { openClient } from "@/lib/client-actions";
-import { Card, PageHeader, buttonClass } from "@/components/app/ui";
+import { addDays, formatDate, todayISO } from "@/lib/credentials";
+import { archiveClient, deleteClient, openClient, restoreClient } from "@/lib/client-actions";
+import { createClient } from "@/lib/supabase/server";
+import { Card, CardHeader, PageHeader, buttonClass } from "@/components/app/ui";
 import SubmitButton from "@/components/app/SubmitButton";
+import ExportClientButton from "@/components/app/ExportClientButton";
+import { DeleteClientForm, RestoreClientForm } from "./ClientLifecycleForms";
 
 export const metadata = { title: "Clients — Sokndall" };
 
@@ -19,16 +22,32 @@ function Count({ value, tone }) {
 // Billing Co (alcance §4.4): the work of every client this person can reach,
 // added up, one row per client — totals only, never one client's detail next
 // to another's. Opening a row switches the whole app to that client.
-export default async function ClientsPage() {
-  const { supabaseAll, org, role, clients, client: active, multiClient } = await getAppContext();
+export default async function ClientsPage({ searchParams }) {
+  const { supabaseAll, org, role, clients, archivedClients, client: active, multiClient } = await getAppContext();
   if (!multiClient) forbidden();
+  const sp = await searchParams;
+  const owner = role === "owner";
 
   const soon = addDays(todayISO(), 30);
-  const [{ queue, stalled }, expirations, { data: providers }] = await Promise.all([
+  // supabaseAll never reads archived clients (RLS), so neither do these totals.
+  const [{ queue, stalled }, expirations, { data: providers }, { data: deletions }, archivedCounts] = await Promise.all([
     loadFollowUps(supabaseAll),
     loadExpirations(supabaseAll),
     supabaseAll.from("cred_providers").select("client_org_id").eq("status", "active"),
+    owner
+      ? supabaseAll.from("cred_client_deletions").select("client_name, deleted_at, deleted_by").order("deleted_at", { ascending: false })
+      : Promise.resolve({ data: [] }),
+    // An archived client's providers, read by naming it (owner only).
+    Promise.all(
+      archivedClients.map(async (c) => {
+        const scoped = await createClient({ clientOrgId: c.id });
+        const { count } = await scoped.from("cred_providers").select("id", { count: "exact", head: true }).eq("client_org_id", c.id);
+        return [c.id, count ?? 0];
+      })
+    ).then((pairs) => new Map(pairs)),
   ]);
+  const { data: directory } = owner && deletions?.length ? await supabaseAll.rpc("cred_org_directory") : { data: [] };
+  const emailOf = (id) => (directory ?? []).find((d) => d.user_id === id)?.email ?? "a former member";
 
   const tally = (rows, clientOf) => {
     const m = new Map();
@@ -61,6 +80,22 @@ export default async function ClientsPage() {
           )
         }
       />
+
+      {sp?.archived && (
+        <p role="status" className="rounded-lg border border-status-active/30 bg-status-active-bg px-4 py-3 text-sm text-ink-900">
+          Client archived. Its data is kept below under Archived; restore it any time.
+        </p>
+      )}
+      {sp?.deleted && (
+        <p role="status" className="rounded-lg border border-status-active/30 bg-status-active-bg px-4 py-3 text-sm text-ink-900">
+          Client deleted, with all of its data and files.
+        </p>
+      )}
+      {sp?.problem && (
+        <p role="alert" className="rounded-lg border border-status-expired/30 bg-status-expired-bg px-4 py-3 text-sm text-status-expired">
+          {sp.problem}
+        </p>
+      )}
 
       <div className="grid gap-4 sm:grid-cols-4">
         {[
@@ -111,11 +146,31 @@ export default async function ClientsPage() {
                     <Count value={byClient.expired.get(c.id) ?? 0} tone="font-semibold text-status-expired" />
                   </td>
                   <td className="px-5 py-3 text-right">
-                    <form action={openClient}>
-                      <input type="hidden" name="client" value={c.id} />
-                      <input type="hidden" name="to" value="/dashboard" />
-                      <SubmitButton className={buttonClass("secondary", "sm")}>Open</SubmitButton>
-                    </form>
+                    <div className="flex items-center justify-end gap-3">
+                      <form action={openClient}>
+                        <input type="hidden" name="client" value={c.id} />
+                        <input type="hidden" name="to" value="/dashboard" />
+                        <SubmitButton className={buttonClass("secondary", "sm")}>Open</SubmitButton>
+                      </form>
+                      {owner && clients.length > 1 && (
+                        <details className="relative text-left text-xs">
+                          <summary className="cursor-pointer list-none text-ink-500 hover:text-ink-900 [&::-webkit-details-marker]:hidden">
+                            Archive
+                          </summary>
+                          <form
+                            action={archiveClient}
+                            className="absolute right-0 z-10 mt-1 w-72 rounded-lg border border-ink-200 bg-white p-3 text-sm shadow-lg"
+                          >
+                            <input type="hidden" name="client" value={c.id} />
+                            <p className="text-ink-700">
+                              {c.name} leaves the selector and this panel, its providers stop counting toward your {org.provider_limit},
+                              and members lose access. Nothing is deleted; restore it any time.
+                            </p>
+                            <SubmitButton className={`${buttonClass("secondary", "sm")} mt-2`}>Archive {c.name}</SubmitButton>
+                          </form>
+                        </details>
+                      )}
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -125,9 +180,55 @@ export default async function ClientsPage() {
       </Card>
 
       <p className="text-xs text-ink-500">
-        {org.provider_limit} providers on your plan, shared by all clients. Opening a client switches every screen —
+        {org.provider_limit} providers on your plan, shared by all active clients. Opening a client switches every screen —
         dashboard, providers, enrollments, documents — to that client.
       </p>
+
+      {owner && archivedClients.length > 0 && (
+        <Card>
+          <CardHeader
+            title="Archived"
+            description="Kept exactly as they were, out of every screen and every member's reach. They don't count toward your providers or storage. Restore one, or export it and delete it for good."
+          />
+          <ul className="divide-y divide-ink-100">
+            {archivedClients.map((c) => (
+              <li key={c.id} className="flex flex-col gap-3 px-5 py-4 text-sm">
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div>
+                    <p className="font-medium text-ink-900">{c.name}</p>
+                    <p className="text-xs text-ink-500">
+                      Archived {formatDate(c.archived_at.slice(0, 10))} · {plural(archivedCounts.get(c.id) ?? 0, "provider", "providers")}
+                    </p>
+                  </div>
+                  <div className="flex flex-wrap items-start gap-2">
+                    <RestoreClientForm action={restoreClient} clientId={c.id} />
+                    <ExportClientButton clientId={c.id} />
+                  </div>
+                </div>
+                <details>
+                  <summary className="cursor-pointer text-xs font-medium text-status-expired hover:underline">Delete for good…</summary>
+                  <div className="mt-2">
+                    <DeleteClientForm action={deleteClient} clientId={c.id} clientName={c.name} />
+                  </div>
+                </details>
+              </li>
+            ))}
+          </ul>
+        </Card>
+      )}
+
+      {owner && deletions?.length > 0 && (
+        <div className="text-xs text-ink-500">
+          <p className="font-medium text-ink-700">Deleted clients</p>
+          <ul className="mt-1 flex flex-col gap-0.5">
+            {deletions.map((d) => (
+              <li key={`${d.client_name}-${d.deleted_at}`}>
+                {d.client_name} — deleted {formatDate(d.deleted_at.slice(0, 10))} by {emailOf(d.deleted_by)}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   );
 }

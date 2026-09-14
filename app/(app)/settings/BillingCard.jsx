@@ -4,6 +4,7 @@ import { accountAccess } from "@/lib/billing";
 import { formatDate } from "@/lib/credentials";
 import { changePlan, openBillingPortal, resubscribe } from "@/lib/billing-actions";
 import RefreshUntilConfirmed from "./RefreshUntilConfirmed";
+import { EXTRA_USER_PRICE, INCLUDED_USERS, monthlyPrice } from "@/lib/seats";
 import SubmitButton from "@/components/app/SubmitButton";
 
 const day = (iso) => (iso ? formatDate(new Date(iso).toISOString().slice(0, 10)) : null);
@@ -35,8 +36,14 @@ export default function BillingCard({ org, providersUsed, requestedPlan, resubsc
       <div className="flex flex-col gap-5 px-5 py-5">
         <div>
           <p className="text-base font-semibold text-ink-900">
-            {current.label} · ${current.price}/month
+            {current.label} · ${org.plan === "billing_co" ? monthlyPrice(org.user_limit) : current.price}/month
           </p>
+          {org.plan === "billing_co" && org.user_limit > INCLUDED_USERS && (
+            <p className="text-xs text-ink-500">
+              ${current.price} + {org.user_limit - INCLUDED_USERS} additional user{org.user_limit - INCLUDED_USERS === 1 ? "" : "s"} × $
+              {EXTRA_USER_PRICE}
+            </p>
+          )}
           <p className="mt-0.5 text-sm text-ink-500">
             {access.message ??
               (org.current_period_end ? `Renews on ${day(org.current_period_end)}.` : "Active.")}
@@ -94,7 +101,7 @@ export default function BillingCard({ org, providersUsed, requestedPlan, resubsc
                     {plan.label} · ${plan.price}/month
                   </p>
                   <p className="text-xs text-ink-500">
-                    Up to {plan.providerLimit} providers · {plan.userLimit} user{plan.userLimit === 1 ? "" : "s"} · {plan.storageLabel}
+                    Up to {plan.providerLimit} providers · {plan.userLimit} user{plan.userLimit === 1 ? "" : "s"}{plan.extraUserPrice ? ` (+$${plan.extraUserPrice}/month each after)` : ""} · {plan.storageLabel}
                   </p>
                   {!upgrade && overLimit > 0 && (
                     <p className="text-xs text-status-expiring">

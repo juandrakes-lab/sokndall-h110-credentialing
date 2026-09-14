@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useEffect, useState } from "react";
+import { startTransition, useActionState, useEffect, useRef, useState } from "react";
 import { Field, FormError, buttonClass, inputClass } from "@/components/app/ui";
 import SubmitButton from "@/components/app/SubmitButton";
 
@@ -70,19 +70,65 @@ export function MemberAccessForm({ action, clients, initial, disabled, idPrefix 
   );
 }
 
-export function InviteForm({ action, disabled, clients }) {
+export function InviteForm({ action, seatReady, disabled, clients }) {
   const [state, formAction, pending] = useActionState(action, {});
   const [email, setEmail] = useState("");
   const [copied, setCopied] = useState(false);
+  const formRef = useRef(null);
 
   useEffect(() => {
     if (state?.saved) setEmail("");
     setCopied(false);
   }, [state?.saved]);
 
+  const extra = state?.needsExtraSeat;
+  const waitingFor = state?.waitingForSeat;
+  const [gaveUp, setGaveUp] = useState(false);
+
+  // Billing Co, a user beyond the plan: Polar is adding the seat. Poll until
+  // the new limit lands, then send the invitation by submitting again.
+  useEffect(() => {
+    if (!waitingFor) return;
+    setGaveUp(false);
+    const started = Date.now();
+    let stopped = false;
+    async function tick() {
+      if (stopped) return;
+      await fetch("/api/billing/sync", { method: "POST" }).catch(() => {});
+      const ready = await seatReady(waitingFor).catch(() => false);
+      if (stopped) return;
+      if (ready) {
+        formRef.current?.requestSubmit();
+        return;
+      }
+      if (Date.now() - started > 90000) {
+        setGaveUp(true);
+        return;
+      }
+      setTimeout(tick, 3000);
+    }
+    tick();
+    return () => {
+      stopped = true;
+    };
+  }, [waitingFor, seatReady]);
+
+  const busy = pending || (waitingFor && !gaveUp);
+
   return (
     <div className="flex flex-col gap-3">
-      <form action={formAction} className="flex flex-col gap-4">
+      <form
+        ref={formRef}
+        // Not `action={formAction}`: React resets a form after each action, and
+        // the extra-user flow submits this one up to three times (cost, confirm,
+        // send) with the same email and clients.
+        onSubmit={(e) => {
+          e.preventDefault();
+          const data = new FormData(e.currentTarget, e.nativeEvent.submitter ?? undefined);
+          startTransition(() => formAction(data));
+        }}
+        className="flex flex-col gap-4"
+      >
         <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
           <Field label="Invite by email" htmlFor="invite-email" error={state?.fieldErrors?.email} className="flex-1">
             <input
@@ -92,14 +138,44 @@ export function InviteForm({ action, disabled, clients }) {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               disabled={disabled}
+              readOnly={busy}
               className={inputClass}
               placeholder="name@practice.com"
             />
           </Field>
-          <SubmitButton disabled={disabled || pending} className={buttonClass("primary")}>
-            {pending ? "Inviting…" : "Send invitation"}
-          </SubmitButton>
+          {!extra && !waitingFor && (
+            <SubmitButton disabled={disabled} pending={pending} className={buttonClass("primary")}>
+              {pending ? "Inviting…" : "Send invitation"}
+            </SubmitButton>
+          )}
         </div>
+        {extra && !waitingFor && (
+          <div className="flex flex-col gap-3 rounded-lg border border-status-expiring/30 bg-status-expiring-bg px-4 py-3 text-sm text-ink-900">
+            <p>
+              <strong>This adds ${extra.price}/month to your plan.</strong> All the users on your plan are taken or invited;
+              user {extra.users} takes your plan from ${extra.from} to ${extra.to} a month, charged by Polar on the same
+              subscription. Remove someone later and it goes back down at your next renewal.
+            </p>
+            <div className="flex flex-wrap gap-2">
+              <SubmitButton name="confirm_extra" value="1" pending={pending} className={buttonClass("primary", "sm")}>
+                Add user (${extra.price}/month) and invite
+              </SubmitButton>
+              <button type="button" onClick={() => location.reload()} className={buttonClass("secondary", "sm")}>
+                Cancel
+              </button>
+            </div>
+          </div>
+        )}
+        {waitingFor && (
+          <p role="status" className="flex items-center gap-2 text-sm text-ink-700">
+            {!gaveUp && (
+              <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-brand-100 border-t-brand-600" aria-hidden="true" />
+            )}
+            {gaveUp
+              ? "Polar hasn't confirmed the new user yet, so the invitation wasn't sent. Reload this page in a minute and invite again — you won't be charged twice."
+              : "Adding the user to your plan, then sending the invitation…"}
+          </p>
+        )}
         {clients && (
           <ClientAccessFields
             key={state?.saved ?? "initial"}

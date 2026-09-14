@@ -543,6 +543,109 @@ async function main() {
       !forgedErr && forged.role === "member" && !forged.accepted_at && new Date(forged.expires_at) < new Date(Date.now() + 15 * 86400000),
       forgedErr?.message ?? JSON.stringify(forged)
     );
+
+    // --- Archived and deleted clients (founder decision 2026-09-14) ---------
+    const usageOf = async () => (await b.client.rpc("cred_provider_usage", { p_org_id: B.orgId })).data?.[0]?.provider_count;
+    const docPath = `${B.orgId}/${client2.id}/${provider2.id}/${run}-w9.pdf`;
+    const { error: upErr2 } = await b.client.storage.from("cred-documents").upload(docPath, Buffer.from("%PDF-1.4\n%%EOF\n"), { contentType: "application/pdf" });
+    await b.client.from("cred_documents").insert({ provider_id: provider2.id, category: "w9", file_name: "w9.pdf", storage_path: docPath, size_bytes: 1 });
+    await b.client.from("cred_credentials").insert({ provider_id: provider2.id, type: "dea", number: "Z9", expiration_date: "2027-03-01" });
+    await b.client.from("cred_communications").insert({ enrollment_id: enr2.id, channel: "phone", outcome: "called" });
+    check("(fixture) client two has a file, credential, enrollment and call log", !upErr2, upErr2?.message);
+
+    await b.client.rpc("cred_set_member_clients", { p_user_id: m.id, p_client_ids: [B.clientId, client2.id] });
+    const before = await usageOf();
+    const bytesOf = async () => (await b.client.rpc("cred_storage_used_bytes", { p_org_id: B.orgId })).data;
+    const bytesBefore = await bytesOf();
+    const { error: archErr } = await b.client.rpc("cred_archive_client", { p_client_id: client2.id });
+    check("The owner archives a client", !archErr, archErr?.message);
+    check("An archived client's providers stop counting toward the limit", (await usageOf()) === before - 1, `${before} → ${await usageOf()}`);
+    const bytesAfter = await bytesOf();
+    check("…and its files stop counting toward storage", bytesBefore > 0 && bytesAfter < bytesBefore, `${bytesBefore} → ${bytesAfter}`);
+
+    const { data: mAfter } = await m.client.from("cred_providers").select("id");
+    check("A member no longer sees an archived client's providers", !(mAfter ?? []).some((r) => r.id === provider2.id));
+    const { data: mClients } = await m.client.from("cred_client_orgs").select("id");
+    check("…nor the archived client itself", !(mClients ?? []).some((c) => c.id === client2.id));
+    const mOnArchived = await scoped(m, client2.id);
+    const { data: mNamed } = await mOnArchived.from("cred_credentials").select("id");
+    check("…not even naming it as the active client", (mNamed ?? []).length === 0);
+    const { data: mFile } = await m.client.storage.from("cred-documents").download(docPath);
+    check("…nor download its files", !mFile);
+
+    const { data: bAll } = await b.client.from("cred_providers").select("id");
+    check("Everyday (unscoped) reads leave archived clients out, owner included", !(bAll ?? []).some((r) => r.id === provider2.id));
+    const bOnArchived = await scoped(b, client2.id);
+    const { data: bNamed } = await bOnArchived.from("cred_providers").select("id");
+    check("The owner reads an archived client only by naming it (its export)", bNamed?.length === 1 && bNamed[0].id === provider2.id);
+    const { error: bWrite } = await b.client.from("cred_providers").insert({ practice_id: practice2.id, first_name: "Late", last_name: "Add" });
+    check("Nothing can be added to an archived client, by the owner either", !!bWrite, bWrite?.message);
+    const { error: subsetArchived } = await b.client.rpc("cred_set_member_clients", { p_user_id: m.id, p_client_ids: [client2.id] });
+    check("A member can't be given an archived client", !!subsetArchived, subsetArchived?.message);
+    const { error: mArchive } = await m.client.rpc("cred_archive_client", { p_client_id: client3.id });
+    const { error: mRestore } = await m.client.rpc("cred_restore_client", { p_client_id: client2.id });
+    check("Members can't archive or restore clients", !!mArchive && !!mRestore);
+
+    // The restore is refused when it would go over the provider limit.
+    await admin.from("cred_organizations").update({ plan: "practice" }).eq("id", B.orgId); // limit 15
+    const { data: bPractice } = await admin.from("cred_practices").select("id").eq("client_org_id", B.clientId).single();
+    const filler = [];
+    for (let n = 0; n < 15 - (await usageOf()); n++) filler.push({ practice_id: bPractice.id, first_name: "Fill", last_name: `${n}` });
+    const { data: filled } = await admin.from("cred_providers").insert(filler).select("id");
+    const { error: overErr } = await b.client.rpc("cred_restore_client", { p_client_id: client2.id });
+    check("Restoring is refused when it would pass the provider limit, saying by how many", !!overErr && /1 too many/.test(overErr.message), overErr?.message);
+    await admin.from("cred_providers").delete().in("id", (filled ?? []).map((r) => r.id));
+    await admin.from("cred_organizations").update({ plan: "billing_co" }).eq("id", B.orgId);
+
+    const { error: restoreErr } = await b.client.rpc("cred_restore_client", { p_client_id: client2.id });
+    const { data: mBack } = await m.client.from("cred_providers").select("id");
+    check("Restoring brings the client back, for members too", !restoreErr && (mBack ?? []).some((r) => r.id === provider2.id), restoreErr?.message);
+    check("…and its providers count again", (await usageOf()) === before, String(await usageOf()));
+
+    // Last active client and an emptied member.
+    await b.client.rpc("cred_set_member_clients", { p_user_id: m.id, p_client_ids: [client3.id] });
+    await b.client.rpc("cred_archive_client", { p_client_id: client3.id });
+    const { data: mNone, error: mNoneErr } = await m.client.from("cred_client_orgs").select("id");
+    const { data: mNoProv, error: mNoProvErr } = await m.client.from("cred_providers").select("id");
+    check("A member whose only client is archived gets empty lists, not errors", !mNoneErr && !mNoProvErr && (mNone ?? []).length === 0 && (mNoProv ?? []).length === 0);
+    await b.client.rpc("cred_archive_client", { p_client_id: client2.id });
+    const { error: lastErr } = await b.client.rpc("cred_archive_client", { p_client_id: B.clientId });
+    check("The last active client can't be archived", !!lastErr && lastErr.message.includes("LAST_CLIENT"), lastErr?.message);
+
+    // Delete for good: only archived, exact name, files first — then nothing left.
+    await b.client.rpc("cred_restore_client", { p_client_id: client3.id });
+    await b.client.rpc("cred_set_member_clients", { p_user_id: m.id, p_client_ids: [B.clientId, client3.id] });
+    const { error: notArchived } = await b.client.rpc("cred_delete_client", { p_client_id: client3.id, p_confirm_name: "Client three" });
+    check("Only an archived client can be deleted", !!notArchived && notArchived.message.includes("NOT_ARCHIVED"), notArchived?.message);
+    const { data: two } = await admin.from("cred_client_orgs").select("name").eq("id", client2.id).single();
+    const { error: wrongName } = await b.client.rpc("cred_delete_client", { p_client_id: client2.id, p_confirm_name: "client two" });
+    check("Deleting needs the client's exact name", !!wrongName && wrongName.message.includes("NAME_MISMATCH"), wrongName?.message);
+    const { error: filesLeft } = await b.client.rpc("cred_delete_client", { p_client_id: client2.id, p_confirm_name: two.name });
+    check("Deleting is refused while the client's files are still in Storage", !!filesLeft && filesLeft.message.includes("FILES_REMAIN"), filesLeft?.message);
+    const { error: mDelete } = await m.client.rpc("cred_delete_client", { p_client_id: client2.id, p_confirm_name: two.name });
+    check("Members can't delete clients", !!mDelete, mDelete?.message);
+
+    const { error: rmErr } = await b.client.storage.from("cred-documents").remove([docPath]);
+    const { error: delErr } = await b.client.rpc("cred_delete_client", { p_client_id: client2.id, p_confirm_name: two.name });
+    check("The owner deletes the archived client once its files are gone", !rmErr && !delErr, (rmErr ?? delErr)?.message);
+    const leftovers = {};
+    for (const t of ["cred_client_orgs", "cred_practices", "cred_providers", "cred_credentials", "cred_enrollments", "cred_enrollment_events", "cred_communications", "cred_documents"]) {
+      const col = t === "cred_client_orgs" ? "id" : "client_org_id";
+      const { count } = await admin.from(t).select("id", { count: "exact", head: true }).eq(col, client2.id);
+      if (count) leftovers[t] = count;
+    }
+    const { data: objs } = await admin.storage.from("cred-documents").list(`${B.orgId}/${client2.id}/${provider2.id}`);
+    check("…leaving no rows in any table and no files", Object.keys(leftovers).length === 0 && (objs ?? []).length === 0, JSON.stringify({ leftovers, files: objs?.length }));
+    const { data: trace } = await b.client.from("cred_client_deletions").select("*").eq("org_id", B.orgId);
+    check(
+      "…and only a minimal record: name, date and who",
+      trace?.length === 1 && trace[0].client_name === two.name && trace[0].deleted_by === b.id && Object.keys(trace[0]).sort().join() === "client_name,deleted_at,deleted_by,id,org_id",
+      JSON.stringify(trace)
+    );
+    const { data: mTrace } = await m.client.from("cred_client_deletions").select("id");
+    check("Members can't read the deletion record", (mTrace ?? []).length === 0);
+    const { data: mRow } = await admin.from("cred_org_members").select("client_ids").eq("user_id", m.id).single();
+    check("A deleted client disappears from members' client lists", !(mRow.client_ids ?? []).includes(client2.id), JSON.stringify(mRow.client_ids));
   }
 
   // --- Fase 5: subscriptions, read-only states, seats ------------------------
