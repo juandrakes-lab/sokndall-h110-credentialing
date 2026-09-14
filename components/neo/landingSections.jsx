@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 import {
-  Band, SectionHead, ReservedSlot, ScreenSlot, RowCard, Lines, Pill, InkTile, PhotoFrame,
+  Band, SectionHead, ReservedSlot, ScreenSlot, RowCard, Lines, Pill, InkTile, PhotoFrame, RangeText,
 } from "@/components/neo/landingPrimitives";
 import Rich from "@/components/neo/rich";
 
@@ -299,12 +299,17 @@ function splitFigure(label) {
   return m ? [m[1], m[2]] : [null, label];
 }
 
-function FigureCard({ f }) {
+function FigureCard({ f, as = "card" }) {
   const [range, rest] = splitFigure(f.label);
+  const cls = as === "row" ? "sk-figrow" : `sk-figcard${f.ours ? " sk-figcard--ours" : ""}`;
   return (
-    <div className={`sk-figcard${f.ours ? " sk-figcard--ours" : ""}`}>
+    <div className={cls}>
       <p className="sk-figcard__l">
-        {range ? <span className="sk-figcard__v">{range}</span> : null}
+        {range ? (
+          <span className="sk-figcard__v">
+            <RangeText text={range} />
+          </span>
+        ) : null}
         <span className="sk-figcard__u">{range ? ` ${rest}` : rest}</span>
       </p>
       <p className="sk-small sk-figcard__note">
@@ -317,11 +322,16 @@ function FigureCard({ f }) {
 /**
  * `groups` (2026-09-14, /pricing's anchors on the copy brief of 2026-09-09):
  * figures that are not comparable with each other, in separate panels, each
- * with its H3 and its own closing. The dark tile then runs the full width on
- * top — heading left, aside right — and the groups sit side by side under it
- * as open columns (a petrol rule, the figures as rows split by hairlines; no
- * panel and no card per figure), so the eye cannot line the four figures up
- * as one scale. The `ours` figure stays the one yellow block.
+ * with its H3 and its own closing. The dark tile runs the full width on top —
+ * heading left, aside right — and under it the figures sit in blocks, the
+ * kit's white cards: one block per group, the group's title on top in the
+ * accent colour, its figures as rows split by a hairline, its closing at the
+ * foot. A group's `ours` figure leaves the group's block for a yellow block of
+ * its own (the section's one highlight, §18), and takes the group's closing
+ * with it — that closing is about this product's figure. On /pricing: the
+ * work group on the left at full height; software on the right, over the
+ * yellow block (the founder's layout, 2026-09-14). Inside every block the
+ * number is the loudest thing; the title is the second voice.
  * `groups`: [{ title, figures, closing }]. Without it, the one-row bento.
  */
 export function FigureBandSection({ head, figures, closing, groups, id }) {
@@ -346,21 +356,32 @@ export function FigureBandSection({ head, figures, closing, groups, id }) {
             </div>
             {head.aside ? <p className="sk-lead sk-figbento__aside">{head.aside}</p> : null}
           </InkTile>
-          {groups.map((g) => (
-            <section className="sk-figgroup" key={g.title}>
-              <h3 className="sk-h4 sk-figgroup__t">{g.title}</h3>
-              <div className="sk-figgroup__figs">
-                {g.figures.map((f) => (
-                  <FigureCard f={f} key={f.label} />
-                ))}
-              </div>
-              {g.closing ? (
-                <p className="sk-body sk-figgroup__closing">
+          <div className="sk-figgrid">
+            {groups.map((g) => {
+              const plain = g.figures.filter((f) => !f.ours);
+              const ours = g.figures.filter((f) => f.ours);
+              const closingEl = g.closing ? (
+                <p className="sk-body sk-figblock__closing">
                   <Rich text={g.closing} linkClassName="sk-link" />
                 </p>
-              ) : null}
-            </section>
-          ))}
+              ) : null;
+              return [
+                <section className="sk-figblock" key={g.title}>
+                  <h3 className="sk-figblock__t">{g.title}</h3>
+                  {plain.map((f) => (
+                    <FigureCard f={f} as="row" key={f.label} />
+                  ))}
+                  {ours.length ? null : closingEl}
+                </section>,
+                ...ours.map((f) => (
+                  <div className="sk-figblock sk-figblock--ours" key={f.label}>
+                    <FigureCard f={f} as="row" />
+                    {closingEl}
+                  </div>
+                )),
+              ];
+            })}
+          </div>
         </div>
       </Band>
     );
@@ -528,41 +549,37 @@ export function PlanCard({ plan, cta, tag }) {
  * picks the plan faster than the provider count does, so the question goes
  * above the price list, where the choice is made.
  *
- * Inside the page's header, under its first H2 (the keyword H2 stays first —
- * the brief's hard constraint), so its heading is an H3 and each option an H4.
- * Static: two answers side by side, not a toggle — there is nothing to filter.
- * Flat — no panel, no cards (the founder, 2026-09-14: boxes inside a grey
- * box read as noise above the plan cards): the question in the first column,
- * each answer behind a petrol rule in the next two, the closing in small type
- * under the answers. No yellow (the list's buttons are the header's action),
- * no numbering, no icon.
+ * Laid out like the FAQ (the founder, 2026-09-14): the head on the left — the
+ * pill, the question itself as the heading, the lead — and on the right the
+ * two answers as the kit's row cards (answer left, what it means right), with
+ * the closing under them. Inside the page's header, under its first H2 (the
+ * keyword H2 stays first), so the heading is an H3 and each answer an H4.
+ * Static, not a toggle. No yellow, no numbering, no icon.
  *
- * `title`, `lead`, `options`: [{ label, body }], `closing` (accent rule).
+ * `pill`, `title`, `lead`, `options`: [{ label, body }], `closing`.
  */
-export function EntityChooser({ title, lead, options, closing, id }) {
+export function EntityChooser({ pill, title, lead, options, closing, id }) {
   return (
-    <div className="sk-chooser" id={id}>
-      <div className="sk-chooser__head">
-        <h3 className="sk-h4 sk-chooser__t">{title}</h3>
-        <p className="sk-body sk-chooser__lead">
-          <Rich text={lead} linkClassName="sk-link" />
-        </p>
+    <div className="sk-panelsplit sk-chooser" id={id}>
+      <div className="sk-panelsplit__head sk-chooser__head">
+        {pill ? <Pill>{pill}</Pill> : null}
+        <h3 className="sk-h3 sk-chooser__t">{title}</h3>
+        {lead ? (
+          <p className="sk-lead sk-chooser__lead">
+            <Rich text={lead} linkClassName="sk-link" />
+          </p>
+        ) : null}
       </div>
-      <div className="sk-chooser__opts">
+      <div className="sk-stack sk-chooser__opts">
         {options.map((o) => (
-          <div className="sk-chooser__opt" key={o.label}>
-            <h4 className="sk-chooser__l">{o.label}</h4>
-            <p className="sk-body">
-              <Rich text={o.body} linkClassName="sk-link" />
-            </p>
-          </div>
+          <RowCard key={o.label} title={o.label} body={o.body} headingLevel="h4" />
         ))}
+        {closing ? (
+          <p className="sk-body sk-chooser__closing">
+            <Rich text={closing} linkClassName="sk-link" />
+          </p>
+        ) : null}
       </div>
-      {closing ? (
-        <p className="sk-body sk-chooser__closing">
-          <Rich text={closing} linkClassName="sk-link" />
-        </p>
-      ) : null}
     </div>
   );
 }

@@ -400,3 +400,13 @@ un H2 y las cifras grandes.
 [ ] Capturas a 390 / 768 / 1440
 [ ] next build → ○ (Static)
 ```
+
+## 21. LOS INTERVALOS EN CIFRAS VAN CON GUIÓN
+
+Desde el 14 sep 2026. En una cifra de display (la cifra grande de una card,
+un stat, un chip) un intervalo se dibuja con raya corta (en dash, "–") sin
+espacios: `$600–$2,400`, `90–120`. La palabra "to" compite con los números.
+El copy lo sigue escribiendo "$600 to $2,400" y el componente `RangeText` hace
+el cambio, dejando "to" como texto para lectores de pantalla. En prosa (lead,
+cuerpo, FAQ, meta description) el intervalo sigue con "to": ahí se lee como
+frase.

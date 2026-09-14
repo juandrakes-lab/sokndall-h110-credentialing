@@ -1155,3 +1155,39 @@ lista de precios, y de las anclas de costo.
   copywriter, 2026-09-14).
 Política de imagen: ninguna.
 Regla de DESIGN_RULES.md que aplica: §2 regla 4, §6, §14, §18; on-page-seo.md §4.
+
+## /pricing — anclas en tres bloques, selector como el FAQ, intervalos con guión
+Fecha: 2026-09-14
+Decisión: el rediseño plano anterior se descarta (el fundador: sin jerarquía
+clara, texto desordenado, fuera del estilo de la página). Se vuelve al
+lenguaje de cards del kit.
+- Anclas: tile oscuro arriba a todo el ancho, y debajo tres bloques. A la
+  izquierda, a doble alto, "Paying someone to do the work" con sus dos cifras
+  (separadas por un filete) y su closing. A la derecha, "Paying for
+  software" con la cifra de MedTrainer, y debajo el bloque amarillo con la
+  cifra propia. El closing del grupo 2 va dentro del amarillo, porque habla de
+  esa cifra ("this sits at the bottom of the same range"). Es el layout que
+  propuso el fundador. El tile no va a la izquierda como en la home: dos
+  columnas de bloques en ~620px romperían las cifras grandes.
+- Jerarquía dentro de cada bloque, en este orden:
+  1. La cifra (la misma de la home y billing).
+  2. El título del grupo, en el color de acento de la segunda línea de los
+     H2, a tamaño de título de card y seminegrita.
+  3. La unidad, en negrita chica.
+  4. La nota con su fuente.
+- Selector: el layout del FAQ. A la izquierda la pastilla, la pregunta como
+  encabezado y el lead; a la derecha las dos respuestas como row cards
+  (respuesta a la izquierda, qué significa a la derecha) y el closing debajo.
+  Cambio de copy por decisión del fundador, sin palabras nuevas:
+  - La pregunta del lead pasa a ser el H3.
+  - La pastilla es "Start with one question".
+  - Se cae ", not with provider count".
+  - El resto del lead queda debajo de la pregunta.
+  Pendiente de revisión del copywriter.
+- Intervalos: en cifras de display se dibujan con guión en lugar de "to"
+  (§21 nueva). `RangeText` lo resuelve en las cifras de FigureBandSection y en
+  los chips del hero, así que la home, billing, pricing y el chip de
+  payer-enrollment cambian juntos. El copy no se toca, y "to" queda para
+  lectores de pantalla. La prosa sigue con "to".
+Política de imagen: ninguna.
+Regla de DESIGN_RULES.md que aplica: §13, §14, §18, §21 (nueva).

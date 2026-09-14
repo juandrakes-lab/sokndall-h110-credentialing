@@ -264,13 +264,40 @@ export function Indicator({ icon, value, label, tone = "white" }) {
 /** The four-up capability strip. `items`: [{ icon, label }] where `icon` is
  *  an element from icons.jsx. On the ink hero it is a plain row under the
  *  rule; on a light header (`tone="light"`) each item is a chip. */
+/**
+ * RangeText — a range in a display figure, set with an en dash (DESIGN_RULES
+ * §21, 2026-09-14). The copy writes "$600 to $2,400"; in a large figure the
+ * word "to" competes with the numbers, so the dash is drawn and the word is
+ * kept for screen readers, which read an en dash as nothing or as "dash".
+ * Only for figures, stats and chips: running prose keeps "to".
+ */
+const RANGE_TO = /(\$?\d[\d,.]*\+?)\s+to\s+(\$?\d[\d,.]*)/g;
+export function RangeText({ text }) {
+  const out = [];
+  let last = 0;
+  for (const m of text.matchAll(RANGE_TO)) {
+    if (m.index > last) out.push(text.slice(last, m.index));
+    out.push(
+      <span className="sk-range" key={m.index}>
+        {m[1]}
+        <span className="sk-range__dash" aria-hidden="true">{"\u2013"}</span>
+        <span className="sk-sr"> to </span>
+        {m[2]}
+      </span>
+    );
+    last = m.index + m[0].length;
+  }
+  if (last < text.length) out.push(text.slice(last));
+  return <>{out}</>;
+}
+
 export function HeroStrip({ items, tone = "dark" }) {
   return (
     <ul className={`sk-strip${tone === "light" ? " sk-strip--chips" : ""}`}>
       {items.map((s) => (
         <li className="sk-strip__item" key={s.label}>
           {s.icon ? <span className="sk-tile">{s.icon}</span> : null}
-          {s.label}
+          <RangeText text={s.label} />
         </li>
       ))}
     </ul>

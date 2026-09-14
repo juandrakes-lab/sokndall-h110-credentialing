@@ -4611,99 +4611,80 @@ html:has(.sk-fnav) { scroll-padding-top: 88px; }
 }
 
 /* ---- EntityChooser (/pricing, 2026-09-14) -------------------------------- */
-/* Flat, no panel and no cards: the question in the first column, its two
-   answers in the next two, each behind a hairline, the closing under the
-   answers in small type. It reads as the step before the plan cards, not as
-   a second set of boxes above them. */
-.sk-chooser {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr);
-  column-gap: var(--s-6);
-  row-gap: var(--s-4);
-  padding-block: var(--s-2) var(--s-3);
-  text-align: left;
-}
-.sk-chooser__head { display: grid; align-content: start; gap: var(--s-3); grid-row: span 2; }
-.sokndall-neo .sk-chooser__t { font-size: 1.375rem; line-height: 1.2; letter-spacing: -0.02em; }
-.sk-chooser__opts { display: contents; }
-.sk-chooser__opt {
-  display: grid;
-  align-content: start;
-  gap: var(--s-2);
-  padding-left: var(--s-5);
-  border-left: 2px solid var(--ink);
-}
-.sk-chooser__l { font-size: 1.0625rem; font-weight: 700; letter-spacing: -0.015em; color: var(--ink); }
-.sokndall-neo .sk-chooser__closing {
-  grid-column: 2 / -1;
-  font-size: 0.875rem;
-  line-height: 1.55;
-  max-width: none;
-}
-@media (max-width: 900px) {
-  .sk-chooser { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
-  .sk-chooser__head { grid-column: 1 / -1; grid-row: auto; }
-  .sokndall-neo .sk-chooser__closing { grid-column: 1 / -1; }
-}
-@media (max-width: 560px) {
-  .sk-chooser { grid-template-columns: minmax(0, 1fr); }
+/* The FAQ's split: head left, the two answers right as row cards, the closing
+   under them. In the header it does not stick. */
+.sk-chooser { margin-block: var(--s-4) var(--s-6); text-align: left; }
+.sk-chooser .sk-panelsplit__head { position: static; display: grid; gap: var(--s-4); justify-items: start; }
+.sk-chooser__lead { max-width: 40ch; }
+.sk-chooser__opts { gap: var(--gap); }
+.sk-chooser .sk-row-card .sk-h4 { color: var(--ink); }
+.sk-chooser__closing {
+  margin-top: var(--s-2);
+  padding-left: var(--s-4);
+  border-left: 2px solid var(--accent);
+  font-weight: 500;
 }
 
 /* ---- PlanFeatureMatrix: word cells at body size -------------------------- */
 .sk-pfm__w { font-size: 0.9375rem; font-weight: 600; }
 
+/* ---- ranges in figures: an en dash (DESIGN_RULES §21) -------------------- */
+/* No nowrap: in a narrow card the range may break after the dash. */
+.sk-range__dash { padding-inline: 0.06em; }
+
 /* ---- FigureBandSection `groups` (/pricing anchors, 2026-09-14) ----------- */
-/* The dark tile across the top, heading left and aside right. Under it the
-   two groups as open columns — no panel, no card per figure: a petrol rule
-   and the group's title head each column, the figures are rows split by
-   hairlines, and the closing sits at the foot. This product's figure is the
-   one filled block, in yellow (§18). The wide gutter between the columns is
-   the "not comparable". */
-.sk-figgroups {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  column-gap: clamp(32px, 4.4vw, 64px);
-  row-gap: clamp(28px, 3vw, 40px);
-  align-items: stretch;
-}
+/* The dark tile across the top, heading left and aside right; under it the
+   blocks, in the kit's card language. In each block the number leads; the
+   group's title is the second voice — the accent colour of a heading's
+   second line, at card-title size; the unit third; the note last. */
+.sk-figgroups { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--gap); }
 .sk-figgroups__head {
-  grid-column: 1 / -1;
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: var(--s-6);
   align-items: end;
 }
 .sk-figgroups__head .sk-figbento__aside { margin-top: 0; max-width: 52ch; }
-.sk-figgroup {
+.sk-figgrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--gap);
+}
+.sk-figgrid > :first-child { grid-row: span 2; }
+.sk-figblock {
   display: flex;
   flex-direction: column;
-  border-top: 2px solid var(--ink);
-  padding-top: var(--s-4);
-}
-.sk-figgroup__t { margin-bottom: var(--s-2); }
-.sk-figgroup__figs { display: grid; grid-template-columns: minmax(0, 1fr); }
-.sk-figgroup .sk-figcard {
-  padding: var(--s-5) 0;
-  background: none;
-  border: 0;
-  border-bottom: 1px solid var(--line);
-  border-radius: 0;
-  box-shadow: none;
-  gap: var(--s-3);
-}
-.sk-figgroup .sk-figcard--ours {
-  margin-top: var(--s-4);
-  padding: var(--s-5);
-  border-bottom: 0;
+  gap: var(--s-5);
+  padding: var(--card-pad);
   border-radius: var(--r-card);
-  background: var(--amber);
+  background: var(--card);
+  border: var(--hairline) solid var(--line);
+  box-shadow: var(--sh-white);
 }
-.sk-figgroup__closing {
+.sokndall-neo .sk-figblock__t {
+  font-size: 1.375rem;
+  line-height: 1.2;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--accent);
+}
+.sk-figrow { display: grid; gap: var(--s-3); }
+.sk-figrow + .sk-figrow { border-top: 1px solid var(--line); padding-top: var(--s-5); }
+.sk-figblock__closing {
   margin-top: auto;
-  padding-top: var(--s-5);
+  padding-left: var(--s-4);
+  border-left: 2px solid var(--accent);
   font-weight: 500;
 }
+.sk-figblock--ours { background: var(--amber); border-color: transparent; box-shadow: var(--sh-offer); }
+.sk-figblock--ours,
+.sk-figblock--ours .sk-small,
+.sk-figblock--ours .sk-link { color: var(--black); }
+.sk-figblock--ours .sk-figblock__closing { border-left-color: rgba(0, 0, 0, 0.4); }
 @media (max-width: 900px) {
-  .sk-figgroups,
   .sk-figgroups__head { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 760px) {
+  .sk-figgrid { grid-template-columns: minmax(0, 1fr); }
+  .sk-figgrid > :first-child { grid-row: auto; }
 }

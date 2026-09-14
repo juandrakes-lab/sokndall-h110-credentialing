@@ -489,28 +489,29 @@ Re-measured 2026-09-12 at a 1348px viewport after the move under the plans
 
 # Copy limits — EntityChooser (`/pricing`)
 
-Added 2026-09-14 for the tax-ID question above the price list; re-measured the
-same day after the flat redesign (three columns, no panel). Measured at 1280px.
+Added 2026-09-14; re-measured the same day on the FAQ-style layout (head
+left, two row cards right). Measured at 1280px.
 
 | Slot | Now | Range | Notes |
 |---|---|---|---|
-| **H3** | 48 | **≤ 60** for 2 lines | 339px first column, 22px. |
-| **Lead** | 117 | **≤ 150** for 4 lines | Same column. |
-| **Option label** | 24 · 20 | **≤ 32** for one line | 339px column behind its petrol rule, 17px bold. |
-| **Option body** | 65 · 68 | **≤ 90** for 2 lines | |
-| **Closing** | 169 | **≤ 210** for 2 lines | Under the two answers, 710px, 14px. |
-| **Options** | 2 | **2** | A two-answer question. A third answer needs a different layout. |
+| **Pill** | 23 | **≤ 28** | |
+| **H3 (the question)** | 52 | **≤ 60** for 2 lines | 416px head column, 28px. |
+| **Lead** | 63 | **≤ 90** for 2 lines | |
+| **Answer label (H4)** | 24 · 20 | **≤ 22** for one line | Row card's left column. "One practice, one tax ID" (24) already takes 2 lines; nothing breaks. |
+| **Answer body** | 65 · 68 | **≤ 90** for 2 lines | Row card's right column. |
+| **Closing** | 169 | **≤ 180** for 2 lines | Under the cards, 601px. |
+| **Options** | 2 | **2 – 3** | A third row card fits; the question must still be a single one. |
 
 # Copy limits — FigureBandSection `groups` (`/pricing` anchors)
 
-Added 2026-09-14. Measured at 1280px.
+Re-measured 2026-09-14 on the three-block layout. Measured at 1280px.
 
 | Slot | Now | Range | Notes |
 |---|---|---|---|
 | **H2** (authored lines) | 14 · 18 | **≤ 21 per line** | Unchanged from the standard head. |
-| **Aside** | 262 | **≤ 300** for 5 lines | Right half of the dark tile, 486px. |
-| **Group title (H3)** | 29 · 19 | **≤ 44** for one line | 512px. |
-| **Figure label** | 27 – 37 | **≤ 50** | The range set large, the unit under it. |
+| **Aside** | 262 | **≤ 300** for 5 lines | Right half of the dark tile. |
+| **Group title (H3)** | 29 · 19 | **≤ 40** for one line | 532px block, 22px, accent colour. |
+| **Figure label** | 27 – 37 | **≤ 50** | Range set large with an en dash (§21), unit under it. |
 | **Figure note** | 70 – 76 | **≤ 120** for 2 lines | |
-| **Group closing** | 201 · 153 | **≤ 240** for 4 lines | 512px open column. Both closings sit on the same baseline row. |
-| **Figures per group** | 2 | **2 – 3** | Stacked. Four stops reading as a group. |
+| **Group closing** | 201 · 153 | **≤ 220** | Group 1 at the foot of the tall block; group 2 inside the yellow block. The left block's height matches the right column's; a longer closing on one side leaves air on the other. |
+| **Figures per group** | 2 | **1 – 3** | The layout is built for this data: the first group spans two rows. |

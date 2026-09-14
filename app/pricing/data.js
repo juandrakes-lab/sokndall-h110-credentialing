@@ -60,10 +60,15 @@ export const PLANS = {
 // EntityChooser — copy brief of 2026-09-09 ("selector por entidad"). Under the
 // keyword H2 and above the price list, as an H3: the keyword H2 has to stay the
 // page's first H2 (on-page-seo.md §4).
+//
+// Restructured by the founder on 2026-09-14, every word from the brief: the
+// question becomes the heading, the old heading's first half becomes the pill,
+// and the rest of the lead stays under the question. The dropped words are
+// ", not with provider count" — pending the copywriter's review.
 export const ENTITY = {
-  title: "Start with one question, not with provider count",
-  lead:
-    "How many separate tax IDs do you need to keep apart? That answer picks your plan faster than counting providers does.",
+  pill: "Start with one question",
+  title: "How many separate tax IDs do you need to keep apart?",
+  lead: "That answer picks your plan faster than counting providers does.",
   options: [
     { label: "One practice, one tax ID", body: "Solo or Practice. Choose on provider count: up to 3, or up to 15." },
     { label: "More than one tax ID", body: "Billing Co, even at six providers. No other plan separates entities." },

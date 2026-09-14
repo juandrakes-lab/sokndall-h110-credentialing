@@ -44,7 +44,8 @@ export default function PricingPage() {
               <h2 className="sk-pricehead__t">{PLANS.head.title}</h2>
               {/* The tax-ID question before the plans: the wrong plan is
                   picked here, not in the comparison (copy brief 2026-09-09).
-                  An H3 under the keyword H2, which stays the first H2. */}
+                  An H3 under the keyword H2, which stays the first H2;
+                  laid out like the FAQ (2026-09-14). */}
               <EntityChooser id="which-plan" {...ENTITY} />
               <PlanList plans={plans} cta={TRIAL_CTA} />
               <p className="sk-small sk-plans__note">
