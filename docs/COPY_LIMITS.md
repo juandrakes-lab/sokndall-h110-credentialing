@@ -489,16 +489,16 @@ Re-measured 2026-09-12 at a 1348px viewport after the move under the plans
 
 # Copy limits — EntityChooser (`/pricing`)
 
-Added 2026-09-14 for the tax-ID question above the price list. Measured at
-1280px. The brief's `[SIN MEDIR]` for the H3 is replaced here.
+Added 2026-09-14 for the tax-ID question above the price list; re-measured the
+same day after the flat redesign (three columns, no panel). Measured at 1280px.
 
 | Slot | Now | Range | Notes |
 |---|---|---|---|
-| **H3** | 48 | **≤ 52** for one line | 412px column, card-title size. Past that it takes two lines; nothing breaks. |
-| **Lead** | 117 | **≤ 130** for 3 lines | Same column. |
-| **Option label** | 24 · 20 | **≤ 28** for one line | 280px white card, 17px bold. |
-| **Option body** | 65 · 68 | **≤ 85** for 3 lines | The two cards stretch to the taller one. |
-| **Closing** | 169 | **≤ 200** for 2 lines | Full panel width after the accent rule, 787px. |
+| **H3** | 48 | **≤ 60** for 2 lines | 339px first column, 22px. |
+| **Lead** | 117 | **≤ 150** for 4 lines | Same column. |
+| **Option label** | 24 · 20 | **≤ 32** for one line | 339px column behind its petrol rule, 17px bold. |
+| **Option body** | 65 · 68 | **≤ 90** for 2 lines | |
+| **Closing** | 169 | **≤ 210** for 2 lines | Under the two answers, 710px, 14px. |
 | **Options** | 2 | **2** | A two-answer question. A third answer needs a different layout. |
 
 # Copy limits — FigureBandSection `groups` (`/pricing` anchors)
@@ -509,8 +509,8 @@ Added 2026-09-14. Measured at 1280px.
 |---|---|---|---|
 | **H2** (authored lines) | 14 · 18 | **≤ 21 per line** | Unchanged from the standard head. |
 | **Aside** | 262 | **≤ 300** for 5 lines | Right half of the dark tile, 486px. |
-| **Group title (H3)** | 29 · 19 | **≤ 40** for one line | 472px. |
+| **Group title (H3)** | 29 · 19 | **≤ 44** for one line | 512px. |
 | **Figure label** | 27 – 37 | **≤ 50** | The range set large, the unit under it. |
-| **Figure note** | 70 – 76 | **≤ 110** for 2 lines | |
-| **Group closing** | 201 · 153 | **≤ 220** for 4 lines | The two panels are the same height; the shorter closing leaves a line of air. |
+| **Figure note** | 70 – 76 | **≤ 120** for 2 lines | |
+| **Group closing** | 201 · 153 | **≤ 240** for 4 lines | 512px open column. Both closings sit on the same baseline row. |
 | **Figures per group** | 2 | **2 – 3** | Stacked. Four stops reading as a group. |

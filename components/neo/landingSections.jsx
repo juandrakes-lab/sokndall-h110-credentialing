@@ -318,8 +318,10 @@ function FigureCard({ f }) {
  * `groups` (2026-09-14, /pricing's anchors on the copy brief of 2026-09-09):
  * figures that are not comparable with each other, in separate panels, each
  * with its H3 and its own closing. The dark tile then runs the full width on
- * top — heading left, aside right — and the groups sit side by side under it,
- * so the eye cannot line the four figures up as one scale.
+ * top — heading left, aside right — and the groups sit side by side under it
+ * as open columns (a petrol rule, the figures as rows split by hairlines; no
+ * panel and no card per figure), so the eye cannot line the four figures up
+ * as one scale. The `ours` figure stays the one yellow block.
  * `groups`: [{ title, figures, closing }]. Without it, the one-row bento.
  */
 export function FigureBandSection({ head, figures, closing, groups, id }) {
@@ -529,9 +531,11 @@ export function PlanCard({ plan, cta, tag }) {
  * Inside the page's header, under its first H2 (the keyword H2 stays first —
  * the brief's hard constraint), so its heading is an H3 and each option an H4.
  * Static: two answers side by side, not a toggle — there is nothing to filter.
- * A soft grey panel so it reads as a step before the white list, not as one
- * more plan. No yellow (the list's buttons are the header's action), no
- * numbering, no icon.
+ * Flat — no panel, no cards (the founder, 2026-09-14: boxes inside a grey
+ * box read as noise above the plan cards): the question in the first column,
+ * each answer behind a petrol rule in the next two, the closing in small type
+ * under the answers. No yellow (the list's buttons are the header's action),
+ * no numbering, no icon.
  *
  * `title`, `lead`, `options`: [{ label, body }], `closing` (accent rule).
  */

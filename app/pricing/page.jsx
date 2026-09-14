@@ -39,7 +39,9 @@ export default function PricingPage() {
           variant: "light",
           figure: (
             <div className="sk-pricehead" id="plans">
-              <h2 className="sk-h3 sk-pricehead__t">{PLANS.head.title}</h2>
+              {/* The keyword H2 (on-page-seo.md §4), set as the plans' label:
+                  the H1 and the sub above already say it (2026-09-14). */}
+              <h2 className="sk-pricehead__t">{PLANS.head.title}</h2>
               {/* The tax-ID question before the plans: the wrong plan is
                   picked here, not in the comparison (copy brief 2026-09-09).
                   An H3 under the keyword H2, which stays the first H2. */}

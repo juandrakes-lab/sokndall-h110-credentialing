@@ -219,9 +219,10 @@ export const MATRIX = {
       "Three plans, one product. What changes is how many providers you track and whether you track them for clients.",
   },
   plans: ["Solo", "Practice", "Billing Co"],
-  // Brief 2026-09-09 (entity chooser): the first row, above "Providers
+  // Brief 2026-09-09 (entity chooser), cell 0.3 corrected by copy on
+  // 2026-09-14 ("Several" → "No limit"): the first row, above "Providers
   // tracked" — the decision axis; below, the table reads as a size ladder.
-  first: [{ label: "Separate tax IDs", cells: ["One", "One", "Several"] }],
+  first: [{ label: "Separate tax IDs", cells: ["One", "One", "No limit"] }],
   // Brief 2026-09-09 (anchors): after "Users included". "Not available" is
   // printed as text, never an empty cell or a dash (DESIGN_RULES §2 regla 3).
   afterUsers: [{ label: "Additional users", cells: ["Not available", "Not available", "$39 a month each"] }],

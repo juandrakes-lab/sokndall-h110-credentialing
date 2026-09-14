@@ -4586,58 +4586,84 @@ html:has(.sk-fnav) { scroll-padding-top: 88px; }
   .sk-pfm__cap { padding: var(--s-2) 0 0; border: 0; background: none; }
 }
 
+/* ---- /pricing header: the keyword H2 as a label (2026-09-14) ------------ */
+/* It stays the page's first H2 with the exact keyword (on-page-seo.md §4), but
+   the H1 and the sub above it already say the same thing, so it is set as the
+   label that opens the plans block — small, between two hairlines — rather
+   than as a third headline in a row. */
+.sokndall-neo .sk-pricehead__t {
+  display: flex;
+  align-items: center;
+  gap: var(--s-4);
+  font-size: 0.9375rem;
+  line-height: 1.35;
+  font-weight: 600;
+  letter-spacing: 0;
+  color: var(--ink);
+  text-align: center;
+}
+.sk-pricehead__t::before,
+.sk-pricehead__t::after {
+  content: "";
+  flex: 1 1 var(--s-6);
+  height: 1px;
+  background: var(--line-strong);
+}
+
 /* ---- EntityChooser (/pricing, 2026-09-14) -------------------------------- */
-/* The tax-ID question above the price list: a soft grey panel, the question
-   left, its two answers right as white cards side by side, the closing across
-   the foot with the accent rule. A step before the list, not a fourth plan. */
+/* Flat, no panel and no cards: the question in the first column, its two
+   answers in the next two, each behind a hairline, the closing under the
+   answers in small type. It reads as the step before the plan cards, not as
+   a second set of boxes above them. */
 .sk-chooser {
   display: grid;
-  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
-  gap: var(--s-5) var(--s-6);
-  align-items: center;
-  padding: var(--card-pad);
-  border-radius: var(--r-panel);
-  background: var(--paper);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr);
+  column-gap: var(--s-6);
+  row-gap: var(--s-4);
+  padding-block: var(--s-2) var(--s-3);
   text-align: left;
 }
-.sk-chooser__head { display: grid; gap: var(--s-3); }
-.sk-chooser__opts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--gap); align-self: stretch; }
+.sk-chooser__head { display: grid; align-content: start; gap: var(--s-3); grid-row: span 2; }
+.sokndall-neo .sk-chooser__t { font-size: 1.375rem; line-height: 1.2; letter-spacing: -0.02em; }
+.sk-chooser__opts { display: contents; }
 .sk-chooser__opt {
   display: grid;
   align-content: start;
   gap: var(--s-2);
-  padding: var(--s-5);
-  border-radius: var(--r-card);
-  background: var(--card);
-  border: var(--hairline) solid var(--line);
-  box-shadow: var(--sh-white);
+  padding-left: var(--s-5);
+  border-left: 2px solid var(--ink);
 }
 .sk-chooser__l { font-size: 1.0625rem; font-weight: 700; letter-spacing: -0.015em; color: var(--ink); }
-.sk-chooser__closing {
-  grid-column: 1 / -1;
-  padding-left: var(--s-4);
-  border-left: 2px solid var(--accent);
-  font-weight: 500;
-  max-width: 78ch;
+.sokndall-neo .sk-chooser__closing {
+  grid-column: 2 / -1;
+  font-size: 0.875rem;
+  line-height: 1.55;
+  max-width: none;
 }
 @media (max-width: 900px) {
-  .sk-chooser { grid-template-columns: minmax(0, 1fr); }
+  .sk-chooser { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .sk-chooser__head { grid-column: 1 / -1; grid-row: auto; }
+  .sokndall-neo .sk-chooser__closing { grid-column: 1 / -1; }
 }
 @media (max-width: 560px) {
-  .sk-chooser__opts { grid-template-columns: minmax(0, 1fr); }
+  .sk-chooser { grid-template-columns: minmax(0, 1fr); }
 }
 
 /* ---- PlanFeatureMatrix: word cells at body size -------------------------- */
 .sk-pfm__w { font-size: 0.9375rem; font-weight: 600; }
 
 /* ---- FigureBandSection `groups` (/pricing anchors, 2026-09-14) ----------- */
-/* The dark tile across the top, heading left and aside right; the two groups
-   under it as separate grey panels, so the four figures never line up as one
-   scale. Inside a panel the figures stack and the closing sits at the foot. */
+/* The dark tile across the top, heading left and aside right. Under it the
+   two groups as open columns — no panel, no card per figure: a petrol rule
+   and the group's title head each column, the figures are rows split by
+   hairlines, and the closing sits at the foot. This product's figure is the
+   one filled block, in yellow (§18). The wide gutter between the columns is
+   the "not comparable". */
 .sk-figgroups {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--gap);
+  column-gap: clamp(32px, 4.4vw, 64px);
+  row-gap: clamp(28px, 3vw, 40px);
   align-items: stretch;
 }
 .sk-figgroups__head {
@@ -4651,16 +4677,30 @@ html:has(.sk-fnav) { scroll-padding-top: 88px; }
 .sk-figgroup {
   display: flex;
   flex-direction: column;
-  gap: var(--s-4);
-  padding: var(--card-pad);
-  border-radius: var(--r-panel);
-  background: var(--paper);
+  border-top: 2px solid var(--ink);
+  padding-top: var(--s-4);
 }
-.sk-figgroup__figs { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--gap); }
+.sk-figgroup__t { margin-bottom: var(--s-2); }
+.sk-figgroup__figs { display: grid; grid-template-columns: minmax(0, 1fr); }
+.sk-figgroup .sk-figcard {
+  padding: var(--s-5) 0;
+  background: none;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  border-radius: 0;
+  box-shadow: none;
+  gap: var(--s-3);
+}
+.sk-figgroup .sk-figcard--ours {
+  margin-top: var(--s-4);
+  padding: var(--s-5);
+  border-bottom: 0;
+  border-radius: var(--r-card);
+  background: var(--amber);
+}
 .sk-figgroup__closing {
   margin-top: auto;
-  padding-left: var(--s-4);
-  border-left: 3px solid var(--ink);
+  padding-top: var(--s-5);
   font-weight: 500;
 }
 @media (max-width: 900px) {

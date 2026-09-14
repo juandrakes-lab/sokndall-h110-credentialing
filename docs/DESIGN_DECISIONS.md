@@ -1130,3 +1130,28 @@ reestructuradas" completo, con dos componentes nuevos o ampliados.
     grupo multi-TIN qué compra.
 Política de imagen: ninguna.
 Regla de DESIGN_RULES.md que aplica: §2 reglas 2, 3 y 4, §6, §13, §14, §18.
+
+## /pricing — la zona antes de los planes, sin cajas dentro de cajas
+Fecha: 2026-09-14
+Decisión: a pedido del fundador ("cuadros dentro de un cuadro gris", ruido
+antes de los planes), rediseño de la zona entre el subtítulo del hero y la
+lista de precios, y de las anclas de costo.
+- El H2 "Credentialing software pricing: three plans, published" NO sale: es
+  el primer H2 con la keyword exacta (on-page-seo.md §4, y el encargo del
+  2026-09-09 lo exige). El fundador pidió sacarlo por redundante con el H1 y
+  el subtítulo; se discutió y se acordó mantenerlo como H2 pero con aspecto de
+  etiqueta: 15px, seminegrita, centrado entre dos filetes. Sigue siendo el
+  primer H2 (verificado en el DOM).
+- `EntityChooser` plano: sin panel gris ni cards. Tres columnas: la pregunta
+  (H3 + lead) y las dos respuestas, cada una detrás de una regla petróleo; el
+  closing en letra chica debajo de las respuestas. De 304px a 161px de alto a
+  1280.
+- Anclas en grupos: sin paneles grises ni una card por cifra. Cada grupo es
+  una columna abierta con regla petróleo arriba, título, cifras como filas
+  separadas por filetes y el closing al pie; la cifra propia sigue siendo el
+  único bloque lleno, en amarillo (§18). El canal ancho entre columnas marca
+  que no se comparan.
+- Copy: celda 0.3 de la matriz "Several" → "No limit" (corrección del
+  copywriter, 2026-09-14).
+Política de imagen: ninguna.
+Regla de DESIGN_RULES.md que aplica: §2 regla 4, §6, §14, §18; on-page-seo.md §4.
