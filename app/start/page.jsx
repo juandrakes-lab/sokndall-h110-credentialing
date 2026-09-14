@@ -6,6 +6,7 @@ import { startTrial } from "@/lib/billing-actions";
 import { buttonClass } from "@/components/app/ui";
 import { signOut } from "@/app/(app)/actions";
 import SubmitButton from "@/components/app/SubmitButton";
+import RecoverSubscription from "./RecoverSubscription";
 
 export const metadata = { title: "Choose your plan — Sokndall", robots: { index: false, follow: false } };
 
@@ -36,6 +37,8 @@ export default async function StartPage({ searchParams }) {
             </SubmitButton>
           </form>
         </div>
+
+        <RecoverSubscription />
 
         <h1 className="mt-10 text-2xl font-semibold tracking-tight text-ink-900">Choose your plan</h1>
         <p className="mt-2 max-w-2xl text-sm text-ink-500">

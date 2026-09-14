@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { accountReady } from "@/lib/billing-actions";
 import { buttonClass } from "@/components/app/ui";
 
-const EVERY_MS = 2000;
+const EVERY_MS = 3000;
 const GIVE_UP_MS = 90000;
 
 export default function WelcomePoller() {
@@ -22,6 +22,12 @@ export default function WelcomePoller() {
       let ready = false;
       try {
         ready = await accountReady();
+        // After the first seconds, also ask Polar directly, in case its
+        // webhook is late or never arrives.
+        if (!ready && Date.now() - started > 4000) {
+          const res = await fetch("/api/billing/sync", { method: "POST" });
+          ready = res.ok && (await res.json()).ready;
+        }
       } catch {
         // A deploy or restart can orphan the action; re-rendering the page
         // asks the server directly (it redirects once the account exists).

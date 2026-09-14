@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { validateEvent, WebhookVerificationError } from "@polar-sh/sdk/webhooks";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { planForProduct, statusFromPolar } from "@/lib/billing";
+import { applySubscription } from "@/lib/polar-sync";
 
 // Polar → Sokndall (alcance §10.2). The only way an organization is created:
 // subscription.created (and every later subscription.* event) runs
@@ -48,25 +48,7 @@ export async function POST(request) {
   }
 
   try {
-    const sub = event.data;
-    const userId = sub.customer?.externalId ?? sub.metadata?.user_id;
-    const plan = planForProduct(sub.productId) ?? sub.product?.metadata?.plan ?? sub.metadata?.plan;
-    if (!userId) throw new Error("subscription has no external customer id");
-    if (!plan) throw new Error(`unknown product ${sub.productId}`);
-
-    const { error } = await admin.rpc("cred_sync_subscription", {
-      p_user_id: userId,
-      p_account_name: sub.customer?.name || sub.customer?.email?.split("@")[0] || null,
-      p_customer_id: sub.customerId,
-      p_subscription_id: sub.id,
-      p_plan: plan,
-      p_status: statusFromPolar(event.type, sub.status),
-      p_trial_ends_at: sub.trialEnd ?? null,
-      p_current_period_end: sub.currentPeriodEnd ?? null,
-      p_cancel_at_period_end: Boolean(sub.cancelAtPeriodEnd),
-      p_modified_at: sub.modifiedAt ?? sub.createdAt ?? null,
-    });
-    if (error) throw new Error(error.message);
+    await applySubscription(admin, event.data, event.type);
 
     await admin.from("cred_polar_events").update({ processed_at: new Date().toISOString() }).eq("id", deliveryId);
     return NextResponse.json({ received: true });

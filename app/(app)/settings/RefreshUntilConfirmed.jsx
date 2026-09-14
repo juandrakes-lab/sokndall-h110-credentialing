@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
-const EVERY_MS = 2000;
+const EVERY_MS = 3000;
 const GIVE_UP_MS = 60000;
 
 // While Polar confirms a billing change (by webhook), re-render the page every
@@ -20,7 +20,10 @@ export default function RefreshUntilConfirmed({ waiting, late }) {
         clearInterval(timer);
         return;
       }
-      router.refresh();
+      // Ask Polar directly too, in case its webhook is late or lost.
+      fetch("/api/billing/sync", { method: "POST" })
+        .catch(() => {})
+        .finally(() => router.refresh());
     }, EVERY_MS);
     return () => clearInterval(timer);
   }, [router]);
