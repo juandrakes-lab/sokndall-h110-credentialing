@@ -4,6 +4,7 @@ import { accountAccess } from "@/lib/billing";
 import { formatDate } from "@/lib/credentials";
 import { changePlan, openBillingPortal, resubscribe } from "@/lib/billing-actions";
 import RefreshUntilConfirmed from "./RefreshUntilConfirmed";
+import SubmitButton from "@/components/app/SubmitButton";
 
 const day = (iso) => (iso ? formatDate(new Date(iso).toISOString().slice(0, 10)) : null);
 
@@ -24,9 +25,9 @@ export default function BillingCard({ org, providersUsed, requestedPlan, resubsc
         actions={
           org.polar_subscription_id && access.state !== "ended" ? (
             <form action={openBillingPortal}>
-              <button type="submit" className={buttonClass("secondary", "sm")}>
+              <SubmitButton className={buttonClass("secondary", "sm")}>
                 Billing portal
-              </button>
+              </SubmitButton>
             </form>
           ) : null
         }
@@ -65,9 +66,9 @@ export default function BillingCard({ org, providersUsed, requestedPlan, resubsc
         {!org.polar_subscription_id ? (
           <form action={resubscribe} className="flex flex-wrap items-center gap-3">
             <input type="hidden" name="plan" value={org.plan} />
-            <button type="submit" className={buttonClass("primary")}>
+            <SubmitButton className={buttonClass("primary")}>
               Start your 14-day {current.label} trial
-            </button>
+            </SubmitButton>
             <span className="text-sm text-ink-500">
               This account has no subscription yet. Everything you entered stays as it is.
             </span>
@@ -75,9 +76,9 @@ export default function BillingCard({ org, providersUsed, requestedPlan, resubsc
         ) : access.state === "ended" ? (
           <form action={resubscribe} className="flex flex-wrap items-center gap-3">
             <input type="hidden" name="plan" value={org.plan} />
-            <button type="submit" className={buttonClass("primary")}>
+            <SubmitButton className={buttonClass("primary")}>
               Restart {current.label} (${current.price}/month)
-            </button>
+            </SubmitButton>
             <span className="text-sm text-ink-500">Everything you had is still here and becomes editable again.</span>
           </form>
         ) : target && requestedPlan !== org.plan ? null : (
@@ -101,9 +102,9 @@ export default function BillingCard({ org, providersUsed, requestedPlan, resubsc
                       you delete some or upgrade again. Nothing is deleted.
                     </p>
                   )}
-                  <button type="submit" className={`${buttonClass(upgrade ? "primary" : "secondary", "sm")} mt-auto self-start`}>
+                  <SubmitButton className={`${buttonClass(upgrade ? "primary" : "secondary", "sm")} mt-auto self-start`}>
                     {upgrade ? `Upgrade to ${plan.label}` : `Switch to ${plan.label}`}
-                  </button>
+                  </SubmitButton>
                 </form>
               );
             })}

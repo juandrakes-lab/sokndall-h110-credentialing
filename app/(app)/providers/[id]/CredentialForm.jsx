@@ -4,6 +4,7 @@ import { useActionState, useEffect, useState } from "react";
 import { CREDENTIAL_FIELDS, CREDENTIAL_TYPES, CREDENTIAL_TYPE_KEYS } from "@/lib/credentials";
 import { US_STATES } from "@/lib/us-states";
 import { Field, FormError, buttonClass, inputClass } from "@/components/app/ui";
+import SubmitButton from "@/components/app/SubmitButton";
 
 function blank(initial) {
   return Object.fromEntries([...CREDENTIAL_FIELDS, "notes", "assigned_user_id"].map((f) => [f, initial?.[f] ?? ""]));
@@ -112,9 +113,9 @@ export default function CredentialForm({ action, initial, caqhIntervalDays, subm
       </div>
 
       <div>
-        <button type="submit" disabled={pending} className={buttonClass("primary")}>
+        <SubmitButton disabled={pending} className={buttonClass("primary")}>
           {pending ? "Saving…" : submitLabel}
-        </button>
+        </SubmitButton>
       </div>
     </form>
   );

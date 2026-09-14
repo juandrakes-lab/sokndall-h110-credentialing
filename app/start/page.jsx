@@ -5,6 +5,7 @@ import { PLANS, PLAN_ORDER } from "@/lib/plans";
 import { startTrial } from "@/lib/billing-actions";
 import { buttonClass } from "@/components/app/ui";
 import { signOut } from "@/app/(app)/actions";
+import SubmitButton from "@/components/app/SubmitButton";
 
 export const metadata = { title: "Choose your plan — Sokndall", robots: { index: false, follow: false } };
 
@@ -30,9 +31,9 @@ export default async function StartPage({ searchParams }) {
         <div className="flex items-center justify-between">
           <p className="text-lg font-semibold tracking-tight text-brand-700">Sokndall</p>
           <form action={signOut}>
-            <button type="submit" className="text-sm text-ink-500 hover:text-ink-900">
+            <SubmitButton className="text-sm text-ink-500 hover:text-ink-900">
               Sign out ({user.email})
-            </button>
+            </SubmitButton>
           </form>
         </div>
 
@@ -66,9 +67,9 @@ export default async function StartPage({ searchParams }) {
                     <li key={f}>✓ {f}</li>
                   ))}
                 </ul>
-                <button type="submit" className={`${buttonClass(chosen ? "primary" : "secondary")} mt-6`}>
+                <SubmitButton className={`${buttonClass(chosen ? "primary" : "secondary")} mt-6`}>
                   Start 14-day trial
-                </button>
+                </SubmitButton>
               </form>
             );
           })}

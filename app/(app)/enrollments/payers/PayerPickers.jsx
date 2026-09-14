@@ -3,6 +3,7 @@
 import { useActionState, useEffect, useMemo, useState } from "react";
 import { Field, FormError, buttonClass, inputClass } from "@/components/app/ui";
 import { PAYER_TYPE_LABELS } from "@/lib/enrollments";
+import SubmitButton from "@/components/app/SubmitButton";
 
 const TYPE_ORDER = ["commercial", "medicare", "medicaid", "other"];
 
@@ -93,9 +94,9 @@ export function CatalogPicker({ action, catalog }) {
       )}
 
       <div>
-        <button type="submit" disabled={picked.size === 0} className={buttonClass("primary")}>
+        <SubmitButton disabled={picked.size === 0} className={buttonClass("primary")}>
           {picked.size ? `Add ${picked.size} payer${picked.size > 1 ? "s" : ""}` : "Select payers to add"}
-        </button>
+        </SubmitButton>
       </div>
     </form>
   );
@@ -134,9 +135,9 @@ export function OwnPayerForm({ action }) {
         </Field>
       </div>
       <div>
-        <button type="submit" disabled={pending} className={buttonClass("secondary")}>
+        <SubmitButton disabled={pending} className={buttonClass("secondary")}>
           {pending ? "Adding…" : "Add payer"}
-        </button>
+        </SubmitButton>
       </div>
     </form>
   );

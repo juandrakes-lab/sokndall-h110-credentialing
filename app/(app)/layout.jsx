@@ -4,6 +4,7 @@ import { getAppContext } from "@/lib/org";
 import AppNav from "@/components/app/AppNav";
 import { accountAccess } from "@/lib/billing";
 import { signOut } from "./actions";
+import SubmitButton from "@/components/app/SubmitButton";
 
 // The entire authenticated app is per-user and behind a redirect — never index it.
 export const metadata = {
@@ -48,9 +49,9 @@ export default async function AppLayout({ children }) {
             {user.email}
           </p>
           <form action={signOut}>
-            <button type="submit" className="mt-1 text-sm font-medium text-ink-700 hover:text-ink-900">
+            <SubmitButton className="mt-1 text-sm font-medium text-ink-700 hover:text-ink-900">
               Sign out
-            </button>
+            </SubmitButton>
           </form>
         </div>
       </aside>
@@ -78,9 +79,9 @@ export default async function AppLayout({ children }) {
         <div className="mx-auto max-w-6xl px-5 py-8 sm:px-8 lg:py-10">{children}</div>
         <div className="border-t border-ink-200 px-5 py-4 text-center lg:hidden">
           <form action={signOut}>
-            <button type="submit" className="text-sm text-ink-500">
+            <SubmitButton className="text-sm text-ink-500">
               Sign out ({user.email})
-            </button>
+            </SubmitButton>
           </form>
         </div>
       </main>

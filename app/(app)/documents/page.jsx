@@ -5,6 +5,7 @@ import { PLANS } from "@/lib/plans";
 import { Card, CardHeader, PageHeader, buttonClass, inputClass } from "@/components/app/ui";
 import DocumentList from "@/components/app/DocumentList";
 import DocumentUploader from "@/components/app/DocumentUploader";
+import SubmitButton from "@/components/app/SubmitButton";
 
 // Every provider document in one place (alcance §3.8), searchable by name and
 // filterable by provider and kind, with the plan's storage use on top.
@@ -75,9 +76,9 @@ export default async function DocumentsPage({ searchParams }) {
                 </option>
               ))}
             </select>
-            <button type="submit" className={buttonClass("secondary")}>
+            <SubmitButton className={buttonClass("secondary")}>
               Search
-            </button>
+            </SubmitButton>
           </form>
           <DocumentList
             documents={documents}

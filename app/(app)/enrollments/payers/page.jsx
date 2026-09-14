@@ -4,6 +4,7 @@ import { PAYER_SELECT, PAYER_TYPE_LABELS, resolvePayer, sortPayers } from "@/lib
 import { Badge, Card, CardHeader, PageHeader, buttonClass } from "@/components/app/ui";
 import { addCatalogPayers, addOwnPayer, removePayer } from "../actions";
 import { CatalogPicker, OwnPayerForm } from "./PayerPickers";
+import SubmitButton from "@/components/app/SubmitButton";
 
 export default async function PayersPage() {
   const { supabase } = await getAppContext();
@@ -67,9 +68,9 @@ export default async function PayersPage() {
                     </Badge>
                   ) : (
                     <form action={removePayer.bind(null, p.id)}>
-                      <button type="submit" className={buttonClass("ghost", "sm")}>
+                      <SubmitButton className={buttonClass("ghost", "sm")}>
                         Remove
-                      </button>
+                      </SubmitButton>
                     </form>
                   )}
                 </li>

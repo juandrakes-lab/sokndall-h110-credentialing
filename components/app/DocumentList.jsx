@@ -1,6 +1,7 @@
 import { deleteDocument } from "@/lib/document-actions";
 import { DOCUMENT_CATEGORIES, formatBytes } from "@/lib/documents";
 import { businessDate, formatDate } from "@/lib/credentials";
+import SubmitButton from "@/components/app/SubmitButton";
 
 // Documents with a download link (a short-lived signed URL, issued on click)
 // and a two-step delete. `showProvider` for the cross-provider Documents page.
@@ -32,9 +33,9 @@ export default function DocumentList({ documents, showProvider = false, emptyTex
           <details className="shrink-0 text-xs text-ink-500">
             <summary className="cursor-pointer list-none hover:text-ink-900 [&::-webkit-details-marker]:hidden">Delete</summary>
             <form action={deleteDocument.bind(null, doc.id)} className="mt-1">
-              <button type="submit" className="font-medium text-status-expired hover:underline">
+              <SubmitButton className="font-medium text-status-expired hover:underline">
                 Yes, delete this file
-              </button>
+              </SubmitButton>
             </form>
           </details>
           )}

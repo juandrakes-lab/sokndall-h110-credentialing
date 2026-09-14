@@ -15,6 +15,7 @@ import {
   mimeFor,
 } from "@/lib/documents";
 import { Field, FormError, FormNotice, buttonClass, inputClass } from "@/components/app/ui";
+import SubmitButton from "@/components/app/SubmitButton";
 
 // Upload one provider document. The file goes from the browser straight to
 // private Storage; the server only checks and records it.
@@ -129,9 +130,9 @@ export default function DocumentUploader({ providerId, providers, enrollmentId, 
       </div>
       <p className="text-xs text-ink-500">Provider paperwork only. Never upload anything with patient information.</p>
       <div>
-        <button type="submit" disabled={!file || !chosenProvider || busy} className={buttonClass("primary")}>
+        <SubmitButton disabled={!file || !chosenProvider} pending={busy} className={buttonClass("primary")}>
           {busy ? "Uploading…" : "Upload"}
-        </button>
+        </SubmitButton>
       </div>
     </form>
   );

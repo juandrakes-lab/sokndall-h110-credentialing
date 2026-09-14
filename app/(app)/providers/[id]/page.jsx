@@ -22,6 +22,7 @@ import {
 import ProviderForm from "../ProviderForm";
 import CredentialForm from "./CredentialForm";
 import CredentialItem from "./CredentialItem";
+import SubmitButton from "@/components/app/SubmitButton";
 
 const TYPE_ORDER = ["state_license", "dea", "malpractice", "board_cert", "caqh_attestation"];
 
@@ -171,9 +172,9 @@ export default async function ProviderPage({ params }) {
                 undone. If they just left the practice, mark them Inactive instead.
               </p>
               <form action={deleteProvider.bind(null, id)} className="mt-3">
-                <button type="submit" className={buttonClass("danger", "sm")}>
+                <SubmitButton className={buttonClass("danger", "sm")}>
                   Delete permanently
-                </button>
+                </SubmitButton>
               </form>
             </details>
           </Card>

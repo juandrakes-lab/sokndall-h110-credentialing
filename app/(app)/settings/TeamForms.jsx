@@ -2,6 +2,7 @@
 
 import { useActionState, useEffect, useState } from "react";
 import { Field, FormError, buttonClass, inputClass } from "@/components/app/ui";
+import SubmitButton from "@/components/app/SubmitButton";
 
 export function InviteForm({ action, disabled }) {
   const [state, formAction, pending] = useActionState(action, {});
@@ -28,9 +29,9 @@ export function InviteForm({ action, disabled }) {
             placeholder="name@practice.com"
           />
         </Field>
-        <button type="submit" disabled={disabled || pending} className={buttonClass("primary")}>
+        <SubmitButton disabled={disabled || pending} className={buttonClass("primary")}>
           {pending ? "Inviting…" : "Send invitation"}
-        </button>
+        </SubmitButton>
       </form>
       <FormError message={state?.error} />
       {state?.link && (
@@ -69,9 +70,9 @@ export function DeleteAccountForm({ action, orgName }) {
         <input id="delete-confirm" name="confirm" autoComplete="off" className={`${inputClass} sm:max-w-sm`} />
       </Field>
       <div>
-        <button type="submit" disabled={pending} className={buttonClass("danger")}>
+        <SubmitButton disabled={pending} className={buttonClass("danger")}>
           {pending ? "Deleting…" : "Delete account permanently"}
-        </button>
+        </SubmitButton>
       </div>
     </form>
   );

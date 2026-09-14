@@ -3,6 +3,7 @@
 import { useActionState, useEffect, useState } from "react";
 import { Field, FormError, FormNotice, buttonClass, inputClass } from "@/components/app/ui";
 import { CHANNEL_LABELS } from "@/lib/enrollments";
+import SubmitButton from "@/components/app/SubmitButton";
 
 // "Log a follow-up": one contact with the payer, and when to chase next —
 // proposed a week out, editable (alcance §3.6–3.7).
@@ -52,9 +53,9 @@ export function FollowUpForm({ action, today, proposed }) {
         <input id="fu-next" name="next_follow_up_date" type="date" value={values.next_follow_up_date} onChange={set("next_follow_up_date")} className={`${inputClass} sm:max-w-[12rem]`} />
       </Field>
       <div>
-        <button type="submit" disabled={pending} className={buttonClass("primary")}>
+        <SubmitButton disabled={pending} className={buttonClass("primary")}>
           {pending ? "Saving…" : "Log follow-up"}
-        </button>
+        </SubmitButton>
       </div>
     </form>
   );
@@ -120,9 +121,9 @@ export function DetailsForm({ action, enrollment, members, ownerEmail, payerMont
         <textarea id="d-notes" name="notes" rows={2} value={values.notes} onChange={set("notes")} className={inputClass} />
       </Field>
       <div>
-        <button type="submit" disabled={pending} className={buttonClass("secondary")}>
+        <SubmitButton disabled={pending} className={buttonClass("secondary")}>
           {pending ? "Saving…" : "Save details"}
-        </button>
+        </SubmitButton>
       </div>
     </form>
   );

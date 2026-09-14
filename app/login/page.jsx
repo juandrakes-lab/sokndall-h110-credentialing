@@ -4,6 +4,7 @@ import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { buttonClass, inputClass } from "@/components/app/ui";
+import SubmitButton from "@/components/app/SubmitButton";
 
 // Only same-site paths: never bounce a login to another origin.
 function safeNext(value) {
@@ -127,9 +128,9 @@ function Login() {
             {error && <p className="text-sm text-status-expired">{error}</p>}
             {notice && <p className="text-sm text-status-active">{notice}</p>}
 
-            <button type="submit" disabled={loading} className={`${buttonClass("primary")} w-full`}>
+            <SubmitButton pending={loading} className={`${buttonClass("primary")} w-full`}>
               {loading ? "One moment…" : mode === "sign-in" ? "Sign in" : "Create account"}
-            </button>
+            </SubmitButton>
           </form>
         </div>
 

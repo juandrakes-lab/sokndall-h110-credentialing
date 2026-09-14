@@ -5,6 +5,7 @@ import ExpiryBadge from "@/components/app/ExpiryBadge";
 import { buttonClass } from "@/components/app/ui";
 import { CREDENTIAL_TYPES, credentialSummary, formatDate } from "@/lib/credentials";
 import CredentialForm from "./CredentialForm";
+import SubmitButton from "@/components/app/SubmitButton";
 
 export default function CredentialItem({ credential, updateAction, deleteAction, caqhIntervalDays, members = [], readOnly = false }) {
   const [mode, setMode] = useState("view"); // "view" | "edit" | "confirm-delete"
@@ -49,9 +50,9 @@ export default function CredentialItem({ credential, updateAction, deleteAction,
         {mode === "confirm-delete" && (
           <form action={deleteAction} className="flex shrink-0 flex-wrap items-center gap-2">
             <span className="text-sm text-ink-700">Delete this credential?</span>
-            <button type="submit" className={buttonClass("danger", "sm")}>
+            <SubmitButton className={buttonClass("danger", "sm")}>
               Delete
-            </button>
+            </SubmitButton>
             <button type="button" onClick={close} className={buttonClass("secondary", "sm")}>
               Keep it
             </button>

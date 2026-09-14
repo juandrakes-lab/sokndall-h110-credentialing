@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { buttonClass } from "@/components/app/ui";
 import { signOut } from "@/app/(app)/actions";
+import SubmitButton from "@/components/app/SubmitButton";
 
 export const metadata = { title: "Join a team — Sokndall", robots: { index: false, follow: false } };
 
@@ -72,9 +73,9 @@ export default async function InvitePage({ params, searchParams }) {
           It was sent to <strong className="text-ink-900">{invite.email}</strong>, and you&apos;re signed in as {user.email}.
         </p>
         <form action={signOut} className="mt-6">
-          <button type="submit" className={buttonClass("secondary")}>
+          <SubmitButton className={buttonClass("secondary")}>
             Sign out and switch
-          </button>
+          </SubmitButton>
         </form>
       </>
     );
@@ -85,9 +86,9 @@ export default async function InvitePage({ params, searchParams }) {
         <p className="mt-2 text-sm text-ink-500">You&apos;ll see the providers, enrollments and follow-ups your team works on.</p>
         {sp.error && <p className="mt-4 text-sm text-status-expired">{ERRORS[sp.error] ?? "Something went wrong joining the account."}</p>}
         <form action={accept.bind(null, token)} className="mt-6">
-          <button type="submit" className={`${buttonClass("primary")} w-full`}>
+          <SubmitButton className={`${buttonClass("primary")} w-full`}>
             Join {invite.org_name}
-          </button>
+          </SubmitButton>
         </form>
       </>
     );

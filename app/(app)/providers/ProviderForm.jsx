@@ -6,6 +6,7 @@ import NpiCheck from "@/components/app/NpiCheck";
 import { Field, FormError, FormNotice, buttonClass, inputClass } from "@/components/app/ui";
 import { formatAddress, sameAddress } from "@/lib/consistency";
 import { titleCase } from "@/lib/nppes";
+import SubmitButton from "@/components/app/SubmitButton";
 
 const EMPTY = {
   first_name: "",
@@ -120,9 +121,9 @@ export default function ProviderForm({ action, initial, submitLabel, cancelHref,
       </fieldset>
       {!readOnly && (
       <div className="flex flex-wrap gap-3 border-t border-ink-100 pt-6">
-        <button type="submit" disabled={pending} className={buttonClass("primary")}>
+        <SubmitButton disabled={pending} className={buttonClass("primary")}>
           {pending ? "Saving…" : submitLabel}
-        </button>
+        </SubmitButton>
         {cancelHref && (
           <Link href={cancelHref} className={buttonClass("secondary")}>
             Cancel

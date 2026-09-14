@@ -3,6 +3,7 @@ import { formatDate } from "@/lib/credentials";
 import { PLANS } from "@/lib/plans";
 import { inviteMember, removeMember, revokeInvitation } from "./team-actions";
 import { InviteForm } from "./TeamForms";
+import SubmitButton from "@/components/app/SubmitButton";
 
 // Owner only: who's on the account, pending invitations, and the seat count
 // against the plan (alcance §4.2 — Solo 1, Practice 3, Billing Co 10).
@@ -28,9 +29,9 @@ export default function TeamCard({ org, members, invitations, writable }) {
               <details className="text-xs text-ink-500">
                 <summary className="cursor-pointer list-none hover:text-ink-900 [&::-webkit-details-marker]:hidden">Remove</summary>
                 <form action={removeMember.bind(null, m.user_id)} className="mt-1">
-                  <button type="submit" className="font-medium text-status-expired hover:underline">
+                  <SubmitButton className="font-medium text-status-expired hover:underline">
                     Yes, remove {m.email}
-                  </button>
+                  </SubmitButton>
                 </form>
               </details>
             )}
@@ -42,9 +43,9 @@ export default function TeamCard({ org, members, invitations, writable }) {
               {i.email} · invited, link valid until {formatDate(i.expires_at.slice(0, 10))}
             </span>
             <form action={revokeInvitation.bind(null, i.id)}>
-              <button type="submit" className={buttonClass("ghost", "sm")}>
+              <SubmitButton className={buttonClass("ghost", "sm")}>
                 Cancel invitation
-              </button>
+              </SubmitButton>
             </form>
           </li>
         ))}

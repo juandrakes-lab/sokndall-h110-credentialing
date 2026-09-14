@@ -18,6 +18,8 @@ import DocumentUploader from "@/components/app/DocumentUploader";
 import { checklistFor } from "@/lib/checklist";
 import { deleteCommunication, logFollowUp, setEnrollmentStatus, updateEnrollmentDetails } from "./actions";
 import { DetailsForm, FollowUpForm } from "./EnrollmentForms";
+import SubmitButton from "@/components/app/SubmitButton";
+import StatusChip from "./StatusChip";
 
 const ACTIVE_STATUS = {
   not_started: "border-ink-500 bg-ink-100 text-ink-900",
@@ -115,18 +117,16 @@ export default async function EnrollmentPanel({ providerId, payerId, closeHref }
             <form action={statusAction} className="flex flex-wrap gap-2">
               <fieldset disabled={readOnly} className="contents">
               {ENROLLMENT_STATUSES.map((s) => (
-                <button
+                <StatusChip
                   key={s}
-                  type="submit"
-                  name="status"
                   value={s}
-                  aria-pressed={s === status}
+                  active={s === status}
                   className={`rounded-full border px-3 py-1.5 text-sm font-medium transition ${
                     s === status ? ACTIVE_STATUS[s] : "border-ink-200 bg-white text-ink-700 hover:border-ink-500"
                   }`}
                 >
                   {ENROLLMENT_STATUS_LABELS[s]}
-                </button>
+                </StatusChip>
               ))}
               </fieldset>
             </form>
@@ -225,9 +225,9 @@ export default async function EnrollmentPanel({ providerId, payerId, closeHref }
                         <details>
                           <summary className="cursor-pointer list-none hover:text-ink-900 [&::-webkit-details-marker]:hidden">Delete</summary>
                           <form action={deleteCommunication.bind(null, item.id)} className="mt-1">
-                            <button type="submit" className="font-medium text-status-expired hover:underline">
+                            <SubmitButton className="font-medium text-status-expired hover:underline">
                               Yes, delete this entry
-                            </button>
+                            </SubmitButton>
                           </form>
                         </details>
                       </div>

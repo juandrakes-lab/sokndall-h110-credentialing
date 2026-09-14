@@ -2,6 +2,7 @@
 
 import { useActionState, useState } from "react";
 import { Field, FormError, FormNotice, buttonClass, inputClass } from "@/components/app/ui";
+import SubmitButton from "@/components/app/SubmitButton";
 
 export default function OrganizationForm({ action, org, canEdit }) {
   const [state, formAction, pending] = useActionState(action, {});
@@ -41,9 +42,9 @@ export default function OrganizationForm({ action, org, canEdit }) {
       </div>
       {canEdit && (
         <div>
-          <button type="submit" disabled={pending} className={buttonClass("primary")}>
+          <SubmitButton disabled={pending} className={buttonClass("primary")}>
             {pending ? "Saving…" : "Save"}
-          </button>
+          </SubmitButton>
         </div>
       )}
     </form>

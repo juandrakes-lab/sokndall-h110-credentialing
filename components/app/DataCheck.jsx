@@ -1,4 +1,5 @@
 import { Card, CardHeader, buttonClass } from "@/components/app/ui";
+import SubmitButton from "@/components/app/SubmitButton";
 
 function timeAgo(iso) {
   if (!iso) return null;
@@ -22,9 +23,9 @@ export default function DataCheck({ issues, checkedAt, recheckAction, subject })
         actions={
           recheckAction && (
             <form action={recheckAction}>
-              <button type="submit" className={buttonClass("secondary", "sm")}>
+              <SubmitButton className={buttonClass("secondary", "sm")}>
                 Check again
-              </button>
+              </SubmitButton>
             </form>
           )
         }

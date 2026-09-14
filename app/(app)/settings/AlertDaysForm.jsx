@@ -2,6 +2,7 @@
 
 import { useActionState, useState } from "react";
 import { Field, FormError, FormNotice, buttonClass, inputClass } from "@/components/app/ui";
+import SubmitButton from "@/components/app/SubmitButton";
 
 export default function AlertDaysForm({ action, initial, canEdit }) {
   const [state, formAction, pending] = useActionState(action, {});
@@ -33,9 +34,9 @@ export default function AlertDaysForm({ action, initial, canEdit }) {
       </div>
       {canEdit && (
         <div>
-          <button type="submit" disabled={pending} className={buttonClass("secondary")}>
+          <SubmitButton disabled={pending} className={buttonClass("secondary")}>
             {pending ? "Saving…" : "Save alert days"}
-          </button>
+          </SubmitButton>
         </div>
       )}
     </form>

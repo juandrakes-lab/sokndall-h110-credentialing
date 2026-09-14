@@ -5,6 +5,7 @@ import NpiCheck from "@/components/app/NpiCheck";
 import { Field, FormError, FormNotice, buttonClass, inputClass } from "@/components/app/ui";
 import { formatAddress, sameAddress } from "@/lib/consistency";
 import { US_STATES } from "@/lib/us-states";
+import SubmitButton from "@/components/app/SubmitButton";
 
 const ADDRESS_FIELDS = ["address_line1", "address_line2", "city", "state", "zip"];
 
@@ -138,9 +139,9 @@ export default function PracticeForm({ action, practice, submitLabel }) {
       </fieldset>
 
       <div className="border-t border-ink-100 pt-6">
-        <button type="submit" disabled={pending} className={buttonClass("primary")}>
+        <SubmitButton disabled={pending} className={buttonClass("primary")}>
           {pending ? "Saving…" : submitLabel}
-        </button>
+        </SubmitButton>
       </div>
     </form>
   );
