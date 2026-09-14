@@ -89,7 +89,7 @@ export const UNITS = {
   },
   paras: [
     "A provider is a record being tracked: one clinician, with their credentials and their enrollment applications. A user is a person who logs in. A three-person front office managing forty clinicians is three users and forty providers. A solo practitioner who does her own paperwork is one of each.",
-    "Sokndall charges by provider and includes users up to the plan's limit. MedTrainer states in [its own FAQ](src:medtrainerProduct) that its pricing scales with the number of users and modules. Neither model is wrong. They are simply not comparable, and every published comparison of this category that puts two per-unit figures side by side without saying which unit is measuring something it did not measure.",
+    "Sokndall charges by provider and includes users up to each plan's limit, with one exception: past ten users on Billing Co, each additional one is $39 a month. MedTrainer states in [its own FAQ](src:medtrainerProduct) that its pricing scales with the number of users and modules. Neither model is wrong. They are simply not comparable, and every published comparison of this category that puts two per-unit figures side by side without saying which unit is measuring something it did not measure.",
   ],
   closing: "When you ask a vendor what it costs, the first question back should be yours: costs per what?",
 };
@@ -239,17 +239,14 @@ export const MATRIX = {
     { label: "Aggregate and scoped client views", cells: ["Not included", "Not included", "Included"] },
     { label: "Every tracking feature", cells: ["Included", "Included", "Included"] },
   ],
-  // Caption withdrawn 2026-09-14 (founder's decision): with the tax-ID and
-  // additional-users rows it is no longer true as written ("the only two
-  // rows…" — there are now four). Returns when copy rewrites it. The
-  // replacement sent the same day ("…Every other row is scale: providers,
-  // users, storage.") is held: the table has no storage row (left out on
-  // 2026-09-12, its figures [PEND]), so the caption would name a row that is
-  // not there. Back to copywriting. Approved text:
-  // "The only two rows where a plan is missing something are the multi-client
-  // rows, and those are the Billing Co structure rather than a feature held
-  // back."
-  caption: null,
+  // Caption rewritten by copywriting on 2026-09-14 against the seven rows
+  // (the first one stopped being true with the tax-ID and additional-users
+  // rows; a first rewrite named a storage row the table does not have). It
+  // covers every row without naming any but the decision axis: capability,
+  // scale, or parity. If a different capability enters the table, it stops
+  // being true and copy has to hear about it.
+  caption:
+    "One capability changes between plans, and it is keeping separate tax IDs apart. The other rows are scale, or identical in all three columns.",
   // The security line, stated as a fact rather than as an answer to SOC 2
   // (the brief's reasoning). No badge, shield or seal may be added beside it:
   // that would imply an accreditation that does not exist (DESIGN_RULES §2

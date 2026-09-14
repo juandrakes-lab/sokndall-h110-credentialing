@@ -550,8 +550,8 @@ Criterio 2              (13)  ≤29                 Charging unit
 Unidad 2                (42)  35–62               what the vendor counts to reach the number
   celda 2.1             (79)  62–95               Users and modules, by utilisation. Stated by MedTrainer
                                                   in its own product FAQ.
-  celda 2.2             (82)  62–95               Providers tracked. Users are included up to the plan
-                                                  limit, not billed separately.
+  celda 2.2             (89)  62–95               Providers tracked. Users included up to each plan's
+                                                  limit; Billing Co bills $39 past ten.
 
 Criterio 3              (17)  ≤29                 First step to buy
 Unidad 3                (45)  35–62               what a buyer has to do before seeing a number

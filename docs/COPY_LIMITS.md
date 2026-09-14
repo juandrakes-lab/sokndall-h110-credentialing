@@ -478,7 +478,7 @@ characters of noise as everything above.
 | **Row label** | 14 – 33 | **≤ 50** for one line | A 387px column at 15px semibold, left-aligned. Past 50 the row grows one line; nothing breaks. |
 | **Value cell** | 1 – 16 | **≤ 18** · counts large, words at 15px | 250px per plan column, centred. Status cells print no word any more (symbol only, the word is screen-reader text), so they have no limit. |
 | **Column head** | 4 – 10 | **≤ 22** | White on the petrol head row, centred. |
-| **Caption** | — | **≤ 200** for one line | Withdrawn 2026-09-14: with the tax-ID and additional-users rows the approved caption stopped being true. Back when copy rewrites it. |
+| **Caption** | 140 | **≤ 200** for one line | Rewritten 2026-09-14 against the seven rows; one line at 1280. |
 | **Security line** | 144 | **≤ 90 per line** · 2 lines up to ~180 | Closing line with its accent rule, 671px. |
 | **Row count** | 7 | **4 – 7** *(judgment)* — now at the ceiling | The brief's argument: parity said once, the differing rows shown. Past 7 the table becomes the feature list it was designed not to be. |
 

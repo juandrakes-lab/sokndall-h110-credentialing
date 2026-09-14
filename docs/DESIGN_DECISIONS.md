@@ -1249,3 +1249,23 @@ Decisión: entra la respuesta de copywriting a la solicitud del mismo día.
   queda a medias por el mismo motivo.
 Política de imagen: ninguna.
 Regla de DESIGN_RULES.md que aplica: §2 regla 4, §18.
+
+## /pricing y /medtrainer-pricing — segunda respuesta de copy (caption, cobro de usuarios)
+Fecha: 2026-09-14
+Decisión: entra la segunda respuesta de copywriting del día.
+- El caption de la matriz vuelve, reescrito contra las siete filas: capacidad,
+  escala o paridad, sin nombrar filas salvo el tax ID. Entra en una línea a
+  1280.
+- /pricing, sección proveedor/usuario, párrafo 2: la primera frase suma la
+  excepción del usuario adicional de Billing Co. Copy la encontró buscando por
+  significado; no dice "billed", así que ningún grep la encontraba.
+- /medtrainer-pricing, celda "ours" de la comparación: reemplazada (89, dentro
+  de 62–95). Es un cambio de copy en una página editorial. El diseño de la
+  página no se toca.
+- Se reemplazaron `docs/H110_COPY_TANDA_A_LANDING.md` y
+  `docs/H110_COPY_TANDA_B_COMPARACION.md` por las versiones sincronizadas del
+  copywriter. El diff contra las anteriores son solo esos cambios y la FAQ
+  Q4, así que archivo y código dicen lo mismo.
+- El cobro del usuario adicional a $39 sigue pendiente en desarrollo
+  (`lib/plans.js`, Polar) y bloquea la publicación de /pricing.
+Regla de DESIGN_RULES.md que aplica: §2 regla 3.
