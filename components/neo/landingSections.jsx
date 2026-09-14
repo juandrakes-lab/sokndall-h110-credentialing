@@ -549,31 +549,43 @@ export function PlanCard({ plan, cta, tag }) {
  * picks the plan faster than the provider count does, so the question goes
  * above the price list, where the choice is made.
  *
- * Laid out like the FAQ (the founder, 2026-09-14): the head on the left — the
- * pill, the question itself as the heading, the lead — and on the right the
- * two answers as the kit's row cards (answer left, what it means right), with
- * the closing under them. Inside the page's header, under its first H2 (the
- * keyword H2 stays first), so the heading is an H3 and each answer an H4.
- * Static, not a toggle. No yellow, no numbering, no icon.
+ * Built as a section, by the section rules (the founder, 2026-09-14): the
+ * split distribution of `ProseBandSection` — the pill on its own row, the
+ * heading at section size (authored lines, the last in the accent colour),
+ * the lead under it; on the right, level with the heading and not with the
+ * pill, the two answers as small cards side by side, and the closing under
+ * both. Below 900px it stacks.
  *
- * `pill`, `title`, `lead`, `options`: [{ label, body }], `closing`.
+ * It sits inside the page's header, under the keyword H2 (which has to stay
+ * the first H2), so the heading is an H3 set at H2 size, and each answer an
+ * H4. Static, not a toggle. No yellow, no numbering, no icon.
+ *
+ * `pill`, `title` (string or authored lines), `lead`, `options`: [{ label,
+ * body }], `closing`.
  */
 export function EntityChooser({ pill, title, lead, options, closing, id }) {
   return (
-    <div className="sk-panelsplit sk-chooser" id={id}>
-      <div className="sk-panelsplit__head sk-chooser__head">
-        {pill ? <Pill>{pill}</Pill> : null}
-        <h3 className="sk-h3 sk-chooser__t">{title}</h3>
-        {lead ? (
-          <p className="sk-lead sk-chooser__lead">
-            <Rich text={lead} linkClassName="sk-link" />
-          </p>
-        ) : null}
-      </div>
-      <div className="sk-stack sk-chooser__opts">
-        {options.map((o) => (
-          <RowCard key={o.label} title={o.label} body={o.body} headingLevel="h4" />
-        ))}
+    <div className="sk-chooser" id={id}>
+      {pill ? <Pill>{pill}</Pill> : null}
+      <h3 className="sk-h2 sk-chooser__t">
+        <Lines lines={title} />
+      </h3>
+      {lead ? (
+        <p className="sk-lead sk-chooser__lead">
+          <Rich text={lead} linkClassName="sk-link" />
+        </p>
+      ) : null}
+      <div className="sk-chooser__side">
+        <div className="sk-chooser__opts">
+          {options.map((o) => (
+            <article className="sk-card sk-card--pad sk-chooser__opt" key={o.label}>
+              <h4 className="sk-h4">{o.label}</h4>
+              <p className="sk-body">
+                <Rich text={o.body} linkClassName="sk-link" />
+              </p>
+            </article>
+          ))}
+        </div>
         {closing ? (
           <p className="sk-body sk-chooser__closing">
             <Rich text={closing} linkClassName="sk-link" />

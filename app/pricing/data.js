@@ -67,7 +67,8 @@ export const PLANS = {
 // ", not with provider count" — pending the copywriter's review.
 export const ENTITY = {
   pill: "Start with one question",
-  title: "How many separate tax IDs do you need to keep apart?",
+  // Authored lines for the section-size heading (≤21 per line).
+  title: ["How many separate", "tax IDs do you need", "to keep apart?"],
   lead: "That answer picks your plan faster than counting providers does.",
   options: [
     { label: "One practice, one tax ID", body: "Solo or Practice. Choose on provider count: up to 3, or up to 15." },

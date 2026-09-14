@@ -1191,3 +1191,31 @@ lenguaje de cards del kit.
   lectores de pantalla. La prosa sigue con "to".
 Política de imagen: ninguna.
 Regla de DESIGN_RULES.md que aplica: §13, §14, §18, §21 (nueva).
+
+## /pricing — el selector como sección; títulos de grupo más chicos; encargo de copy
+Fecha: 2026-09-14
+Decisión:
+- `EntityChooser` se arma con las reglas de sección (pedido del fundador): la
+  distribución split de `ProseBandSection`.
+  - La pastilla va en su propia fila.
+  - El encabezado va a tamaño de H2 de sección, con las líneas autorales
+    "How many separate / tax IDs do you need / to keep apart?", la última en
+    acento. Sigue siendo `<h3>` en el HTML, porque va debajo del H2 de la
+    keyword.
+  - El lead va debajo del encabezado.
+  - A la derecha, a la altura del encabezado y no de la pastilla, las dos
+    respuestas como cards chicas lado a lado, y el closing debajo de ambas.
+  - Columnas 1fr/1fr como el split estándar. A 0.9fr la primera línea
+    (456px) no entraba.
+  - Margen de sección arriba y abajo dentro del encabezado. En móvil se apila
+    igual que antes.
+- Anclas: el título de cada grupo baja de 22px a 18px (acento, seminegrita).
+  A 22px competía con la cifra.
+- Encargo pendiente para el copywriter (el fundador prefirió pedirlo antes que
+  usar un texto provisional): fusionar los dos closings de las anclas en una
+  sola nota de cierre debajo de la sección, ≤216 caracteres. Pegados tal cual
+  no sirven: "a fraction of these" pierde a qué cifras se refiere, y juntos
+  suman ~350. Hasta que llegue, cada closing sigue en su bloque (el del grupo
+  2 dentro del amarillo).
+Política de imagen: ninguna.
+Regla de DESIGN_RULES.md que aplica: §13, §14, §18.

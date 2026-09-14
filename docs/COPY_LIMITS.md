@@ -489,18 +489,18 @@ Re-measured 2026-09-12 at a 1348px viewport after the move under the plans
 
 # Copy limits — EntityChooser (`/pricing`)
 
-Added 2026-09-14; re-measured the same day on the FAQ-style layout (head
-left, two row cards right). Measured at 1280px.
+Added 2026-09-14; re-measured the same day on the section layout (split: pill
+row, section-size heading left, two small cards right). Measured at 1280px.
 
 | Slot | Now | Range | Notes |
 |---|---|---|---|
 | **Pill** | 23 | **≤ 28** | |
-| **H3 (the question)** | 52 | **≤ 60** for 2 lines | 416px head column, 28px. |
+| **Heading** (authored lines) | 17 · 19 · 14 | **≤ 18 per line** | 502px column at 54px. "How many separate" (17) measures 456px; 19 fits at 451px only because of the letter shapes. Three lines. |
 | **Lead** | 63 | **≤ 90** for 2 lines | |
-| **Answer label (H4)** | 24 · 20 | **≤ 22** for one line | Row card's left column. "One practice, one tax ID" (24) already takes 2 lines; nothing breaks. |
-| **Answer body** | 65 · 68 | **≤ 90** for 2 lines | Row card's right column. |
-| **Closing** | 169 | **≤ 180** for 2 lines | Under the cards, 601px. |
-| **Options** | 2 | **2 – 3** | A third row card fits; the question must still be a single one. |
+| **Answer label (H4)** | 24 · 20 | **≤ 20** for one line | 243px card. "One practice, one tax ID" takes 2 lines; nothing breaks. |
+| **Answer body** | 65 · 68 | **≤ 70** for 3 lines | |
+| **Closing** | 169 | **≤ 180** for 3 lines | Under the cards, 502px. |
+| **Options** | 2 | **2** | Side by side; a third does not fit the column. |
 
 # Copy limits — FigureBandSection `groups` (`/pricing` anchors)
 
@@ -510,7 +510,7 @@ Re-measured 2026-09-14 on the three-block layout. Measured at 1280px.
 |---|---|---|---|
 | **H2** (authored lines) | 14 · 18 | **≤ 21 per line** | Unchanged from the standard head. |
 | **Aside** | 262 | **≤ 300** for 5 lines | Right half of the dark tile. |
-| **Group title (H3)** | 29 · 19 | **≤ 40** for one line | 532px block, 22px, accent colour. |
+| **Group title (H3)** | 29 · 19 | **≤ 50** for one line | 532px block, 18px, accent colour. |
 | **Figure label** | 27 – 37 | **≤ 50** | Range set large with an en dash (§21), unit under it. |
 | **Figure note** | 70 – 76 | **≤ 120** for 2 lines | |
 | **Group closing** | 201 · 153 | **≤ 220** | Group 1 at the foot of the tall block; group 2 inside the yellow block. The left block's height matches the right column's; a longer closing on one side leaves air on the other. |

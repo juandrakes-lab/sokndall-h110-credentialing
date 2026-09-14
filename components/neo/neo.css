@@ -4611,18 +4611,46 @@ html:has(.sk-fnav) { scroll-padding-top: 88px; }
 }
 
 /* ---- EntityChooser (/pricing, 2026-09-14) -------------------------------- */
-/* The FAQ's split: head left, the two answers right as row cards, the closing
-   under them. In the header it does not stick. */
-.sk-chooser { margin-block: var(--s-4) var(--s-6); text-align: left; }
-.sk-chooser .sk-panelsplit__head { position: static; display: grid; gap: var(--s-4); justify-items: start; }
-.sk-chooser__lead { max-width: 40ch; }
-.sk-chooser__opts { gap: var(--gap); }
-.sk-chooser .sk-row-card .sk-h4 { color: var(--ink); }
+/* The split section distribution (`.sk-prose2`): the pill on its own row, the
+   heading and lead in the left column, and the right column starting level
+   with the heading — the two answers side by side, the closing under them.
+   Section spacing above and below, since it reads as a section inside the
+   header. */
+.sk-chooser {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-areas:
+    "pill ."
+    "title side"
+    "lead side";
+  grid-template-rows: auto auto 1fr;
+  column-gap: clamp(32px, 6vw, 96px);
+  align-items: start;
+  margin-block: var(--s-6) var(--s-8);
+  text-align: left;
+}
+.sk-chooser > .sk-head__pill { grid-area: pill; }
+.sk-chooser__t { grid-area: title; }
+.sk-chooser__lead { grid-area: lead; margin-top: var(--s-5); max-width: 40ch; }
+.sk-chooser__side { grid-area: side; display: grid; gap: var(--s-5); padding-top: 6px; }
+.sk-chooser__opts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--gap); }
+.sk-chooser__opt { display: grid; align-content: start; gap: var(--s-3); }
+.sk-chooser__opt .sk-h4 { color: var(--ink); }
 .sk-chooser__closing {
-  margin-top: var(--s-2);
   padding-left: var(--s-4);
   border-left: 2px solid var(--accent);
   font-weight: 500;
+}
+@media (max-width: 900px) {
+  .sk-chooser {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "pill" "title" "lead" "side";
+    grid-template-rows: none;
+  }
+  .sk-chooser__side { margin-top: var(--s-6); padding-top: 0; }
+}
+@media (max-width: 560px) {
+  .sk-chooser__opts { grid-template-columns: minmax(0, 1fr); }
 }
 
 /* ---- PlanFeatureMatrix: word cells at body size -------------------------- */
@@ -4636,7 +4664,8 @@ html:has(.sk-fnav) { scroll-padding-top: 88px; }
 /* The dark tile across the top, heading left and aside right; under it the
    blocks, in the kit's card language. In each block the number leads; the
    group's title is the second voice — the accent colour of a heading's
-   second line, at card-title size; the unit third; the note last. */
+   second line, at 18px (22px competed with the number); the unit third; the
+   note last. */
 .sk-figgroups { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--gap); }
 .sk-figgroups__head {
   display: grid;
@@ -4662,10 +4691,10 @@ html:has(.sk-fnav) { scroll-padding-top: 88px; }
   box-shadow: var(--sh-white);
 }
 .sokndall-neo .sk-figblock__t {
-  font-size: 1.375rem;
-  line-height: 1.2;
+  font-size: 1.125rem;
+  line-height: 1.3;
   font-weight: 600;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.01em;
   color: var(--accent);
 }
 .sk-figrow { display: grid; gap: var(--s-3); }
