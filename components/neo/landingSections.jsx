@@ -328,7 +328,9 @@ function FigureCard({ f, as = "card" }) {
  * accent colour, its figures as rows split by a hairline, its closing at the
  * foot. A group's `ours` figure leaves the group's block for a yellow block of
  * its own (the section's one highlight, §18), and takes the group's closing
- * with it — that closing is about this product's figure. On /pricing: the
+ * with it. `closing` (the section's own) sets under the blocks, full width, as
+ * every section's closing line — on /pricing since 2026-09-14 it is the only
+ * one, and the groups carry none. On /pricing: the
  * work group on the left at full height; software on the right, over the
  * yellow block (the founder's layout, 2026-09-14). Inside every block the
  * number is the loudest thing; the title is the second voice.
@@ -383,6 +385,11 @@ export function FigureBandSection({ head, figures, closing, groups, id }) {
             })}
           </div>
         </div>
+        {closing ? (
+          <p className="sk-body sk-body--lg sk-closing">
+            <Rich text={closing} linkClassName="sk-link" />
+          </p>
+        ) : null}
       </Band>
     );
   }

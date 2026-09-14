@@ -87,7 +87,7 @@ export default function PricingPage() {
 
         {/* The four anchors in two groups that do not compare with each other:
             buying the work, buying software (copy brief 2026-09-09). */}
-        <FigureBandSection head={ANCHOR.head} groups={ANCHOR.groups} />
+        <FigureBandSection head={ANCHOR.head} groups={ANCHOR.groups} closing={ANCHOR.closing} />
 
         {/* The trial as three steps, the reference's "How we work": step label
             and a large fact on each, the last step a dark tile. One

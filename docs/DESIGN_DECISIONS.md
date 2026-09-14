@@ -1219,3 +1219,33 @@ Decisión:
   2 dentro del amarillo).
 Política de imagen: ninguna.
 Regla de DESIGN_RULES.md que aplica: §13, §14, §18.
+
+## /pricing — respuesta de copy del 2026-09-14 (closing único, lead, FAQ Q4)
+Fecha: 2026-09-14
+Decisión: entra la respuesta de copywriting a la solicitud del mismo día.
+- Anclas: los dos closings de grupo se borran y entra un solo closing de
+  sección debajo de los tres bloques, con la línea de cierre estándar (regla de
+  acento, sin ámbar). El bloque amarillo queda solo con su cifra. Los bloques
+  quedan parejos: 387px a la izquierda, 387px a la derecha.
+  - El copy pedía dos líneas de ~105 cortadas en el punto. La línea de cierre
+    estándar mide 72ch (775px) y lo pone en tres líneas de ~80. A todo el
+    ancho serían ~125 caracteres por línea, más de lo legible. Se mantiene el
+    estándar y el corte queda natural.
+- Selector: el lead vuelve a su rango con la extensión del copywriter (164).
+  Reestructura confirmada.
+- FAQ Q4 reemplazada (usuario adicional de Billing Co). El schema FAQPage lee
+  la misma data (verificado en el JSON-LD).
+- Caption de la matriz: la versión propuesta NO entra y el caption sigue
+  retirado. Nombra una fila de almacenamiento ("providers, users, storage")
+  que la tabla no tiene: salió el 2026-09-12 con cifras [PEND]. La respuesta
+  de copy también cuenta "tres filas de multi-cliente", y hoy son dos (se
+  consolidaron). Vuelve a copy.
+- Para producto/fundador (bloqueante, según copy): el usuario adicional a $39
+  se promete en la nota de precio, en la matriz y en la FAQ Q4, y no existe en
+  `lib/plans.js` ni en Polar. Opciones de copy: implementarlo antes de
+  publicar, o sacar las tres menciones (tope duro de 10 usuarios).
+- Para copy (fuera de mi alcance, página editorial): `/medtrainer-pricing`
+  dice "Users are included up to the plan limit, not billed separately", que
+  queda a medias por el mismo motivo.
+Política de imagen: ninguna.
+Regla de DESIGN_RULES.md que aplica: §2 regla 4, §18.

@@ -63,13 +63,14 @@ export const PLANS = {
 //
 // Restructured by the founder on 2026-09-14, every word from the brief: the
 // question becomes the heading, the old heading's first half becomes the pill,
-// and the rest of the lead stays under the question. The dropped words are
-// ", not with provider count" — pending the copywriter's review.
+// and the rest of the lead stays under the question. Confirmed by copywriting
+// on 2026-09-14, which extended the lead back into its 92-179 range.
 export const ENTITY = {
   pill: "Start with one question",
   // Authored lines for the section-size heading (≤21 per line).
   title: ["How many separate", "tax IDs do you need", "to keep apart?"],
-  lead: "That answer picks your plan faster than counting providers does.",
+  lead:
+    "That answer picks your plan faster than counting providers does. Solo and Practice are built for one practice; Billing Co is the only one that keeps entities apart.",
   options: [
     { label: "One practice, one tax ID", body: "Solo or Practice. Choose on provider count: up to 3, or up to 15." },
     { label: "More than one tax ID", body: "Billing Co, even at six providers. No other plan separates entities." },
@@ -95,7 +96,8 @@ export const UNITS = {
 
 // Replaced whole by the copy brief of 2026-09-09: the same four figures, in
 // two groups that are not comparable with each other (FigureBandSection
-// `groups`). Figure 4 is arithmetic on our own published price: $299 × 12 =
+// `groups`). The two group closings were replaced on 2026-09-14 by one
+// section closing under the three blocks (copywriting's reply of that date). Figure 4 is arithmetic on our own published price: $299 × 12 =
 // $3,588, ÷ 15 = $239.20.
 export const ANCHOR = {
   head: {
@@ -117,8 +119,6 @@ export const ANCHOR = {
           note: "Initial submissions across core payers. Unit: one provider. [Medicotech](src:medicotech).",
         },
       ],
-      closing:
-        "Sokndall costs a fraction of these because it is not the same purchase. Nobody here verifies a licence with a board, submits an application or calls a payer. Your team does that; this holds the record.",
     },
     {
       title: "Paying for software",
@@ -133,10 +133,10 @@ export const ANCHOR = {
           ours: true,
         },
       ],
-      closing:
-        "Against software, this sits at the bottom of the same range rather than below it. The difference is the unit and the fact that the number is on the page.",
     },
   ],
+  closing:
+    "Outsourcing buys the work \u2014 nobody here verifies a licence with a board, files an application or calls a payer. Against software, this sits at the bottom of the same range, counted in providers rather than seats.",
 };
 
 // TrialTermsBlock. Each item in the copy is "label — explanation"; the row card
@@ -185,7 +185,9 @@ export const FAQ = [
   },
   {
     q: "Do you charge per provider or per user?",
-    a: "Per provider. A provider is a clinician whose credentials and enrollments you track; a user is someone who logs in. Solo includes 3 providers and 1 user, Practice 15 providers and 3 users, Billing Co 50 providers and 10 users. Users are included rather than billed, which is the opposite of how most of this category prices, and it is why the per-unit figures do not compare directly.",
+    // Answer replaced by copywriting on 2026-09-14: the old one said users are
+    // "included rather than billed", half false since the $39 additional user.
+    a: "Per provider. A provider is a clinician whose credentials and enrollments you track; a user is someone who logs in. Solo includes 3 providers and 1 user, Practice 15 and 3, Billing Co 50 and 10. Users are included up to those limits rather than billed on top. Billing Co is the one exception: past ten users, each additional one is $39 a month.",
   },
   {
     q: "Is there an onboarding fee?",
@@ -239,7 +241,11 @@ export const MATRIX = {
   ],
   // Caption withdrawn 2026-09-14 (founder's decision): with the tax-ID and
   // additional-users rows it is no longer true as written ("the only two
-  // rows…" — there are now four). Returns when copy rewrites it. Approved text:
+  // rows…" — there are now four). Returns when copy rewrites it. The
+  // replacement sent the same day ("…Every other row is scale: providers,
+  // users, storage.") is held: the table has no storage row (left out on
+  // 2026-09-12, its figures [PEND]), so the caption would name a row that is
+  // not there. Back to copywriting. Approved text:
   // "The only two rows where a plan is missing something are the multi-client
   // rows, and those are the Billing Co structure rather than a feature held
   // back."

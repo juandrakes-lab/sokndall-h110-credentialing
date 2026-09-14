@@ -496,7 +496,7 @@ row, section-size heading left, two small cards right). Measured at 1280px.
 |---|---|---|---|
 | **Pill** | 23 | **≤ 28** | |
 | **Heading** (authored lines) | 17 · 19 · 14 | **≤ 18 per line** | 502px column at 54px. "How many separate" (17) measures 456px; 19 fits at 451px only because of the letter shapes. Three lines. |
-| **Lead** | 63 | **≤ 90** for 2 lines | |
+| **Lead** | 164 | **92 – 179** | Copywriting's range (Intro note), confirmed on the block: 164 sets in 4 lines under the 3-line heading at 477px. |
 | **Answer label (H4)** | 24 · 20 | **≤ 20** for one line | 243px card. "One practice, one tax ID" takes 2 lines; nothing breaks. |
 | **Answer body** | 65 · 68 | **≤ 70** for 3 lines | |
 | **Closing** | 169 | **≤ 180** for 3 lines | Under the cards, 502px. |
@@ -513,5 +513,6 @@ Re-measured 2026-09-14 on the three-block layout. Measured at 1280px.
 | **Group title (H3)** | 29 · 19 | **≤ 50** for one line | 532px block, 18px, accent colour. |
 | **Figure label** | 27 – 37 | **≤ 50** | Range set large with an en dash (§21), unit under it. |
 | **Figure note** | 70 – 76 | **≤ 120** for 2 lines | |
-| **Group closing** | 201 · 153 | **≤ 220** | Group 1 at the foot of the tall block; group 2 inside the yellow block. The left block's height matches the right column's; a longer closing on one side leaves air on the other. |
+| **Group closing** | — | — | Removed 2026-09-14: the groups carry none. |
+| **Section closing** | 212 | **≤ 216** | Under the three blocks, the standard closing line (72ch, 775px): 212 sets in 3 lines of ~80, not 2 of ~105 — the full-width measure would be ~125 a line, past a readable length. |
 | **Figures per group** | 2 | **1 – 3** | The layout is built for this data: the first group spans two rows. |
