@@ -476,11 +476,41 @@ characters of noise as everything above.
 | **H2** (one line, card-title size) | 35 | **≤ 70** for one line | Since 2026-09-12 the table sits under the price list, inside the header, and its H2 is set at 28px like the list's own. The authored two-line break is joined into one line. |
 | **Intro note** | 110 | **≤ 120** for 2 lines | Centred, capped at 60ch (559px). |
 | **Row label** | 14 – 33 | **≤ 50** for one line | A 387px column at 15px semibold, left-aligned. Past 50 the row grows one line; nothing breaks. |
-| **Value cell** | 1 – 2 digits | **≤ 15** | 250px per plan column, centred. Status cells print no word any more (symbol only, the word is screen-reader text), so they have no limit. |
+| **Value cell** | 1 – 16 | **≤ 18** · counts large, words at 15px | 250px per plan column, centred. Status cells print no word any more (symbol only, the word is screen-reader text), so they have no limit. |
 | **Column head** | 4 – 10 | **≤ 22** | White on the petrol head row, centred. |
-| **Caption** | 150 | **≤ 200** for one line | Full table width, 13px. |
+| **Caption** | — | **≤ 200** for one line | Withdrawn 2026-09-14: with the tax-ID and additional-users rows the approved caption stopped being true. Back when copy rewrites it. |
 | **Security line** | 144 | **≤ 90 per line** · 2 lines up to ~180 | Closing line with its accent rule, 671px. |
-| **Row count** | 5 | **4 – 7** *(judgment)* | The brief's argument: parity said once, the differing rows shown. Past 7 the table becomes the feature list it was designed not to be. |
+| **Row count** | 7 | **4 – 7** *(judgment)* — now at the ceiling | The brief's argument: parity said once, the differing rows shown. Past 7 the table becomes the feature list it was designed not to be. |
 
 Re-measured 2026-09-12 at a 1348px viewport after the move under the plans
 (the numbers at 1280 are a few characters lower). Below 640px each row is a card and every limit above grows.
+
+---
+
+# Copy limits — EntityChooser (`/pricing`)
+
+Added 2026-09-14 for the tax-ID question above the price list. Measured at
+1280px. The brief's `[SIN MEDIR]` for the H3 is replaced here.
+
+| Slot | Now | Range | Notes |
+|---|---|---|---|
+| **H3** | 48 | **≤ 52** for one line | 412px column, card-title size. Past that it takes two lines; nothing breaks. |
+| **Lead** | 117 | **≤ 130** for 3 lines | Same column. |
+| **Option label** | 24 · 20 | **≤ 28** for one line | 280px white card, 17px bold. |
+| **Option body** | 65 · 68 | **≤ 85** for 3 lines | The two cards stretch to the taller one. |
+| **Closing** | 169 | **≤ 200** for 2 lines | Full panel width after the accent rule, 787px. |
+| **Options** | 2 | **2** | A two-answer question. A third answer needs a different layout. |
+
+# Copy limits — FigureBandSection `groups` (`/pricing` anchors)
+
+Added 2026-09-14. Measured at 1280px.
+
+| Slot | Now | Range | Notes |
+|---|---|---|---|
+| **H2** (authored lines) | 14 · 18 | **≤ 21 per line** | Unchanged from the standard head. |
+| **Aside** | 262 | **≤ 300** for 5 lines | Right half of the dark tile, 486px. |
+| **Group title (H3)** | 29 · 19 | **≤ 40** for one line | 472px. |
+| **Figure label** | 27 – 37 | **≤ 50** | The range set large, the unit under it. |
+| **Figure note** | 70 – 76 | **≤ 110** for 2 lines | |
+| **Group closing** | 201 · 153 | **≤ 220** for 4 lines | The two panels are the same height; the shorter closing leaves a line of air. |
+| **Figures per group** | 2 | **2 – 3** | Stacked. Four stops reading as a group. |

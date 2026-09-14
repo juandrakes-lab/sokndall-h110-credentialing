@@ -1090,3 +1090,43 @@ celdas de los planes centradas.
   matriz sigue siendo el segundo H2).
 Política de imagen: ninguna.
 Regla de DESIGN_RULES.md que aplica: §2 reglas 3 (enmendada) y 4, §6, §13, §15, §18.
+
+## /pricing — selector por tax ID, anclas en dos grupos (encargo de copy 2026-09-09)
+Fecha: 2026-09-14
+Decisión: entra el encargo "selector por entidad + anclas de costo
+reestructuradas" completo, con dos componentes nuevos o ampliados.
+- `EntityChooser` (nuevo): la pregunta del tax ID va dentro del encabezado,
+  debajo del H2 de la keyword y antes de la lista de precios, como H3 (las
+  opciones como H4). Verificado en el HTML: la keyword sigue siendo el primer
+  H2, un solo H1, sin saltos de jerarquía. Panel gris suave: pregunta y lead a
+  la izquierda, las dos respuestas como cards blancas a la derecha, el
+  closing al pie con la regla de acento. Estático, no es un toggle: no hay
+  nada que filtrar. Sin amarillo, sin numeración, sin ícono.
+- Descripción de Billing Co reemplazada. El enlace a /for-billing-companies
+  queda solo sobre "billing companies": esa página está escrita para ellas y
+  no para un grupo multi-TIN (el pendiente que el mismo encargo declara).
+- Nota de precio reemplazada (sale el enlace a las anclas, entra el usuario
+  adicional a $39).
+- Matriz: "Separate tax IDs" (One / One / Several) como primera fila, y
+  "Additional users" (Not available / … / $39 a month each) después de "Users
+  included". Las celdas de palabra se imprimen enteras a tamaño de cuerpo; las
+  cantidades siguen grandes. Siete filas: el techo de COPY_LIMITS.
+- Caption de la matriz retirado (decisión del fundador): con las filas nuevas
+  deja de ser cierto ("the only two rows…", ahora son cuatro). Vuelve cuando
+  copy lo reescriba; el texto aprobado queda comentado en `data.js`.
+- Anclas (`FigureBandSection groups`, modo nuevo; el modo de una fila no
+  cambia en la home ni en /for-billing-companies): el tile oscuro va arriba a
+  todo el ancho, H2 a la izquierda y aside a la derecha; debajo, los dos grupos
+  como paneles grises separados, cada uno con su H3, sus dos cifras apiladas y
+  su closing. Así las cuatro cifras no se leen como una sola escala. La cifra
+  propia sigue siendo el único amarillo de la sección.
+- Para el copywriter / producto:
+  - El usuario adicional a $39 no existe en `lib/plans.js` ni en Polar. La
+    página lo promete antes de que el checkout lo cobre, igual que la
+    discrepancia de precios ya conocida.
+  - La FAQ "Do you charge per provider or per user?" dice "Users are included
+    rather than billed". Con el usuario adicional pago eso queda a medias.
+  - El pendiente del encargo sigue abierto: ninguna página le explica al
+    grupo multi-TIN qué compra.
+Política de imagen: ninguna.
+Regla de DESIGN_RULES.md que aplica: §2 reglas 2, 3 y 4, §6, §13, §14, §18.

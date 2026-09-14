@@ -3,12 +3,12 @@ import Faq from "@/components/neo/Faq";
 import Rich from "@/components/neo/rich";
 import { CountDiagram } from "@/components/neo/Schematics";
 import LandingTemplate, {
-  PlanList, PlanFeatureMatrix, ProseBandSection, FigureBandSection, CardGridSection, PanelSection, CtaSection,
+  PlanList, PlanFeatureMatrix, EntityChooser, ProseBandSection, FigureBandSection, CardGridSection, PanelSection, CtaSection,
 } from "@/components/neo/LandingTemplate";
 import { FAQ_HEAD, PLAN_PERIOD } from "@/components/neo/neoData";
 import { JsonLd, faqSchema, softwareSchema, PLAN_PRICES } from "@/components/neo/schema";
 import { pageMeta } from "@/lib/seo";
-import { META, HERO, PLANS, MATRIX, UNITS, UNITS_DIAGRAM, ANCHOR, TRIAL, FAQ, CLOSING } from "./data";
+import { META, HERO, PLANS, ENTITY, MATRIX, UNITS, UNITS_DIAGRAM, ANCHOR, TRIAL, FAQ, CLOSING } from "./data";
 
 // `/pricing` — page 2 of the v3.1 map, on LandingTemplate.
 //
@@ -40,6 +40,10 @@ export default function PricingPage() {
           figure: (
             <div className="sk-pricehead" id="plans">
               <h2 className="sk-h3 sk-pricehead__t">{PLANS.head.title}</h2>
+              {/* The tax-ID question before the plans: the wrong plan is
+                  picked here, not in the comparison (copy brief 2026-09-09).
+                  An H3 under the keyword H2, which stays the first H2. */}
+              <EntityChooser id="which-plan" {...ENTITY} />
               <PlanList plans={plans} cta={TRIAL_CTA} />
               <p className="sk-small sk-plans__note">
                 <Rich text={PLANS.note} linkClassName="sk-link" />
@@ -57,8 +61,10 @@ export default function PricingPage() {
                 plans={MATRIX.plans}
                 highlight={1}
                 rows={[
+                  ...MATRIX.first,
                   { label: "Providers tracked", cells: PLAN_PRICES.map((p) => String(p.providers)) },
                   { label: "Users included", cells: PLAN_PRICES.map((p) => String(p.users)) },
+                  ...MATRIX.afterUsers,
                   ...MATRIX.rows,
                 ]}
                 caption={MATRIX.caption}
@@ -76,7 +82,9 @@ export default function PricingPage() {
           media={<CountDiagram rows={UNITS_DIAGRAM.rows} caption={UNITS_DIAGRAM.caption} />}
         />
 
-        <FigureBandSection head={ANCHOR.head} figures={ANCHOR.figures} closing={ANCHOR.closing} />
+        {/* The four anchors in two groups that do not compare with each other:
+            buying the work, buying software (copy brief 2026-09-09). */}
+        <FigureBandSection head={ANCHOR.head} groups={ANCHOR.groups} />
 
         {/* The trial as three steps, the reference's "How we work": step label
             and a large fact on each, the last step a dark tile. One

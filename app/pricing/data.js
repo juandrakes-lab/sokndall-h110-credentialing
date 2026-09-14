@@ -41,7 +41,10 @@ export const PLANS = {
     },
     {
       name: "Billing Co",
-      desc: "[Separate client organizations, one login](/for-billing-companies)",
+      // Brief 2026-09-09: names both audiences. The link to
+      // /for-billing-companies stays, on "billing companies" only — that page
+      // is written for them, not for a multi-TIN group (the brief's open item).
+      desc: "For [billing companies](/for-billing-companies) and multi-TIN groups",
       features: [
         "Up to 50 providers across all clients",
         "Up to 10 users, scoped to their clients",
@@ -51,7 +54,22 @@ export const PLANS = {
     },
   ],
   note:
-    "Every plan is monthly and cancels from Settings. Fourteen-day trial, card up front, nothing charged before day 15. What the per-provider figures compare against, below.",
+    "Every plan is monthly and cancels from Settings. Billing Co includes 10 users; each one after that is $39 a month. Fourteen-day trial, card up front, nothing charged before day 15.",
+};
+
+// EntityChooser — copy brief of 2026-09-09 ("selector por entidad"). Under the
+// keyword H2 and above the price list, as an H3: the keyword H2 has to stay the
+// page's first H2 (on-page-seo.md §4).
+export const ENTITY = {
+  title: "Start with one question, not with provider count",
+  lead:
+    "How many separate tax IDs do you need to keep apart? That answer picks your plan faster than counting providers does.",
+  options: [
+    { label: "One practice, one tax ID", body: "Solo or Practice. Choose on provider count: up to 3, or up to 15." },
+    { label: "More than one tax ID", body: "Billing Co, even at six providers. No other plan separates entities." },
+  ],
+  closing:
+    "Solo and Practice hold one practice. If you run an ASC on its own tax ID, or grew by acquisition and each site bills under a different one, that is more than one entity.",
 };
 
 // COPY_LIMITS: ≤21 per authored H2 line. Line 4 is 22 — one over. Kept as
@@ -69,34 +87,50 @@ export const UNITS = {
   closing: "When you ask a vendor what it costs, the first question back should be yours: costs per what?",
 };
 
+// Replaced whole by the copy brief of 2026-09-09: the same four figures, in
+// two groups that are not comparable with each other (FigureBandSection
+// `groups`). Figure 4 is arithmetic on our own published price: $299 × 12 =
+// $3,588, ÷ 15 = $239.20.
 export const ANCHOR = {
   head: {
     pill: "Cost anchors",
-    title: ["What this costs", "next to what you", "already pay"],
+    title: ["What this costs", "next to what else"],
     aside:
-      "Four published figures, and they do not measure the same thing. Two count providers handed to an outside team. One counts staff seats inside software. The last one is this product. Every figure states its unit, because that is exactly where this comparison usually goes wrong.",
+      "Four published figures, in two groups that are not comparable with each other. Two of them buy the work. Two of them buy software. Every figure states the unit it counts in, because that is where this comparison goes wrong.",
   },
-  figures: [
+  groups: [
     {
-      label: "$600 to $2,400 per provider, per year",
-      note: "Outsourced ongoing maintenance. Unit: one provider, per year. [Medicotech](src:medicotech) and [Medwave](src:medwave).",
+      title: "Paying someone to do the work",
+      figures: [
+        {
+          label: "$600 to $2,400 per provider, per year",
+          note: "Ongoing maintenance, outsourced. Unit: one provider. [Medicotech](src:medicotech) and [Medwave](src:medwave).",
+        },
+        {
+          label: "$1,500 to $5,000 per provider, once",
+          note: "Initial submissions across core payers. Unit: one provider. [Medicotech](src:medicotech).",
+        },
+      ],
+      closing:
+        "Sokndall costs a fraction of these because it is not the same purchase. Nobody here verifies a licence with a board, submits an application or calls a payer. Your team does that; this holds the record.",
     },
     {
-      label: "$1,500 to $5,000 per provider, once",
-      note: "Full initial outsourcing across core payers. Unit: one provider, once. [Medicotech](src:medicotech).",
-    },
-    {
-      label: "$3,600 to $9,000 a year, 15 users",
-      note: "[MedTrainer's own published category guidance](src:medtrainerBlog). Unit: staff seats, not providers.",
-    },
-    {
-      label: "$3,588 a year, 15 providers",
-      note: "Sokndall Practice, $299 a month. Unit: providers tracked. $239 each per year.",
-      ours: true,
+      title: "Paying for software",
+      figures: [
+        {
+          label: "$3,600 to $9,000 a year, 15 users",
+          note: "[MedTrainer's own published guidance](src:medtrainerBlog). Unit: staff seats, not providers.",
+        },
+        {
+          label: "$3,588 a year, 15 providers",
+          note: "Sokndall Practice at $299 a month. Unit: providers tracked. $239 each.",
+          ours: true,
+        },
+      ],
+      closing:
+        "Against software, this sits at the bottom of the same range rather than below it. The difference is the unit and the fact that the number is on the page.",
     },
   ],
-  closing:
-    "Buying the work and tracking the work are different purchases at different prices. If you want someone to submit the applications, buy that instead.",
 };
 
 // TrialTermsBlock. Each item in the copy is "label — explanation"; the row card
@@ -185,13 +219,24 @@ export const MATRIX = {
       "Three plans, one product. What changes is how many providers you track and whether you track them for clients.",
   },
   plans: ["Solo", "Practice", "Billing Co"],
+  // Brief 2026-09-09 (entity chooser): the first row, above "Providers
+  // tracked" — the decision axis; below, the table reads as a size ladder.
+  first: [{ label: "Separate tax IDs", cells: ["One", "One", "Several"] }],
+  // Brief 2026-09-09 (anchors): after "Users included". "Not available" is
+  // printed as text, never an empty cell or a dash (DESIGN_RULES §2 regla 3).
+  afterUsers: [{ label: "Additional users", cells: ["Not available", "Not available", "$39 a month each"] }],
   rows: [
     { label: "Separate client organizations", cells: ["Not included", "Not included", "Included"] },
     { label: "Aggregate and scoped client views", cells: ["Not included", "Not included", "Included"] },
     { label: "Every tracking feature", cells: ["Included", "Included", "Included"] },
   ],
-  caption:
-    "The only two rows where a plan is missing something are the multi-client rows, and those are the Billing Co structure rather than a feature held back.",
+  // Caption withdrawn 2026-09-14 (founder's decision): with the tax-ID and
+  // additional-users rows it is no longer true as written ("the only two
+  // rows…" — there are now four). Returns when copy rewrites it. Approved text:
+  // "The only two rows where a plan is missing something are the multi-client
+  // rows, and those are the Billing Co structure rather than a feature held
+  // back."
+  caption: null,
   // The security line, stated as a fact rather than as an answer to SOC 2
   // (the brief's reasoning). No badge, shield or seal may be added beside it:
   // that would imply an accreditation that does not exist (DESIGN_RULES §2

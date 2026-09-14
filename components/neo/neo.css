@@ -4585,3 +4585,85 @@ html:has(.sk-fnav) { scroll-padding-top: 88px; }
   .sk-pfm__g { width: 22px; height: 22px; }
   .sk-pfm__cap { padding: var(--s-2) 0 0; border: 0; background: none; }
 }
+
+/* ---- EntityChooser (/pricing, 2026-09-14) -------------------------------- */
+/* The tax-ID question above the price list: a soft grey panel, the question
+   left, its two answers right as white cards side by side, the closing across
+   the foot with the accent rule. A step before the list, not a fourth plan. */
+.sk-chooser {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  gap: var(--s-5) var(--s-6);
+  align-items: center;
+  padding: var(--card-pad);
+  border-radius: var(--r-panel);
+  background: var(--paper);
+  text-align: left;
+}
+.sk-chooser__head { display: grid; gap: var(--s-3); }
+.sk-chooser__opts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--gap); align-self: stretch; }
+.sk-chooser__opt {
+  display: grid;
+  align-content: start;
+  gap: var(--s-2);
+  padding: var(--s-5);
+  border-radius: var(--r-card);
+  background: var(--card);
+  border: var(--hairline) solid var(--line);
+  box-shadow: var(--sh-white);
+}
+.sk-chooser__l { font-size: 1.0625rem; font-weight: 700; letter-spacing: -0.015em; color: var(--ink); }
+.sk-chooser__closing {
+  grid-column: 1 / -1;
+  padding-left: var(--s-4);
+  border-left: 2px solid var(--accent);
+  font-weight: 500;
+  max-width: 78ch;
+}
+@media (max-width: 900px) {
+  .sk-chooser { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 560px) {
+  .sk-chooser__opts { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* ---- PlanFeatureMatrix: word cells at body size -------------------------- */
+.sk-pfm__w { font-size: 0.9375rem; font-weight: 600; }
+
+/* ---- FigureBandSection `groups` (/pricing anchors, 2026-09-14) ----------- */
+/* The dark tile across the top, heading left and aside right; the two groups
+   under it as separate grey panels, so the four figures never line up as one
+   scale. Inside a panel the figures stack and the closing sits at the foot. */
+.sk-figgroups {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--gap);
+  align-items: stretch;
+}
+.sk-figgroups__head {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--s-6);
+  align-items: end;
+}
+.sk-figgroups__head .sk-figbento__aside { margin-top: 0; max-width: 52ch; }
+.sk-figgroup {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+  padding: var(--card-pad);
+  border-radius: var(--r-panel);
+  background: var(--paper);
+}
+.sk-figgroup__figs { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--gap); }
+.sk-figgroup__closing {
+  margin-top: auto;
+  padding-left: var(--s-4);
+  border-left: 3px solid var(--ink);
+  font-weight: 500;
+}
+@media (max-width: 900px) {
+  .sk-figgroups,
+  .sk-figgroups__head { grid-template-columns: minmax(0, 1fr); }
+}

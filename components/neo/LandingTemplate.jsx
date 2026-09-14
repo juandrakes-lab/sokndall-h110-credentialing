@@ -84,6 +84,7 @@ export {
   PlanList,
   PlanCard,
   PlanFeatureMatrix,
+  EntityChooser,
   PlanListSection,
   ProseBandSection,
   StatusTableSection,
