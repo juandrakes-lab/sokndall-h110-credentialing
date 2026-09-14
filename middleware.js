@@ -48,7 +48,17 @@ export async function middleware(request) {
   }
 
   if (isAppPath(pathname)) {
-    const { response } = await updateSession(request);
+    const { response, user } = await updateSession(request);
+    // Signed out on a page of the app: sign in, then come back to it.
+    // Invitations are readable signed out; auth callbacks finish sign-in;
+    // /start sends newcomers to sign-up itself.
+    const selfHandled = ["/invite", "/auth", "/start"].some((p) => pathname === p || pathname.startsWith(p + "/"));
+    if (!user && !selfHandled) {
+      const url = request.nextUrl.clone();
+      url.pathname = "/login";
+      url.search = `?next=${encodeURIComponent(pathname + request.nextUrl.search)}`;
+      return NextResponse.redirect(url);
+    }
     return response;
   }
 
@@ -59,6 +69,7 @@ export const config = {
   matcher: [
     "/",
     "/dashboard/:path*",
+    "/clients/:path*",
     "/providers/:path*",
     "/follow-ups/:path*",
     "/enrollments/:path*",
