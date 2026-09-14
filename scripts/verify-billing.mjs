@@ -150,6 +150,16 @@ async function main() {
 
   const other = await deliver("checkout.created", { id: "chk_1" });
   check("Non-subscription events are acknowledged and ignored", other.status === 202, String(other.status));
+
+  // After the account is deleted, Polar's revoke (or a late older event) must
+  // not bring it back.
+  const deletedSub = `sub_${run}`;
+  await admin.from("cred_ended_subscriptions").insert({ subscription_id: deletedSub }); // what cred_delete_organization records
+  await admin.from("cred_organizations").delete().eq("owner_user_id", userId);
+  const late = await deliver("subscription.revoked", subscription({ plan: "billing_co", status: "canceled", modifiedAt: new Date(run + 6000).toISOString() }));
+  check("A revoke arriving after the account was deleted creates nothing", late.status === 200 && !(await org()), JSON.stringify(late.body));
+  const lateActive = await deliver("subscription.updated", subscription({ plan: "practice", status: "active", modifiedAt: new Date(run + 7000).toISOString() }));
+  check("…nor does a late event from before the deletion", lateActive.status === 200 && !(await org()), JSON.stringify(lateActive.body));
 }
 
 try {
@@ -163,6 +173,7 @@ try {
     await admin.auth.admin.deleteUser(userId);
   }
   await admin.from("cred_polar_events").delete().like("id", `msg_%${run}%`);
+  await admin.from("cred_ended_subscriptions").delete().eq("subscription_id", `sub_${run}`);
   const failed = results.filter((r) => !r).length;
   console.log(`\ncleanup done\n${results.length - failed}/${results.length} checks passed`);
   process.exit(failed ? 1 : 0);

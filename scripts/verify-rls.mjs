@@ -471,6 +471,78 @@ async function main() {
     check("Restricted member cannot log calls on the other client's enrollment", !!mComm, mComm?.message);
     const { data: mDir } = await m.client.rpc("cred_org_directory");
     check("A member can see who is on the account (for assignment)", (mDir ?? []).length === 2);
+
+    // --- Fase 6: active client, clients created by the owner, subsets --------
+    // The app sends the active client in x-cred-client; reads narrow to it.
+    const scoped = async (user, clientId) => {
+      const { data: s } = await user.client.auth.getSession();
+      return createClient(URL_, ANON, {
+        ...opts,
+        global: { headers: { Authorization: `Bearer ${s.session.access_token}`, "x-cred-client": clientId } },
+      });
+    };
+    const bOnTwo = await scoped(b, client2.id);
+    const { data: twoOnly } = await bOnTwo.from("cred_providers").select("id");
+    check("With client two active, the owner reads only client two's providers", twoOnly?.length === 1 && twoOnly[0].id === provider2.id);
+    const { data: twoEnr } = await bOnTwo.from("cred_enrollments").select("id");
+    check("…and only client two's enrollments", (twoEnr ?? []).length === 1 && twoEnr[0].id === enr2.id);
+    const { data: allClients } = await bOnTwo.from("cred_client_orgs").select("id");
+    check("…while the client selector still lists every client", (allClients ?? []).length === 2);
+
+    const bOnForeign = await scoped(b, A.clientId);
+    const { data: foreign } = await bOnForeign.from("cred_providers").select("id");
+    check("Naming another account's client as active shows nothing at all", (foreign ?? []).length === 0);
+    const mOnTwo = await scoped(m, client2.id);
+    const { data: mTwo } = await mOnTwo.from("cred_providers").select("id");
+    check("A limited member naming a client they can't reach sees nothing", (mTwo ?? []).length === 0);
+
+    const { data: usage } = await m.client.rpc("cred_provider_usage", { p_org_id: B.orgId });
+    check("The plan's provider count spans every client, even for a limited member", usage?.[0]?.provider_count === 2, JSON.stringify(usage));
+    const { data: noUsage } = await a.client.rpc("cred_provider_usage", { p_org_id: B.orgId });
+    check("Another account can't read the provider count", (noUsage ?? []).length === 0);
+
+    const { data: client3, error: c3Err } = await b.client.from("cred_client_orgs").insert({ org_id: B.orgId, name: "Client three" }).select("id").single();
+    check("A Billing Co owner adds a client", !c3Err && !!client3, c3Err?.message);
+    const { error: mAdd } = await m.client.from("cred_client_orgs").insert({ org_id: B.orgId, name: "Member's client" });
+    check("A member cannot add clients", !!mAdd, mAdd?.message);
+    const { error: aAdd } = await a.client.from("cred_client_orgs").insert({ org_id: A.orgId, name: "Second practice" });
+    check("A Solo/Practice owner cannot add a second client", !!aAdd, aAdd?.message);
+    const { error: crossAdd } = await a.client.from("cred_client_orgs").insert({ org_id: B.orgId, name: "Planted" });
+    check("Nobody can add a client to another account", !!crossAdd, crossAdd?.message);
+
+    const { error: setErr } = await b.client.rpc("cred_set_member_clients", { p_user_id: m.id, p_client_ids: [client2.id] });
+    const { data: nowSees } = await m.client.from("cred_providers").select("id");
+    check("The owner moves a member to another client", !setErr && nowSees?.length === 1 && nowSees[0].id === provider2.id, setErr?.message);
+    const { error: emptyErr } = await b.client.rpc("cred_set_member_clients", { p_user_id: m.id, p_client_ids: [] });
+    check("A member can't be left with no clients", !!emptyErr, emptyErr?.message);
+    const { error: foreignErr } = await b.client.rpc("cred_set_member_clients", { p_user_id: m.id, p_client_ids: [A.clientId] });
+    check("A member can't be given another account's client", !!foreignErr, foreignErr?.message);
+    const { error: selfErr } = await m.client.rpc("cred_set_member_clients", { p_user_id: m.id, p_client_ids: null });
+    check("A member can't widen their own access", !!selfErr, selfErr?.message);
+    await b.client.rpc("cred_set_member_clients", { p_user_id: m.id, p_client_ids: null });
+    const { data: allAgain } = await m.client.from("cred_providers").select("id");
+    check("…and access to all clients includes ones added later", (allAgain ?? []).length === 2);
+    await b.client.rpc("cred_set_member_clients", { p_user_id: m.id, p_client_ids: [B.clientId] });
+
+    const { createHash: ch } = await import("node:crypto");
+    const { error: subsetInv } = await b.client
+      .from("cred_invitations")
+      .insert({ org_id: B.orgId, email: `subset-${run}@example.com`, token_hash: ch("sha256").update(`t-${run}`).digest("hex"), client_ids: [client3.id] });
+    check("An invitation can be limited to some clients", !subsetInv, subsetInv?.message);
+    const { error: badInv } = await b.client
+      .from("cred_invitations")
+      .insert({ org_id: B.orgId, email: `bad-${run}@example.com`, token_hash: ch("sha256").update(`u-${run}`).digest("hex"), client_ids: [A.clientId] });
+    check("An invitation can't name another account's client", !!badInv, badInv?.message);
+    const { data: forged, error: forgedErr } = await b.client
+      .from("cred_invitations")
+      .insert({ org_id: B.orgId, email: `forge-${run}@example.com`, token_hash: ch("sha256").update(`v-${run}`).digest("hex"), role: "owner", expires_at: "2099-01-01", accepted_at: new Date().toISOString() })
+      .select("role, expires_at, accepted_at")
+      .single();
+    check(
+      "An invitation always makes a member, lasts 14 days and starts unaccepted",
+      !forgedErr && forged.role === "member" && !forged.accepted_at && new Date(forged.expires_at) < new Date(Date.now() + 15 * 86400000),
+      forgedErr?.message ?? JSON.stringify(forged)
+    );
   }
 
   // --- Fase 5: subscriptions, read-only states, seats ------------------------
@@ -580,6 +652,15 @@ async function main() {
     const { error: ownerDelete } = await c.client.rpc("cred_delete_organization");
     const { data: gone } = await admin.from("cred_organizations").select("id").eq("id", C);
     check("The owner can delete the account, and everything goes with it", !ownerDelete && gone?.length === 0, ownerDelete?.message);
+    const { data: tomb } = await admin.from("cred_ended_subscriptions").select("subscription_id").eq("subscription_id", `sub_c_${run}`);
+    const back = await admin.rpc("cred_sync_subscription", {
+      p_user_id: c.id, p_account_name: "Zombie", p_customer_id: null, p_subscription_id: `sub_c_${run}`,
+      p_plan: "solo", p_status: "active", p_trial_ends_at: null, p_current_period_end: null,
+      p_cancel_at_period_end: false, p_modified_at: new Date().toISOString(),
+    });
+    const { data: zombie } = await admin.from("cred_organizations").select("id").eq("owner_user_id", c.id);
+    check("A deleted account's subscription can never bring it back", tomb?.length === 1 && !back.error && (zombie ?? []).length === 0, back.error?.message);
+    await admin.from("cred_ended_subscriptions").delete().eq("subscription_id", `sub_c_${run}`);
   }
 }
 

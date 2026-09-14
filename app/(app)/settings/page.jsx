@@ -21,15 +21,18 @@ function sentAt(iso) {
 
 export default async function SettingsPage({ searchParams }) {
   const sp = await searchParams;
-  const { supabase, org, role, practice } = await getAppContext();
+  const { supabase, org, role, practice, clients, multiClient } = await getAppContext();
   const owner = role === "owner";
-  const [used, { data: log }, { data: members }, { data: invitations }] = await Promise.all([
+  const [used, { data: log }, { data: directory }, { data: access }, { data: invitations }] = await Promise.all([
     providerCount(supabase, org.id),
     // RLS: only the owner can read the log and the invitations.
     supabase.from("cred_notification_log").select("*").eq("org_id", org.id).order("created_at", { ascending: false }).limit(40),
     supabase.rpc("cred_org_directory"),
+    supabase.from("cred_org_members").select("user_id, client_ids").eq("org_id", org.id),
     supabase.from("cred_invitations").select("*").eq("org_id", org.id).order("created_at", { ascending: false }),
   ]);
+  const clientIdsOf = new Map((access ?? []).map((m) => [m.user_id, m.client_ids]));
+  const members = (directory ?? []).map((m) => ({ ...m, client_ids: clientIdsOf.get(m.user_id) ?? null }));
   // One email covers several items (several log rows); show each email once.
   const emails = [];
   for (const row of log ?? []) {
@@ -49,11 +52,15 @@ export default async function SettingsPage({ searchParams }) {
       <div className="grid gap-8 lg:grid-cols-3">
         <Card className="lg:col-span-2">
           <CardHeader
-            title="Practice"
-            description="Legal name, group NPI, TIN and addresses — what every payer application asks for."
+            title={clients.length > 1 ? `Practice · ${practice.legal_name}` : "Practice"}
+            description={
+              clients.length > 1
+                ? "The practice of the client you have open. Legal name, group NPI, TIN and addresses — what every payer application asks for."
+                : "Legal name, group NPI, TIN and addresses — what every payer application asks for."
+            }
           />
           <div className="px-5 py-6">
-            <PracticeForm action={savePractice} practice={practice} submitLabel="Save practice" />
+            <PracticeForm key={practice.id} action={savePractice} practice={practice} submitLabel="Save practice" />
           </div>
         </Card>
 
@@ -71,7 +78,8 @@ export default async function SettingsPage({ searchParams }) {
               {[
                 ["Plan", `${plan.label} · $${plan.price}/month`],
                 ["Providers", `${used} of ${org.provider_limit} in use`],
-                ["Users", `${(members ?? []).length} of ${org.user_limit}`],
+                ["Users", `${members.length} of ${org.user_limit}`],
+                ...(multiClient ? [["Clients", String(clients.length)]] : []),
                 ["Document storage", plan.storageLabel],
               ].map(([label, value]) => (
                 <div key={label} className="flex justify-between gap-4 px-5 py-3">
@@ -137,9 +145,10 @@ export default async function SettingsPage({ searchParams }) {
       {owner && (
         <TeamCard
           org={org}
-          members={members ?? []}
+          members={members}
           invitations={invitations ?? []}
           writable={accountAccess(org).writable}
+          clients={multiClient ? clients.map((c) => ({ id: c.id, name: c.name })) : null}
         />
       )}
 

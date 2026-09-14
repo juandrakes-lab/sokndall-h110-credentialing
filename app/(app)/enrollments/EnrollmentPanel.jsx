@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { getAppContext } from "@/lib/org";
+import { canReach, getAppContext } from "@/lib/org";
 import { formatDate, todayISO } from "@/lib/credentials";
 import {
   CHANNEL_LABELS,
@@ -41,7 +41,7 @@ export default async function EnrollmentPanel({ providerId, payerId, closeHref }
 
   const [{ data: provider }, { data: payerRow }, { data: enrollment }, { data: members }, { data: credentials }, { data: documents }, { data: writable }] =
     await Promise.all([
-      supabase.from("cred_providers").select("id, first_name, last_name, npi, nppes_data").eq("id", providerId).maybeSingle(),
+      supabase.from("cred_providers").select("id, first_name, last_name, npi, nppes_data, client_org_id").eq("id", providerId).maybeSingle(),
       supabase.from("cred_payers_org").select(PAYER_SELECT).eq("id", payerId).maybeSingle(),
       supabase.from("cred_enrollments").select("*").eq("provider_id", providerId).eq("payer_id", payerId).maybeSingle(),
       supabase.rpc("cred_org_directory"),
@@ -156,7 +156,7 @@ export default async function EnrollmentPanel({ providerId, payerId, closeHref }
               key={`${providerId}.${payerId}:${status}:${(comms ?? []).length}`}
               action={updateEnrollmentDetails.bind(null, providerId, payerId)}
               enrollment={enrollment}
-              members={directory}
+              members={directory.filter((m) => canReach(m, provider.client_org_id))}
               ownerEmail={owner?.email ?? user.email}
               payerMonths={payer.revalidation_months}
             />

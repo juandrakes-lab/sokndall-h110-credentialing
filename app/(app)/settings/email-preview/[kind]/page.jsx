@@ -18,7 +18,8 @@ export default async function EmailPreviewPage({ params }) {
   const { kind } = await params;
   if (!KINDS[kind]) notFound();
 
-  const { supabase, org, role } = await getAppContext();
+  // Emails cover every client, not only the one open in the app.
+  const { supabaseAll: supabase, org, role } = await getAppContext();
   const back = (
     <Link href="/settings" className="hover:text-ink-900">
       ← Settings

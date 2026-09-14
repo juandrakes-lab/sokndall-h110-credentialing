@@ -1,10 +1,10 @@
 import Link from "next/link";
-import { getAppContext } from "@/lib/org";
+import { getAppContext, providerUsage } from "@/lib/org";
 import { providerIssues } from "@/lib/consistency";
 import { daysUntil } from "@/lib/credentials";
 import { Badge, Card, EmptyState, PageHeader, buttonClass } from "@/components/app/ui";
 import LimitNotice from "@/components/app/LimitNotice";
-import { accountAccess, readOnlyProviderIds } from "@/lib/billing";
+import { accountAccess } from "@/lib/billing";
 
 function credentialStanding(credentials) {
   if (credentials.length === 0) return <Badge tone="neutral">None yet</Badge>;
@@ -27,26 +27,27 @@ function dataStanding(issues) {
 }
 
 export default async function ProvidersPage() {
-  const { supabase, org, practice } = await getAppContext();
+  const { supabase, org, practice, clients } = await getAppContext();
 
-  const { data: providers, error } = await supabase
-    .from("cred_providers")
-    .select("*, cred_credentials(expiration_date)")
-    .order("last_name", { ascending: true });
+  const [{ data: providers, error }, usage] = await Promise.all([
+    supabase.from("cred_providers").select("*, cred_credentials(expiration_date)").order("last_name", { ascending: true }),
+    providerUsage(supabase, org.id),
+  ]);
 
   if (error) {
     return <p className="text-sm text-status-expired">Couldn&apos;t load providers: {error.message}</p>;
   }
 
-  const atLimit = providers.length >= org.provider_limit;
-  const readOnly = readOnlyProviderIds(providers, org);
+  const atLimit = usage.count >= org.provider_limit;
   const writable = accountAccess(org).writable;
+  const readOnly = writable ? usage.overLimit : new Set(providers.map((p) => p.id));
+  const across = clients.length > 1 ? ` (${providers.length} for this client)` : "";
 
   return (
     <div className="flex flex-col gap-6">
       <PageHeader
         title="Providers"
-        description={`${providers.length} of ${org.provider_limit} providers on your plan.`}
+        description={`${usage.count} of ${org.provider_limit} providers on your plan${across}.`}
         actions={
           <>
             {/* eslint-disable-next-line @next/next/no-html-link-for-pages -- file download, not a page */}

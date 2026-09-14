@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getAppContext } from "@/lib/org";
+import { canReach, getAppContext } from "@/lib/org";
 import { practiceServiceAddress, providerIssues } from "@/lib/consistency";
 import { Badge, Card, CardHeader, PageHeader, buttonClass } from "@/components/app/ui";
 import DataCheck from "@/components/app/DataCheck";
@@ -108,7 +108,7 @@ export default async function ProviderPage({ params }) {
                     updateAction={updateCredential.bind(null, c.id, id)}
                     deleteAction={deleteCredential.bind(null, c.id, id)}
                     caqhIntervalDays={org.caqh_reattestation_interval_days}
-                    members={members ?? []}
+                    members={(members ?? []).filter((m) => canReach(m, provider.client_org_id))}
                     readOnly={readOnly}
                   />
                 ))}
@@ -120,7 +120,7 @@ export default async function ProviderPage({ params }) {
                 <CredentialForm
                   action={createCredential.bind(null, id)}
                   caqhIntervalDays={org.caqh_reattestation_interval_days}
-                  members={members ?? []}
+                  members={(members ?? []).filter((m) => canReach(m, provider.client_org_id))}
                   submitLabel="Add credential"
                 />
               </div>

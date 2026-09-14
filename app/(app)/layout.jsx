@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getAppContext } from "@/lib/org";
 import AppNav from "@/components/app/AppNav";
+import ClientSwitcher from "@/components/app/ClientSwitcher";
 import { accountAccess } from "@/lib/billing";
 import { signOut } from "./actions";
 import SubmitButton from "@/components/app/SubmitButton";
@@ -13,7 +14,7 @@ export const metadata = {
 };
 
 export default async function AppLayout({ children }) {
-  const { user, org, role, practice } = await getAppContext();
+  const { user, org, role, practice, clients, client, multiClient } = await getAppContext();
 
   if (!user) redirect("/login");
   // A login without an account chooses a plan first; an account without its
@@ -34,13 +35,21 @@ export default async function AppLayout({ children }) {
           <Link href="/dashboard" className="text-lg font-semibold tracking-tight text-brand-700">
             Sokndall
           </Link>
-          <p className="hidden truncate text-xs text-ink-500 lg:mt-1 lg:block" title={practice.legal_name}>
-            {practice.legal_name}
-          </p>
+          {clients.length < 2 && (
+            <p className="hidden truncate text-xs text-ink-500 lg:mt-1 lg:block" title={practice.legal_name}>
+              {practice.legal_name}
+            </p>
+          )}
         </div>
 
+        {clients.length > 1 && (
+          <div className="px-6 pb-4">
+            <ClientSwitcher clients={clients.map((c) => ({ id: c.id, name: c.name }))} activeId={client.id} />
+          </div>
+        )}
+
         <div className="pb-3 lg:flex-1 lg:pb-0">
-          <AppNav />
+          <AppNav showClients={multiClient} />
         </div>
 
         <div className="hidden border-t border-ink-100 px-6 py-4 lg:block">

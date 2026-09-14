@@ -6,6 +6,7 @@ import { updateSession } from "@/lib/supabase/middleware";
 // static and must never trigger an auth round-trip on a crawl or a cache hit.
 const APP_PREFIXES = [
   "/dashboard",
+  "/clients",
   "/providers",
   "/follow-ups",
   "/enrollments",

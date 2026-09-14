@@ -1,17 +1,20 @@
 import { Badge, Card, CardHeader, buttonClass } from "@/components/app/ui";
 import { formatDate } from "@/lib/credentials";
 import { PLANS } from "@/lib/plans";
-import { inviteMember, removeMember, revokeInvitation } from "./team-actions";
-import { InviteForm } from "./TeamForms";
+import { inviteMember, removeMember, revokeInvitation, setMemberClients } from "./team-actions";
+import { InviteForm, MemberAccessForm } from "./TeamForms";
 import SubmitButton from "@/components/app/SubmitButton";
 
 // Owner only: who's on the account, pending invitations, and the seat count
 // against the plan (alcance §4.2 — Solo 1, Practice 3, Billing Co 10).
-export default function TeamCard({ org, members, invitations, writable }) {
+export default function TeamCard({ org, members, invitations, writable, clients }) {
   const pending = invitations.filter((i) => !i.accepted_at && new Date(i.expires_at) > new Date());
   const seatsUsed = members.length + pending.length;
   const full = seatsUsed >= org.user_limit;
   const plan = PLANS[org.plan];
+  const nameOf = new Map((clients ?? []).map((c) => [c.id, c.name]));
+  const reach = (ids) =>
+    !ids ? "All clients" : ids.map((id) => nameOf.get(id)).filter(Boolean).join(", ") || "No clients";
 
   return (
     <Card>
@@ -21,18 +24,35 @@ export default function TeamCard({ org, members, invitations, writable }) {
       />
       <ul className="divide-y divide-ink-100 text-sm">
         {members.map((m) => (
-          <li key={m.user_id} className="flex items-center justify-between gap-3 px-5 py-3">
-            <span className="truncate text-ink-900">{m.email}</span>
-            {m.role === "owner" ? (
-              <Badge tone="brand">Owner</Badge>
-            ) : (
-              <details className="text-xs text-ink-500">
-                <summary className="cursor-pointer list-none hover:text-ink-900 [&::-webkit-details-marker]:hidden">Remove</summary>
-                <form action={removeMember.bind(null, m.user_id)} className="mt-1">
-                  <SubmitButton className="font-medium text-status-expired hover:underline">
-                    Yes, remove {m.email}
-                  </SubmitButton>
-                </form>
+          <li key={m.user_id} className="px-5 py-3">
+            <div className="flex items-center justify-between gap-3">
+              <div className="min-w-0">
+                <p className="truncate text-ink-900">{m.email}</p>
+                {clients && m.role !== "owner" && <p className="truncate text-xs text-ink-500">{reach(m.client_ids)}</p>}
+              </div>
+              {m.role === "owner" ? (
+                <Badge tone="brand">Owner</Badge>
+              ) : (
+                <details className="text-xs text-ink-500">
+                  <summary className="cursor-pointer list-none hover:text-ink-900 [&::-webkit-details-marker]:hidden">Remove</summary>
+                  <form action={removeMember.bind(null, m.user_id)} className="mt-1">
+                    <SubmitButton className="font-medium text-status-expired hover:underline">
+                      Yes, remove {m.email}
+                    </SubmitButton>
+                  </form>
+                </details>
+              )}
+            </div>
+            {clients && m.role !== "owner" && (
+              <details className="mt-1 text-sm">
+                <summary className="cursor-pointer text-xs font-medium text-brand-600 hover:underline">Change clients</summary>
+                <MemberAccessForm
+                  action={setMemberClients.bind(null, m.user_id)}
+                  clients={clients}
+                  initial={m.client_ids}
+                  disabled={!writable}
+                  idPrefix={`access-${m.user_id}`}
+                />
               </details>
             )}
           </li>
@@ -41,6 +61,7 @@ export default function TeamCard({ org, members, invitations, writable }) {
           <li key={i.id} className="flex items-center justify-between gap-3 px-5 py-3">
             <span className="truncate text-ink-500">
               {i.email} · invited, link valid until {formatDate(i.expires_at.slice(0, 10))}
+              {clients && ` · ${reach(i.client_ids)}`}
             </span>
             <form action={revokeInvitation.bind(null, i.id)}>
               <SubmitButton className={buttonClass("ghost", "sm")}>
@@ -61,7 +82,7 @@ export default function TeamCard({ org, members, invitations, writable }) {
               : " Adding users beyond the 10 included isn't available yet."}
           </p>
         ) : (
-          <InviteForm action={inviteMember} disabled={!writable} />
+          <InviteForm action={inviteMember} disabled={!writable} clients={clients} />
         )}
       </div>
     </Card>

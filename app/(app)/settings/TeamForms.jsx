@@ -4,7 +4,73 @@ import { useActionState, useEffect, useState } from "react";
 import { Field, FormError, buttonClass, inputClass } from "@/components/app/ui";
 import SubmitButton from "@/components/app/SubmitButton";
 
-export function InviteForm({ action, disabled }) {
+// Billing Co: all clients (including ones added later) or a chosen few.
+function ClientAccessFields({ clients, initial, error, disabled, idPrefix }) {
+  const [some, setSome] = useState(Boolean(initial));
+  const [chosen, setChosen] = useState(() => new Set(initial ?? []));
+
+  return (
+    <fieldset disabled={disabled} className="flex flex-col gap-2 text-sm">
+      <legend className="mb-1 font-medium text-ink-900">Clients they can work on</legend>
+      <label className="flex items-center gap-2">
+        <input type="radio" name="access" value="all" checked={!some} onChange={() => setSome(false)} />
+        All clients, including ones you add later
+      </label>
+      <label className="flex items-center gap-2">
+        <input type="radio" name="access" value="some" checked={some} onChange={() => setSome(true)} />
+        Only these clients
+      </label>
+      {some && (
+        <div className="ml-6 flex flex-col gap-1.5">
+          {clients.map((c) => (
+            <label key={c.id} htmlFor={`${idPrefix}-${c.id}`} className="flex items-center gap-2">
+              <input
+                id={`${idPrefix}-${c.id}`}
+                type="checkbox"
+                name="client_ids"
+                value={c.id}
+                checked={chosen.has(c.id)}
+                onChange={(e) => {
+                  const next = new Set(chosen);
+                  if (e.target.checked) next.add(c.id);
+                  else next.delete(c.id);
+                  setChosen(next);
+                }}
+              />
+              {c.name}
+            </label>
+          ))}
+        </div>
+      )}
+      {error && <p className="text-xs text-status-expired">{error}</p>}
+    </fieldset>
+  );
+}
+
+export function MemberAccessForm({ action, clients, initial, disabled, idPrefix }) {
+  const [state, formAction] = useActionState(action, {});
+  return (
+    <form action={formAction} className="mt-3 flex flex-col gap-3">
+      <ClientAccessFields
+        key={state?.saved ?? "initial"}
+        clients={clients}
+        initial={initial}
+        error={state?.fieldErrors?.client_ids}
+        disabled={disabled}
+        idPrefix={idPrefix}
+      />
+      <FormError message={state?.error} />
+      {state?.notice && <p className="text-sm text-status-active">{state.notice}</p>}
+      <div>
+        <SubmitButton disabled={disabled} className={buttonClass("secondary", "sm")}>
+          Save access
+        </SubmitButton>
+      </div>
+    </form>
+  );
+}
+
+export function InviteForm({ action, disabled, clients }) {
   const [state, formAction, pending] = useActionState(action, {});
   const [email, setEmail] = useState("");
   const [copied, setCopied] = useState(false);
@@ -16,22 +82,33 @@ export function InviteForm({ action, disabled }) {
 
   return (
     <div className="flex flex-col gap-3">
-      <form action={formAction} className="flex flex-col gap-3 sm:flex-row sm:items-end">
-        <Field label="Invite by email" htmlFor="invite-email" error={state?.fieldErrors?.email} className="flex-1">
-          <input
-            id="invite-email"
-            name="email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+      <form action={formAction} className="flex flex-col gap-4">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
+          <Field label="Invite by email" htmlFor="invite-email" error={state?.fieldErrors?.email} className="flex-1">
+            <input
+              id="invite-email"
+              name="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              disabled={disabled}
+              className={inputClass}
+              placeholder="name@practice.com"
+            />
+          </Field>
+          <SubmitButton disabled={disabled || pending} className={buttonClass("primary")}>
+            {pending ? "Inviting…" : "Send invitation"}
+          </SubmitButton>
+        </div>
+        {clients && (
+          <ClientAccessFields
+            key={state?.saved ?? "initial"}
+            clients={clients}
+            error={state?.fieldErrors?.client_ids}
             disabled={disabled}
-            className={inputClass}
-            placeholder="name@practice.com"
+            idPrefix="invite"
           />
-        </Field>
-        <SubmitButton disabled={disabled || pending} className={buttonClass("primary")}>
-          {pending ? "Inviting…" : "Send invitation"}
-        </SubmitButton>
+        )}
       </form>
       <FormError message={state?.error} />
       {state?.link && (
