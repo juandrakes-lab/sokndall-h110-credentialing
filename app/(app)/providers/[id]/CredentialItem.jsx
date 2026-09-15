@@ -7,7 +7,7 @@ import { CREDENTIAL_TYPES, credentialSummary, formatDate } from "@/lib/credentia
 import CredentialForm from "./CredentialForm";
 import SubmitButton from "@/components/app/SubmitButton";
 
-export default function CredentialItem({ credential, updateAction, deleteAction, caqhIntervalDays, members = [], readOnly = false }) {
+export default function CredentialItem({ credential, updateAction, deleteAction, caqhIntervalDays, members = [], readOnly = false, lastName, registryLicenses = [] }) {
   const [mode, setMode] = useState("view"); // "view" | "edit" | "confirm-delete"
   const close = useCallback(() => setMode("view"), []);
   const config = CREDENTIAL_TYPES[credential.type];
@@ -66,6 +66,8 @@ export default function CredentialItem({ credential, updateAction, deleteAction,
             action={updateAction}
             initial={credential}
             caqhIntervalDays={caqhIntervalDays}
+            lastName={lastName}
+            registryLicenses={registryLicenses}
             members={members}
             submitLabel="Save changes"
             onDone={close}

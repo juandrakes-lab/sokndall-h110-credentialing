@@ -40,7 +40,7 @@ export default async function PayersPage() {
         <Card className="lg:col-span-2">
           <CardHeader title="Add your own payer" description="A regional plan or anything not on our list." />
           <div className="px-5 py-5">
-            <OwnPayerForm action={addOwnPayer} />
+            <OwnPayerForm action={addOwnPayer} catalogNames={available.map((p) => p.name)} ownNames={payers.map((p) => p.name)} />
           </div>
         </Card>
       </div>

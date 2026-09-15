@@ -63,15 +63,19 @@ export function Badge({ tone = "neutral", children }) {
 }
 
 export function Field({ label, htmlFor, hint, required, error, children, className = "" }) {
+  // An error turns the field's own input red, not just the message under it.
+  const invalid = error
+    ? "[&_:is(input,select,textarea)]:border-status-expired [&_:is(input,select,textarea)]:ring-2 [&_:is(input,select,textarea)]:ring-status-expired-bg"
+    : "";
   return (
-    <div className={`flex flex-col gap-1.5 ${className}`}>
+    <div className={`flex flex-col gap-1.5 ${invalid} ${className}`}>
       <label htmlFor={htmlFor} className="text-sm font-medium text-ink-700">
         {label}
         {required && <span className="text-status-expired"> *</span>}
       </label>
       {children}
       {error ? (
-        <p className="text-xs text-status-expired">{error}</p>
+        <p role="alert" className="text-xs text-status-expired">{error}</p>
       ) : (
         hint && <p className="text-xs text-ink-500">{hint}</p>
       )}

@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { lookupNpi } from "@/lib/nppes-actions";
+import { isValidNpi } from "@/lib/nppes";
 import { buttonClass } from "@/components/app/ui";
 
 function same(a, b) {
@@ -15,14 +16,17 @@ function same(a, b) {
 //   compare   (record) => [{ label, registry, yours, match?, info? }] rows to show
 //   onApply   (record) => void, fills the form from the record
 //   expect    "individual" | "organization" — warns when the NPI is the other kind
-export default function NpiCheck({ npi, compare, onApply, expect }) {
+export default function NpiCheck({ npi, compare, onApply, expect, onRecord }) {
   const [result, setResult] = useState(null);
   const [pending, startTransition] = useTransition();
-  const ready = /^\d{10}$/.test(npi ?? "");
+  // Only a well-formed NPI (10 digits, valid check digit) can be looked up.
+  const ready = isValidNpi(npi ?? "");
 
   function check() {
     startTransition(async () => {
-      setResult(await lookupNpi(npi));
+      const r = await lookupNpi(npi);
+      setResult(r);
+      if (r?.ok) onRecord?.(r.record);
     });
   }
 

@@ -45,6 +45,8 @@ export default async function ProviderPage({ params }) {
   ]);
 
   if (!provider) notFound();
+  // Licenses the provider declared in the NPI Registry, one per state.
+  const registryLicenses = (provider?.nppes_data?.record?.taxonomies ?? [provider?.nppes_data?.record?.taxonomy].filter(Boolean)).filter((t) => t?.state && t?.license);
   const readOnly = writable === false;
   const accountEnded = !accountAccess(org).writable;
 
@@ -108,6 +110,8 @@ export default async function ProviderPage({ params }) {
                     updateAction={updateCredential.bind(null, c.id, id)}
                     deleteAction={deleteCredential.bind(null, c.id, id)}
                     caqhIntervalDays={org.caqh_reattestation_interval_days}
+                    lastName={provider.last_name}
+                    registryLicenses={registryLicenses}
                     members={(members ?? []).filter((m) => canReach(m, provider.client_org_id))}
                     readOnly={readOnly}
                   />
@@ -120,6 +124,8 @@ export default async function ProviderPage({ params }) {
                 <CredentialForm
                   action={createCredential.bind(null, id)}
                   caqhIntervalDays={org.caqh_reattestation_interval_days}
+                    lastName={provider.last_name}
+                    registryLicenses={registryLicenses}
                   members={(members ?? []).filter((m) => canReach(m, provider.client_org_id))}
                   submitLabel="Add credential"
                 />
@@ -145,6 +151,7 @@ export default async function ProviderPage({ params }) {
                 readOnly={readOnly}
                 action={updateProvider.bind(null, id)}
                 initial={Object.fromEntries(Object.entries(provider).map(([k, v]) => [k, v ?? ""]))}
+                registry={provider.nppes_data?.status === "found" ? provider.nppes_data.record : null}
                 practiceAddress={practiceServiceAddress(practice)}
                 submitLabel="Save changes"
                 editing

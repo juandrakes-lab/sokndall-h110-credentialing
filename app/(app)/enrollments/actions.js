@@ -3,15 +3,12 @@
 import { revalidatePath } from "next/cache";
 import { getAppContext } from "@/lib/org";
 import { todayISO } from "@/lib/credentials";
-import { CHANNEL_LABELS, ENROLLMENT_STATUSES, IN_FLIGHT, proposedFollowUp } from "@/lib/enrollments";
+import { ENROLLMENT_STATUSES, IN_FLIGHT, proposedFollowUp } from "@/lib/enrollments";
+import { REVALIDATION_CHOICES, detailsErrors, followUpErrors } from "@/lib/enrollment-rules";
 
 function text(formData, key) {
   const value = formData.get(key)?.toString().trim();
   return value ? value : null;
-}
-
-function isDate(value) {
-  return /^\d{4}-\d{2}-\d{2}$/.test(value ?? "");
 }
 
 function refresh() {
@@ -79,17 +76,7 @@ export async function logFollowUp(providerId, payerId, _prev, formData) {
   };
   const nextFollowUp = text(formData, "next_follow_up_date");
 
-  const fieldErrors = {};
-  if (!CHANNEL_LABELS[values.channel]) fieldErrors.channel = "Choose how you contacted the payer.";
-  if (!isDate(values.contact_date)) fieldErrors.contact_date = "Enter the date of the contact.";
-  if (values.contact_date > todayISO()) fieldErrors.contact_date = "The contact can't be in the future.";
-  if (!values.outcome && !values.reference_number) {
-    fieldErrors.outcome = "Write what happened, or at least the reference number.";
-  }
-  if (nextFollowUp && !isDate(nextFollowUp)) fieldErrors.next_follow_up_date = "Enter a date.";
-  else if (nextFollowUp && isDate(values.contact_date) && nextFollowUp < values.contact_date) {
-    fieldErrors.next_follow_up_date = "The next follow-up can't be before this contact.";
-  }
+  const fieldErrors = followUpErrors({ ...values, next_follow_up_date: nextFollowUp });
   if (Object.keys(fieldErrors).length) return { fieldErrors };
 
   const { supabase } = await getAppContext();
@@ -122,21 +109,23 @@ export async function updateEnrollmentDetails(providerId, payerId, _prev, formDa
     revalidation_months_override: text(formData, "revalidation_months_override"),
   };
 
-  const fieldErrors = {};
-  for (const key of ["next_follow_up_date", "submitted_date", "effective_date"]) {
-    if (values[key] && !isDate(values[key])) fieldErrors[key] = "Enter a date.";
-  }
-  if (values.revalidation_months_override) {
-    const months = Number(values.revalidation_months_override);
-    if (!Number.isInteger(months) || months < 1 || months > 120) {
-      fieldErrors.revalidation_months_override = "Enter a number of months between 1 and 120.";
-    } else {
-      values.revalidation_months_override = months;
-    }
-  }
-  if (Object.keys(fieldErrors).length) return { fieldErrors };
-
   const { supabase } = await getAppContext();
+  const { data: current } = await supabase
+    .from("cred_enrollments")
+    .select("status, next_follow_up_date, revalidation_months_override")
+    .eq("provider_id", providerId)
+    .eq("payer_id", payerId)
+    .maybeSingle();
+  const fieldErrors = detailsErrors(values, {
+    status: current?.status ?? "not_started",
+    initial: {
+      next_follow_up_date: current?.next_follow_up_date ?? "",
+      revalidation_months_override: current?.revalidation_months_override ? String(current.revalidation_months_override) : "",
+    },
+  });
+  if (Object.keys(fieldErrors).length) return { fieldErrors };
+  if (values.revalidation_months_override) values.revalidation_months_override = Number(values.revalidation_months_override);
+
   const { enrollment, error } = await ensureEnrollment(supabase, providerId, payerId);
   if (error || !enrollment) return { error: `Couldn't open this enrollment: ${error?.message}` };
 
@@ -191,9 +180,7 @@ export async function addOwnPayer(_prev, formData) {
   const fieldErrors = {};
   if (!name) fieldErrors.name = "Enter the payer's name.";
   if (!["commercial", "medicare", "medicaid", "other"].includes(payerType)) fieldErrors.payer_type = "Choose a type.";
-  if (!Number.isInteger(months) || months < 1 || months > 120) {
-    fieldErrors.revalidation_months = "Enter a number of months between 1 and 120.";
-  }
+  if (!REVALIDATION_CHOICES.includes(months)) fieldErrors.revalidation_months = "Choose a cycle.";
   if (Object.keys(fieldErrors).length) return { fieldErrors };
 
   const { supabase, org } = await getAppContext();

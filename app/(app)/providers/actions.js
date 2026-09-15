@@ -3,7 +3,9 @@
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { getAppContext } from "@/lib/org";
-import { fetchNppes, isValidNpi } from "@/lib/nppes";
+import { fetchNppes } from "@/lib/nppes";
+import { providerErrors } from "@/lib/provider-rules";
+import { credentialErrors } from "@/lib/credential-rules";
 import { snapshotFromLookup } from "@/lib/consistency";
 import { CREDENTIAL_FIELDS, CREDENTIAL_TYPES } from "@/lib/credentials";
 import { BUCKET } from "@/lib/documents";
@@ -18,25 +20,26 @@ function readProvider(formData) {
     first_name: text(formData, "first_name"),
     last_name: text(formData, "last_name"),
     npi: text(formData, "npi")?.replace(/\D/g, "") || null,
-    caqh_id: text(formData, "caqh_id"),
+    caqh_id: text(formData, "caqh_id")?.replace(/\D/g, "") || null,
     taxonomy_code: text(formData, "taxonomy_code")?.toUpperCase() ?? null,
     specialty: text(formData, "specialty"),
-    email: text(formData, "email"),
-    phone: text(formData, "phone"),
+    email: text(formData, "email")?.toLowerCase() ?? null,
+    // Stored as the 10 digits; shown as (555) 201-4433.
+    phone: text(formData, "phone")?.replace(/\D/g, "").replace(/^1(\d{10})$/, "$1") || null,
     start_date: text(formData, "start_date"),
     notes: text(formData, "notes"),
   };
 }
 
-function validateProvider(values) {
-  const errors = {};
-  if (!values.first_name) errors.first_name = "Enter a first name.";
-  if (!values.last_name) errors.last_name = "Enter a last name.";
-  if (values.npi && !isValidNpi(values.npi)) {
-    errors.npi = "That isn't a valid NPI — it must be 10 digits and pass the NPI check digit.";
-  }
-  if (values.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.email)) {
-    errors.email = "That email address doesn't look right.";
+// Same rules as the form, plus what only the server can see: another
+// provider on the account with this NPI.
+async function validateProvider(supabase, values, providerId = null) {
+  const errors = providerErrors(values);
+  if (values.npi && !errors.npi) {
+    let q = supabase.from("cred_providers").select("id, first_name, last_name").eq("npi", values.npi).limit(1);
+    if (providerId) q = q.neq("id", providerId);
+    const { data: twin } = await q;
+    if (twin?.[0]) errors.npi = `${twin[0].first_name} ${twin[0].last_name} already has this NPI.`;
   }
   return errors;
 }
@@ -54,7 +57,7 @@ export async function createProvider(_prev, formData) {
   if (!org || !practice) redirect("/onboarding");
 
   const values = readProvider(formData);
-  const fieldErrors = validateProvider(values);
+  const fieldErrors = await validateProvider(supabase, values);
   if (Object.keys(fieldErrors).length) return { fieldErrors };
 
   if (!values.start_date) delete values.start_date;
@@ -80,7 +83,7 @@ export async function updateProvider(providerId, _prev, formData) {
   const { supabase } = await getAppContext();
 
   const values = readProvider(formData);
-  const fieldErrors = validateProvider(values);
+  const fieldErrors = await validateProvider(supabase, values, providerId);
   if (Object.keys(fieldErrors).length) return { fieldErrors };
 
   values.status = formData.get("status") === "inactive" ? "inactive" : "active";
@@ -152,33 +155,29 @@ function readCredential(type, formData) {
   const values = Object.fromEntries(CREDENTIAL_FIELDS.map((f) => [f, null]));
   for (const field of config.fields) values[field] = text(formData, field);
   if (values.state) values.state = values.state.toUpperCase();
+  if (type === "dea" && values.number) values.number = values.number.replace(/\s/g, "").toUpperCase();
   values.notes = text(formData, "notes");
   // Only sent when the account has more than one person (the field is hidden otherwise).
   if (formData.has("assigned_user_id")) values.assigned_user_id = text(formData, "assigned_user_id");
   return values;
 }
 
-function validateCredential(type, values) {
-  const config = CREDENTIAL_TYPES[type];
-  const errors = {};
-  for (const field of config.required ?? []) {
-    if (!values[field]) errors[field] = `${config.labels[field]} is required.`;
-  }
-  if (values.issue_date && values.expiration_date && values.issue_date > values.expiration_date) {
-    errors.expiration_date = `${config.labels.expiration_date} can't be before ${config.labels.issue_date.toLowerCase()}.`;
-  }
-  return errors;
+// The form's rules again — a DEA number is checked against the provider's
+// last name, which only the database knows for sure.
+async function validateCredential(supabase, type, values, providerId) {
+  const { data: provider } = await supabase.from("cred_providers").select("last_name").eq("id", providerId).maybeSingle();
+  return credentialErrors(type, values, { lastName: provider?.last_name });
 }
 
 export async function createCredential(providerId, _prev, formData) {
   const type = formData.get("type")?.toString();
   if (!CREDENTIAL_TYPES[type]) return { error: "Choose a credential type." };
 
+  const { supabase } = await getAppContext();
   const values = readCredential(type, formData);
-  const fieldErrors = validateCredential(type, values);
+  const fieldErrors = await validateCredential(supabase, type, values, providerId);
   if (Object.keys(fieldErrors).length) return { fieldErrors };
 
-  const { supabase } = await getAppContext();
   const { error } = await supabase
     .from("cred_credentials")
     .insert({ ...values, type, provider_id: providerId });
@@ -204,7 +203,7 @@ export async function updateCredential(credentialId, providerId, _prev, formData
   if (!current) return { error: "This credential no longer exists." };
 
   const values = readCredential(current.type, formData);
-  const fieldErrors = validateCredential(current.type, values);
+  const fieldErrors = await validateCredential(supabase, current.type, values, providerId);
   if (Object.keys(fieldErrors).length) return { fieldErrors };
 
   const { error } = await supabase.from("cred_credentials").update(values).eq("id", credentialId);

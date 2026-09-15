@@ -159,6 +159,7 @@ export default async function EnrollmentPanel({ providerId, payerId, closeHref }
               members={directory.filter((m) => canReach(m, provider.client_org_id))}
               ownerEmail={owner?.email ?? user.email}
               payerMonths={payer.revalidation_months}
+              status={status}
             />
             </fieldset>
             {enrollment?.revalidation_due_date && (

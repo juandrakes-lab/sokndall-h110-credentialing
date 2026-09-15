@@ -34,12 +34,13 @@ export async function updateAlertDays(_prev, formData) {
   const { supabase, org, role } = await getAppContext();
   if (role !== "owner") return { error: "Only the account owner can change these settings." };
 
-  const raw = formData.get("alert_days")?.toString() ?? "";
-  const parts = raw.split(/[\s,;]+/).filter(Boolean);
+  // One checkbox per day (older clients may still send "90, 60, 30").
+  const parts = formData.getAll("alert_days").flatMap((v) => v.toString().split(/[\s,;]+/)).filter(Boolean);
   const days = [...new Set(parts.map(Number))].sort((a, b) => b - a);
 
-  if (parts.length === 0 || days.some((d) => !Number.isInteger(d) || d < 1 || d > 365)) {
-    return { fieldErrors: { alert_days: "Enter whole numbers of days between 1 and 365, separated by commas." } };
+  if (parts.length === 0) return { fieldErrors: { alert_days: "Choose at least one day." } };
+  if (days.some((d) => !Number.isInteger(d) || d < 1 || d > 365)) {
+    return { fieldErrors: { alert_days: "Alert days are whole numbers between 1 and 365." } };
   }
   if (days.length > 8) return { fieldErrors: { alert_days: "Up to 8 alert days." } };
 

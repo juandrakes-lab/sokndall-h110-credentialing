@@ -1,8 +1,10 @@
 "use client";
 
-import { useActionState, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Field, FormError, buttonClass, inputClass } from "@/components/app/ui";
 import { PAYER_TYPE_LABELS } from "@/lib/enrollments";
+import { REVALIDATION_CHOICES } from "@/lib/enrollment-rules";
+import useSmartForm from "@/components/app/useSmartForm";
 import SubmitButton from "@/components/app/SubmitButton";
 
 const TYPE_ORDER = ["commercial", "medicare", "medicaid", "other"];
@@ -102,27 +104,55 @@ export function CatalogPicker({ action, catalog }) {
   );
 }
 
-export function OwnPayerForm({ action }) {
-  const blank = { name: "", payer_type: "commercial", revalidation_months: "36" };
-  const [state, formAction, pending] = useActionState(action, {});
-  const [values, setValues] = useState(blank);
-  const set = (key) => (e) => setValues((v) => ({ ...v, [key]: e.target.value }));
-  const errors = state?.fieldErrors ?? {};
+// Usual revalidation cycle by payer type — Medicare and Medicaid every 5
+// years, commercial plans every 3 — proposed until the user picks another.
+const DEFAULT_MONTHS = { commercial: "36", medicare: "60", medicaid: "60", other: "36" };
+
+// A payer that isn't in our catalog. Offers the catalog entry instead when the
+// name typed is already there.
+export function OwnPayerForm({ action, catalogNames = [], ownNames = [] }) {
+  const blank = { name: "", payer_type: "commercial", revalidation_months: DEFAULT_MONTHS.commercial };
+  const norm = (s) => String(s ?? "").toLowerCase().replace(/[^a-z0-9]/g, "");
+  const form = useSmartForm(action, {
+    initial: blank,
+    validate: (v) => {
+      const e = {};
+      if (!v.name.trim()) e.name = "Enter the payer's name.";
+      else if (ownNames.some((n) => norm(n) === norm(v.name))) e.name = "That payer is already on your list.";
+      else if (catalogNames.some((n) => norm(n) === norm(v.name))) e.name = "That payer is in our list — add it from the search above.";
+      if (!REVALIDATION_CHOICES.includes(Number(v.revalidation_months))) e.revalidation_months = "Choose a cycle.";
+      return e;
+    },
+  });
+  const { values, setValues, bind, errorFor, state, pending } = form;
+  const [monthsTouched, setMonthsTouched] = useState(false);
 
   useEffect(() => {
-    if (state?.saved) setValues(blank);
+    if (state?.saved) {
+      form.reset(blank);
+      setMonthsTouched(false);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps -- reset only after a save
   }, [state?.saved]);
 
   return (
-    <form action={formAction} className="flex flex-col gap-4">
+    <form onSubmit={form.onSubmit} onBlur={form.onBlur} noValidate className="flex flex-col gap-4">
       <FormError message={state?.error} />
       <div className="grid gap-4 sm:grid-cols-3">
-        <Field label="Payer name" htmlFor="own-name" error={errors.name} className="sm:col-span-3">
-          <input id="own-name" name="name" value={values.name} onChange={set("name")} className={inputClass} placeholder="e.g. Community Health Plan of Washington" />
+        <Field label="Payer name" htmlFor="own-name" error={errorFor("name")} className="sm:col-span-3">
+          <input id="own-name" name="name" maxLength={120} value={values.name} onChange={bind("name")} className={inputClass} placeholder="e.g. Community Health Plan of Washington" />
         </Field>
-        <Field label="Type" htmlFor="own-type" error={errors.payer_type}>
-          <select id="own-type" name="payer_type" value={values.payer_type} onChange={set("payer_type")} className={inputClass}>
+        <Field label="Type" htmlFor="own-type" error={errorFor("payer_type")}>
+          <select
+            id="own-type"
+            name="payer_type"
+            value={values.payer_type}
+            onChange={(e) => {
+              const t = e.target.value;
+              setValues((v) => ({ ...v, payer_type: t, revalidation_months: monthsTouched ? v.revalidation_months : DEFAULT_MONTHS[t] }));
+            }}
+            className={inputClass}
+          >
             {TYPE_ORDER.map((t) => (
               <option key={t} value={t}>
                 {PAYER_TYPE_LABELS[t]}
@@ -130,12 +160,27 @@ export function OwnPayerForm({ action }) {
             ))}
           </select>
         </Field>
-        <Field label="Revalidate every" htmlFor="own-months" error={errors.revalidation_months} hint="Months. Usually 36 for commercial plans.">
-          <input id="own-months" name="revalidation_months" type="number" min={1} max={120} value={values.revalidation_months} onChange={set("revalidation_months")} className={inputClass} />
+        <Field label="Revalidate every" htmlFor="own-months" error={errorFor("revalidation_months")}>
+          <select
+            id="own-months"
+            name="revalidation_months"
+            value={values.revalidation_months}
+            onChange={(e) => {
+              setMonthsTouched(true);
+              bind("revalidation_months")(e);
+            }}
+            className={inputClass}
+          >
+            {REVALIDATION_CHOICES.map((m) => (
+              <option key={m} value={String(m)}>
+                {m} months ({m / 12} year{m === 12 ? "" : "s"})
+              </option>
+            ))}
+          </select>
         </Field>
       </div>
       <div>
-        <SubmitButton disabled={pending} className={buttonClass("secondary")}>
+        <SubmitButton pending={pending} className={buttonClass("secondary")}>
           {pending ? "Adding…" : "Add payer"}
         </SubmitButton>
       </div>
