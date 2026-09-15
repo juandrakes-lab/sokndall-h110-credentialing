@@ -1,15 +1,12 @@
 "use client";
 
-import { Suspense, useState } from "react";
+import Link from "next/link";
+import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { buttonClass, inputClass } from "@/components/app/ui";
 import SubmitButton from "@/components/app/SubmitButton";
-
-// Only same-site paths: never bounce a login to another origin.
-function safeNext(value) {
-  return value && value.startsWith("/") && !value.startsWith("//") ? value : null;
-}
+import { AuthField, AuthShell, Captcha, Divider, GoogleButton, PasswordInput, captchaRequired, safeNext } from "@/components/app/AuthParts";
 
 export default function LoginPage() {
   return (
@@ -19,133 +16,106 @@ export default function LoginPage() {
   );
 }
 
-// Sign in or create a login. A new login has no account yet: it goes on to
-// choose a plan (/start), unless it came from an invitation (?next=/invite/…).
+// Sign in. Newcomers start at /signup; old links to /login?mode=signup are
+// forwarded there with their parameters.
 function Login() {
   const router = useRouter();
   const params = useSearchParams();
   const supabase = createClient();
-  const next = safeNext(params.get("next"));
-  const afterSignUp = next ?? "/start";
-  const afterSignIn = next ?? "/dashboard";
-  const callback = (path) => `${window.location.origin}/auth/callback?next=${encodeURIComponent(path)}`;
+  const next = safeNext(params.get("next")) ?? "/dashboard";
 
-  const [mode, setMode] = useState(params.get("mode") === "signup" ? "sign-up" : "sign-in"); // "sign-in" | "sign-up"
   const [email, setEmail] = useState(params.get("email") ?? "");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState(null);
-  const [notice, setNotice] = useState(null);
+  const [captcha, setCaptcha] = useState(null);
+  const [error, setError] = useState(params.get("error") === "link" ? "That link has expired or was already used. Sign in, or ask for a new one." : null);
   const [loading, setLoading] = useState(false);
 
-  async function handleGoogle() {
+  useEffect(() => {
+    if (params.get("mode") === "signup") {
+      const rest = new URLSearchParams(params);
+      rest.delete("mode");
+      router.replace(`/signup${rest.toString() ? `?${rest}` : ""}`);
+    }
+  }, [params, router]);
+
+  async function google() {
     setError(null);
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
-      options: { redirectTo: callback(mode === "sign-up" ? afterSignUp : afterSignIn) },
+      options: { redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}` },
     });
-    if (error) setError(error.message);
+    if (error) setError("Google sign-in isn't available right now. Use your email and password.");
   }
 
-  async function handleSubmit(e) {
+  async function submit(e) {
     e.preventDefault();
     setError(null);
-    setNotice(null);
+    if (!email.trim() || !password) {
+      setError("Enter your email and password.");
+      return;
+    }
+    if (captchaRequired() && !captcha) {
+      setError("Complete the check above the button.");
+      return;
+    }
     setLoading(true);
-
-    const { data, error } =
-      mode === "sign-in"
-        ? await supabase.auth.signInWithPassword({ email, password })
-        : await supabase.auth.signUp({
-            email,
-            password,
-            options: { emailRedirectTo: callback(afterSignUp) },
-          });
-
+    const { error } = await supabase.auth.signInWithPassword({
+      email: email.trim().toLowerCase(),
+      password,
+      options: { captchaToken: captcha ?? undefined },
+    });
     setLoading(false);
-
     if (error) {
-      setError(error.message);
+      // One message for a wrong email or a wrong password: never say which.
+      if (/rate|many/i.test(error.message)) setError("Too many attempts. Wait a few minutes and try again, or reset your password.");
+      else if (/confirm/i.test(error.message)) setError("Confirm your email first — open the link we sent you.");
+      else setError("Email or password is incorrect.");
       return;
     }
-
-    // With email confirmation on, sign-up returns no session until the link
-    // in the confirmation email is clicked.
-    if (mode === "sign-up" && !data.session) {
-      setNotice(`We sent a confirmation link to ${email}. Open it to continue.`);
-      return;
-    }
-
-    router.push(mode === "sign-up" ? afterSignUp : afterSignIn);
+    router.push(next);
     router.refresh();
   }
 
+  const signUpHref = `/signup${params.toString() ? `?${params.toString()}` : ""}`;
+
   return (
-    <main className="flex min-h-screen items-center justify-center bg-ink-50 px-5 py-12">
-      <div className="w-full max-w-sm">
-        <p className="text-center text-lg font-semibold tracking-tight text-brand-700">Sokndall</p>
-
-        <div className="mt-6 rounded-xl border border-ink-200 bg-white px-6 py-7 shadow-sm">
-          <h1 className="text-xl font-semibold text-ink-900">
-            {mode === "sign-in" ? "Sign in" : "Create your account"}
-          </h1>
-          <p className="mt-1 text-sm text-ink-500">Credential and payer enrollment tracking.</p>
-
-          <button type="button" onClick={handleGoogle} className={`${buttonClass("secondary")} mt-6 w-full`}>
-            Continue with Google
-          </button>
-
-          <div className="my-5 flex items-center gap-3 text-xs text-ink-500">
-            <div className="h-px flex-1 bg-ink-200" />
-            or
-            <div className="h-px flex-1 bg-ink-200" />
-          </div>
-
-          <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-            <label className="sr-only" htmlFor="email">Email</label>
-            <input
-              id="email"
-              type="email"
-              required
-              placeholder="Email"
-              autoComplete="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className={inputClass}
-            />
-            <label className="sr-only" htmlFor="password">Password</label>
-            <input
-              id="password"
-              type="password"
-              required
-              minLength={8}
-              placeholder="Password"
-              autoComplete={mode === "sign-in" ? "current-password" : "new-password"}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className={inputClass}
-            />
-
-            {error && <p className="text-sm text-status-expired">{error}</p>}
-            {notice && <p className="text-sm text-status-active">{notice}</p>}
-
-            <SubmitButton pending={loading} className={`${buttonClass("primary")} w-full`}>
-              {loading ? "One moment…" : mode === "sign-in" ? "Sign in" : "Create account"}
-            </SubmitButton>
-          </form>
-        </div>
-
-        <button
-          type="button"
-          onClick={() => {
-            setMode(mode === "sign-in" ? "sign-up" : "sign-in");
-            setError(null);
-            setNotice(null);
-          }}
-          className="mt-4 w-full text-center text-sm font-medium text-brand-600 hover:underline"
-        >
-          {mode === "sign-in" ? "New here? Create an account" : "Already have an account? Sign in"}
-        </button>
+    <AuthShell
+      title="Sign in"
+      subtitle="Credential and payer enrollment tracking."
+      footer={
+        <>
+          New to Sokndall?{" "}
+          <Link href={signUpHref} className="font-medium text-brand-600 hover:underline">
+            Create an account
+          </Link>
+        </>
+      }
+    >
+      <div className="mt-6">
+        <GoogleButton onClick={google} />
       </div>
-    </main>
+      <Divider />
+      <form onSubmit={submit} noValidate className="flex flex-col gap-4">
+        <AuthField id="li-email" label="Email">
+          <input id="li-email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="email" className={inputClass} />
+        </AuthField>
+        <AuthField
+          id="li-password"
+          label="Password"
+          aside={
+            <Link href="/forgot-password" onClick={() => { try { sessionStorage.setItem("sokndall-email", email); } catch {} }} className="text-xs font-medium text-brand-600 hover:underline">
+              Forgot password?
+            </Link>
+          }
+        >
+          <PasswordInput id="li-password" value={password} onChange={(e) => setPassword(e.target.value)} autoComplete="current-password" />
+        </AuthField>
+        <Captcha onToken={setCaptcha} />
+        {error && <p role="alert" className="text-sm text-status-expired">{error}</p>}
+        <SubmitButton pending={loading} className={`${buttonClass("primary")} w-full`}>
+          {loading ? "Signing in…" : "Sign in"}
+        </SubmitButton>
+      </form>
+    </AuthShell>
   );
 }

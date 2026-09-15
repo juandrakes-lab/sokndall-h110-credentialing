@@ -56,7 +56,7 @@ export default async function InvitePage({ params, searchParams }) {
           or sign in if you already have one.
         </p>
         <div className="mt-6 flex flex-col gap-3">
-          <Link href={`/login?mode=signup&email=${encodeURIComponent(invite.email)}&next=${encodeURIComponent(next)}`} className={buttonClass("primary")}>
+          <Link href={`/signup?email=${encodeURIComponent(invite.email)}&next=${encodeURIComponent(next)}`} className={buttonClass("primary")}>
             Create a login
           </Link>
           <Link href={`/login?email=${encodeURIComponent(invite.email)}&next=${encodeURIComponent(next)}`} className={buttonClass("secondary")}>

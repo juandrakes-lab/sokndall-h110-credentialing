@@ -23,7 +23,7 @@ export default async function StartPage({ searchParams }) {
   const picked = PLANS[sp.plan] ? sp.plan : null;
   const { user, org } = await getAppContext();
 
-  if (!user) redirect(`/login?mode=signup&next=${encodeURIComponent(picked ? `/start?plan=${picked}` : "/start")}`);
+  if (!user) redirect(`/signup?next=${encodeURIComponent(picked ? `/start?plan=${picked}` : "/start")}`);
   if (org) redirect("/dashboard");
 
   return (
