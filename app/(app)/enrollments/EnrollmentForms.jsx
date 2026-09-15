@@ -64,7 +64,7 @@ export function FollowUpForm({ action, today, proposed }) {
 // Everything else about the application: who owns it, dates, references.
 // Dates that don't apply yet stay locked: the submission date until the
 // application leaves "Not started", the effective date until it's approved.
-export function DetailsForm({ action, enrollment, members, ownerEmail, payerMonths, status = "not_started" }) {
+export function DetailsForm({ action, enrollment, members, ownerEmail: ownerName, payerMonths, status = "not_started" }) {
   const initial = {
     assigned_user_id: enrollment?.assigned_user_id ?? "",
     next_follow_up_date: enrollment?.next_follow_up_date ?? "",
@@ -87,12 +87,12 @@ export function DetailsForm({ action, enrollment, members, ownerEmail, payerMont
       <div className="grid gap-4 sm:grid-cols-2">
         <Field label="Responsible" htmlFor="d-assigned">
           <select id="d-assigned" name="assigned_user_id" value={values.assigned_user_id} onChange={bind("assigned_user_id")} className={inputClass}>
-            <option value="">Account owner ({ownerEmail})</option>
+            <option value="">Account owner ({ownerName})</option>
             {members
               .filter((m) => m.role !== "owner")
               .map((m) => (
                 <option key={m.user_id} value={m.user_id}>
-                  {m.email}
+                  {m.name}
                 </option>
               ))}
           </select>

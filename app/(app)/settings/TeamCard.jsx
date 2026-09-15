@@ -46,7 +46,8 @@ export default function TeamCard({ org, members, invitations, writable, clients,
           <li key={m.user_id} className="px-5 py-3">
             <div className="flex items-center justify-between gap-3">
               <div className="min-w-0">
-                <p className="truncate text-ink-900">{m.email}</p>
+                <p className="truncate text-ink-900">{m.name}</p>
+                {m.name !== m.email && <p className="truncate text-xs text-ink-500">{m.email}</p>}
                 {clients && m.role !== "owner" && <p className="truncate text-xs text-ink-500">{reach(m.client_ids)}</p>}
               </div>
               {m.role === "owner" ? (
@@ -56,7 +57,7 @@ export default function TeamCard({ org, members, invitations, writable, clients,
                   <summary className="cursor-pointer list-none hover:text-ink-900 [&::-webkit-details-marker]:hidden">Remove</summary>
                   <form action={removeMember.bind(null, m.user_id)} className="mt-1">
                     <SubmitButton className="font-medium text-status-expired hover:underline">
-                      Yes, remove {m.email}
+                      Yes, remove {m.name}
                     </SubmitButton>
                   </form>
                 </details>

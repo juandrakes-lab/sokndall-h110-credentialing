@@ -20,10 +20,11 @@ export default function SignupPage() {
 
 function signupErrors(v) {
   const e = {};
-  if (v.name.trim().length < 2) e.name = "Enter your full name.";
+  if (!v.first_name.trim()) e.first_name = "Enter your first name.";
+  if (!v.last_name.trim()) e.last_name = "Enter your last name.";
   if (!v.email.trim()) e.email = "Enter your work email.";
   else if (emailError(v.email)) e.email = emailError(v.email);
-  if (!passwordChecks(v.password, { email: v.email, name: v.name }).every((c) => c.ok)) e.password = "The password doesn't meet the requirements below.";
+  if (!passwordChecks(v.password, { email: v.email, name: v.first_name }).every((c) => c.ok)) e.password = "The password doesn't meet the requirements below.";
   if (!v.confirm) e.confirm = "Type the password again.";
   else if (v.confirm !== v.password) e.confirm = "The two passwords don't match.";
   if (!v.terms) e.terms = "Accept the Terms and Privacy Policy to continue.";
@@ -40,7 +41,7 @@ function Signup() {
   const next = safeNext(params.get("next")) ?? "/start";
   const callback = `${typeof window === "undefined" ? "" : window.location.origin}/auth/callback?next=${encodeURIComponent(next)}`;
 
-  const [v, setV] = useState({ name: "", email: params.get("email") ?? "", password: "", confirm: "", terms: false });
+  const [v, setV] = useState({ first_name: "", last_name: "", email: params.get("email") ?? "", password: "", confirm: "", terms: false });
   const [touched, setTouched] = useState({});
   const [attempted, setAttempted] = useState(false);
   const [captcha, setCaptcha] = useState(null);
@@ -52,7 +53,7 @@ function Signup() {
   const show = (f) => (attempted || touched[f] ? errors[f] : null);
   const set = (f) => (e) => setV((s) => ({ ...s, [f]: e.target.type === "checkbox" ? e.target.checked : e.target.value }));
   const blur = (f) => () => setTouched((t) => ({ ...t, [f]: true }));
-  const checks = passwordChecks(v.password, { email: v.email, name: v.name });
+  const checks = passwordChecks(v.password, { email: v.email, name: v.first_name });
 
   async function google() {
     setError(null);
@@ -65,7 +66,7 @@ function Signup() {
     setError(null);
     if (Object.keys(errors).length) {
       setAttempted(true);
-      const first = ["name", "email", "password", "confirm", "terms"].find((f) => errors[f]);
+      const first = ["first_name", "last_name", "email", "password", "confirm", "terms"].find((f) => errors[f]);
       document.getElementById(`su-${first}`)?.focus();
       return;
     }
@@ -80,7 +81,7 @@ function Signup() {
       options: {
         emailRedirectTo: callback,
         captchaToken: captcha ?? undefined,
-        data: { full_name: v.name.trim(), terms_version: TERMS_VERSION, terms_accepted_at: new Date().toISOString() },
+        data: { first_name: v.first_name.trim(), last_name: v.last_name.trim(), full_name: `${v.first_name.trim()} ${v.last_name.trim()}`, terms_version: TERMS_VERSION, terms_accepted_at: new Date().toISOString() },
       },
     });
     setLoading(false);
@@ -141,9 +142,14 @@ function Signup() {
       <Divider />
 
       <form onSubmit={submit} noValidate className="flex flex-col gap-4">
-        <AuthField id="su-name" label="Full name" error={show("name")}>
-          <input id="su-name" value={v.name} onChange={set("name")} onBlur={blur("name")} autoComplete="name" className={inputClass} />
-        </AuthField>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <AuthField id="su-first_name" label="First name" error={show("first_name")}>
+            <input id="su-first_name" value={v.first_name} onChange={set("first_name")} onBlur={blur("first_name")} autoComplete="given-name" className={inputClass} />
+          </AuthField>
+          <AuthField id="su-last_name" label="Last name" error={show("last_name")}>
+            <input id="su-last_name" value={v.last_name} onChange={set("last_name")} onBlur={blur("last_name")} autoComplete="family-name" className={inputClass} />
+          </AuthField>
+        </div>
         <AuthField id="su-email" label="Work email" error={show("email")}>
           <input id="su-email" type="email" value={v.email} onChange={set("email")} onBlur={blur("email")} autoComplete="email" className={inputClass} />
         </AuthField>

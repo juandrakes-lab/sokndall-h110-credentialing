@@ -3,6 +3,22 @@
 import { revalidatePath } from "next/cache";
 import { getAppContext } from "@/lib/org";
 
+// Your own name, kept on the login (the team directory reads it from there).
+export async function updateProfile(_prev, formData) {
+  const { supabaseAll } = await getAppContext();
+  const first = formData.get("first_name")?.toString().trim() ?? "";
+  const last = formData.get("last_name")?.toString().trim() ?? "";
+  const fieldErrors = {};
+  if (!first) fieldErrors.first_name = "Enter your first name.";
+  if (!last) fieldErrors.last_name = "Enter your last name.";
+  if (Object.keys(fieldErrors).length) return { fieldErrors };
+
+  const { error } = await supabaseAll.auth.updateUser({ data: { first_name: first, last_name: last, full_name: `${first} ${last}` } });
+  if (error) return { error: `Couldn't save: ${error.message}` };
+  revalidatePath("/", "layout");
+  return { notice: "Saved." };
+}
+
 export async function updateOrganization(_prev, formData) {
   const { supabase, org, role } = await getAppContext();
   if (role !== "owner") return { error: "Only the account owner can change these settings." };

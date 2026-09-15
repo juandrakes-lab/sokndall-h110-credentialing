@@ -47,7 +47,7 @@ export default async function ClientsPage({ searchParams }) {
     ).then((pairs) => new Map(pairs)),
   ]);
   const { data: directory } = owner && deletions?.length ? await supabaseAll.rpc("cred_org_directory") : { data: [] };
-  const emailOf = (id) => (directory ?? []).find((d) => d.user_id === id)?.email ?? "a former member";
+  const nameOf = (id) => (directory ?? []).find((d) => d.user_id === id)?.name ?? "a former member";
 
   const tally = (rows, clientOf) => {
     const m = new Map();
@@ -223,7 +223,7 @@ export default async function ClientsPage({ searchParams }) {
           <ul className="mt-1 flex flex-col gap-0.5">
             {deletions.map((d) => (
               <li key={`${d.client_name}-${d.deleted_at}`}>
-                {d.client_name} — deleted {formatDate(d.deleted_at.slice(0, 10))} by {emailOf(d.deleted_by)}
+                {d.client_name} — deleted {formatDate(d.deleted_at.slice(0, 10))} by {nameOf(d.deleted_by)}
               </li>
             ))}
           </ul>

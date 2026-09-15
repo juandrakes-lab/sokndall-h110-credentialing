@@ -20,7 +20,7 @@ function withOpen(basePath, params, key) {
 // row opens the enrollment's side panel on the same page.
 export default function FollowUpList({ items, lastContact, directory, basePath, params = {}, mode = "queue" }) {
   const owner = directory.find((d) => d.role === "owner");
-  const who = (id) => (id ? directory.find((d) => d.user_id === id)?.email ?? "Former member" : owner?.email ?? "Owner");
+  const who = (id) => (id ? directory.find((d) => d.user_id === id)?.name ?? "Former member" : owner?.name ?? "Owner");
 
   return (
     <ul className="divide-y divide-ink-100">

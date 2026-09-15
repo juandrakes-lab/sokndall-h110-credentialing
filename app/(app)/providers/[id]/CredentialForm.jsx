@@ -210,7 +210,7 @@ export default function CredentialForm({ action, initial, caqhIntervalDays, subm
               <option value="">Account owner</option>
               {members.filter((m) => m.role !== "owner").map((m) => (
                 <option key={m.user_id} value={m.user_id}>
-                  {m.email}
+                  {m.name}
                 </option>
               ))}
             </select>

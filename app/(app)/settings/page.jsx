@@ -6,7 +6,8 @@ import { recheckPracticeNppes, savePractice } from "@/lib/practice-actions";
 import { Card, CardHeader, PageHeader } from "@/components/app/ui";
 import DataCheck from "@/components/app/DataCheck";
 import PracticeForm from "@/components/app/PracticeForm";
-import { updateAlertDays, updateOrganization } from "./actions";
+import { updateAlertDays, updateOrganization, updateProfile } from "./actions";
+import ProfileForm from "./ProfileForm";
 import OrganizationForm from "./OrganizationForm";
 import AlertDaysForm from "./AlertDaysForm";
 import BillingCard from "./BillingCard";
@@ -22,7 +23,7 @@ function sentAt(iso) {
 
 export default async function SettingsPage({ searchParams }) {
   const sp = await searchParams;
-  const { supabase, org, role, practice, clients, multiClient } = await getAppContext();
+  const { supabase, user, org, role, practice, clients, multiClient } = await getAppContext();
   const owner = role === "owner";
   const [used, { data: log }, { data: directory }, { data: access }, { data: invitations }] = await Promise.all([
     providerCount(supabase, org.id),
@@ -158,6 +159,18 @@ export default async function SettingsPage({ searchParams }) {
           seatChange={seatChange}
         />
       )}
+
+      <Card>
+        <CardHeader title="Your name" description="How the rest of the team sees you — as responsible for an item, and in every history entry." />
+        <div className="px-5 py-6">
+          <ProfileForm
+            action={updateProfile}
+            firstName={user.user_metadata?.first_name ?? user.user_metadata?.full_name?.split(" ")[0] ?? ""}
+            lastName={user.user_metadata?.last_name ?? user.user_metadata?.full_name?.split(" ").slice(1).join(" ") ?? ""}
+            email={user.email}
+          />
+        </div>
+      </Card>
 
       <Card>
         <CardHeader title="Account" />

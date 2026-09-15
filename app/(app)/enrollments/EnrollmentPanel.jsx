@@ -62,7 +62,7 @@ export default async function EnrollmentPanel({ providerId, payerId, closeHref }
     : [{ data: [] }, { data: [] }];
 
   const directory = members ?? [];
-  const emailOf = (id) => directory.find((m) => m.user_id === id)?.email ?? "Former member";
+  const nameOf = (id) => directory.find((m) => m.user_id === id)?.name ?? "Former member";
   const owner = directory.find((m) => m.role === "owner");
   const status = enrollment?.status ?? "not_started";
   const stalled = enrollment ? stalledDays(enrollment) : null;
@@ -157,7 +157,7 @@ export default async function EnrollmentPanel({ providerId, payerId, closeHref }
               action={updateEnrollmentDetails.bind(null, providerId, payerId)}
               enrollment={enrollment}
               members={directory.filter((m) => canReach(m, provider.client_org_id))}
-              ownerEmail={owner?.email ?? user.email}
+              ownerEmail={owner?.name ?? user.email}
               payerMonths={payer.revalidation_months}
               status={status}
             />
@@ -202,7 +202,7 @@ export default async function EnrollmentPanel({ providerId, payerId, closeHref }
                             : `Opened as ${ENROLLMENT_STATUS_LABELS[item.to_status]}`}
                       </p>
                       <p className="text-xs text-ink-500">
-                        {item.changed_by ? emailOf(item.changed_by) : "System"} · {when(item.created_at)}
+                        {item.changed_by ? nameOf(item.changed_by) : "System"} · {when(item.created_at)}
                       </p>
                     </li>
                   ) : (
@@ -221,7 +221,7 @@ export default async function EnrollmentPanel({ providerId, payerId, closeHref }
                       {item.requested && <p className="text-sm text-status-expiring">They asked for: {item.requested}</p>}
                       <div className="flex items-center gap-3 text-xs text-ink-500">
                         <span>
-                          {item.created_by ? emailOf(item.created_by) : "—"} · {when(item.created_at)}
+                          {item.created_by ? nameOf(item.created_by) : "—"} · {when(item.created_at)}
                         </span>
                         <details>
                           <summary className="cursor-pointer list-none hover:text-ink-900 [&::-webkit-details-marker]:hidden">Delete</summary>

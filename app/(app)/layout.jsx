@@ -43,6 +43,7 @@ export default async function AppLayout({ children }) {
   if (role !== "owner" && clients.length === 0) return <NoClients email={user.email} />;
   if (!practice) redirect("/onboarding");
 
+  const displayName = user.user_metadata?.full_name || [user.user_metadata?.first_name, user.user_metadata?.last_name].filter(Boolean).join(" ") || user.user_metadata?.name || null;
   const access = accountAccess(org);
   const banner =
     access.state === "trial" || access.state === "active"
@@ -75,6 +76,7 @@ export default async function AppLayout({ children }) {
 
         <div className="hidden border-t border-ink-100 px-6 py-4 lg:block">
           {access.state === "trial" && <p className="mb-2 text-xs text-ink-500">{access.message}</p>}
+          {displayName && <p className="truncate text-sm font-medium text-ink-900">{displayName}</p>}
           <p className="truncate text-xs text-ink-500" title={user.email}>
             {user.email}
           </p>

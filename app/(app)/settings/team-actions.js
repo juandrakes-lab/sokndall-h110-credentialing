@@ -104,13 +104,14 @@ export async function inviteMember(_prev, formData) {
   }
 
   const link = `${await origin()}/invite/${token}`;
+  const inviter = user.user_metadata?.full_name || user.email;
   let emailed = true;
   try {
     await sendEmail({
       to: email,
       subject: `${org.name} invited you to Sokndall`,
-      html: `<p>${esc(user.email)} invited you to join <strong>${esc(org.name)}</strong> on Sokndall, where the team tracks provider credentials and payer enrollments.</p><p><a href="${esc(link)}">Accept the invitation</a></p><p>The link works for 14 days.</p>`,
-      text: `${user.email} invited you to join ${org.name} on Sokndall.\n\nAccept: ${link}\n\nThe link works for 14 days.`,
+      html: `<p>${esc(inviter)} invited you to join <strong>${esc(org.name)}</strong> on Sokndall, where the team tracks provider credentials and payer enrollments.</p><p><a href="${esc(link)}">Accept the invitation</a></p><p>The link works for 14 days.</p>`,
+      text: `${inviter} invited you to join ${org.name} on Sokndall.\n\nAccept: ${link}\n\nThe link works for 14 days.`,
     });
   } catch {
     emailed = false;
