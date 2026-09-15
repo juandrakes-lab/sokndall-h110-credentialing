@@ -2,7 +2,9 @@
 
 import { revalidatePath } from "next/cache";
 import { getAppContext, providerCount } from "@/lib/org";
-import { fetchNppes, isValidNpi } from "@/lib/nppes";
+import { fetchNppes } from "@/lib/nppes";
+import { providerErrors } from "@/lib/provider-rules";
+import { credentialErrors, normalizeCoverage } from "@/lib/credential-rules";
 import { snapshotFromLookup } from "@/lib/consistency";
 import { normalizeDate } from "@/lib/dates";
 import { CREDENTIAL_FIELDS, CREDENTIAL_TYPES, todayISO } from "@/lib/credentials";
@@ -45,29 +47,33 @@ export async function importProviders(rows) {
 
   rows.forEach((r, i) => {
     if (!r.first_name || !r.last_name) return errors.push(`${line(i)}: missing first or last name.`);
-
-    const npi = r.npi?.replace(/\D/g, "") || null;
-    if (npi && !isValidNpi(npi)) return errors.push(`${line(i)} (${r.first_name} ${r.last_name}): "${r.npi}" isn't a valid NPI.`);
-    if (npi && seenNpi.has(npi)) return errors.push(`${line(i)} (${r.first_name} ${r.last_name}): a provider with NPI ${npi} already exists.`);
+    const who = `${line(i)} (${r.first_name} ${r.last_name})`;
 
     const startDate = r.start_date ? normalizeDate(r.start_date) : null;
-    if (r.start_date && !startDate) return errors.push(`${line(i)} (${r.first_name} ${r.last_name}): start date "${r.start_date}" isn't a date (use MM/DD/YYYY).`);
+    if (r.start_date && !startDate) return errors.push(`${who}: start date "${r.start_date}" isn't a date (use MM/DD/YYYY).`);
 
-    if (r.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(r.email)) {
-      return errors.push(`${line(i)} (${r.first_name} ${r.last_name}): "${r.email}" isn't an email address.`);
-    }
+    // The same rules as the provider form (lib/provider-rules.js), on the
+    // cleaned values, so the database never meets a malformed row.
+    const values = {
+      first_name: r.first_name.trim(),
+      last_name: r.last_name.trim(),
+      npi: r.npi?.replace(/\D/g, "") || null,
+      caqh_id: r.caqh_id?.replace(/\D/g, "") || null,
+      taxonomy_code: r.taxonomy_code?.trim().toUpperCase() || null,
+      email: r.email?.trim().toLowerCase() || null,
+      phone: r.phone?.replace(/\D/g, "").replace(/^1(\d{10})$/, "$1") || null,
+      start_date: startDate,
+    };
+    const problems = providerErrors(values);
+    const first = Object.keys(problems)[0];
+    if (first) return errors.push(`${who}: ${problems[first]}`);
+    if (values.npi && seenNpi.has(values.npi)) return errors.push(`${who}: a provider with NPI ${values.npi} already exists.`);
 
-    if (npi) seenNpi.add(npi);
+    if (values.npi) seenNpi.add(values.npi);
     valid.push({
+      ...values,
       practice_id: practice.id,
-      first_name: r.first_name,
-      last_name: r.last_name,
-      npi,
-      caqh_id: r.caqh_id ?? null,
       specialty: r.specialty ?? null,
-      taxonomy_code: r.taxonomy_code?.toUpperCase() ?? null,
-      email: r.email ?? null,
-      phone: r.phone ?? null,
       // Every row needs every column in a bulk insert, so the default is explicit.
       start_date: startDate ?? todayISO(),
       notes: r.notes ?? null,
@@ -118,9 +124,11 @@ export async function importCredentials(rows) {
 
   const byNpi = new Map();
   const byName = new Map();
+  const lastNameOf = new Map();
   for (const p of providers ?? []) {
     if (p.npi) byNpi.set(p.npi, p.id);
     byName.set(`${p.first_name.trim().toLowerCase()}|${p.last_name.trim().toLowerCase()}`, p.id);
+    lastNameOf.set(p.id, p.last_name);
   }
 
   const errors = [];
@@ -158,9 +166,12 @@ export async function importCredentials(rows) {
     if (missing.length) {
       return errors.push(`${line(i)} (${who}): ${config.label} needs ${missing.map((f) => config.labels[f].toLowerCase()).join(" and ")}.`);
     }
-    if (values.issue_date && values.expiration_date && values.issue_date > values.expiration_date) {
-      return errors.push(`${line(i)} (${who}): expires before it was issued.`);
-    }
+    if (type === "dea" && values.number) values.number = values.number.replace(/[\s-]/g, "").toUpperCase();
+    if (values.coverage) values.coverage = normalizeCoverage(values.coverage) ?? values.coverage;
+    // Everything the credential form checks (lib/credential-rules.js).
+    const problems = credentialErrors(type, values, { lastName: lastNameOf.get(providerId) });
+    const first = Object.keys(problems)[0];
+    if (first) return errors.push(`${line(i)} (${who}): ${problems[first]}`);
 
     valid.push({ ...values, type, provider_id: providerId, notes: r.notes ?? null });
   });

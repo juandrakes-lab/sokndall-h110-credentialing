@@ -183,6 +183,24 @@ async function main() {
     check("B still sees exactly its own credential", data?.length === 1 && data[0].id === B.credentialId);
   }
 
+  // --- Field formats are held by the database too (Fase 7) -----------------
+  {
+    const bad = [
+      ["cred_providers", { practice_id: A.practiceId, first_name: "X", last_name: "Y", npi: "12345" }, "a 5-digit NPI"],
+      ["cred_providers", { practice_id: A.practiceId, first_name: "X", last_name: "Y", phone: "555-1234" }, "a phone that isn't 10 digits"],
+      ["cred_providers", { practice_id: A.practiceId, first_name: "X", last_name: "Y", taxonomy_code: "FAMILY" }, "a malformed taxonomy code"],
+      ["cred_credentials", { provider_id: A.providerId, type: "dea", number: "7890987", expiration_date: "2027-01-01" }, "a DEA number without its letters"],
+      ["cred_credentials", { provider_id: A.providerId, type: "state_license", state: "Texas", number: "1", expiration_date: "2027-01-01" }, "a state that isn't a 2-letter code"],
+      ["cred_credentials", { provider_id: A.providerId, type: "state_license", state: "TX", number: "1", issue_date: "2027-01-01", expiration_date: "2026-01-01" }, "an expiration before the issue date"],
+    ];
+    for (const [table, row, what] of bad) {
+      const { error } = await a.client.from(table).insert(row);
+      check(`The database refuses ${what}`, !!error && /check constraint/i.test(error.message), error?.message);
+    }
+    const { error: tinErr } = await a.client.from("cred_practices").update({ tin: "12-345" }).eq("id", A.practiceId);
+    check("The database refuses a TIN that isn't 9 digits", !!tinErr, tinErr?.message);
+  }
+
   // --- Plan columns are not writable by the customer ----------------------
   {
     const { error } = await a.client.from("cred_organizations").update({ plan: "billing_co" }).eq("id", A.orgId);
@@ -549,7 +567,7 @@ async function main() {
     const docPath = `${B.orgId}/${client2.id}/${provider2.id}/${run}-w9.pdf`;
     const { error: upErr2 } = await b.client.storage.from("cred-documents").upload(docPath, Buffer.from("%PDF-1.4\n%%EOF\n"), { contentType: "application/pdf" });
     await b.client.from("cred_documents").insert({ provider_id: provider2.id, category: "w9", file_name: "w9.pdf", storage_path: docPath, size_bytes: 1 });
-    await b.client.from("cred_credentials").insert({ provider_id: provider2.id, type: "dea", number: "Z9", expiration_date: "2027-03-01" });
+    await b.client.from("cred_credentials").insert({ provider_id: provider2.id, type: "dea", number: "AB1234563", expiration_date: "2027-03-01" });
     await b.client.from("cred_communications").insert({ enrollment_id: enr2.id, channel: "phone", outcome: "called" });
     check("(fixture) client two has a file, credential, enrollment and call log", !upErr2, upErr2?.message);
 
@@ -711,7 +729,7 @@ async function main() {
     check("After a downgrade, providers within the limit stay editable", !firstErr && first?.length === 1, firstErr?.message);
     const { error: fourthErr } = await c.client.from("cred_providers").update({ notes: "should fail" }).eq("id", provIds[3]);
     check("After a downgrade, the newest provider over the limit is read-only", !!fourthErr, fourthErr?.message);
-    const { error: credErr } = await c.client.from("cred_credentials").insert({ provider_id: provIds[3], type: "dea", number: "X1", expiration_date: "2027-01-01" });
+    const { error: credErr } = await c.client.from("cred_credentials").insert({ provider_id: provIds[3], type: "dea", number: "AB1234563", expiration_date: "2027-01-01" });
     check("…including adding credentials to it", !!credErr, credErr?.message);
     const { data: seeAll } = await c.client.from("cred_providers").select("id");
     check("…but it's still visible", (seeAll ?? []).length === 4);
