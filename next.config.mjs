@@ -3,6 +3,9 @@ const nextConfig = {
   // forbidden() → a real 403 for the Billing Co–only routes (alcance §4.3).
   experimental: { authInterrupts: true },
 
+  // Dev only: keep Next's "N" badge off the app sidebar's account button.
+  devIndicators: { position: "bottom-right" },
+
   // One trailing-slash convention for the whole site: no trailing slash.
   // Next issues a 308 from "/path/" to "/path" automatically.
   trailingSlash: false,
