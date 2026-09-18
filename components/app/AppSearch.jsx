@@ -98,7 +98,7 @@ export default function AppSearch({ onDone, autoFocus = false, showClients = fal
 
   const items = [
     ...places.map((p) => ({ kind: "place", key: `p-${p.href}`, label: p.label, detail: "Go to", icon: p.icon, go: () => router.push(p.href) })),
-    ...(results?.providers ?? []).map((p) => ({ kind: "provider", key: `pr-${p.id}`, label: p.name, detail: p.detail || "Provider", avatar: p.name, photo: p.photo, go: () => router.push(`/providers/${p.id}`) })),
+    ...(results?.providers ?? []).map((p) => ({ kind: "provider", key: `pr-${p.id}`, label: p.name, detail: p.detail || "Provider", avatar: p.name, go: () => router.push(`/providers/${p.id}`) })),
     ...(results?.payers ?? []).map((p) => ({ kind: "payer", key: `pa-${p.id}`, label: p.name, detail: "Payer · open the matrix", icon: ICONS.building, go: () => router.push("/enrollments") })),
     ...(results?.documents ?? []).map((d) => ({ kind: "document", key: `d-${d.id}`, label: d.name, detail: d.detail || "Document", icon: ICONS.file, go: () => router.push(`/providers/${d.providerId}`) })),
     ...(showClients ? results?.clients ?? [] : []).map((c) => ({

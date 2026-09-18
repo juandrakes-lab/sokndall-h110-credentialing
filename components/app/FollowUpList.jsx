@@ -32,7 +32,7 @@ export default function FollowUpList({ items, lastContact, directory, basePath, 
               scroll={false}
               className="flex items-center gap-3 px-5 py-3 transition-colors hover:bg-ink-50/70"
             >
-              <Avatar name={`${e.provider.first_name} ${e.provider.last_name}`} photo={e.provider.photo_url} />
+              <Avatar name={`${e.provider.first_name} ${e.provider.last_name}`} />
               <div className="min-w-0 flex-1">
                 <p className="truncate">
                   <span className="font-semibold text-ink-900">

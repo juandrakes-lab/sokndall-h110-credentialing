@@ -97,7 +97,7 @@ export default async function ClientsPage({ searchParams }) {
         </p>
       )}
 
-      <div className="-mx-4 flex snap-x gap-3 overflow-x-auto px-4 pb-1 sm:mx-0 sm:grid sm:grid-cols-4 sm:gap-4 sm:overflow-visible sm:px-0 [&>*]:w-[70%] [&>*]:shrink-0 [&>*]:snap-start sm:[&>*]:w-auto">
+      <div className="-mx-4 flex snap-x snap-mandatory scroll-px-4 gap-3 overflow-x-auto px-4 pb-4 -mb-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:mx-0 sm:grid sm:grid-cols-4 sm:gap-4 sm:mb-0 sm:overflow-visible sm:px-0 sm:pb-0 [&>*]:w-[70%] [&>*]:shrink-0 [&>*]:snap-start sm:[&>*]:w-auto">
         <StatCard label="Follow-ups this week" value={queue.length} icon={ICONS.phone} />
         <StatCard label="Stalled 30+ days" value={stalled.length} icon={ICONS.pause} tone={stalled.length ? "amber" : "green"} />
         <StatCard label="Expiring in 30 days" value={[...byClient.expiring.values()].reduce((a, b) => a + b, 0)} icon={ICONS.calendar} tone="amber" />

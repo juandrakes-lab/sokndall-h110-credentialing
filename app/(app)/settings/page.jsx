@@ -8,6 +8,7 @@ import DataCheck from "@/components/app/DataCheck";
 import PracticeForm from "@/components/app/PracticeForm";
 import { updateAlertDays, updateOrganization, updateProfile } from "./actions";
 import ProfileForm from "./ProfileForm";
+import PhotoForm from "./PhotoForm";
 import OrganizationForm from "./OrganizationForm";
 import AlertDaysForm from "./AlertDaysForm";
 import BillingCard from "./BillingCard";
@@ -239,7 +240,20 @@ export default async function SettingsPage({ searchParams }) {
 
       {tab === "you" && (
         <div className="flex flex-col gap-10">
-          <Section title="Your name" description="How the rest of the team sees you — as responsible for an item, and in every history entry. If you sign in with Google, your Google photo appears next to it.">
+          <Section title="Your photo" description="Optional. Shown next to your name for the rest of the team. If you sign in with Google, your Google photo is used until you upload one; without either, your initials.">
+            <Card>
+              <div className="px-5 py-6">
+                <PhotoForm
+                  userId={user.id}
+                  name={[user.user_metadata?.first_name, user.user_metadata?.last_name].filter(Boolean).join(" ") || user.user_metadata?.full_name || user.email}
+                  photo={user.user_metadata?.photo_url || user.user_metadata?.avatar_url || user.user_metadata?.picture || null}
+                  fromGoogle={!user.user_metadata?.photo_url && Boolean(user.user_metadata?.avatar_url || user.user_metadata?.picture)}
+                />
+              </div>
+            </Card>
+          </Section>
+
+          <Section title="Your name" description="How the rest of the team sees you — as responsible for an item, and in every history entry.">
             <Card>
               <div className="px-5 py-6">
                 <ProfileForm

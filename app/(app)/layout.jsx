@@ -75,7 +75,7 @@ export default async function AppLayout({ children }) {
         activeClientId={client?.id}
         workspaceName={clients.length > 1 ? client?.name ?? practice.legal_name : practice.legal_name}
         displayName={displayName}
-        photo={user.user_metadata?.avatar_url || user.user_metadata?.picture || null}
+        photo={user.user_metadata?.photo_url || user.user_metadata?.avatar_url || user.user_metadata?.picture || null}
         email={user.email}
         trial={access.state === "trial" ? access.message : null}
         signOut={signOut}

@@ -218,7 +218,7 @@ export function StatCard({ label, value, suffix, hint, icon, tone = "brand", hre
 export function StatRow({ children, cols = 3 }) {
   const grid = cols === 4 ? "sm:grid-cols-2 lg:grid-cols-4" : "sm:grid-cols-3";
   return (
-    <div className={`-mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-1 sm:mx-0 sm:grid sm:gap-4 sm:overflow-visible sm:px-0 sm:pb-0 [&>*]:w-[78%] [&>*]:shrink-0 [&>*]:snap-start sm:[&>*]:w-auto ${grid}`}>
+    <div className={`-mx-4 flex snap-x snap-mandatory scroll-px-4 gap-3 overflow-x-auto px-4 pb-4 -mb-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:mx-0 sm:grid sm:gap-4 sm:overflow-visible sm:mb-0 sm:px-0 sm:pb-0 [&>*]:w-[78%] [&>*]:shrink-0 [&>*]:snap-start sm:[&>*]:w-auto ${grid}`}>
       {children}
     </div>
   );
@@ -314,12 +314,13 @@ export function Avatar({ name, photo, size = "md" }) {
   );
 }
 
-// A person who signs in: the photo of the account they sign in with (Google
-// supplies one), else initials on the site's yellow.
+// A person who signs in: the photo they uploaded, else the one their Google
+// sign-in supplies, else initials on the site's yellow. Providers never get
+// a photo — they are records, not users; they keep an initials circle.
 export function PersonPhoto({ name, photo, size = "md" }) {
   const box = { sm: "h-7 w-7 text-[0.6875rem]", md: "h-9 w-9 text-sm", lg: "h-12 w-12 text-base", xl: "h-20 w-20 text-2xl" }[size];
   if (photo) {
-    // eslint-disable-next-line @next/next/no-img-element -- a small avatar from the sign-in provider; next/image adds nothing here
+    // eslint-disable-next-line @next/next/no-img-element -- a 256px avatar from Storage or Google; next/image adds nothing here
     return <img src={photo} alt="" className={`${box} shrink-0 rounded-full object-cover ring-2 ring-white`} referrerPolicy="no-referrer" />;
   }
   return (

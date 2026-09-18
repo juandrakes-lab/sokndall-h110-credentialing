@@ -178,7 +178,6 @@ export default async function DashboardPage({ searchParams }) {
     ...urgentExpirations.map((i) => ({
       key: i.id,
       title: i.who,
-      photo: i.provider?.photo_url,
       detail: i.kind === "Payer revalidation" ? `Payer revalidation · ${i.detail}` : i.kind,
       badge: daysUntil(i.date) < 0 ? "Expired" : daysUntil(i.date) === 0 ? "Expires today" : `${daysUntil(i.date)} days left`,
       tone: daysUntil(i.date) <= 7 ? "red" : "amber",
@@ -187,7 +186,6 @@ export default async function DashboardPage({ searchParams }) {
     ...overdue.map((e) => ({
       key: e.id,
       title: `${e.provider.first_name} ${e.provider.last_name}`,
-      photo: e.provider.photo_url,
       detail: `Follow up with ${e.payer.name}`,
       badge: daysUntil(e.next_follow_up_date) === 0 ? "Call today" : `${-daysUntil(e.next_follow_up_date)} days late`,
       tone: "amber",
@@ -411,7 +409,7 @@ export default async function DashboardPage({ searchParams }) {
                           className="flex flex-col gap-1 rounded-xl px-3 py-2.5 transition-colors hover:bg-ink-50 sm:flex-row sm:items-center sm:justify-between"
                         >
                           <div className="flex min-w-0 items-center gap-3">
-                            <Avatar name={item.who} photo={item.provider?.photo_url} size="sm" />
+                            <Avatar name={item.who} size="sm" />
                             <div className="min-w-0 truncate">
                             <span className="font-semibold text-ink-900">{item.who}</span>
                             <span className="text-sm text-ink-500">

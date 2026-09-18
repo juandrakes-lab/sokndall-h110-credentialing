@@ -32,7 +32,7 @@ export default async function EnrollmentsPage({ searchParams }) {
   const { supabase } = await getAppContext();
 
   const [{ data: providers }, { data: payerRows }, { data: enrollments }] = await Promise.all([
-    supabase.from("cred_providers").select("id, first_name, last_name, specialty, photo_url").eq("status", "active").order("last_name"),
+    supabase.from("cred_providers").select("id, first_name, last_name, specialty").eq("status", "active").order("last_name"),
     supabase.from("cred_payers_org").select(PAYER_SELECT),
     supabase.from("cred_enrollments").select("id, provider_id, payer_id, status, next_follow_up_date, status_changed_at"),
   ]);
@@ -136,7 +136,7 @@ export default async function EnrollmentsPage({ searchParams }) {
                 <tr key={provider.id}>
                   <th scope="row" className="sticky left-0 z-10 border-b border-r border-ink-100 bg-white px-4 py-2 text-left font-normal">
                     <div className="flex items-center gap-2.5">
-                      <Avatar name={`${provider.first_name} ${provider.last_name}`} photo={provider.photo_url} size="sm" />
+                      <Avatar name={`${provider.first_name} ${provider.last_name}`} size="sm" />
                       <div className="min-w-0">
                         <Link href={`/providers/${provider.id}`} className="font-semibold text-ink-900 hover:text-brand-600">
                           {provider.last_name}, {provider.first_name}
