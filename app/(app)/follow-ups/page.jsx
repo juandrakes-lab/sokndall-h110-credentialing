@@ -3,7 +3,7 @@ import { getAppContext } from "@/lib/org";
 import { loadFollowUps } from "@/lib/follow-ups";
 import { daysUntil, formatDate } from "@/lib/credentials";
 import { parseCellKey, weekEndISO } from "@/lib/enrollments";
-import { Card, EmptyState, ICONS, PageHeader, SectionPill, StatCard, buttonClass } from "@/components/app/ui";
+import { Card, EmptyState, ICONS, PageHeader, SectionPill, StatCard, StatRow, buttonClass } from "@/components/app/ui";
 import FollowUpList from "@/components/app/FollowUpList";
 import EnrollmentPanel from "../enrollments/EnrollmentPanel";
 
@@ -38,7 +38,7 @@ export default async function FollowUpsPage({ searchParams }) {
         }
       />
 
-      <div className="grid gap-4 sm:grid-cols-3">
+      <StatRow>
         <StatCard label="Overdue" value={overdue.length} icon={ICONS.alert} tone={overdue.length ? "red" : "green"} hint={overdue.length ? "Call these first." : "Nothing is late."} />
         <StatCard label="Due this week" value={today.length + later.length} icon={ICONS.phone} tone="brand" hint={`Through Sunday, ${formatDate(weekEndISO())}.`} />
         <StatCard
@@ -48,7 +48,7 @@ export default async function FollowUpsPage({ searchParams }) {
           tone={stalled.length ? "amber" : "green"}
           hint="With the payer, no status change in 30+ days."
         />
-      </div>
+      </StatRow>
 
       {queue.length === 0 ? (
         <Card>

@@ -95,7 +95,7 @@ export default async function InvitePage({ params, searchParams }) {
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-ink-50 px-5">
+    <main className="flex min-h-screen items-center justify-center app-ground app-type px-5">
       <div className="w-full max-w-md">
         <p className="text-center text-lg font-semibold tracking-tight text-brand-700">Sokndall</p>
         <div className="mt-6 rounded-xl border border-ink-200 bg-white px-6 py-7 shadow-sm">{body}</div>

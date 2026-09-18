@@ -22,7 +22,7 @@ export default async function OnboardingPage() {
   const finishing = clients.length > 1;
 
   return (
-    <main className="min-h-screen bg-ink-50 px-5 py-12">
+    <main className="min-h-screen app-ground app-type px-5 py-12">
       <div className="mx-auto max-w-3xl">
         <p className="text-lg font-semibold tracking-tight text-brand-700">Sokndall</p>
         <h1 className="mt-8 text-2xl font-semibold tracking-tight text-ink-900">

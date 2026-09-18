@@ -2,7 +2,7 @@ import { getAppContext } from "@/lib/org";
 import { DOCUMENT_CATEGORIES, DOCUMENT_CATEGORY_KEYS, formatBytes } from "@/lib/documents";
 import { PAYER_SELECT, resolvePayer } from "@/lib/enrollments";
 import { PLANS } from "@/lib/plans";
-import { Card, CardHeader, ICONS, PageHeader, StatCard, buttonClass, inputClass } from "@/components/app/ui";
+import { Card, CardHeader, ICONS, PageHeader, StatCard, StatRow, buttonClass, inputClass } from "@/components/app/ui";
 import Disclosure from "@/components/app/Disclosure";
 import DocumentList from "@/components/app/DocumentList";
 import DocumentUploader from "@/components/app/DocumentUploader";
@@ -55,7 +55,7 @@ export default async function DocumentsPage({ searchParams }) {
         }
       />
 
-      <div className="grid gap-4 sm:grid-cols-3">
+      <StatRow>
         <StatCard label="Documents on file" value={allDocuments ?? 0} icon={ICONS.documents} hint="Across every provider of this client." />
         <StatCard
           label="Storage used"
@@ -66,13 +66,11 @@ export default async function DocumentsPage({ searchParams }) {
           meter={share}
           hint="Up to 10 MB per file."
         />
-        <div className="flex flex-col justify-center gap-3 rounded-2xl bg-white p-5 shadow-[0_1px_2px_rgba(14,42,46,0.05),0_6px_20px_-6px_rgba(14,42,46,0.08)] ring-1 ring-ink-900/[0.06]">
-          <p className="text-sm font-medium text-ink-900">Add paperwork</p>
-          <Disclosure label="Upload a document" title="Upload a document" icon={ICONS.upload} variant="primary" className="self-start" panelClassName="mt-1">
-            <DocumentUploader providers={providers ?? []} compact />
-          </Disclosure>
-        </div>
-      </div>
+      </StatRow>
+
+      <Disclosure label="Upload a document" title="Upload a document" icon={ICONS.upload} variant="primary" className="self-start">
+        <DocumentUploader providers={providers ?? []} compact />
+      </Disclosure>
 
       <Card className="overflow-hidden">
         <CardHeader

@@ -12,7 +12,7 @@ export default async function WelcomePage() {
   if (org) redirect("/onboarding");
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-ink-50 px-5">
+    <main className="flex min-h-screen items-center justify-center app-ground app-type px-5">
       <div className="w-full max-w-md rounded-xl border border-ink-200 bg-white px-6 py-8 text-center shadow-sm">
         <p className="text-lg font-semibold tracking-tight text-brand-700">Sokndall</p>
         <WelcomePoller />

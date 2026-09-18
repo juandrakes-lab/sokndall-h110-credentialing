@@ -7,13 +7,14 @@ import { inputClass } from "@/components/app/ui";
 // The frame every access screen shares: sign up, sign in, forgot/reset password.
 export function AuthShell({ title, subtitle, children, footer }) {
   return (
-    <main className="flex min-h-screen items-center justify-center bg-ink-50 px-5 py-12">
+    <main className="flex min-h-screen items-center justify-center app-ground app-type px-5 py-12">
       <div className="w-full max-w-md">
-        <Link href="/" className="block text-center text-lg font-semibold tracking-tight text-brand-700">
+        <Link href="/" className="flex items-center justify-center gap-2.5 text-lg font-semibold tracking-tight text-ink-900">
+          <span className="flex h-9 w-9 items-center justify-center rounded-[11px] bg-brand-700 text-base font-semibold text-white">S</span>
           Sokndall
         </Link>
-        <div className="mt-6 rounded-xl border border-ink-200 bg-white px-6 py-7 shadow-sm sm:px-8">
-          <h1 className="text-xl font-semibold text-ink-900">{title}</h1>
+        <div className="mt-6 rounded-3xl bg-white px-6 py-8 shadow-[0_1px_2px_rgba(14,42,46,0.05),0_20px_50px_-20px_rgba(14,42,46,0.25)] ring-1 ring-ink-900/[0.06] sm:px-8">
+          <h1 className="text-2xl font-semibold tracking-[-0.02em] text-ink-900">{title}</h1>
           {subtitle && <p className="mt-1 text-sm text-ink-500">{subtitle}</p>}
           {children}
         </div>
@@ -29,7 +30,7 @@ export function GoogleButton({ onClick, label = "Continue with Google", disabled
       type="button"
       onClick={onClick}
       disabled={disabled}
-      className="flex w-full items-center justify-center gap-3 rounded-lg border border-ink-200 bg-white px-4 py-2.5 text-sm font-medium text-ink-900 shadow-sm transition hover:bg-ink-50 disabled:opacity-60"
+      className="flex w-full items-center justify-center gap-3 rounded-xl border border-ink-200 bg-white px-4 py-2.5 text-sm font-medium text-ink-900 transition hover:bg-ink-50 disabled:opacity-60"
     >
       <svg viewBox="0 0 48 48" className="h-4 w-4" aria-hidden="true">
         <path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z" />

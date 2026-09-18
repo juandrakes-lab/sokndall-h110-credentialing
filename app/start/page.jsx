@@ -27,7 +27,7 @@ export default async function StartPage({ searchParams }) {
   if (org) redirect("/dashboard");
 
   return (
-    <main className="min-h-screen bg-ink-50 px-5 py-12">
+    <main className="min-h-screen app-ground app-type px-5 py-12">
       <div className="mx-auto max-w-5xl">
         <div className="flex items-center justify-between">
           <p className="text-lg font-semibold tracking-tight text-brand-700">Sokndall</p>

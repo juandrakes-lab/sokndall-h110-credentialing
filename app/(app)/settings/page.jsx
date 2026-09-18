@@ -3,7 +3,7 @@ import { getAppContext, providerCount } from "@/lib/org";
 import { practiceIssues } from "@/lib/consistency";
 import { PLANS } from "@/lib/plans";
 import { recheckPracticeNppes, savePractice } from "@/lib/practice-actions";
-import { Card, CardHeader, ICONS, PageHeader, StatCard, Tabs } from "@/components/app/ui";
+import { Card, CardHeader, ICONS, PageHeader, StatCard, StatRow, Tabs } from "@/components/app/ui";
 import DataCheck from "@/components/app/DataCheck";
 import PracticeForm from "@/components/app/PracticeForm";
 import { updateAlertDays, updateOrganization, updateProfile } from "./actions";
@@ -102,11 +102,11 @@ export default async function SettingsPage({ searchParams }) {
 
           {!owner && (
             <Section title="Plan" description="What this account's plan covers. Only the owner can change it.">
-              <div className="grid gap-4 sm:grid-cols-3">
+              <StatRow>
                 <StatCard label="Plan" value={plan.label} suffix={`$${plan.price}/mo`} icon={ICONS.card} />
                 <StatCard label="Providers" value={used} suffix={`of ${org.provider_limit}`} icon={ICONS.providers} meter={used / org.provider_limit} />
                 <StatCard label="Document storage" value={plan.storageLabel} icon={ICONS.documents} />
-              </div>
+              </StatRow>
             </Section>
           )}
 
@@ -137,7 +137,7 @@ export default async function SettingsPage({ searchParams }) {
       {tab === "billing" && owner && (
         <div className="flex flex-col gap-10">
           <Section title="What you're using" description="Your plan's limits and how much of each you have in use today.">
-            <div className="grid gap-4 sm:grid-cols-3">
+            <StatRow>
               <StatCard label="Plan" value={plan.label} suffix={`$${plan.price}/mo`} icon={ICONS.card} />
               <StatCard label="Providers" value={used} suffix={`of ${org.provider_limit}`} icon={ICONS.providers} meter={used / org.provider_limit} />
               <StatCard
@@ -148,7 +148,7 @@ export default async function SettingsPage({ searchParams }) {
                 meter={members.length / org.user_limit}
                 hint={multiClient ? `${clients.length} client${clients.length === 1 ? "" : "s"} · ${plan.storageLabel} of storage` : `${plan.storageLabel} of storage`}
               />
-            </div>
+            </StatRow>
           </Section>
 
           <Section title="Plan & billing" description="Change plan, update the card or cancel. Invoices live in the Polar portal.">

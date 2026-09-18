@@ -20,7 +20,7 @@ export function buttonClass(variant = "primary", size = "md") {
 
 export function PageHeader({ title, description, actions, eyebrow }) {
   return (
-    <div className="mb-7 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+    <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
       <div className="min-w-0">
         {eyebrow && <div className="mb-2 text-sm font-medium text-ink-700">{eyebrow}</div>}
         <h1 className="text-[1.75rem] font-semibold leading-[1.15] tracking-[-0.02em] text-ink-900 sm:text-[2rem]">{title}</h1>
@@ -199,6 +199,16 @@ export function StatCard({ label, value, suffix, hint, icon, tone = "brand", hre
     );
   }
   return <div className={cls}>{body}</div>;
+}
+
+// A row of StatCards: three columns on a laptop, a swipeable strip on a phone
+// (stacked, three tiles would push the page's real content off the screen).
+export function StatRow({ children }) {
+  return (
+    <div className="-mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-1 sm:mx-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:overflow-visible sm:px-0 sm:pb-0 [&>*]:w-[78%] [&>*]:shrink-0 [&>*]:snap-start sm:[&>*]:w-auto">
+      {children}
+    </div>
+  );
 }
 
 const METER_FILL = {

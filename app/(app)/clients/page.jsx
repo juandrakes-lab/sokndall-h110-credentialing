@@ -6,7 +6,7 @@ import { loadExpirations } from "@/lib/expirations";
 import { addDays, formatDate, todayISO } from "@/lib/credentials";
 import { archiveClient, deleteClient, openClient, restoreClient } from "@/lib/client-actions";
 import { createClient } from "@/lib/supabase/server";
-import { Card, CardHeader, PageHeader, buttonClass } from "@/components/app/ui";
+import { Card, CardHeader, ICONS, PageHeader, StatCard, buttonClass } from "@/components/app/ui";
 import SubmitButton from "@/components/app/SubmitButton";
 import ExportClientButton from "@/components/app/ExportClientButton";
 import { DeleteClientForm, RestoreClientForm } from "./ClientLifecycleForms";
@@ -16,7 +16,7 @@ export const metadata = { title: "Clients — Sokndall" };
 const plural = (n, one, many) => `${n} ${n === 1 ? one : many}`;
 
 function Count({ value, tone }) {
-  return <span className={`tabular-nums ${value ? tone : "text-ink-300"}`}>{value}</span>;
+  return <span className={`tabular-nums ${value ? tone : "text-ink-500/50"}`}>{value}</span>;
 }
 
 // Billing Co (alcance §4.4): the work of every client this person can reach,
@@ -97,24 +97,17 @@ export default async function ClientsPage({ searchParams }) {
         </p>
       )}
 
-      <div className="grid gap-4 sm:grid-cols-4">
-        {[
-          ["Follow-ups this week", queue.length, "text-brand-700"],
-          ["Stalled 30+ days", stalled.length, "text-status-expiring"],
-          ["Expiring in 30 days", [...byClient.expiring.values()].reduce((a, b) => a + b, 0), "text-status-expiring"],
-          ["Expired", [...byClient.expired.values()].reduce((a, b) => a + b, 0), "text-status-expired"],
-        ].map(([label, value, tone]) => (
-          <div key={label} className="rounded-xl border border-ink-200 bg-white px-5 py-4 shadow-sm">
-            <div className="text-sm text-ink-500">{label}</div>
-            <div className={`mt-1 text-3xl font-semibold tabular-nums ${value ? tone : "text-ink-900"}`}>{value}</div>
-          </div>
-        ))}
+      <div className="-mx-4 flex snap-x gap-3 overflow-x-auto px-4 pb-1 sm:mx-0 sm:grid sm:grid-cols-4 sm:gap-4 sm:overflow-visible sm:px-0 [&>*]:w-[70%] [&>*]:shrink-0 [&>*]:snap-start sm:[&>*]:w-auto">
+        <StatCard label="Follow-ups this week" value={queue.length} icon={ICONS.phone} />
+        <StatCard label="Stalled 30+ days" value={stalled.length} icon={ICONS.pause} tone={stalled.length ? "amber" : "green"} />
+        <StatCard label="Expiring in 30 days" value={[...byClient.expiring.values()].reduce((a, b) => a + b, 0)} icon={ICONS.calendar} tone="amber" />
+        <StatCard label="Expired" value={[...byClient.expired.values()].reduce((a, b) => a + b, 0)} icon={ICONS.alert} tone="red" />
       </div>
 
       <Card className="overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
-            <thead className="border-b border-ink-100 bg-ink-50 text-xs uppercase tracking-wide text-ink-500">
+            <thead className="border-b border-ink-100 text-xs font-medium text-ink-700">
               <tr>
                 <th className="px-5 py-3 font-medium">Client</th>
                 <th className="px-5 py-3 text-right font-medium">Providers</th>

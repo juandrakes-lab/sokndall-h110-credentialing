@@ -14,6 +14,7 @@ import {
   STATUS_FILL,
   SegmentBar,
   StatCard,
+  StatRow,
   buttonClass,
 } from "@/components/app/ui";
 import LimitNotice from "@/components/app/LimitNotice";
@@ -101,7 +102,7 @@ export default async function ProvidersPage() {
       />
 
       {providers.length > 0 && (
-        <div className="grid gap-4 sm:grid-cols-3">
+        <StatRow>
           <StatCard
             label="On your plan"
             value={usage.count}
@@ -127,7 +128,7 @@ export default async function ProvidersPage() {
             tone={toReview ? "amber" : "green"}
             hint={toReview ? "Differences with the NPI Registry." : "Everything matches the NPI Registry."}
           />
-        </div>
+        </StatRow>
       )}
 
       {writable && atLimit && <LimitNotice org={org} />}

@@ -10,7 +10,7 @@ export const metadata = {
 // plan but Billing Co (alcance §4.3).
 export default function Forbidden() {
   return (
-    <main className="flex min-h-screen items-center justify-center bg-ink-50 px-5">
+    <main className="flex min-h-screen items-center justify-center app-ground app-type px-5">
       <div className="max-w-md text-center">
         <p className="text-lg font-semibold tracking-tight text-brand-700">Sokndall</p>
         <h1 className="mt-6 text-xl font-semibold text-ink-900">This isn&apos;t part of your plan</h1>

@@ -18,7 +18,7 @@ export const metadata = {
 
 function NoClients({ email }) {
   return (
-    <main className="flex min-h-screen items-center justify-center bg-ink-50 px-5">
+    <main className="flex min-h-screen items-center justify-center app-ground app-type px-5">
       <div className="max-w-md text-center">
         <p className="text-lg font-semibold tracking-tight text-brand-700">Sokndall</p>
         <h1 className="mt-6 text-xl font-semibold text-ink-900">No clients to work on right now</h1>

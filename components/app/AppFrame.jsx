@@ -148,7 +148,7 @@ function UserMenu({ folded, displayName, email, trial, signOut, align = "up" }) 
             <Icon d={ICONS.settings} className="h-4 w-4 text-ink-700" /> Settings
           </Link>
           <form action={signOut}>
-            <SubmitButton className="w-full justify-start gap-2.5 rounded-xl px-3 py-2 text-left text-sm font-medium text-ink-900 hover:bg-ink-50">
+            <SubmitButton className="w-full !justify-start gap-2.5 rounded-xl px-3 py-2 text-left text-sm font-medium text-ink-900 hover:bg-ink-50">
               <Icon d={ICONS.logout} className="h-4 w-4 text-ink-700" /> Sign out
             </SubmitButton>
           </form>
@@ -354,7 +354,7 @@ export default function AppFrame({
                   <p className="px-3 text-sm font-semibold text-ink-900">{displayName || email}</p>
                   <p className="px-3 text-xs text-ink-500">{trial || email}</p>
                   <form action={signOut} className="mt-2">
-                    <SubmitButton className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left text-[0.9375rem] font-medium text-ink-900">
+                    <SubmitButton className="flex w-full !justify-start items-center gap-3 rounded-xl px-3 py-3 text-left text-[0.9375rem] font-medium text-ink-900">
                       <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-ink-100 text-ink-700">
                         <Icon d={ICONS.logout} className="h-[18px] w-[18px]" />
                       </span>
