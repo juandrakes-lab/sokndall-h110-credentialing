@@ -14,6 +14,7 @@ import {
 } from "@/lib/enrollments";
 import { Badge, Card, ICONS, Icon, buttonClass } from "@/components/app/ui";
 import Disclosure from "@/components/app/Disclosure";
+import ScrollLock from "@/components/app/ScrollLock";
 import DocumentList from "@/components/app/DocumentList";
 import DocumentUploader from "@/components/app/DocumentUploader";
 import { checklistFor } from "@/lib/checklist";
@@ -79,13 +80,14 @@ export default async function EnrollmentPanel({ providerId, payerId, closeHref }
 
   return (
     <div className="fixed inset-0 z-40 flex justify-end">
-      <Link href={closeHref} scroll={false} aria-label="Close" className="absolute inset-0 bg-ink-900/20" />
+      <ScrollLock />
+      <Link href={closeHref} scroll={false} aria-label="Close" className="absolute inset-0 bg-ink-900/15" />
       <aside
         role="dialog"
         aria-label={`${provider.first_name} ${provider.last_name} — ${payer.name}`}
-        className="relative flex h-full w-full max-w-2xl flex-col overflow-y-auto bg-canvas shadow-2xl"
+        className="glass-panel relative flex h-full w-full max-w-2xl flex-col overflow-y-auto overscroll-contain"
       >
-        <header className="sticky top-0 z-10 flex items-start justify-between gap-4 border-b border-ink-900/[0.06] bg-canvas/90 px-6 py-4 backdrop-blur">
+        <header className="sticky top-0 z-10 flex items-start justify-between gap-4 border-b border-white/60 bg-white/40 px-6 py-4 backdrop-blur-xl">
           <div className="min-w-0">
             <p className="text-sm text-ink-500">
               {payer.name} · {PAYER_TYPE_LABELS[payer.payer_type]}

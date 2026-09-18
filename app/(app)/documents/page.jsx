@@ -68,7 +68,7 @@ export default async function DocumentsPage({ searchParams }) {
         />
       </StatRow>
 
-      <Disclosure label="Upload a document" title="Upload a document" icon={ICONS.upload} variant="primary" className="self-start">
+      <Disclosure label="Upload a document" title="Upload a document" icon={ICONS.upload} variant="primary" className="self-start" defaultOpen={sp.upload === "1"}>
         <DocumentUploader providers={providers ?? []} compact />
       </Disclosure>
 

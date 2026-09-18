@@ -60,7 +60,7 @@ export default async function EnrollmentsPage({ searchParams }) {
 
   if (!providers?.length || !payers.length) {
     return (
-      <div>
+      <div className="flex flex-col gap-8">
         {header}
         <Card>
           {!providers?.length ? (

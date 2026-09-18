@@ -79,6 +79,7 @@ export default async function AppLayout({ children }) {
         email={user.email}
         trial={access.state === "trial" ? access.message : null}
         signOut={signOut}
+        owner={role === "owner"}
         banner={
           banner && (
             <div

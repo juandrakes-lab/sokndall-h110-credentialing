@@ -44,8 +44,8 @@ export default async function SettingsPage({ searchParams }) {
     { key: "practice", label: "Practice" },
     ...(owner ? [{ key: "team", label: "Team" }] : []),
     ...(owner ? [{ key: "billing", label: "Plan & billing" }] : []),
-    { key: "alerts", label: "Email alerts" },
-    { key: "you", label: "You & account" },
+    { key: "alerts", label: "Alerts & rules" },
+    { key: "you", label: "Your profile" },
   ];
   const wanted = sp.plan_change || sp.resubscribed === "1" ? "billing" : sp.tab;
   const tab = TABS.some((t) => t.key === wanted) ? wanted : "practice";
@@ -78,7 +78,7 @@ export default async function SettingsPage({ searchParams }) {
   const plan = PLANS[org.plan];
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-8">
       <PageHeader title="Settings" description="Your practice, your team, your plan and what Sokndall emails you." />
 
       <Tabs tabs={TABS.map((t) => ({ ...t, href: t.key === "practice" ? "/settings" : `/settings?tab=${t.key}` }))} active={tab} Link={Link} />
@@ -151,9 +151,28 @@ export default async function SettingsPage({ searchParams }) {
             </StatRow>
           </Section>
 
+          <Section title="Company name" description="The business this account belongs to — on invoices and on every email Sokndall sends.">
+            <Card>
+              <div className="px-5 py-6">
+                <OrganizationForm action={updateOrganization} org={org} canEdit={owner} only="name" />
+              </div>
+            </Card>
+          </Section>
+
           <Section title="Plan & billing" description="Change plan, update the card or cancel. Invoices live in the Polar portal.">
             <BillingCard org={org} providersUsed={used} requestedPlan={sp.plan_change} resubscribed={sp.resubscribed === "1"} />
           </Section>
+
+          {owner && (
+            <Section title="Delete account" description="Closes the subscription and erases everything. There is no undo.">
+              <Card className="ring-status-expired/25">
+                <CardHeader title="Delete account" icon={ICONS.alert} divider={false} />
+                <div className="px-5 pb-6">
+                  <DeleteAccountForm action={deleteAccount} orgName={org.name} />
+                </div>
+              </Card>
+            </Section>
+          )}
         </div>
       )}
 
@@ -176,6 +195,14 @@ export default async function SettingsPage({ searchParams }) {
                     </Link>
                   </div>
                 )}
+              </div>
+            </Card>
+          </Section>
+
+          <Section title="CAQH re-attestation" description="How often a provider's CAQH attestation comes due. Due dates on every provider follow this.">
+            <Card>
+              <div className="px-5 py-6">
+                <OrganizationForm action={updateOrganization} org={org} canEdit={owner} only="caqh" />
               </div>
             </Card>
           </Section>
@@ -225,24 +252,6 @@ export default async function SettingsPage({ searchParams }) {
             </Card>
           </Section>
 
-          <Section title="Account" description="The account name on invoices and emails.">
-            <Card>
-              <div className="px-5 py-6">
-                <OrganizationForm action={updateOrganization} org={org} canEdit={owner} />
-              </div>
-            </Card>
-          </Section>
-
-          {owner && (
-            <Section title="Delete account" description="Closes the subscription and erases everything. There is no undo.">
-              <Card className="ring-status-expired/25">
-                <CardHeader title="Delete account" icon={ICONS.alert} divider={false} />
-                <div className="px-5 pb-6">
-                  <DeleteAccountForm action={deleteAccount} orgName={org.name} />
-                </div>
-              </Card>
-            </Section>
-          )}
         </div>
       )}
     </div>

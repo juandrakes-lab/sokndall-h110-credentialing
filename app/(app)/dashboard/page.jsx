@@ -15,7 +15,9 @@ import { loadFollowUps } from "@/lib/follow-ups";
 import { REVALIDATION, loadExpirations } from "@/lib/expirations";
 import {
   Avatar,
+  Badge,
   Card,
+  CardHeader,
   EmptyState,
   ICONS,
   Icon,
@@ -26,6 +28,7 @@ import {
   SectionPill,
   SegmentBar,
   StatCard,
+  StatRow,
   buttonClass,
 } from "@/components/app/ui";
 import ExpiryBadge from "@/components/app/ExpiryBadge";
@@ -131,7 +134,7 @@ export default async function DashboardPage({ searchParams }) {
 
   if ((providers ?? []).length === 0) {
     return (
-      <div>
+      <div className="flex flex-col gap-8">
         <PageHeader title="Dashboard" description="What expires, and what to chase this week." />
         <Card>
           <EmptyState
@@ -169,24 +172,28 @@ export default async function DashboardPage({ searchParams }) {
   const infoRequested = (pipeline ?? []).filter((e) => e.status === "info_requested");
   const attention = urgentExpirations.length + overdue.length + infoRequested.length;
 
+  // Start here: the expirations inside two weeks, then the late follow-ups,
+  // most urgent first — five at most.
   const nextUp = [
-    ...urgentExpirations.slice(0, 3).map((i) => ({
+    ...urgentExpirations.map((i) => ({
       key: i.id,
       title: i.who,
+      photo: i.provider?.photo_url,
       detail: i.kind === "Payer revalidation" ? `Payer revalidation · ${i.detail}` : i.kind,
       badge: daysUntil(i.date) < 0 ? "Expired" : daysUntil(i.date) === 0 ? "Expires today" : `${daysUntil(i.date)} days left`,
-      tone: "red",
+      tone: daysUntil(i.date) <= 7 ? "red" : "amber",
       href: i.href,
     })),
-    ...overdue.slice(0, 3).map((e) => ({
+    ...overdue.map((e) => ({
       key: e.id,
       title: `${e.provider.first_name} ${e.provider.last_name}`,
-      detail: `${e.payer.name} · follow-up due ${formatDate(e.next_follow_up_date)}`,
-      badge: "Chase",
+      photo: e.provider.photo_url,
+      detail: `Follow up with ${e.payer.name}`,
+      badge: daysUntil(e.next_follow_up_date) === 0 ? "Call today" : `${-daysUntil(e.next_follow_up_date)} days late`,
       tone: "amber",
       href: hrefWith(params, "open", cellKey(e.provider_id, e.payer_id)),
     })),
-  ].slice(0, 3);
+  ].slice(0, 5);
 
   // Credential health: a provider is current when they have credentials on file
   // and none of them is expired or inside 30 days.
@@ -200,6 +207,8 @@ export default async function DashboardPage({ searchParams }) {
   }
   const providerRows = [...byProvider.values()];
   const current = providerRows.filter((p) => p.total > 0 && (p.worst === null || p.worst > 30)).length;
+  const withExpired = providerRows.filter((p) => p.worst !== null && p.worst < 0).length;
+  const dueSoon = providerRows.filter((p) => p.worst !== null && p.worst >= 0 && p.worst <= 30).length;
   const noFile = providerRows.filter((p) => p.total === 0).length;
   const health = providerRows.length ? current / providerRows.length : 0;
 
@@ -232,7 +241,7 @@ export default async function DashboardPage({ searchParams }) {
   const where = clients.length > 1 ? client?.name : practice.legal_name;
 
   return (
-    <div className="flex flex-col gap-10">
+    <div className="flex flex-col gap-8">
       <Suspense fallback={<PageHeader title="Dashboard" description={`${today} · ${where}`} />}>
         <DashboardHeader
           title="Dashboard"
@@ -243,90 +252,93 @@ export default async function DashboardPage({ searchParams }) {
         />
       </Suspense>
 
-      {/* What needs a person, and where to start. */}
-      <div className="grid gap-4 lg:grid-cols-[1.65fr_1fr]">
-        <section className="relative overflow-hidden rounded-2xl bg-brand-700 p-6 text-white shadow-[0_1px_2px_rgba(14,42,46,0.10),0_16px_40px_-16px_rgba(14,42,46,0.55)] sm:p-7">
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute -right-16 -top-24 h-72 w-72 rounded-full"
-            style={{ background: "radial-gradient(closest-side, rgba(242,193,78,0.30), transparent)" }}
-          />
-          <p className="text-sm font-medium text-white/70">This week</p>
-          <div className="mt-2 flex flex-wrap items-baseline gap-x-3 gap-y-1">
-            <span className="text-[2.75rem] font-semibold leading-none tracking-[-0.03em] tabular-nums">{attention}</span>
-            <h2 className="text-lg font-medium text-white/90">{attention === 1 ? "thing needs you" : "things need you"}</h2>
-          </div>
-          <div className="mt-5 flex flex-wrap gap-2">
-            {[
-              [`${urgentExpirations.length} expiring within ${URGENT_DAYS} days`, ICONS.calendar],
-              [`${overdue.length} follow-up${overdue.length === 1 ? "" : "s"} overdue`, ICONS.phone],
-              [`${infoRequested.length} payer request${infoRequested.length === 1 ? "" : "s"}`, ICONS.alert],
-            ].map(([label, icon]) => (
-              <span key={label} className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1.5 text-[0.8125rem] font-medium text-white ring-1 ring-inset ring-white/15">
-                <Icon d={icon} className="h-3.5 w-3.5 text-white/70" />
-                {label}
-              </span>
-            ))}
-          </div>
+      {/* This week at a glance: four numbers, each opening its list. */}
+      <StatRow cols={4}>
+        <StatCard accent label="Need you this week" value={attention} icon={ICONS.pulse} hint="Expiring soon, overdue and payer requests." />
+        <StatCard
+          label={`Expiring within ${URGENT_DAYS} days`}
+          value={urgentExpirations.length}
+          icon={ICONS.calendar}
+          tone={urgentExpirations.length ? "red" : "green"}
+          hint="Credentials and payer revalidations."
+          href="#expirations"
+          Link={Link}
+        />
+        <StatCard
+          label="Follow-ups overdue"
+          value={overdue.length}
+          icon={ICONS.phone}
+          tone={overdue.length ? "amber" : "green"}
+          hint={`${queue.length} due this week in all.`}
+          href="/follow-ups"
+          Link={Link}
+        />
+        <StatCard
+          label="Payer requests"
+          value={infoRequested.length}
+          icon={ICONS.alert}
+          tone={infoRequested.length ? "amber" : "green"}
+          hint="Applications waiting on you."
+          href="/enrollments"
+          Link={Link}
+        />
+      </StatRow>
 
-          <div className="mt-6">
-            {nextUp.length === 0 ? (
-              <p className="text-[0.9375rem] text-white/80">Nothing is overdue and nothing expires in the next two weeks. Good place to be.</p>
-            ) : (
-              <>
-                <p className="mb-2 text-sm font-medium text-white/70">Start here</p>
-                <ul className="flex flex-col gap-1.5">
-                  {nextUp.map((item) => (
-                    <li key={item.key}>
-                      <Link
-                        href={item.href}
-                        scroll={false}
-                        className="flex items-center gap-3 rounded-xl bg-white/[0.07] px-3.5 py-2.5 ring-1 ring-inset ring-white/10 transition hover:bg-white/[0.14]"
-                      >
-                        <span className={`h-2 w-2 shrink-0 rounded-full ${item.tone === "red" ? "bg-status-expired" : "bg-accent-400"}`} aria-hidden="true" />
-                        <span className="min-w-0 flex-1">
-                          <span className="block truncate text-sm font-semibold">{item.title}</span>
-                          <span className="block truncate text-xs text-white/70">{item.detail}</span>
-                        </span>
-                        <span className="shrink-0 whitespace-nowrap rounded-full bg-white/15 px-2 py-0.5 text-[0.6875rem] font-semibold">{item.badge}</span>
-                        <Icon d={ICONS.arrowRight} className="h-4 w-4 shrink-0 text-white/60" />
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </>
-            )}
-          </div>
-        </section>
+      {/* Where to start, and how the roster stands. */}
+      <div className="grid gap-6 lg:grid-cols-[1.6fr_1fr]">
+        <Card className="overflow-hidden">
+          <CardHeader icon={ICONS.arrowRight} title="Start here" description="The most urgent items first. Open one to act on it." />
+          {nextUp.length === 0 ? (
+            <p className="px-5 py-6 text-sm text-ink-500">Nothing is overdue and nothing expires in the next two weeks.</p>
+          ) : (
+            <ul className="divide-y divide-ink-100">
+              {nextUp.map((item) => (
+                <li key={item.key}>
+                  <Link href={item.href} scroll={false} className="flex items-center gap-3 px-5 py-3 transition-colors hover:bg-ink-50/70">
+                    <Avatar name={item.title} photo={item.photo} />
+                    <span className="min-w-0 flex-1">
+                      <span className="block truncate font-semibold text-ink-900">{item.title}</span>
+                      <span className="block truncate text-xs text-ink-500">{item.detail}</span>
+                    </span>
+                    <Badge tone={item.tone}>{item.badge}</Badge>
+                    <Icon d={ICONS.arrowRight} className="h-4 w-4 shrink-0 text-ink-500" />
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          )}
+        </Card>
 
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1">
-          <Card className="flex items-center gap-5 px-5 py-5">
-            <Ring value={health} tone={health > 0.8 ? "green" : health > 0.5 ? "amber" : "red"}>
-              <span className="text-lg font-semibold tabular-nums text-ink-900">{Math.round(health * 100)}%</span>
-            </Ring>
-            <div className="min-w-0">
-              <h3 className="text-[0.9375rem] font-semibold text-ink-900">Credentials current</h3>
-              <p className="mt-1 text-sm text-ink-700">
-                {current} of {providerRows.length} providers have nothing expired or due within 30 days.
+        <Card className="flex flex-col">
+          <CardHeader icon={ICONS.shield} title="Credentials current" description="Providers with nothing expired or due within 30 days." />
+          <div className="flex flex-1 flex-col gap-5 px-5 py-5">
+            <div className="flex items-center gap-4">
+              <Ring value={health} size={84} tone={health > 0.8 ? "green" : health > 0.5 ? "amber" : "red"}>
+                <span className="text-lg font-semibold tabular-nums text-ink-900">{Math.round(health * 100)}%</span>
+              </Ring>
+              <p className="text-sm text-ink-700">
+                <span className="font-semibold text-ink-900">{current}</span> of {providerRows.length} providers are fully current.
               </p>
-              {noFile > 0 && (
-                <Link href="/providers" className="mt-1 inline-block text-xs font-medium text-brand-600 hover:underline">
-                  {noFile} provider{noFile === 1 ? " has" : "s have"} no credentials on file →
-                </Link>
-              )}
             </div>
-          </Card>
-
-          <StatCard
-            label="With a payer right now"
-            value={pipelineCounts.submitted + pipelineCounts.in_review + pipelineCounts.info_requested}
-            suffix={`of ${pipelineTotal} cells`}
-            icon={ICONS.enrollments}
-            hint={`${pipelineCounts.approved} approved · ${stalled.length} with no movement in 30+ days`}
-            href="/enrollments"
-            Link={Link}
-          />
-        </div>
+            <ul className="flex flex-col gap-2.5 text-sm">
+              {[
+                ["bg-red-600", "Something expired", withExpired],
+                ["bg-amber-500", "Due within 30 days", dueSoon],
+                ["bg-status-active", "Current", current],
+                ["bg-slate-300", "No credentials on file", noFile],
+              ].map(([dot, label, n]) => (
+                <li key={label} className="flex items-center gap-2.5">
+                  <span className={`h-2 w-2 shrink-0 rounded-full ${dot}`} aria-hidden="true" />
+                  <span className="flex-1 text-ink-700">{label}</span>
+                  <span className="font-semibold tabular-nums text-ink-900">{n}</span>
+                </li>
+              ))}
+            </ul>
+            <Link href="/providers" className={`${buttonClass("link")} mt-auto self-start`}>
+              See every provider
+            </Link>
+          </div>
+        </Card>
       </div>
 
       {/* Where every application stands. */}
@@ -356,7 +368,7 @@ export default async function DashboardPage({ searchParams }) {
       </section>
 
       {/* Expirations. */}
-      <section className="flex flex-col gap-4">
+      <section id="expirations" className="flex scroll-mt-20 flex-col gap-4">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <SectionPill icon={ICONS.calendar} count={visibleCount}>
             Expirations

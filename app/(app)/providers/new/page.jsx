@@ -12,7 +12,7 @@ export default async function NewProviderPage() {
   const atLimit = used >= org.provider_limit;
 
   return (
-    <div className="mx-auto flex max-w-3xl flex-col">
+    <div className="mx-auto flex max-w-3xl flex-col gap-8">
       <PageHeader
         eyebrow={
           <Link href="/providers" className="hover:text-ink-900">

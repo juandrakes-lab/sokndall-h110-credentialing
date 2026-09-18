@@ -20,7 +20,7 @@ export function buttonClass(variant = "primary", size = "md") {
 
 export function PageHeader({ title, description, actions, eyebrow }) {
   return (
-    <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+    <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
       <div className="min-w-0">
         {eyebrow && <div className="mb-2 text-sm font-medium text-ink-700">{eyebrow}</div>}
         <h1 className="text-[2rem] font-normal leading-[1.1] tracking-[-0.03em] text-ink-900 sm:text-[2.375rem]">{title}</h1>
@@ -173,7 +173,21 @@ export function SectionPill({ icon, tone = "brand", count, children, as: Tag = "
 
 // A headline number with its label: the dashboards' KPI. `href` makes the whole
 // tile a link; `meter` (0–1) draws a thin progress bar under the figure.
-export function StatCard({ label, value, suffix, hint, icon, tone = "brand", href, meter, Link }) {
+export function StatCard({ label, value, suffix, hint, icon, tone = "brand", href, meter, Link, accent = false }) {
+  if (accent) {
+    // The one filled tile on a page: the number that frames the rest.
+    return (
+      <div className="relative overflow-hidden rounded-2xl bg-brand-700 px-5 py-4 text-white shadow-[0_1px_2px_rgba(14,42,46,0.10),0_10px_30px_-12px_rgba(14,42,46,0.55)]">
+        <div aria-hidden="true" className="pointer-events-none absolute -right-10 -top-12 h-36 w-36 rounded-full" style={{ background: "radial-gradient(closest-side, rgba(242,193,78,0.35), transparent)" }} />
+        <div className="relative flex items-center justify-between gap-3">
+          <span className="text-sm font-medium text-white/85">{label}</span>
+          {icon && <Icon d={icon} className="h-[22px] w-[22px] text-accent-400" />}
+        </div>
+        <div className="relative mt-3 text-[2rem] font-semibold leading-none tracking-[-0.02em] tabular-nums">{value}</div>
+        {hint && <p className="relative mt-2 text-xs text-white/70">{hint}</p>}
+      </div>
+    );
+  }
   const body = (
     <>
       <div className="flex items-center justify-between gap-3">
@@ -201,9 +215,10 @@ export function StatCard({ label, value, suffix, hint, icon, tone = "brand", hre
 
 // A row of StatCards: three columns on a laptop, a swipeable strip on a phone
 // (stacked, three tiles would push the page's real content off the screen).
-export function StatRow({ children }) {
+export function StatRow({ children, cols = 3 }) {
+  const grid = cols === 4 ? "sm:grid-cols-2 lg:grid-cols-4" : "sm:grid-cols-3";
   return (
-    <div className="-mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-1 sm:mx-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:overflow-visible sm:px-0 sm:pb-0 [&>*]:w-[78%] [&>*]:shrink-0 [&>*]:snap-start sm:[&>*]:w-auto">
+    <div className={`-mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-1 sm:mx-0 sm:grid sm:gap-4 sm:overflow-visible sm:px-0 sm:pb-0 [&>*]:w-[78%] [&>*]:shrink-0 [&>*]:snap-start sm:[&>*]:w-auto ${grid}`}>
       {children}
     </div>
   );
@@ -318,7 +333,7 @@ export function PersonPhoto({ name, photo, size = "md" }) {
 // the right one and a tab can be bookmarked).
 export function Tabs({ tabs, active, Link }) {
   return (
-    <nav className="-mx-1 mb-7 flex gap-1 overflow-x-auto px-1 pb-1" aria-label="Sections">
+    <nav className="-mx-1 flex gap-1 overflow-x-auto px-1 pb-1" aria-label="Sections">
       {tabs.map((t) => {
         const on = t.key === active;
         return (

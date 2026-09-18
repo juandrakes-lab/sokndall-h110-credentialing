@@ -23,25 +23,29 @@ export async function updateOrganization(_prev, formData) {
   const { supabase, org, role } = await getAppContext();
   if (role !== "owner") return { error: "Only the account owner can change these settings." };
 
+  // Each settings form sends only its own field; save what came.
+  const hasName = formData.has("name");
+  const hasInterval = formData.has("caqh_reattestation_interval_days");
   const name = formData.get("name")?.toString().trim();
   const interval = Number(formData.get("caqh_reattestation_interval_days"));
   const fieldErrors = {};
-  if (!name) fieldErrors.name = "Enter a name.";
-  if (!Number.isInteger(interval) || interval < 30 || interval > 365) {
+  if (hasName && !name) fieldErrors.name = "Enter a name.";
+  if (hasInterval && (!Number.isInteger(interval) || interval < 30 || interval > 365)) {
     fieldErrors.caqh_reattestation_interval_days = "Enter a number of days between 30 and 365.";
   }
+  if (!hasName && !hasInterval) return { error: "Nothing to save." };
   if (Object.keys(fieldErrors).length) return { fieldErrors };
 
   // Only these two columns are writable by the customer; plan and limits are
   // not (column privileges in the Fase 1 migration).
-  const { error } = await supabase
-    .from("cred_organizations")
-    .update({ name, caqh_reattestation_interval_days: interval })
-    .eq("id", org.id);
+  const changes = {};
+  if (hasName) changes.name = name;
+  if (hasInterval) changes.caqh_reattestation_interval_days = interval;
+  const { error } = await supabase.from("cred_organizations").update(changes).eq("id", org.id);
   if (error) return { error: `Couldn't save: ${error.message}` };
 
   revalidatePath("/", "layout");
-  return { notice: "Saved. CAQH due dates were recalculated." };
+  return { notice: hasInterval ? "Saved. CAQH due dates were recalculated." : "Saved." };
 }
 
 // The alert ladder (alcance §3.11): days before a deadline when an email goes

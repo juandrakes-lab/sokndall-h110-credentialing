@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState, useTransition } from "react";
 import { switchClient } from "@/lib/client-actions";
 import AppSearch from "@/components/app/AppSearch";
+import ScrollLock from "@/components/app/ScrollLock";
 import SubmitButton from "@/components/app/SubmitButton";
 import { ICONS, Icon, NAV_COOKIE, PersonPhoto } from "@/components/app/ui";
 
@@ -95,7 +96,7 @@ function ClientMenu({ clients, activeId, folded, align = "left" }) {
       </button>
 
       {open && (
-        <div className={`absolute z-40 mt-1 w-64 rounded-2xl bg-white p-1.5 shadow-[0_12px_40px_rgba(14,42,46,0.16)] ring-1 ring-ink-900/10 ${align === "left" ? "left-0" : "right-0"}`}>
+        <div className={`absolute z-40 mt-1 w-64 rounded-2xl glass p-1.5 ${align === "left" ? "left-0" : "right-0"}`}>
           <p className="px-3 py-1.5 text-xs font-medium text-ink-500">Clients</p>
           <ul className="max-h-72 overflow-y-auto">
             {clients.map((c) => (
@@ -124,6 +125,60 @@ function ClientMenu({ clients, activeId, folded, align = "left" }) {
   );
 }
 
+function NewMenu({ owner, multi }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef(null);
+  useEffect(() => {
+    const close = (e) => !ref.current?.contains(e.target) && setOpen(false);
+    document.addEventListener("mousedown", close);
+    return () => document.removeEventListener("mousedown", close);
+  }, []);
+  const items = [
+    { href: "/providers/new", label: "Provider", hint: "Add one by NPI", icon: ICONS.providers },
+    { href: "/documents?upload=1", label: "Document", hint: "Upload a license, W-9, CV…", icon: ICONS.upload },
+    { href: "/import-export/providers", label: "Import providers", hint: "From a CSV spreadsheet", icon: ICONS.importExport },
+    ...(owner ? [{ href: "/settings?tab=team", label: "Teammate", hint: "Invite by email", icon: ICONS.team }] : []),
+    ...(owner && multi ? [{ href: "/clients/new", label: "Client", hint: "A new practice to manage", icon: ICONS.clients }] : []),
+  ];
+  return (
+    <div ref={ref} className="relative">
+      <button type="button" onClick={() => setOpen((v) => !v)} aria-expanded={open} className="inline-flex h-10 items-center gap-2 rounded-xl bg-brand-700 px-4 text-sm font-medium text-white shadow-[0_1px_2px_rgba(14,42,46,0.25)] hover:bg-brand-600">
+        <Icon d={ICONS.plus} className="h-4 w-4" strokeWidth={2.2} />
+        New
+      </button>
+      {open && (
+        <div className="glass absolute right-0 top-full z-40 mt-2 w-64 p-1.5">
+          {items.map((item) => (
+            <Link key={item.href} href={item.href} onClick={() => setOpen(false)} className="flex items-center gap-3 rounded-xl px-3 py-2 hover:bg-white/70">
+              <Icon d={item.icon} className="h-[18px] w-[18px] text-brand-600" />
+              <span className="min-w-0">
+                <span className="block text-sm font-medium text-ink-900">{item.label}</span>
+                <span className="block truncate text-xs text-ink-500">{item.hint}</span>
+              </span>
+            </Link>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// A tool reached from the top bar: an icon, its name on hover.
+function ToolLink({ href, label, icon, pathname }) {
+  const active = isOn(pathname, href);
+  return (
+    <Link
+      href={href}
+      title={label}
+      aria-label={label}
+      aria-current={active ? "page" : undefined}
+      className={`flex h-10 w-10 items-center justify-center rounded-xl transition-colors ${active ? "bg-white text-brand-600 shadow-[0_1px_2px_rgba(14,42,46,0.10)]" : "text-ink-700 hover:bg-white/70 hover:text-ink-900"}`}
+    >
+      <Icon d={icon} className="h-[19px] w-[19px]" />
+    </Link>
+  );
+}
+
 function UserMenu({ folded, displayName, email, photo, trial, signOut, align = "up" }) {
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
@@ -142,7 +197,7 @@ function UserMenu({ folded, displayName, email, photo, trial, signOut, align = "
   return (
     <div ref={ref} className="relative">
       {open && (
-        <div className={`absolute z-40 w-60 rounded-2xl bg-white p-1.5 shadow-[0_12px_40px_rgba(14,42,46,0.16)] ring-1 ring-ink-900/10 ${align === "up" ? "bottom-full mb-2 left-0" : "top-full mt-2 right-0"}`}>
+        <div className={`absolute z-40 w-60 rounded-2xl glass p-1.5 ${align === "up" ? "bottom-full mb-2 left-0" : "top-full mt-2 right-0"}`}>
           <div className="px-3 py-2">
             {displayName && <p className="truncate text-sm font-semibold text-ink-900">{displayName}</p>}
             <p className="truncate text-xs text-ink-500">{email}</p>
@@ -202,6 +257,7 @@ export default function AppFrame({
   email,
   trial,
   signOut,
+  owner = false,
 }) {
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(initialCollapsed);
@@ -242,9 +298,10 @@ export default function AppFrame({
         </button>
       </div>
 
-      {multi && (
+      {/* Folded, the client moves to the top bar — it needs its name to be useful. */}
+      {multi && !folded && (
         <div className="mt-3">
-          <ClientMenu clients={clients} activeId={activeClientId} folded={folded} />
+          <ClientMenu clients={clients} activeId={activeClientId} folded={false} />
         </div>
       )}
 
@@ -252,10 +309,6 @@ export default function AppFrame({
         {!folded && <p className="px-3 pb-1.5 text-xs font-medium text-ink-700">Work</p>}
         {work.map((item) => (
           <NavLink key={item.href} item={item} pathname={pathname} folded={folded} count={item.countKey ? counts[item.countKey] : 0} />
-        ))}
-        {folded ? <div className="mx-auto my-2 h-px w-6 bg-ink-900/10" aria-hidden="true" /> : <p className="px-3 pb-1.5 pt-4 text-xs font-medium text-ink-700">Account</p>}
-        {MANAGE.map((item) => (
-          <NavLink key={item.href} item={item} pathname={pathname} folded={folded} />
         ))}
       </nav>
 
@@ -271,11 +324,11 @@ export default function AppFrame({
       <div className="min-w-0 flex-1 lg:py-3 lg:pl-0 lg:pr-3">
         <main className="min-h-screen bg-canvas lg:min-h-[calc(100vh-1.5rem)] lg:rounded-[1.5rem] lg:shadow-[0_1px_2px_rgba(14,42,46,0.05),0_16px_48px_-12px_rgba(14,42,46,0.16)] lg:ring-1 lg:ring-ink-900/[0.05]">
           {/* Top bar: search on a laptop; on a phone the workspace and a search button. */}
-          <div className="sticky top-0 z-30 flex h-16 items-center gap-3 border-b border-ink-900/[0.06] bg-canvas/85 px-4 backdrop-blur-md sm:px-6 lg:rounded-t-[1.5rem] lg:px-8">
-            <div className="flex min-w-0 flex-1 items-center gap-3 lg:max-w-md">
+          <div className="sticky top-0 z-30 flex h-16 items-center gap-3 border-b border-ink-900/[0.06] bg-canvas/[0.97] px-4 sm:px-6 lg:rounded-t-[1.5rem] lg:px-8">
+            <div className="flex min-w-0 flex-1 items-center gap-3 lg:max-w-2xl">
               <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] bg-brand-700 text-sm font-semibold text-white lg:hidden">S</span>
               <div className="hidden min-w-0 flex-1 lg:block">
-                <AppSearch showClients={multi} />
+                <AppSearch showClients={multi} indexKey={activeClientId ?? "one"} />
               </div>
               <div className="min-w-0 flex-1 lg:hidden">
                 {multi ? (
@@ -296,11 +349,24 @@ export default function AppFrame({
             <div className="lg:hidden">
               <UserMenu folded displayName={displayName} email={email} photo={photo} trial={trial} signOut={signOut} align="down" />
             </div>
+            <div className="ml-auto hidden items-center gap-1.5 lg:flex">
+              {multi && collapsed && (
+                <div className="mr-1 w-56">
+                  <ClientMenu clients={clients} activeId={activeClientId} folded={false} align="right" />
+                </div>
+              )}
+              {MANAGE.map((item) => (
+                <ToolLink key={item.href} href={item.href} label={item.label} icon={item.icon} pathname={pathname} />
+              ))}
+              <div className="ml-1.5">
+                <NewMenu owner={owner} multi={multi} />
+              </div>
+            </div>
           </div>
 
           {banner}
 
-          <div className="mx-auto max-w-6xl px-4 pb-24 pt-7 sm:px-6 lg:px-8 lg:pb-12">{children}</div>
+          <div className={`mx-auto px-4 pb-24 pt-6 sm:px-6 lg:px-8 lg:pb-12 ${collapsed ? "max-w-[88rem]" : "max-w-[76rem]"}`}>{children}</div>
         </main>
       </div>
 
@@ -329,11 +395,12 @@ export default function AppFrame({
 
       {sheet && (
         <div className="fixed inset-0 z-40 lg:hidden">
+          <ScrollLock />
           <button type="button" aria-label="Close" className="absolute inset-0 bg-ink-900/30" onClick={() => setSheet(null)} />
-          <div className={`absolute inset-x-0 ${sheet === "more" ? "bottom-0 rounded-t-3xl" : "top-0 rounded-b-3xl"} bg-white p-4 pb-6 shadow-2xl`}>
+          <div className={`absolute inset-x-0 ${sheet === "more" ? "bottom-0 rounded-t-3xl" : "top-0 rounded-b-3xl"} glass-strong p-4 pb-6`}>
             {sheet === "search" ? (
               <div className="pt-2">
-                <AppSearch autoFocus showClients={multi} onDone={() => setSheet(null)} />
+                <AppSearch autoFocus showClients={multi} indexKey={activeClientId ?? "one"} onDone={() => setSheet(null)} />
                 <button type="button" onClick={() => setSheet(null)} className="mt-3 w-full rounded-xl py-2 text-sm font-medium text-ink-700">
                   Cancel
                 </button>

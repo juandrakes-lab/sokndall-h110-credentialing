@@ -28,7 +28,7 @@ export default async function EmailPreviewPage({ params }) {
 
   if (role !== "owner") {
     return (
-      <div>
+      <div className="flex flex-col gap-6">
         <PageHeader eyebrow={back} title="Email preview" />
         <p className="text-sm text-ink-500">Only the account owner can preview emails.</p>
       </div>

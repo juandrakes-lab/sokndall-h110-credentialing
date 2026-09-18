@@ -36,7 +36,7 @@ export default function DashboardHeader({ title, description, exportHref, select
   }
 
   return (
-    <div>
+    <div className="flex flex-col gap-4">
       <PageHeader
         title={title}
         description={description}
@@ -72,7 +72,7 @@ export default function DashboardHeader({ title, description, exportHref, select
       />
 
       {open && (
-        <div id="dashboard-filters" className="-mt-2 flex flex-col flex-wrap gap-3 rounded-2xl bg-ink-50 p-3 ring-1 ring-inset ring-ink-100 sm:flex-row sm:items-center">
+        <div id="dashboard-filters" className="flex flex-col flex-wrap gap-3 rounded-2xl bg-ink-50 p-3 ring-1 ring-inset ring-ink-100 sm:flex-row sm:items-center">
           {selects.map((s) => (
             <div key={s.key}>
               <label className="sr-only" htmlFor={`filter-${s.key}`}>
