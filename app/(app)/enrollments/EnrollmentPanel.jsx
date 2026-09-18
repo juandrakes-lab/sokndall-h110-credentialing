@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { canReach, getAppContext } from "@/lib/org";
-import { formatDate, todayISO } from "@/lib/credentials";
+import { daysUntil, formatDate, todayISO } from "@/lib/credentials";
 import {
   CHANNEL_LABELS,
   ENROLLMENT_STATUSES,
@@ -12,7 +12,8 @@ import {
   resolvePayer,
   stalledDays,
 } from "@/lib/enrollments";
-import { Badge } from "@/components/app/ui";
+import { Badge, Card, ICONS, Icon, buttonClass } from "@/components/app/ui";
+import Disclosure from "@/components/app/Disclosure";
 import DocumentList from "@/components/app/DocumentList";
 import DocumentUploader from "@/components/app/DocumentUploader";
 import { checklistFor } from "@/lib/checklist";
@@ -82,14 +83,14 @@ export default async function EnrollmentPanel({ providerId, payerId, closeHref }
       <aside
         role="dialog"
         aria-label={`${provider.first_name} ${provider.last_name} — ${payer.name}`}
-        className="relative flex h-full w-full max-w-2xl flex-col overflow-y-auto bg-white shadow-2xl"
+        className="relative flex h-full w-full max-w-2xl flex-col overflow-y-auto bg-canvas shadow-2xl"
       >
-        <header className="sticky top-0 z-10 flex items-start justify-between gap-4 border-b border-ink-100 bg-white px-6 py-4">
+        <header className="sticky top-0 z-10 flex items-start justify-between gap-4 border-b border-ink-900/[0.06] bg-canvas/90 px-6 py-4 backdrop-blur">
           <div className="min-w-0">
             <p className="text-sm text-ink-500">
               {payer.name} · {PAYER_TYPE_LABELS[payer.payer_type]}
             </p>
-            <h2 className="text-lg font-semibold text-ink-900">
+            <h2 className="text-xl font-semibold tracking-[-0.01em] text-ink-900">
               {provider.first_name} {provider.last_name}
             </h2>
             <div className="mt-1 flex flex-wrap items-center gap-2">
@@ -130,7 +131,7 @@ export default async function EnrollmentPanel({ providerId, payerId, closeHref }
               ))}
               </fieldset>
             </form>
-            <p className="mt-2 text-xs text-ink-500">Every change is saved to the history below with your name and the time.</p>
+            <p className="mt-2.5 text-xs text-ink-500">Every change is saved to the history below with your name and the time.</p>
             {missing.length > 0 && ["not_started", "denied"].includes(status) && (
               <div className="mt-4 rounded-lg border border-status-expiring/30 bg-status-expiring-bg px-4 py-3 text-sm">
                 <p className="font-medium text-ink-900">Before you submit, this provider is missing:</p>
@@ -142,16 +143,38 @@ export default async function EnrollmentPanel({ providerId, payerId, closeHref }
             )}
           </section>
 
-          {!readOnly && (
-          <section className="rounded-xl border border-ink-200 bg-ink-50/60 p-5">
-            <h3 className="mb-4 text-sm font-semibold text-ink-900">Log a follow-up</h3>
-            <FollowUpForm key={`${providerId}.${payerId}`} action={logFollowUp.bind(null, providerId, payerId)} today={todayISO()} proposed={proposedFollowUp()} />
-          </section>
+          {!readOnly && enrollment && (
+            <Disclosure
+              label="Log a follow-up"
+              title="Log a follow-up"
+              icon={ICONS.phone}
+              variant="primary"
+              className="self-start"
+              defaultOpen={Boolean(enrollment.next_follow_up_date) && daysUntil(enrollment.next_follow_up_date) <= 0}
+            >
+              <FollowUpForm key={`${providerId}.${payerId}`} action={logFollowUp.bind(null, providerId, payerId)} today={todayISO()} proposed={proposedFollowUp()} />
+            </Disclosure>
           )}
 
           <section>
-            <h3 className="mb-4 text-sm font-semibold text-ink-900">Application details</h3>
+            <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+              <h3 className="text-sm font-semibold text-ink-900">Application details</h3>
+            </div>
+            <dl className="mb-3 grid grid-cols-2 gap-x-6 gap-y-3 rounded-2xl bg-ink-50/80 px-4 py-3.5 text-sm ring-1 ring-inset ring-ink-100 sm:grid-cols-4">
+              {[
+                ["Submitted", enrollment?.submitted_date ? formatDate(enrollment.submitted_date) : "—"],
+                ["Effective", enrollment?.effective_date ? formatDate(enrollment.effective_date) : "—"],
+                ["Reference", enrollment?.external_ref || "—"],
+                ["Owner", enrollment?.assigned_user_id ? nameOf(enrollment.assigned_user_id) : owner?.name ?? user.email],
+              ].map(([label, value]) => (
+                <div key={label} className="min-w-0">
+                  <dt className="text-xs text-ink-700">{label}</dt>
+                  <dd className="truncate font-medium text-ink-900">{value}</dd>
+                </div>
+              ))}
+            </dl>
             <fieldset disabled={readOnly} className="contents">
+            <Disclosure label={readOnly ? "See the fields" : "Edit the details"} title="Application details" icon={ICONS.file} className="self-start">
             <DetailsForm
               key={`${providerId}.${payerId}:${status}:${(comms ?? []).length}`}
               action={updateEnrollmentDetails.bind(null, providerId, payerId)}
@@ -161,6 +184,7 @@ export default async function EnrollmentPanel({ providerId, payerId, closeHref }
               payerMonths={payer.revalidation_months}
               status={status}
             />
+            </Disclosure>
             </fieldset>
             {enrollment?.revalidation_due_date && (
               <p className="mt-3 text-sm text-ink-700">
@@ -177,7 +201,9 @@ export default async function EnrollmentPanel({ providerId, payerId, closeHref }
             </div>
             {readOnly ? null : enrollment ? (
               <div className="mt-3">
-                <DocumentUploader key={enrollment.id} providerId={providerId} enrollmentId={enrollment.id} defaultCategory="contract" />
+                <Disclosure label="Attach a document" title="Attach a document" icon={ICONS.upload} className="self-start">
+                  <DocumentUploader key={enrollment.id} providerId={providerId} enrollmentId={enrollment.id} defaultCategory="contract" />
+                </Disclosure>
               </div>
             ) : (
               <p className="text-xs text-ink-500">Set a status first, then attach documents here.</p>

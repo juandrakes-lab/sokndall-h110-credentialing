@@ -1,4 +1,4 @@
-import { Card, CardHeader, buttonClass } from "@/components/app/ui";
+import { Card, CardHeader, ICONS, buttonClass } from "@/components/app/ui";
 import SubmitButton from "@/components/app/SubmitButton";
 
 function timeAgo(iso) {
@@ -14,6 +14,7 @@ export default function DataCheck({ issues, checkedAt, recheckAction, subject })
   return (
     <Card>
       <CardHeader
+        icon={ICONS.pulse}
         title="Data check"
         description={
           checkedAt
@@ -48,7 +49,7 @@ export default function DataCheck({ issues, checkedAt, recheckAction, subject })
                 <p className={`text-sm font-medium ${issue.severity === "error" ? "text-status-expired" : "text-ink-900"}`}>
                   {issue.title}
                 </p>
-                <p className="text-sm text-ink-500">{issue.detail}</p>
+                <p className="text-sm text-ink-700">{issue.detail}</p>
               </div>
             </li>
           ))}

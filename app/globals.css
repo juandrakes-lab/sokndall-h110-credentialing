@@ -36,6 +36,10 @@
   --color-accent-100: #fbeecb;
   --color-accent-700: #8a6310;
 
+  /* The floating block's own ground: white cards sit on it, so a card is a
+   * step up rather than the page itself. */
+  --color-canvas: #f6f7f8;
+
   --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
 
   /* ------------------------------------------------------------------ *

@@ -2,7 +2,8 @@ import { getAppContext } from "@/lib/org";
 import { DOCUMENT_CATEGORIES, DOCUMENT_CATEGORY_KEYS, formatBytes } from "@/lib/documents";
 import { PAYER_SELECT, resolvePayer } from "@/lib/enrollments";
 import { PLANS } from "@/lib/plans";
-import { Card, CardHeader, PageHeader, buttonClass, inputClass } from "@/components/app/ui";
+import { Card, CardHeader, ICONS, PageHeader, StatCard, buttonClass, inputClass } from "@/components/app/ui";
+import Disclosure from "@/components/app/Disclosure";
 import DocumentList from "@/components/app/DocumentList";
 import DocumentUploader from "@/components/app/DocumentUploader";
 import SubmitButton from "@/components/app/SubmitButton";
@@ -25,10 +26,11 @@ export default async function DocumentsPage({ searchParams }) {
   if (provider) query = query.eq("provider_id", provider);
   if (category) query = query.eq("category", category);
 
-  const [{ data: rows }, { data: providers }, { data: used }] = await Promise.all([
+  const [{ data: rows }, { data: providers }, { data: used }, { count: allDocuments }] = await Promise.all([
     query,
     supabase.from("cred_providers").select("id, first_name, last_name").order("last_name"),
     supabase.rpc("cred_storage_used_bytes", { p_org_id: org.id }),
+    supabase.from("cred_documents").select("id", { count: "exact", head: true }),
   ]);
 
   const documents = (rows ?? []).map((d) => ({
@@ -36,7 +38,7 @@ export default async function DocumentsPage({ searchParams }) {
     payerName: d.cred_enrollments?.cred_payers_org ? resolvePayer(d.cred_enrollments.cred_payers_org).name : null,
   }));
   const limit = org.storage_limit_mb * 1024 * 1024;
-  const share = Math.min(100, ((used ?? 0) / limit) * 100);
+  const share = Math.min(1, (used ?? 0) / limit);
   const filtered = Boolean(q || provider || category);
   const exportQs = new URLSearchParams(Object.entries({ q, provider, category }).filter(([, v]) => v)).toString();
 
@@ -44,7 +46,7 @@ export default async function DocumentsPage({ searchParams }) {
     <div className="flex flex-col gap-8">
       <PageHeader
         title="Documents"
-        description="Every provider document, attached to its provider or application."
+        description="Every provider document, attached to its provider or application. Provider paperwork only — never anything with patient information."
         actions={
           // eslint-disable-next-line @next/next/no-html-link-for-pages -- file download, not a page
           <a href={`/export/documents${exportQs ? `?${exportQs}` : ""}`} className={buttonClass("secondary")}>
@@ -53,65 +55,68 @@ export default async function DocumentsPage({ searchParams }) {
         }
       />
 
-      <div className="grid gap-8 lg:grid-cols-3">
-        <Card className="overflow-hidden lg:col-span-2">
-          <form className="flex flex-col gap-3 border-b border-ink-100 px-5 py-4 sm:flex-row" action="/documents">
-            <label className="sr-only" htmlFor="doc-q">Search by file name</label>
-            <input id="doc-q" name="q" type="search" defaultValue={q} placeholder="Search by file name" className={inputClass} />
-            <label className="sr-only" htmlFor="doc-p">Provider</label>
-            <select id="doc-p" name="provider" defaultValue={provider} className={`${inputClass} sm:w-48`}>
-              <option value="">All providers</option>
-              {(providers ?? []).map((p) => (
-                <option key={p.id} value={p.id}>
-                  {p.last_name}, {p.first_name}
-                </option>
-              ))}
-            </select>
-            <label className="sr-only" htmlFor="doc-c">Kind</label>
-            <select id="doc-c" name="category" defaultValue={category} className={`${inputClass} sm:w-48`}>
-              <option value="">All kinds</option>
-              {DOCUMENT_CATEGORY_KEYS.map((key) => (
-                <option key={key} value={key}>
-                  {DOCUMENT_CATEGORIES[key]}
-                </option>
-              ))}
-            </select>
-            <SubmitButton className={buttonClass("secondary")}>
-              Search
-            </SubmitButton>
-          </form>
-          <DocumentList
-            documents={documents}
-            showProvider
-            emptyText={filtered ? "No document matches." : "No documents yet. Upload one on the right, or from a provider's page."}
-          />
-        </Card>
-
-        <div className="flex flex-col gap-8">
-          <Card className="px-5 py-4">
-            <div className="flex items-baseline justify-between text-sm">
-              <span className="font-medium text-ink-900">Storage</span>
-              <span className="text-ink-500">
-                {formatBytes(used ?? 0)} of {PLANS[org.plan].storageLabel}
-              </span>
-            </div>
-            <div className="mt-2 h-2 overflow-hidden rounded-full bg-ink-100">
-              <div
-                className={`h-full rounded-full ${share > 90 ? "bg-status-expired" : "bg-brand-600"}`}
-                style={{ width: `${Math.max(share, used ? 1 : 0)}%` }}
-              />
-            </div>
-            <p className="mt-2 text-xs text-ink-500">Up to 10 MB per file.</p>
-          </Card>
-
-          <Card>
-            <CardHeader title="Upload" />
-            <div className="px-5 py-5">
-              <DocumentUploader providers={providers ?? []} compact />
-            </div>
-          </Card>
+      <div className="grid gap-4 sm:grid-cols-3">
+        <StatCard label="Documents on file" value={allDocuments ?? 0} icon={ICONS.documents} hint="Across every provider of this client." />
+        <StatCard
+          label="Storage used"
+          value={formatBytes(used ?? 0)}
+          suffix={`of ${PLANS[org.plan].storageLabel}`}
+          icon={ICONS.shield}
+          tone={share > 0.9 ? "red" : "brand"}
+          meter={share}
+          hint="Up to 10 MB per file."
+        />
+        <div className="flex flex-col justify-center gap-3 rounded-2xl bg-white p-5 shadow-[0_1px_2px_rgba(14,42,46,0.05),0_6px_20px_-6px_rgba(14,42,46,0.08)] ring-1 ring-ink-900/[0.06]">
+          <p className="text-sm font-medium text-ink-900">Add paperwork</p>
+          <Disclosure label="Upload a document" title="Upload a document" icon={ICONS.upload} variant="primary" className="self-start" panelClassName="mt-1">
+            <DocumentUploader providers={providers ?? []} compact />
+          </Disclosure>
         </div>
       </div>
+
+      <Card className="overflow-hidden">
+        <CardHeader
+          title="All documents"
+          icon={ICONS.documents}
+          description={filtered ? "Filtered." : "Newest first."}
+          actions={
+            <form className="flex flex-col gap-2 sm:flex-row" action="/documents">
+              <label className="sr-only" htmlFor="doc-q">
+                Search by file name
+              </label>
+              <input id="doc-q" name="q" type="search" defaultValue={q} placeholder="Search by file name" className={`${inputClass} sm:w-52`} />
+              <label className="sr-only" htmlFor="doc-p">
+                Provider
+              </label>
+              <select id="doc-p" name="provider" defaultValue={provider} className={`${inputClass} sm:w-44`}>
+                <option value="">All providers</option>
+                {(providers ?? []).map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.last_name}, {p.first_name}
+                  </option>
+                ))}
+              </select>
+              <label className="sr-only" htmlFor="doc-c">
+                Kind
+              </label>
+              <select id="doc-c" name="category" defaultValue={category} className={`${inputClass} sm:w-44`}>
+                <option value="">All kinds</option>
+                {DOCUMENT_CATEGORY_KEYS.map((key) => (
+                  <option key={key} value={key}>
+                    {DOCUMENT_CATEGORIES[key]}
+                  </option>
+                ))}
+              </select>
+              <SubmitButton className={buttonClass("secondary")}>Search</SubmitButton>
+            </form>
+          }
+        />
+        <DocumentList
+          documents={documents}
+          showProvider
+          emptyText={filtered ? "No document matches." : "No documents yet. Upload one above, or from a provider's page."}
+        />
+      </Card>
     </div>
   );
 }

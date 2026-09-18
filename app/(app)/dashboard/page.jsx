@@ -1,25 +1,42 @@
 import Link from "next/link";
 import { Suspense } from "react";
 import { getAppContext } from "@/lib/org";
-import { BUCKETS, CREDENTIAL_TYPES, CREDENTIAL_TYPE_KEYS, bucketFor, formatDate } from "@/lib/credentials";
+import { BUCKETS, CREDENTIAL_TYPES, CREDENTIAL_TYPE_KEYS, bucketFor, daysUntil, formatDate } from "@/lib/credentials";
 import {
   ENROLLMENT_STATUSES,
   ENROLLMENT_STATUS_LABELS,
   PAYER_SELECT,
+  cellKey,
   parseCellKey,
   resolvePayer,
   sortPayers,
 } from "@/lib/enrollments";
 import { loadFollowUps } from "@/lib/follow-ups";
 import { REVALIDATION, loadExpirations } from "@/lib/expirations";
-import { Card, EmptyState, ICONS, PageHeader, SectionPill, buttonClass } from "@/components/app/ui";
+import {
+  Card,
+  EmptyState,
+  ICONS,
+  Icon,
+  PIPELINE_ORDER,
+  PageHeader,
+  Ring,
+  STATUS_FILL,
+  SectionPill,
+  SegmentBar,
+  StatCard,
+  buttonClass,
+} from "@/components/app/ui";
 import ExpiryBadge from "@/components/app/ExpiryBadge";
 import FollowUpList from "@/components/app/FollowUpList";
 import EnrollmentPanel from "../enrollments/EnrollmentPanel";
 import DashboardHeader from "./DashboardFilters";
 
 const PREVIEW_ROWS = 5;
+// Rows shown per expiration window before "show all" opens that window alone.
+const BUCKET_ROWS = 6;
 const FILTER_KEYS = ["provider", "payer", "type", "status"];
+const URGENT_DAYS = 14;
 
 const BUCKET_DOT = {
   expired: "bg-status-expired",
@@ -45,33 +62,31 @@ function hrefWith(params, key, value) {
 
 // One of the four expiration windows, as a segment of a single strip. Clicking
 // it narrows the list below to that window; clicking it again clears it.
-function Bucket({ href, bucket, count, selected }) {
+function Bucket({ href, bucket, count, share, selected }) {
   return (
     <Link
       href={href}
       scroll={false}
       aria-pressed={selected}
-      className={`flex flex-col gap-2.5 rounded-xl px-4 py-3.5 transition-colors ${
-        selected
-          ? "bg-white shadow-[0_1px_2px_rgba(14,42,46,0.08),0_2px_10px_rgba(14,42,46,0.06)] ring-1 ring-brand-500/40"
-          : "hover:bg-white/80"
+      className={`flex flex-col gap-2.5 rounded-xl px-4 py-3.5 transition ${
+        selected ? "bg-white shadow-[0_1px_2px_rgba(14,42,46,0.08),0_4px_14px_-4px_rgba(14,42,46,0.12)] ring-1 ring-brand-500/40" : "hover:bg-white/70"
       }`}
     >
-      <span className="flex items-center gap-2 text-sm text-ink-500">
+      <span className="flex items-center gap-2 text-sm font-medium text-ink-900">
         <span className={`h-2 w-2 rounded-full ${BUCKET_DOT[bucket.key]}`} aria-hidden="true" />
         {bucket.label}
       </span>
-      <span className={`text-[1.75rem] font-semibold leading-none tabular-nums ${count ? BUCKET_TONE[bucket.key] : "text-ink-500/60"}`}>
-        {count}
+      <span className={`text-[1.75rem] font-semibold leading-none tracking-[-0.02em] tabular-nums ${count ? BUCKET_TONE[bucket.key] : "text-ink-500/60"}`}>{count}</span>
+      <span className="h-1 overflow-hidden rounded-full bg-ink-100" aria-hidden="true">
+        <span className={`block h-full rounded-full ${count ? BUCKET_DOT[bucket.key] : ""}`} style={{ width: `${share * 100}%` }} />
       </span>
     </Link>
   );
 }
 
-// The main screen (alcance §3.12): expiration buckets, this week's follow-up
-// queue and stalled applications, filterable by provider, payer, credential
-// type and enrollment status. Three blocks, each named once; the filters stay
-// folded behind a button until they're used.
+// The main screen (alcance §3.12). It opens with what needs a person this week,
+// then the three lists it comes from: expirations, the follow-up queue and the
+// applications that have gone quiet.
 export default async function DashboardPage({ searchParams }) {
   const sp = await searchParams;
   const str = (v) => (typeof v === "string" ? v : "");
@@ -85,10 +100,17 @@ export default async function DashboardPage({ searchParams }) {
   const params = Object.fromEntries(Object.entries(filters).filter(([, v]) => v));
   const open = parseCellKey(sp.open);
 
-  const { supabase } = await getAppContext();
+  const { supabase, practice, client, clients } = await getAppContext();
 
   let error = null;
-  const [expirations, followUps, { data: providers }, { data: payerRows }] = await Promise.all([
+  let pipelineQuery = supabase
+    .from("cred_enrollments")
+    .select("status, provider_id, payer_id, cred_providers!inner(status)")
+    .eq("cred_providers.status", "active");
+  if (filters.provider) pipelineQuery = pipelineQuery.eq("provider_id", filters.provider);
+  if (filters.payer) pipelineQuery = pipelineQuery.eq("payer_id", filters.payer);
+
+  const [expirations, followUps, { data: providers }, { data: payerRows }, { data: pipeline }, { data: credentialRows }] = await Promise.all([
     loadExpirations(supabase, filters).catch((e) => {
       error = e;
       return [];
@@ -96,6 +118,8 @@ export default async function DashboardPage({ searchParams }) {
     loadFollowUps(supabase, filters),
     supabase.from("cred_providers").select("id, first_name, last_name").eq("status", "active").order("last_name"),
     supabase.from("cred_payers_org").select(PAYER_SELECT),
+    pipelineQuery,
+    supabase.from("cred_credentials").select("provider_id, expiration_date, cred_providers!inner(status)").eq("cred_providers.status", "active"),
   ]);
 
   if (error) {
@@ -129,9 +153,65 @@ export default async function DashboardPage({ searchParams }) {
   }
   const visibleBuckets = BUCKETS.filter((b) => !filters.bucket || b.key === filters.bucket);
   const visibleCount = visibleBuckets.reduce((n, b) => n + grouped[b.key].length, 0);
+  const bucketPeak = Math.max(1, ...BUCKETS.map((b) => grouped[b.key].length));
 
   const { queue, stalled, lastContact, directory } = followUps;
   const payers = sortPayers((payerRows ?? []).map(resolvePayer));
+
+  // What needs a person this week: anything already expired or expiring inside
+  // two weeks, every follow-up that is due or late, and every payer waiting on
+  // us for information.
+  const overdue = queue.filter((e) => daysUntil(e.next_follow_up_date) <= 0);
+  const urgentExpirations = items.filter((i) => daysUntil(i.date) <= URGENT_DAYS).sort((a, b) => a.date.localeCompare(b.date));
+  const infoRequested = (pipeline ?? []).filter((e) => e.status === "info_requested");
+  const attention = urgentExpirations.length + overdue.length + infoRequested.length;
+
+  const nextUp = [
+    ...urgentExpirations.slice(0, 3).map((i) => ({
+      key: i.id,
+      title: i.who,
+      detail: i.what,
+      badge: daysUntil(i.date) < 0 ? "Expired" : daysUntil(i.date) === 0 ? "Expires today" : `${daysUntil(i.date)} days left`,
+      tone: "red",
+      href: i.href,
+    })),
+    ...overdue.slice(0, 3).map((e) => ({
+      key: e.id,
+      title: `${e.provider.first_name} ${e.provider.last_name}`,
+      detail: `${e.payer.name} · follow-up due ${formatDate(e.next_follow_up_date)}`,
+      badge: "Chase",
+      tone: "amber",
+      href: hrefWith(params, "open", cellKey(e.provider_id, e.payer_id)),
+    })),
+  ].slice(0, 3);
+
+  // Credential health: a provider is current when they have credentials on file
+  // and none of them is expired or inside 30 days.
+  const byProvider = new Map((providers ?? []).map((p) => [p.id, { total: 0, worst: null }]));
+  for (const row of credentialRows ?? []) {
+    const entry = byProvider.get(row.provider_id);
+    if (!entry) continue;
+    entry.total += 1;
+    const days = row.expiration_date ? daysUntil(row.expiration_date) : null;
+    if (days !== null && (entry.worst === null || days < entry.worst)) entry.worst = days;
+  }
+  const providerRows = [...byProvider.values()];
+  const current = providerRows.filter((p) => p.total > 0 && (p.worst === null || p.worst > 30)).length;
+  const noFile = providerRows.filter((p) => p.total === 0).length;
+  const health = providerRows.length ? current / providerRows.length : 0;
+
+  const pipelineCounts = Object.fromEntries(PIPELINE_ORDER.map((s) => [s, 0]));
+  for (const e of pipeline ?? []) if (e.status in pipelineCounts) pipelineCounts[e.status] += 1;
+  // Cells nobody has opened yet are "not started" too.
+  const cells = (providers ?? []).length * payers.length;
+  if (!filters.provider && !filters.payer) pipelineCounts.not_started += Math.max(0, cells - (pipeline ?? []).length);
+  const pipelineTotal = PIPELINE_ORDER.reduce((n, s) => n + pipelineCounts[s], 0);
+  const segments = PIPELINE_ORDER.filter((s) => pipelineCounts[s] > 0).map((s) => ({
+    key: s,
+    label: ENROLLMENT_STATUS_LABELS[s],
+    value: pipelineCounts[s],
+    color: STATUS_FILL[s],
+  }));
 
   const selects = [
     { key: "provider", label: "Provider", all: "All providers", options: (providers ?? []).map((p) => [p.id, `${p.last_name}, ${p.first_name}`]) },
@@ -145,18 +225,134 @@ export default async function DashboardPage({ searchParams }) {
     { key: "status", label: "Enrollment status", all: "All enrollment statuses", options: ENROLLMENT_STATUSES.map((s) => [s, ENROLLMENT_STATUS_LABELS[s]]) },
   ];
 
+  const today = new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" });
+  const where = clients.length > 1 ? client?.name : practice.legal_name;
+
   return (
-    <div className="flex flex-col gap-8">
-      <Suspense fallback={<PageHeader title="Dashboard" description="What expires in the next 90 days, and what to chase this week." />}>
+    <div className="flex flex-col gap-10">
+      <Suspense fallback={<PageHeader title="Dashboard" description={`${today} · ${where}`} />}>
         <DashboardHeader
           title="Dashboard"
-          description="What expires in the next 90 days, and what to chase this week."
+          description={`${today} · ${where}`}
           exportHref={`/export/expirations${Object.keys(params).length ? `?${new URLSearchParams(params)}` : ""}`}
           selects={selects}
           filterKeys={FILTER_KEYS}
         />
       </Suspense>
 
+      {/* What needs a person, and where to start. */}
+      <div className="grid gap-4 lg:grid-cols-[1.65fr_1fr]">
+        <section className="relative overflow-hidden rounded-2xl bg-brand-700 p-6 text-white shadow-[0_1px_2px_rgba(14,42,46,0.10),0_16px_40px_-16px_rgba(14,42,46,0.55)] sm:p-7">
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute -right-16 -top-24 h-72 w-72 rounded-full"
+            style={{ background: "radial-gradient(closest-side, rgba(242,193,78,0.30), transparent)" }}
+          />
+          <p className="text-sm font-medium text-white/70">This week</p>
+          <div className="mt-2 flex flex-wrap items-baseline gap-x-3 gap-y-1">
+            <span className="text-[2.75rem] font-semibold leading-none tracking-[-0.03em] tabular-nums">{attention}</span>
+            <h2 className="text-lg font-medium text-white/90">{attention === 1 ? "thing needs you" : "things need you"}</h2>
+          </div>
+          <div className="mt-5 flex flex-wrap gap-2">
+            {[
+              [`${urgentExpirations.length} expiring within ${URGENT_DAYS} days`, ICONS.calendar],
+              [`${overdue.length} follow-up${overdue.length === 1 ? "" : "s"} overdue`, ICONS.phone],
+              [`${infoRequested.length} payer request${infoRequested.length === 1 ? "" : "s"}`, ICONS.alert],
+            ].map(([label, icon]) => (
+              <span key={label} className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1.5 text-[0.8125rem] font-medium text-white ring-1 ring-inset ring-white/15">
+                <Icon d={icon} className="h-3.5 w-3.5 text-white/70" />
+                {label}
+              </span>
+            ))}
+          </div>
+
+          <div className="mt-6">
+            {nextUp.length === 0 ? (
+              <p className="text-[0.9375rem] text-white/80">Nothing is overdue and nothing expires in the next two weeks. Good place to be.</p>
+            ) : (
+              <>
+                <p className="mb-2 text-sm font-medium text-white/70">Start here</p>
+                <ul className="flex flex-col gap-1.5">
+                  {nextUp.map((item) => (
+                    <li key={item.key}>
+                      <Link
+                        href={item.href}
+                        scroll={false}
+                        className="flex items-center gap-3 rounded-xl bg-white/[0.07] px-3.5 py-2.5 ring-1 ring-inset ring-white/10 transition hover:bg-white/[0.14]"
+                      >
+                        <span className={`h-2 w-2 shrink-0 rounded-full ${item.tone === "red" ? "bg-status-expired" : "bg-accent-400"}`} aria-hidden="true" />
+                        <span className="min-w-0 flex-1">
+                          <span className="block truncate text-sm font-semibold">{item.title}</span>
+                          <span className="block truncate text-xs text-white/70">{item.detail}</span>
+                        </span>
+                        <span className="shrink-0 whitespace-nowrap rounded-full bg-white/15 px-2 py-0.5 text-[0.6875rem] font-semibold">{item.badge}</span>
+                        <Icon d={ICONS.arrowRight} className="h-4 w-4 shrink-0 text-white/60" />
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
+          </div>
+        </section>
+
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1">
+          <Card className="flex items-center gap-5 px-5 py-5">
+            <Ring value={health} tone={health > 0.8 ? "green" : health > 0.5 ? "amber" : "red"}>
+              <span className="text-lg font-semibold tabular-nums text-ink-900">{Math.round(health * 100)}%</span>
+            </Ring>
+            <div className="min-w-0">
+              <h3 className="text-[0.9375rem] font-semibold text-ink-900">Credentials current</h3>
+              <p className="mt-1 text-sm text-ink-700">
+                {current} of {providerRows.length} providers have nothing expired or due within 30 days.
+              </p>
+              {noFile > 0 && (
+                <Link href="/providers" className="mt-1 inline-block text-xs font-medium text-brand-600 hover:underline">
+                  {noFile} provider{noFile === 1 ? " has" : "s have"} no credentials on file →
+                </Link>
+              )}
+            </div>
+          </Card>
+
+          <StatCard
+            label="With a payer right now"
+            value={pipelineCounts.submitted + pipelineCounts.in_review + pipelineCounts.info_requested}
+            suffix={`of ${pipelineTotal} cells`}
+            icon={ICONS.enrollments}
+            hint={`${pipelineCounts.approved} approved · ${stalled.length} with no movement in 30+ days`}
+            href="/enrollments"
+            Link={Link}
+          />
+        </div>
+      </div>
+
+      {/* Where every application stands. */}
+      <section className="flex flex-col gap-4">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <SectionPill icon={ICONS.pulse} count={pipelineTotal}>
+            Enrollment pipeline
+          </SectionPill>
+          <Link href="/enrollments" className={buttonClass("secondary", "sm")}>
+            Open the matrix
+          </Link>
+        </div>
+        <Card className="px-5 py-5">
+          <SegmentBar segments={segments} height={14} />
+          <ul className="mt-4 grid gap-x-6 gap-y-3 sm:grid-cols-3 lg:grid-cols-6">
+            {PIPELINE_ORDER.map((s) => (
+              <li key={s} className="flex items-center gap-2.5">
+                <span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ background: STATUS_FILL[s] }} aria-hidden="true" />
+                <span className="min-w-0">
+                  <span className="block text-lg font-semibold leading-none tabular-nums text-ink-900">{pipelineCounts[s]}</span>
+                  <span className="block truncate text-xs text-ink-700">{ENROLLMENT_STATUS_LABELS[s]}</span>
+                </span>
+              </li>
+            ))}
+          </ul>
+        </Card>
+      </section>
+
+      {/* Expirations. */}
       <section className="flex flex-col gap-4">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <SectionPill icon={ICONS.calendar} count={visibleCount}>
@@ -165,13 +361,14 @@ export default async function DashboardPage({ searchParams }) {
           <p className="text-sm text-ink-500">Credentials and payer revalidations, next 90 days</p>
         </div>
 
-        <div className="grid grid-cols-2 gap-1 rounded-2xl bg-ink-50 p-1 ring-1 ring-inset ring-ink-100 sm:grid-cols-4">
+        <div className="grid grid-cols-2 gap-1 rounded-2xl bg-white/70 p-1 ring-1 ring-inset ring-ink-900/[0.06] sm:grid-cols-4">
           {BUCKETS.map((b) => (
             <Bucket
               key={b.key}
               bucket={b}
               href={hrefWith(params, "bucket", filters.bucket === b.key ? "" : b.key)}
               count={grouped[b.key].length}
+              share={grouped[b.key].length / bucketPeak}
               selected={filters.bucket === b.key}
             />
           ))}
@@ -186,12 +383,12 @@ export default async function DashboardPage({ searchParams }) {
             visibleBuckets.map((b) =>
               grouped[b.key].length === 0 ? null : (
                 <section key={b.key} className="border-t border-ink-100 first:border-t-0">
-                  <h3 className="flex items-center gap-2 px-5 pb-1 pt-4 text-xs font-medium text-ink-500">
+                  <h3 className="flex items-center gap-2 px-5 pb-1 pt-4 text-xs font-medium text-ink-700">
                     <span className={`h-1.5 w-1.5 rounded-full ${BUCKET_DOT[b.key]}`} aria-hidden="true" />
                     {b.label} · {grouped[b.key].length}
                   </h3>
                   <ul className="px-2 pb-2">
-                    {grouped[b.key].map((item) => (
+                    {(filters.bucket ? grouped[b.key] : grouped[b.key].slice(0, BUCKET_ROWS)).map((item) => (
                       <li key={item.id}>
                         <Link
                           href={item.href}
@@ -200,7 +397,7 @@ export default async function DashboardPage({ searchParams }) {
                         >
                           <div className="min-w-0">
                             <span className="font-medium text-ink-900">{item.who}</span>
-                            <span className="text-ink-500"> · {item.what}</span>
+                            <span className="text-ink-700"> · {item.what}</span>
                           </div>
                           <div className="flex shrink-0 items-center gap-3 text-sm">
                             <span className="text-ink-500">{formatDate(item.date)}</span>
@@ -210,6 +407,13 @@ export default async function DashboardPage({ searchParams }) {
                       </li>
                     ))}
                   </ul>
+                  {!filters.bucket && grouped[b.key].length > BUCKET_ROWS && (
+                    <div className="px-5 pb-4">
+                      <Link href={hrefWith(params, "bucket", b.key)} scroll={false} className={buttonClass("link")}>
+                        Show all {grouped[b.key].length} in {b.label.toLowerCase()}
+                      </Link>
+                    </div>
+                  )}
                 </section>
               )
             )
@@ -217,6 +421,7 @@ export default async function DashboardPage({ searchParams }) {
         </Card>
       </section>
 
+      {/* This week's calls, and what has gone quiet. */}
       <div className="grid gap-10 lg:grid-cols-2 lg:gap-6">
         <section className="flex min-w-0 flex-col gap-4">
           <div className="flex min-h-9 items-center justify-between gap-2">

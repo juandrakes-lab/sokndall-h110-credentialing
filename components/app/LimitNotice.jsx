@@ -25,7 +25,7 @@ export default async function LimitNotice({ org }) {
         )}
       </div>
       {next && role === "owner" && (
-        <Link href="/settings#billing" className={`${buttonClass("primary", "sm")} shrink-0`}>
+        <Link href="/settings?tab=billing" className={`${buttonClass("primary", "sm")} shrink-0`}>
           Upgrade to {next.label}
         </Link>
       )}

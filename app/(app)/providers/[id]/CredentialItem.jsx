@@ -17,7 +17,7 @@ export default function CredentialItem({ credential, updateAction, deleteAction,
     credential.type === "caqh_attestation"
       ? `Attested ${formatDate(credential.issue_date)} · next due ${formatDate(credential.expiration_date)}`
       : [
-          credential.issue_date && `${config.labels.issue_date} ${formatDate(credential.issue_date)}`,
+          credential.issue_date && config.labels.issue_date && `${config.labels.issue_date} ${formatDate(credential.issue_date)}`,
           credential.expiration_date && `${config.labels.expiration_date} ${formatDate(credential.expiration_date)}`,
         ]
           .filter(Boolean)
@@ -28,10 +28,10 @@ export default function CredentialItem({ credential, updateAction, deleteAction,
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
-            <span className="font-medium text-ink-900">{config.label}</span>
+            <span className="font-semibold text-ink-900">{config.label}</span>
             <ExpiryBadge date={credential.expiration_date} />
           </div>
-          {summary && <p className="mt-0.5 text-sm text-ink-700">{summary}</p>}
+          {summary && <p className="mt-0.5 text-sm text-ink-900">{summary}</p>}
           {dateLine && <p className="mt-0.5 text-sm text-ink-500">{dateLine}</p>}
           {credential.notes && <p className="mt-1 text-sm text-ink-500">{credential.notes}</p>}
         </div>
@@ -61,7 +61,7 @@ export default function CredentialItem({ credential, updateAction, deleteAction,
       </div>
 
       {mode === "edit" && (
-        <div className="mt-4 rounded-lg border border-ink-200 bg-ink-50 p-4">
+        <div className="mt-4 rounded-2xl bg-ink-50/80 p-4 ring-1 ring-inset ring-ink-100">
           <CredentialForm
             action={updateAction}
             initial={credential}

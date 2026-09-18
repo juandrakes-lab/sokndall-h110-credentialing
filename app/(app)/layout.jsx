@@ -91,7 +91,7 @@ export default async function AppLayout({ children }) {
               <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-2">
                 <span>{banner.text}</span>
                 {role === "owner" && (
-                  <Link href="/settings#billing" className="font-medium underline">
+                  <Link href="/settings?tab=billing" className="font-medium underline">
                     {access.writable ? "Billing" : "Choose a plan"}
                   </Link>
                 )}

@@ -1,47 +1,78 @@
 // Small presentational kit for the authenticated app (Tailwind v4 tokens from
 // app/globals.css). Server-safe: no hooks, so pages and client forms share it.
+//
+// Depth, in three layers: the coloured ground (sidebar), the canvas of the
+// floating block, and white cards with a soft shadow on it. Text is ink by
+// default; grey (ink-500) is for hints, dates-as-metadata and empty states.
 
 const BUTTON = {
-  primary: "bg-brand-700 text-white hover:bg-brand-600",
-  secondary: "bg-white text-ink-900 ring-1 ring-inset ring-ink-200 hover:bg-ink-50",
-  ghost: "text-ink-700 hover:bg-ink-100",
+  primary: "bg-brand-700 text-white shadow-[0_1px_2px_rgba(14,42,46,0.25)] hover:bg-brand-600",
+  secondary: "bg-white text-ink-900 ring-1 ring-inset ring-ink-200 shadow-[0_1px_2px_rgba(14,42,46,0.05)] hover:bg-ink-50",
+  ghost: "text-ink-900 hover:bg-ink-100",
   danger: "bg-status-expired text-white hover:opacity-90",
   link: "text-brand-600 underline-offset-2 hover:underline px-0 py-0",
 };
 
 export function buttonClass(variant = "primary", size = "md") {
-  const sizing = variant === "link" ? "" : size === "sm" ? "px-3 py-1.5 text-sm" : "px-4 py-2 text-sm";
-  return `inline-flex items-center justify-center gap-2 rounded-xl font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${sizing} ${BUTTON[variant]}`;
+  const sizing = variant === "link" ? "" : size === "sm" ? "h-8 px-3 text-sm" : "h-10 px-4 text-sm";
+  return `inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-xl font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${sizing} ${BUTTON[variant]}`;
 }
 
 export function PageHeader({ title, description, actions, eyebrow }) {
   return (
-    <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+    <div className="mb-7 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
       <div className="min-w-0">
-        {eyebrow && <div className="mb-1.5 text-sm text-ink-500">{eyebrow}</div>}
-        <h1 className="text-[1.625rem] font-semibold leading-tight tracking-tight text-ink-900">{title}</h1>
-        {description && <p className="mt-1.5 max-w-2xl text-[0.9375rem] text-ink-500">{description}</p>}
+        {eyebrow && <div className="mb-2 text-sm font-medium text-ink-700">{eyebrow}</div>}
+        <h1 className="text-[1.75rem] font-semibold leading-[1.15] tracking-[-0.02em] text-ink-900 sm:text-[2rem]">{title}</h1>
+        {description && <p className="mt-2 max-w-2xl text-[0.9375rem] leading-relaxed text-ink-500">{description}</p>}
       </div>
-      {actions && <div className="flex flex-wrap gap-2">{actions}</div>}
+      {actions && <div className="flex flex-wrap items-center gap-2">{actions}</div>}
     </div>
   );
 }
 
-export function Card({ children, className = "", as: Tag = "section" }) {
+export const cardClass = "rounded-2xl bg-white shadow-[0_1px_2px_rgba(14,42,46,0.05),0_6px_20px_-6px_rgba(14,42,46,0.08)] ring-1 ring-ink-900/[0.06]";
+
+export function Card({ children, className = "", as: Tag = "section", ...rest }) {
   return (
-    <Tag className={`rounded-2xl border border-ink-200/80 bg-white ${className}`}>{children}</Tag>
+    <Tag className={`${cardClass} ${className}`} {...rest}>
+      {children}
+    </Tag>
   );
 }
 
-export function CardHeader({ title, description, actions }) {
+export function CardHeader({ title, description, actions, icon, divider = true }) {
   return (
-    <div className="flex flex-col gap-2 border-b border-ink-100 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
-      <div>
-        <h2 className="text-base font-semibold text-ink-900">{title}</h2>
-        {description && <p className="mt-0.5 text-sm text-ink-500">{description}</p>}
+    <div className={`flex flex-col gap-3 px-5 pb-4 pt-5 sm:flex-row sm:items-start sm:justify-between ${divider ? "border-b border-ink-100" : ""}`}>
+      <div className="flex min-w-0 items-start gap-3">
+        {icon && <IconTile d={icon} />}
+        <div className="min-w-0">
+          <h2 className="text-[1.0625rem] font-semibold leading-snug tracking-[-0.01em] text-ink-900">{title}</h2>
+          {description && <p className="mt-1 text-sm text-ink-500">{description}</p>}
+        </div>
       </div>
-      {actions && <div className="flex gap-2">{actions}</div>}
+      {actions && <div className="flex shrink-0 flex-wrap gap-2">{actions}</div>}
     </div>
+  );
+}
+
+// A small rounded square holding a stroke icon — the reference's section marks.
+export function IconTile({ d, tone = "brand", size = "md" }) {
+  const tones = {
+    brand: "bg-brand-50 text-brand-700",
+    amber: "bg-status-expiring-bg text-status-expiring",
+    red: "bg-status-expired-bg text-status-expired",
+    green: "bg-status-active-bg text-status-active",
+    neutral: "bg-ink-100 text-ink-700",
+    accent: "bg-accent-100 text-accent-700",
+  };
+  const box = size === "sm" ? "h-8 w-8 rounded-[10px]" : "h-9 w-9 rounded-xl";
+  return (
+    <span className={`flex shrink-0 items-center justify-center ${box} ${tones[tone]}`} aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" className="h-[18px] w-[18px]">
+        <path d={d} />
+      </svg>
+    </span>
   );
 }
 
@@ -49,14 +80,16 @@ const TONES = {
   green: "bg-status-active-bg text-status-active ring-status-active/20",
   amber: "bg-status-expiring-bg text-status-expiring ring-status-expiring/25",
   red: "bg-status-expired-bg text-status-expired ring-status-expired/20",
-  neutral: "bg-status-neutral-bg text-status-neutral ring-ink-200",
-  brand: "bg-brand-50 text-brand-600 ring-brand-100",
+  neutral: "bg-status-neutral-bg text-ink-700 ring-ink-200",
+  brand: "bg-brand-50 text-brand-700 ring-brand-100",
+  violet: "bg-enroll-purple-bg text-enroll-purple ring-enroll-purple/20",
   blue: "bg-sky-50 text-sky-800 ring-sky-200",
 };
 
-export function Badge({ tone = "neutral", children }) {
+export function Badge({ tone = "neutral", children, dot = false }) {
   return (
-    <span className={`inline-flex items-center gap-1 whitespace-nowrap rounded-full px-2 py-0.5 text-xs font-medium ring-1 ring-inset ${TONES[tone]}`}>
+    <span className={`inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-2 py-0.5 text-xs font-medium ring-1 ring-inset ${TONES[tone]}`}>
+      {dot && <span className="h-1.5 w-1.5 rounded-full bg-current" aria-hidden="true" />}
       {children}
     </span>
   );
@@ -69,7 +102,7 @@ export function Field({ label, htmlFor, hint, required, error, children, classNa
     : "";
   return (
     <div className={`flex flex-col gap-1.5 ${invalid} ${className}`}>
-      <label htmlFor={htmlFor} className="text-sm font-medium text-ink-700">
+      <label htmlFor={htmlFor} className="text-sm font-medium text-ink-900">
         {label}
         {required && <span className="text-status-expired"> *</span>}
       </label>
@@ -119,12 +152,11 @@ const PILL_TONES = {
   amber: "bg-status-expiring-bg text-status-expiring",
   red: "bg-status-expired-bg text-status-expired",
   green: "bg-status-active-bg text-status-active",
-  neutral: "bg-ink-100 text-ink-700 [&_svg]:text-ink-500",
+  neutral: "bg-ink-100 text-ink-900 [&_svg]:text-ink-700",
 };
 
 // A section's name as a soft pill with its icon (the reference's "Code Review"
-// heading), with the count beside it. Used where a page has a few big blocks
-// instead of boxes inside boxes.
+// heading), with the count beside it.
 export function SectionPill({ icon, tone = "brand", count, children, as: Tag = "h2" }) {
   return (
     <Tag className="flex items-center gap-2.5">
@@ -136,8 +168,148 @@ export function SectionPill({ icon, tone = "brand", count, children, as: Tag = "
         )}
         {children}
       </span>
-      {count !== undefined && <span className="text-sm font-medium tabular-nums text-ink-500">{count}</span>}
+      {count !== undefined && <span className="text-sm font-semibold tabular-nums text-ink-900">{count}</span>}
     </Tag>
+  );
+}
+
+// A headline number with its label: the dashboards' KPI. `href` makes the whole
+// tile a link; `meter` (0–1) draws a thin progress bar under the figure.
+export function StatCard({ label, value, suffix, hint, icon, tone = "brand", href, meter, Link }) {
+  const body = (
+    <>
+      <div className="flex items-center justify-between gap-3">
+        <span className="text-sm font-medium text-ink-900">{label}</span>
+        {icon && <IconTile d={icon} tone={tone} size="sm" />}
+      </div>
+      <div className="mt-3 flex items-baseline gap-1.5">
+        <span className="text-[2rem] font-semibold leading-none tracking-[-0.02em] tabular-nums text-ink-900">{value}</span>
+        {suffix && <span className="text-sm font-medium text-ink-500">{suffix}</span>}
+      </div>
+      {meter !== undefined && <Meter value={meter} tone={tone} className="mt-3" />}
+      {hint && <p className="mt-2 text-xs text-ink-500">{hint}</p>}
+    </>
+  );
+  const cls = `${cardClass} block px-5 py-4`;
+  if (href && Link) {
+    return (
+      <Link href={href} className={`${cls} transition hover:ring-ink-900/15`}>
+        {body}
+      </Link>
+    );
+  }
+  return <div className={cls}>{body}</div>;
+}
+
+const METER_FILL = {
+  brand: "bg-brand-600",
+  green: "bg-status-active",
+  amber: "bg-status-expiring",
+  red: "bg-status-expired",
+  accent: "bg-accent-400",
+  neutral: "bg-ink-500",
+};
+
+export function Meter({ value, tone = "brand", className = "" }) {
+  const pct = Math.max(0, Math.min(1, value || 0)) * 100;
+  return (
+    <div className={`h-1.5 overflow-hidden rounded-full bg-ink-100 ${className}`} role="presentation">
+      <div className={`h-full rounded-full ${METER_FILL[tone]}`} style={{ width: `${pct > 0 ? Math.max(pct, 2) : 0}%` }} />
+    </div>
+  );
+}
+
+// A ring for one share (e.g. providers fully current). Stroke 8, round cap,
+// the share in the middle; the label always rides beside it in text.
+export function Ring({ value, size = 88, tone = "green", children }) {
+  const colors = { green: "var(--color-status-active)", amber: "var(--color-status-expiring)", red: "var(--color-status-expired)", brand: "var(--color-brand-600)" };
+  const r = (size - 10) / 2;
+  const c = 2 * Math.PI * r;
+  const share = Math.max(0, Math.min(1, value || 0));
+  return (
+    <div className="relative shrink-0" style={{ width: size, height: size }}>
+      <svg viewBox={`0 0 ${size} ${size}`} width={size} height={size} className="-rotate-90" aria-hidden="true">
+        <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="var(--color-ink-100)" strokeWidth="8" />
+        {share > 0 && (
+          <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke={colors[tone]} strokeWidth="8" strokeLinecap="round" strokeDasharray={`${c * share} ${c}`} />
+        )}
+      </svg>
+      <div className="absolute inset-0 flex items-center justify-center">{children}</div>
+    </div>
+  );
+}
+
+// Enrollment statuses as marks (bars, dots). Validated as a set for colour-blind
+// separation in this order; every use ships a label and a count beside it.
+export const STATUS_FILL = {
+  approved: "#16a34a",
+  in_review: "#0284c7",
+  submitted: "#7c3aed",
+  info_requested: "#d97706",
+  denied: "#be123c",
+  not_started: "#cbd5e1",
+};
+export const PIPELINE_ORDER = ["approved", "in_review", "submitted", "info_requested", "denied", "not_started"];
+
+// One horizontal stacked bar, 2px surface gaps between segments.
+export function SegmentBar({ segments, height = 12 }) {
+  const total = segments.reduce((n, s) => n + s.value, 0);
+  if (!total) return <div className="rounded-full bg-ink-100" style={{ height }} />;
+  return (
+    <div className="flex w-full gap-[2px] overflow-hidden rounded-full" style={{ height }}>
+      {segments
+        .filter((s) => s.value > 0)
+        .map((s) => (
+          <div key={s.key} title={`${s.label}: ${s.value}`} className="h-full first:rounded-l-full last:rounded-r-full" style={{ width: `${(s.value / total) * 100}%`, background: s.color }} />
+        ))}
+    </div>
+  );
+}
+
+export function initials(name, fallback) {
+  const source = (name || fallback || "?").trim();
+  const parts = source.split(/[\s@._-]+/).filter(Boolean);
+  return ((parts[0]?.[0] ?? "?") + (name && parts[1] ? parts[1][0] : "")).toUpperCase();
+}
+
+const AVATAR_TONES = ["bg-brand-50 text-brand-700", "bg-accent-100 text-accent-700", "bg-sky-50 text-sky-800", "bg-enroll-purple-bg text-enroll-purple", "bg-status-active-bg text-status-active"];
+
+// Initials in a circle, the colour picked from the name so a person keeps it.
+export function Avatar({ name, size = "md" }) {
+  const hash = [...(name ?? "")].reduce((n, ch) => n + ch.charCodeAt(0), 0);
+  const box = size === "lg" ? "h-14 w-14 text-lg" : size === "sm" ? "h-7 w-7 text-[0.6875rem]" : "h-9 w-9 text-xs";
+  return (
+    <span className={`flex shrink-0 items-center justify-center rounded-full font-semibold ${box} ${AVATAR_TONES[hash % AVATAR_TONES.length]}`} aria-hidden="true">
+      {initials(name)}
+    </span>
+  );
+}
+
+// Page-level tabs as links (the state lives in the URL, so the server renders
+// the right one and a tab can be bookmarked).
+export function Tabs({ tabs, active, Link }) {
+  return (
+    <nav className="-mx-1 mb-7 flex gap-1 overflow-x-auto px-1 pb-1" aria-label="Sections">
+      {tabs.map((t) => {
+        const on = t.key === active;
+        return (
+          <Link
+            key={t.key}
+            href={t.href}
+            scroll={false}
+            aria-current={on ? "page" : undefined}
+            className={`flex shrink-0 items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition-colors ${
+              on ? "bg-brand-700 text-white" : "bg-white text-ink-900 ring-1 ring-inset ring-ink-200 hover:bg-ink-50"
+            }`}
+          >
+            {t.label}
+            {t.count !== undefined && (
+              <span className={`rounded-full px-1.5 text-xs tabular-nums ${on ? "bg-white/20 text-white" : "bg-ink-100 text-ink-700"}`}>{t.count}</span>
+            )}
+          </Link>
+        );
+      })}
+    </nav>
   );
 }
 
@@ -145,7 +317,7 @@ export function SectionPill({ icon, tone = "brand", count, children, as: Tag = "
 // AppFrame, because the server layout reads it too.
 export const NAV_COOKIE = "sk_nav";
 
-// Stroke icons (24px grid) shared by the sidebar and section pills.
+// Stroke icons (24px grid) shared by the sidebar, tiles and section pills.
 export const ICONS = {
   dashboard: "M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z",
   followUps: "M12 8v4l3 2M21 12a9 9 0 11-18 0 9 9 0 0118 0z",
@@ -159,4 +331,29 @@ export const ICONS = {
   phone: "M5 4h4l2 5-2.5 1.5a11 11 0 005 5L15 13l5 2v4a2 2 0 01-2 2A16 16 0 013 6a2 2 0 012-2z",
   pause: "M10 9v6M14 9v6M21 12a9 9 0 11-18 0 9 9 0 0118 0z",
   filter: "M4 6h16M7 12h10M10 18h4",
+  search: "M11 18a7 7 0 100-14 7 7 0 000 14zM20 20l-3.5-3.5",
+  plus: "M12 5v14M5 12h14",
+  upload: "M12 16V4M7 9l5-5 5 5M4 20h16",
+  check: "M5 12.5l4.5 4.5L19 7.5",
+  alert: "M12 9v4M12 17h.01M10.3 3.9L2.4 17.5A2 2 0 004.1 20.5h15.8a2 2 0 001.7-3L13.7 3.9a2 2 0 00-3.4 0z",
+  shield: "M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z M9 12l2 2 4-4",
+  pulse: "M3 12h4l3-8 4 16 3-8h4",
+  file: "M14 3H6a2 2 0 00-2 2v14a2 2 0 002 2h12a2 2 0 002-2V9zM14 3v6h6",
+  user: "M12 12a4 4 0 100-8 4 4 0 000 8zM4 21a8 8 0 0116 0",
+  card: "M3 6h18v12H3zM3 10h18",
+  mail: "M4 6h16v12H4zM4 7l8 6 8-6",
+  team: "M9 11a4 4 0 100-8 4 4 0 000 8zM2 21v-1a7 7 0 0114 0v1M16 3.13a4 4 0 010 7.75M22 21v-1a7 7 0 00-4-6.3",
+  building: "M4 21V5a2 2 0 012-2h8a2 2 0 012 2v16M16 9h2a2 2 0 012 2v10M8 7h4M8 11h4M8 15h4M3 21h18",
+  more: "M5 12h.01M12 12h.01M19 12h.01",
+  arrowRight: "M5 12h14M13 6l6 6-6 6",
+  chevronDown: "M6 9l6 6 6-6",
+  logout: "M15 17l5-5-5-5M20 12H9M12 21H6a2 2 0 01-2-2V5a2 2 0 012-2h6",
 };
+
+export function Icon({ d, className = "h-[18px] w-[18px]", strokeWidth = 1.8 }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" className={`shrink-0 ${className}`} aria-hidden="true">
+      <path d={d} />
+    </svg>
+  );
+}

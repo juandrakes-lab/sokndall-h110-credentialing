@@ -1,4 +1,4 @@
-import { Card, CardHeader } from "@/components/app/ui";
+import { Card, CardHeader, ICONS, Meter } from "@/components/app/ui";
 
 // The onboarding checklist (alcance §3.10): what's ready, and what's still
 // missing before an application can be submitted.
@@ -9,9 +9,13 @@ export default function ChecklistCard({ items }) {
   return (
     <Card>
       <CardHeader
+        icon={ICONS.check}
         title="Ready to enroll?"
         description={complete ? "Everything payers ask for is on file." : `${done} of ${items.length} ready. Payers ask for all of these.`}
       />
+      <div className="px-5 pt-4">
+        <Meter value={items.length ? done / items.length : 0} tone={complete ? "green" : "amber"} />
+      </div>
       <ul className="divide-y divide-ink-100">
         {items.map((item) => (
           <li key={item.key} className="flex gap-3 px-5 py-2.5">
@@ -24,7 +28,7 @@ export default function ChecklistCard({ items }) {
               ✓
             </span>
             <div>
-              <p className={`text-sm ${item.done ? "text-ink-700" : "font-medium text-ink-900"}`}>
+              <p className={`text-sm ${item.done ? "text-ink-700" : "font-semibold text-ink-900"}`}>
                 {item.label}
                 <span className="sr-only">{item.done ? " — done" : " — missing"}</span>
               </p>

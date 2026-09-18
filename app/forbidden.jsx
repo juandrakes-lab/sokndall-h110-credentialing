@@ -21,7 +21,7 @@ export default function Forbidden() {
           <Link href="/dashboard" className={buttonClass("secondary")}>
             Back to the dashboard
           </Link>
-          <Link href="/settings#billing" className={buttonClass("primary")}>
+          <Link href="/settings?tab=billing" className={buttonClass("primary")}>
             See plans
           </Link>
         </div>
