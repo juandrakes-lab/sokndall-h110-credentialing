@@ -14,6 +14,7 @@ import {
 import { loadFollowUps } from "@/lib/follow-ups";
 import { REVALIDATION, loadExpirations } from "@/lib/expirations";
 import {
+  Avatar,
   Card,
   EmptyState,
   ICONS,
@@ -397,12 +398,15 @@ export default async function DashboardPage({ searchParams }) {
                           scroll={false}
                           className="flex flex-col gap-1 rounded-xl px-3 py-2.5 transition-colors hover:bg-ink-50 sm:flex-row sm:items-center sm:justify-between"
                         >
-                          <div className="min-w-0 truncate">
+                          <div className="flex min-w-0 items-center gap-3">
+                            <Avatar name={item.who} photo={item.provider?.photo_url} size="sm" />
+                            <div className="min-w-0 truncate">
                             <span className="font-semibold text-ink-900">{item.who}</span>
                             <span className="text-sm text-ink-500">
                               {"  "}
                               {item.kind === "Payer revalidation" ? `Payer revalidation · ${item.detail}` : item.kind}
                             </span>
+                            </div>
                           </div>
                           <div className="flex shrink-0 items-center gap-3 text-sm">
                             <span className="text-ink-500">{formatDate(item.date)}</span>
@@ -433,17 +437,22 @@ export default async function DashboardPage({ searchParams }) {
             <SectionPill icon={ICONS.phone} count={queue.length}>
               Follow-ups this week
             </SectionPill>
-            {queue.length > 0 && (
-              <Link href="/follow-ups" className={buttonClass("link")}>
-                See all
-              </Link>
-            )}
+
           </div>
           <Card className="overflow-hidden">
             {queue.length === 0 ? (
               <p className="px-5 py-6 text-sm text-ink-500">Nothing to chase this week.</p>
             ) : (
-              <FollowUpList items={queue.slice(0, PREVIEW_ROWS)} lastContact={lastContact} directory={directory} basePath="/dashboard" params={params} />
+              <>
+                <FollowUpList items={queue.slice(0, PREVIEW_ROWS)} lastContact={lastContact} directory={directory} basePath="/dashboard" params={params} />
+                {queue.length > PREVIEW_ROWS && (
+                  <div className="border-t border-ink-100 px-5 py-3">
+                    <Link href="/follow-ups" className={buttonClass("link")}>
+                      See all {queue.length} follow-ups
+                    </Link>
+                  </div>
+                )}
+              </>
             )}
           </Card>
         </section>
@@ -458,7 +467,16 @@ export default async function DashboardPage({ searchParams }) {
             {stalled.length === 0 ? (
               <p className="px-5 py-6 text-sm text-ink-500">No stalled applications.</p>
             ) : (
-              <FollowUpList items={stalled.slice(0, PREVIEW_ROWS)} lastContact={lastContact} directory={directory} basePath="/dashboard" params={params} mode="stalled" />
+              <>
+                <FollowUpList items={stalled.slice(0, PREVIEW_ROWS)} lastContact={lastContact} directory={directory} basePath="/dashboard" params={params} mode="stalled" />
+                {stalled.length > PREVIEW_ROWS && (
+                  <div className="border-t border-ink-100 px-5 py-3">
+                    <Link href="/follow-ups" className={buttonClass("link")}>
+                      See all {stalled.length} stalled
+                    </Link>
+                  </div>
+                )}
+              </>
             )}
           </Card>
         </section>

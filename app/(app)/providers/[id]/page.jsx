@@ -4,6 +4,7 @@ import { canReach, getAppContext } from "@/lib/org";
 import { practiceServiceAddress, providerIssues } from "@/lib/consistency";
 import { daysUntil, formatDate } from "@/lib/credentials";
 import {
+  Avatar,
   Badge,
   Card,
   CardHeader,
@@ -137,6 +138,8 @@ export default async function ProviderPage({ params, searchParams }) {
 
       {/* Who this is, and where they stand — before any form. */}
       <Card className="flex flex-col gap-5 px-5 py-5 sm:flex-row sm:items-center sm:gap-8">
+        <div className="flex min-w-0 items-center gap-5">
+        <Avatar name={`${provider.first_name} ${provider.last_name}`} photo={provider.photo_url} size="lg" />
         <dl className="grid min-w-0 grid-cols-2 gap-x-8 gap-y-3 text-sm sm:grid-cols-2">
           {[
             ["NPI", provider.npi || "Not on file"],
@@ -150,6 +153,7 @@ export default async function ProviderPage({ params, searchParams }) {
             </div>
           ))}
         </dl>
+        </div>
 
         <div className="flex flex-1 flex-wrap items-center gap-6 sm:justify-end">
           <div className="flex items-center gap-3">

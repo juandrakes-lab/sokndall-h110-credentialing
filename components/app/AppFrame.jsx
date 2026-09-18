@@ -6,7 +6,7 @@ import { useEffect, useRef, useState, useTransition } from "react";
 import { switchClient } from "@/lib/client-actions";
 import AppSearch from "@/components/app/AppSearch";
 import SubmitButton from "@/components/app/SubmitButton";
-import { ICONS, Icon, NAV_COOKIE, PersonPhoto, initials } from "@/components/app/ui";
+import { ICONS, Icon, NAV_COOKIE, PersonPhoto } from "@/components/app/ui";
 
 // Alcance §5, grouped: the day-to-day work first, then the account's plumbing.
 const WORK = [
@@ -71,18 +71,25 @@ function ClientMenu({ clients, activeId, folded, align = "left" }) {
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
         title={folded ? active?.name : undefined}
-        className={`flex w-full items-center gap-2.5 rounded-xl transition-colors hover:bg-white/55 ${folded ? "justify-center p-1.5" : "px-2 py-2"}`}
+        className={`flex w-full items-center gap-2.5 rounded-xl transition-colors hover:bg-white/55 ${folded ? "justify-center p-2" : "px-3 py-2"}`}
       >
-        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[10px] bg-white text-[0.6875rem] font-semibold text-brand-700 ring-1 ring-ink-900/5">
-          {pending ? <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-current border-t-transparent" /> : initials(active?.name)}
-        </span>
-        {!folded && (
+        {folded ? (
+          pending ? (
+            <span className="h-4 w-4 animate-spin rounded-full border-2 border-ink-700 border-t-transparent" />
+          ) : (
+            <Icon d={ICONS.switch} className="h-[18px] w-[18px] text-ink-700" />
+          )
+        ) : (
           <>
             <span className="min-w-0 flex-1 text-left">
-              <span className="block text-[0.6875rem] font-medium text-ink-700">Client</span>
+              <span className="block text-[0.6875rem] font-medium text-ink-500">Client</span>
               <span className="block truncate text-sm font-semibold text-ink-900">{active?.name}</span>
             </span>
-            <Icon d={ICONS.chevronDown} className="h-4 w-4 text-ink-700" />
+            {pending ? (
+              <span className="h-4 w-4 shrink-0 animate-spin rounded-full border-2 border-ink-700 border-t-transparent" />
+            ) : (
+              <Icon d={ICONS.chevronDown} className="h-4 w-4 text-ink-700" />
+            )}
           </>
         )}
       </button>
@@ -102,7 +109,6 @@ function ClientMenu({ clients, activeId, folded, align = "left" }) {
                   }}
                   className={`flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-left text-sm ${c.id === activeId ? "bg-ink-50 font-semibold text-ink-900" : "text-ink-900 hover:bg-ink-50"}`}
                 >
-                  <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-[0.625rem] font-semibold text-brand-700">{initials(c.name)}</span>
                   <span className="min-w-0 flex-1 truncate">{c.name}</span>
                   {c.id === activeId && <Icon d={ICONS.check} className="h-4 w-4 text-brand-600" />}
                 </button>

@@ -10,7 +10,7 @@ const BUTTON = {
   secondary: "bg-white text-ink-900 ring-1 ring-inset ring-ink-200 shadow-[0_1px_2px_rgba(14,42,46,0.05)] hover:bg-ink-50",
   ghost: "text-ink-900 hover:bg-ink-100",
   danger: "bg-status-expired text-white hover:opacity-90",
-  link: "text-brand-600 underline-offset-2 hover:underline px-0 py-0",
+  link: "text-sm font-medium text-ink-500 underline-offset-4 hover:text-brand-600 hover:underline px-0 py-0",
 };
 
 export function buttonClass(variant = "primary", size = "md") {
@@ -23,7 +23,7 @@ export function PageHeader({ title, description, actions, eyebrow }) {
     <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
       <div className="min-w-0">
         {eyebrow && <div className="mb-2 text-sm font-medium text-ink-700">{eyebrow}</div>}
-        <h1 className="text-[1.75rem] font-semibold leading-[1.15] tracking-[-0.02em] text-ink-900 sm:text-[2rem]">{title}</h1>
+        <h1 className="text-[2rem] font-normal leading-[1.1] tracking-[-0.03em] text-ink-900 sm:text-[2.375rem]">{title}</h1>
         {description && <p className="mt-2 max-w-2xl text-[0.9375rem] leading-relaxed text-ink-500">{description}</p>}
       </div>
       {actions && <div className="flex flex-wrap items-center gap-2">{actions}</div>}
@@ -285,9 +285,13 @@ export function initials(name, fallback) {
 const AVATAR_TONES = ["bg-brand-50 text-brand-700", "bg-accent-100 text-accent-700", "bg-sky-50 text-sky-800", "bg-enroll-purple-bg text-enroll-purple", "bg-status-active-bg text-status-active"];
 
 // Initials in a circle, the colour picked from the name so a person keeps it.
-export function Avatar({ name, size = "md" }) {
+export function Avatar({ name, photo, size = "md" }) {
   const hash = [...(name ?? "")].reduce((n, ch) => n + ch.charCodeAt(0), 0);
-  const box = size === "lg" ? "h-14 w-14 text-lg" : size === "sm" ? "h-7 w-7 text-[0.6875rem]" : "h-9 w-9 text-xs";
+  const box = size === "lg" ? "h-14 w-14 text-lg" : size === "sm" ? "h-8 w-8 text-[0.6875rem]" : "h-9 w-9 text-xs";
+  if (photo) {
+    // eslint-disable-next-line @next/next/no-img-element -- a small avatar; next/image adds nothing here
+    return <img src={photo} alt="" className={`${box} shrink-0 rounded-full object-cover`} referrerPolicy="no-referrer" />;
+  }
   return (
     <span className={`flex shrink-0 items-center justify-center rounded-full font-semibold ${box} ${AVATAR_TONES[hash % AVATAR_TONES.length]}`} aria-hidden="true">
       {initials(name)}
@@ -295,12 +299,12 @@ export function Avatar({ name, size = "md" }) {
   );
 }
 
-// A person who signs in: their photo (uploaded, or Google's), else initials on
-// the site's yellow. Providers never get one — they are records, not users.
+// A person who signs in: the photo of the account they sign in with (Google
+// supplies one), else initials on the site's yellow.
 export function PersonPhoto({ name, photo, size = "md" }) {
   const box = { sm: "h-7 w-7 text-[0.6875rem]", md: "h-9 w-9 text-sm", lg: "h-12 w-12 text-base", xl: "h-20 w-20 text-2xl" }[size];
   if (photo) {
-    // eslint-disable-next-line @next/next/no-img-element -- a 256px avatar from Storage or Google; next/image adds nothing here
+    // eslint-disable-next-line @next/next/no-img-element -- a small avatar from the sign-in provider; next/image adds nothing here
     return <img src={photo} alt="" className={`${box} shrink-0 rounded-full object-cover ring-2 ring-white`} referrerPolicy="no-referrer" />;
   }
   return (
@@ -372,6 +376,7 @@ export const ICONS = {
   more: "M5 12h.01M12 12h.01M19 12h.01",
   arrowRight: "M5 12h14M13 6l6 6-6 6",
   chevronDown: "M6 9l6 6 6-6",
+  switch: "M8 9l4-4 4 4M16 15l-4 4-4-4",
   logout: "M15 17l5-5-5-5M20 12H9M12 21H6a2 2 0 01-2-2V5a2 2 0 012-2h6",
 };
 

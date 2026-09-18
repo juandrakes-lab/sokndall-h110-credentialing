@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Badge, STATUS_FILL } from "@/components/app/ui";
+import { Avatar, Badge, STATUS_FILL } from "@/components/app/ui";
 import { formatDate } from "@/lib/credentials";
 import { CHANNEL_LABELS, ENROLLMENT_STATUS_LABELS, cellKey, followUpLabel, stalledDays } from "@/lib/enrollments";
 
@@ -30,8 +30,9 @@ export default function FollowUpList({ items, lastContact, directory, basePath, 
             <Link
               href={withOpen(basePath, params, cellKey(e.provider_id, e.payer_id))}
               scroll={false}
-              className="flex items-center gap-4 px-5 py-3 transition-colors hover:bg-ink-50/70"
+              className="flex items-center gap-3 px-5 py-3 transition-colors hover:bg-ink-50/70"
             >
+              <Avatar name={`${e.provider.first_name} ${e.provider.last_name}`} photo={e.provider.photo_url} />
               <div className="min-w-0 flex-1">
                 <p className="truncate">
                   <span className="font-semibold text-ink-900">

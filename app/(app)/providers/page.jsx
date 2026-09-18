@@ -4,6 +4,7 @@ import { providerIssues } from "@/lib/consistency";
 import { daysUntil } from "@/lib/credentials";
 import { ENROLLMENT_STATUS_LABELS } from "@/lib/enrollments";
 import {
+  Avatar,
   Badge,
   Card,
   EmptyState,
@@ -161,6 +162,7 @@ export default async function ProvidersPage() {
                     <tr key={p.id} className="transition-colors hover:bg-ink-50/70">
                       <td className="px-5 py-3.5">
                         <div className="flex items-center gap-3">
+                          <Avatar name={`${p.first_name} ${p.last_name}`} photo={p.photo_url} />
                           <div className="min-w-0">
                             <Link href={`/providers/${p.id}`} className="font-semibold text-ink-900 hover:text-brand-600">
                               {p.last_name}, {p.first_name}
