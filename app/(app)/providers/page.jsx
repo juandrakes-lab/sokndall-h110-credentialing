@@ -4,7 +4,6 @@ import { providerIssues } from "@/lib/consistency";
 import { daysUntil } from "@/lib/credentials";
 import { ENROLLMENT_STATUS_LABELS } from "@/lib/enrollments";
 import {
-  Avatar,
   Badge,
   Card,
   EmptyState,
@@ -162,14 +161,12 @@ export default async function ProvidersPage() {
                     <tr key={p.id} className="transition-colors hover:bg-ink-50/70">
                       <td className="px-5 py-3.5">
                         <div className="flex items-center gap-3">
-                          <Avatar name={`${p.first_name} ${p.last_name}`} />
                           <div className="min-w-0">
                             <Link href={`/providers/${p.id}`} className="font-semibold text-ink-900 hover:text-brand-600">
                               {p.last_name}, {p.first_name}
                             </Link>
-                            <div className="flex flex-wrap items-center gap-2 text-xs text-ink-700">
+                            <div className="flex flex-wrap items-center gap-2 text-xs text-ink-500">
                               <span>{p.specialty ?? "No specialty"}</span>
-                              {p.npi && <span className="text-ink-500">NPI {p.npi}</span>}
                               {p.status === "inactive" && <Badge tone="neutral">Inactive</Badge>}
                               {readOnly.has(p.id) && <Badge tone="amber">Read-only</Badge>}
                             </div>

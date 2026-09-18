@@ -38,11 +38,13 @@ const BUCKET_ROWS = 6;
 const FILTER_KEYS = ["provider", "payer", "type", "status"];
 const URGENT_DAYS = 14;
 
+// Severity in steps of lightness as well as hue, so the four read apart even
+// where red and orange don't: strong red, amber, pale yellow, grey.
 const BUCKET_DOT = {
-  expired: "bg-status-expired",
-  d30: "bg-status-expiring",
-  d60: "bg-accent-400",
-  d90: "bg-ink-200",
+  expired: "bg-red-600",
+  d30: "bg-amber-500",
+  d60: "bg-amber-200",
+  d90: "bg-slate-300",
 };
 
 const BUCKET_TONE = {
@@ -170,7 +172,7 @@ export default async function DashboardPage({ searchParams }) {
     ...urgentExpirations.slice(0, 3).map((i) => ({
       key: i.id,
       title: i.who,
-      detail: i.what,
+      detail: i.kind === "Payer revalidation" ? `Payer revalidation · ${i.detail}` : i.kind,
       badge: daysUntil(i.date) < 0 ? "Expired" : daysUntil(i.date) === 0 ? "Expires today" : `${daysUntil(i.date)} days left`,
       tone: "red",
       href: i.href,
@@ -395,9 +397,12 @@ export default async function DashboardPage({ searchParams }) {
                           scroll={false}
                           className="flex flex-col gap-1 rounded-xl px-3 py-2.5 transition-colors hover:bg-ink-50 sm:flex-row sm:items-center sm:justify-between"
                         >
-                          <div className="min-w-0">
-                            <span className="font-medium text-ink-900">{item.who}</span>
-                            <span className="text-ink-700"> · {item.what}</span>
+                          <div className="min-w-0 truncate">
+                            <span className="font-semibold text-ink-900">{item.who}</span>
+                            <span className="text-sm text-ink-500">
+                              {"  "}
+                              {item.kind === "Payer revalidation" ? `Payer revalidation · ${item.detail}` : item.kind}
+                            </span>
                           </div>
                           <div className="flex shrink-0 items-center gap-3 text-sm">
                             <span className="text-ink-500">{formatDate(item.date)}</span>

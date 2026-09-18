@@ -10,16 +10,18 @@ import {
   sortPayers,
   stalledDays,
 } from "@/lib/enrollments";
-import { Card, EmptyState, ICONS, PIPELINE_ORDER, PageHeader, STATUS_FILL, SectionPill, SegmentBar, buttonClass } from "@/components/app/ui";
+import { Card, EmptyState, ICONS, Icon, PIPELINE_ORDER, PageHeader, STATUS_FILL, SectionPill, SegmentBar, buttonClass } from "@/components/app/ui";
 import EnrollmentPanel from "./EnrollmentPanel";
 
+// Cells read like the app's status badges: a soft fill and a small shadow, no
+// outline — except an empty cell, which stays a dashed placeholder.
 const CHIP = {
-  not_started: "bg-white text-ink-500 border-dashed border-ink-200",
-  submitted: "bg-enroll-purple-bg text-enroll-purple border-enroll-purple/25",
-  in_review: "bg-sky-50 text-sky-800 border-sky-200",
-  info_requested: "bg-status-expiring-bg text-status-expiring border-status-expiring/30",
-  approved: "bg-status-active-bg text-status-active border-status-active/30",
-  denied: "bg-status-expired-bg text-status-expired border-status-expired/30",
+  not_started: "bg-transparent text-ink-500 border border-dashed border-ink-200",
+  submitted: "bg-enroll-purple-bg text-enroll-purple shadow-[0_1px_2px_rgba(14,42,46,0.10)]",
+  in_review: "bg-sky-50 text-sky-800 shadow-[0_1px_2px_rgba(14,42,46,0.10)]",
+  info_requested: "bg-status-expiring-bg text-status-expiring shadow-[0_1px_2px_rgba(14,42,46,0.10)]",
+  approved: "bg-status-active-bg text-status-active shadow-[0_1px_2px_rgba(14,42,46,0.10)]",
+  denied: "bg-status-expired-bg text-status-expired shadow-[0_1px_2px_rgba(14,42,46,0.10)]",
 };
 
 // The flagship screen (alcance §3.13): providers down, payers across, one
@@ -150,12 +152,12 @@ export default async function EnrollmentsPage({ searchParams }) {
                         <Link
                           href={`/enrollments?open=${key}`}
                           scroll={false}
-                          className={`flex items-center justify-between gap-1 rounded-lg border px-2.5 py-1.5 text-xs font-medium transition hover:ring-2 hover:ring-brand-100 ${CHIP[status]}`}
+                          className={`flex items-center justify-between gap-1 rounded-lg px-2.5 py-1.5 text-xs font-medium transition hover:ring-2 hover:ring-brand-100 ${CHIP[status]}`}
                         >
                           <span className="truncate">{ENROLLMENT_STATUS_LABELS[status]}</span>
-                          <span className="flex shrink-0 gap-1">
-                            {due && <span className="h-2 w-2 rounded-full bg-status-expired" aria-label="Follow-up due" />}
-                            {stalled && <span className="h-2 w-2 rounded-full bg-status-expiring" aria-label="Stalled" />}
+                          <span className="flex shrink-0 items-center gap-1">
+                            {due && <span className="h-2 w-2 rounded-full bg-red-600" aria-label="Follow-up due" />}
+                            {stalled && <Icon d={ICONS.pause} className="h-3.5 w-3.5 text-amber-600" strokeWidth={2.2} />}
                           </span>
                         </Link>
                       </td>
@@ -170,10 +172,10 @@ export default async function EnrollmentsPage({ searchParams }) {
 
       <div className="flex flex-wrap gap-x-6 gap-y-2 text-xs text-ink-700">
         <span className="flex items-center gap-1.5">
-          <span className="h-2 w-2 rounded-full bg-status-expired" /> Follow-up due today or overdue
+          <span className="h-2 w-2 rounded-full bg-red-600" aria-hidden="true" /> Follow-up due today or overdue
         </span>
         <span className="flex items-center gap-1.5">
-          <span className="h-2 w-2 rounded-full bg-status-expiring" /> Stalled: no status change in 30+ days
+          <Icon d={ICONS.pause} className="h-3.5 w-3.5 text-amber-600" strokeWidth={2.2} /> Stalled: no status change in 30+ days
         </span>
       </div>
 

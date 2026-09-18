@@ -1,4 +1,4 @@
-import { Badge, Card, CardHeader, buttonClass } from "@/components/app/ui";
+import { Badge, Card, CardHeader, buttonClass, PersonPhoto } from "@/components/app/ui";
 import { formatDate } from "@/lib/credentials";
 import { PLANS } from "@/lib/plans";
 import { EXTRA_USER_PRICE, INCLUDED_USERS, monthlyPrice } from "@/lib/seats";
@@ -45,10 +45,13 @@ export default function TeamCard({ org, members, invitations, writable, clients,
         {members.map((m) => (
           <li key={m.user_id} className="px-5 py-3">
             <div className="flex items-center justify-between gap-3">
+              <div className="flex min-w-0 items-center gap-3">
+              <PersonPhoto name={m.name} photo={m.photo} />
               <div className="min-w-0">
-                <p className="truncate text-ink-900">{m.name}</p>
+                <p className="truncate font-semibold text-ink-900">{m.name}</p>
                 {m.name !== m.email && <p className="truncate text-xs text-ink-500">{m.email}</p>}
                 {clients && m.role !== "owner" && <p className="truncate text-xs text-ink-500">{reach(m.client_ids)}</p>}
+              </div>
               </div>
               {m.role === "owner" ? (
                 <Badge tone="brand">Owner</Badge>

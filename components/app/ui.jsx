@@ -44,7 +44,7 @@ export function Card({ children, className = "", as: Tag = "section", ...rest })
 export function CardHeader({ title, description, actions, icon, divider = true }) {
   return (
     <div className={`flex flex-col gap-3 px-5 pb-4 pt-5 sm:flex-row sm:items-start sm:justify-between ${divider ? "border-b border-ink-100" : ""}`}>
-      <div className="flex min-w-0 items-start gap-3">
+      <div className="flex min-w-0 items-start gap-2.5">
         {icon && <IconTile d={icon} />}
         <div className="min-w-0">
           <h2 className="text-[1.0625rem] font-semibold leading-snug tracking-[-0.01em] text-ink-900">{title}</h2>
@@ -56,39 +56,38 @@ export function CardHeader({ title, description, actions, icon, divider = true }
   );
 }
 
-// A small rounded square holding a stroke icon — the reference's section marks.
+// A section's stroke icon, sitting straight on the surface in its tone — no
+// box around it (the reference's marks).
 export function IconTile({ d, tone = "brand", size = "md" }) {
   const tones = {
-    brand: "bg-brand-50 text-brand-700",
-    amber: "bg-status-expiring-bg text-status-expiring",
-    red: "bg-status-expired-bg text-status-expired",
-    green: "bg-status-active-bg text-status-active",
-    neutral: "bg-ink-100 text-ink-700",
-    accent: "bg-accent-100 text-accent-700",
+    brand: "text-brand-600",
+    amber: "text-status-expiring",
+    red: "text-status-expired",
+    green: "text-status-active",
+    neutral: "text-ink-700",
+    accent: "text-accent-700",
   };
-  const box = size === "sm" ? "h-8 w-8 rounded-[10px]" : "h-9 w-9 rounded-xl";
+  const box = size === "sm" ? "h-[22px] w-[22px]" : "h-6 w-6";
   return (
-    <span className={`flex shrink-0 items-center justify-center ${box} ${tones[tone]}`} aria-hidden="true">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" className="h-[18px] w-[18px]">
-        <path d={d} />
-      </svg>
-    </span>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className={`mt-px shrink-0 ${box} ${tones[tone]}`} aria-hidden="true">
+      <path d={d} />
+    </svg>
   );
 }
 
 const TONES = {
-  green: "bg-status-active-bg text-status-active ring-status-active/20",
-  amber: "bg-status-expiring-bg text-status-expiring ring-status-expiring/25",
-  red: "bg-status-expired-bg text-status-expired ring-status-expired/20",
-  neutral: "bg-status-neutral-bg text-ink-700 ring-ink-200",
-  brand: "bg-brand-50 text-brand-700 ring-brand-100",
-  violet: "bg-enroll-purple-bg text-enroll-purple ring-enroll-purple/20",
-  blue: "bg-sky-50 text-sky-800 ring-sky-200",
+  green: "bg-status-active-bg text-status-active",
+  amber: "bg-status-expiring-bg text-status-expiring",
+  red: "bg-status-expired-bg text-status-expired",
+  neutral: "bg-status-neutral-bg text-ink-700",
+  brand: "bg-brand-50 text-brand-700",
+  violet: "bg-enroll-purple-bg text-enroll-purple",
+  blue: "bg-sky-50 text-sky-800",
 };
 
 export function Badge({ tone = "neutral", children, dot = false }) {
   return (
-    <span className={`inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-2 py-0.5 text-xs font-medium ring-1 ring-inset ${TONES[tone]}`}>
+    <span className={`inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-2 py-0.5 text-xs font-medium shadow-[0_1px_2px_rgba(14,42,46,0.10),0_1px_1px_rgba(14,42,46,0.04)] ${TONES[tone]}`}>
       {dot && <span className="h-1.5 w-1.5 rounded-full bg-current" aria-hidden="true" />}
       {children}
     </span>
@@ -147,28 +146,27 @@ export function EmptyState({ title, description, action }) {
   );
 }
 
-const PILL_TONES = {
-  brand: "bg-brand-50 text-brand-700 [&_svg]:text-brand-600",
-  amber: "bg-status-expiring-bg text-status-expiring",
-  red: "bg-status-expired-bg text-status-expired",
-  green: "bg-status-active-bg text-status-active",
-  neutral: "bg-ink-100 text-ink-900 [&_svg]:text-ink-700",
+const HEADING_TONES = {
+  brand: "text-brand-600",
+  amber: "text-status-expiring",
+  red: "text-status-expired",
+  green: "text-status-active",
+  neutral: "text-ink-700",
 };
 
-// A section's name as a soft pill with its icon (the reference's "Code Review"
-// heading), with the count beside it.
+// A section's name: its icon in the section's tone, the title, and the count.
 export function SectionPill({ icon, tone = "brand", count, children, as: Tag = "h2" }) {
   return (
     <Tag className="flex items-center gap-2.5">
-      <span className={`inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 text-[0.9375rem] font-medium ${PILL_TONES[tone]}`}>
-        {icon && (
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4" aria-hidden="true">
-            <path d={icon} />
-          </svg>
-        )}
-        {children}
-      </span>
-      {count !== undefined && <span className="text-sm font-semibold tabular-nums text-ink-900">{count}</span>}
+      {icon && (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className={`h-6 w-6 shrink-0 ${HEADING_TONES[tone]}`} aria-hidden="true">
+          <path d={icon} />
+        </svg>
+      )}
+      <span className="text-lg font-semibold tracking-[-0.01em] text-ink-900">{children}</span>
+      {count !== undefined && (
+        <span className="rounded-full bg-white px-2 py-0.5 text-xs font-semibold tabular-nums text-ink-700 shadow-[0_1px_2px_rgba(14,42,46,0.10)]">{count}</span>
+      )}
     </Tag>
   );
 }
@@ -278,8 +276,10 @@ export function SegmentBar({ segments, height = 12 }) {
 
 export function initials(name, fallback) {
   const source = (name || fallback || "?").trim();
-  const parts = source.split(/[\s@._-]+/).filter(Boolean);
-  return ((parts[0]?.[0] ?? "?") + (name && parts[1] ? parts[1][0] : "")).toUpperCase();
+  // An email stands in for a name until the person sets one: one letter only.
+  if (source.includes("@")) return source[0].toUpperCase();
+  const parts = source.split(/\s+/).filter(Boolean);
+  return ((parts[0]?.[0] ?? "?") + (parts[1]?.[0] ?? "")).toUpperCase();
 }
 
 const AVATAR_TONES = ["bg-brand-50 text-brand-700", "bg-accent-100 text-accent-700", "bg-sky-50 text-sky-800", "bg-enroll-purple-bg text-enroll-purple", "bg-status-active-bg text-status-active"];
@@ -290,6 +290,21 @@ export function Avatar({ name, size = "md" }) {
   const box = size === "lg" ? "h-14 w-14 text-lg" : size === "sm" ? "h-7 w-7 text-[0.6875rem]" : "h-9 w-9 text-xs";
   return (
     <span className={`flex shrink-0 items-center justify-center rounded-full font-semibold ${box} ${AVATAR_TONES[hash % AVATAR_TONES.length]}`} aria-hidden="true">
+      {initials(name)}
+    </span>
+  );
+}
+
+// A person who signs in: their photo (uploaded, or Google's), else initials on
+// the site's yellow. Providers never get one — they are records, not users.
+export function PersonPhoto({ name, photo, size = "md" }) {
+  const box = { sm: "h-7 w-7 text-[0.6875rem]", md: "h-9 w-9 text-sm", lg: "h-12 w-12 text-base", xl: "h-20 w-20 text-2xl" }[size];
+  if (photo) {
+    // eslint-disable-next-line @next/next/no-img-element -- a 256px avatar from Storage or Google; next/image adds nothing here
+    return <img src={photo} alt="" className={`${box} shrink-0 rounded-full object-cover ring-2 ring-white`} referrerPolicy="no-referrer" />;
+  }
+  return (
+    <span className={`flex shrink-0 items-center justify-center rounded-full bg-accent-400 font-semibold text-brand-700 ${box}`} aria-hidden="true">
       {initials(name)}
     </span>
   );

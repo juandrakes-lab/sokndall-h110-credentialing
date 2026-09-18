@@ -6,7 +6,7 @@ import { useEffect, useRef, useState, useTransition } from "react";
 import { switchClient } from "@/lib/client-actions";
 import AppSearch from "@/components/app/AppSearch";
 import SubmitButton from "@/components/app/SubmitButton";
-import { ICONS, Icon, NAV_COOKIE, initials } from "@/components/app/ui";
+import { ICONS, Icon, NAV_COOKIE, PersonPhoto, initials } from "@/components/app/ui";
 
 // Alcance §5, grouped: the day-to-day work first, then the account's plumbing.
 const WORK = [
@@ -118,7 +118,7 @@ function ClientMenu({ clients, activeId, folded, align = "left" }) {
   );
 }
 
-function UserMenu({ folded, displayName, email, trial, signOut, align = "up" }) {
+function UserMenu({ folded, displayName, email, photo, trial, signOut, align = "up" }) {
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
 
@@ -162,7 +162,7 @@ function UserMenu({ folded, displayName, email, trial, signOut, align = "up" }) 
         title={folded ? displayName || email : undefined}
         className={`flex w-full items-center gap-3 rounded-xl text-left transition-colors hover:bg-white/55 ${folded ? "justify-center p-1.5" : "px-2 py-2"}`}
       >
-        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-accent-400 text-sm font-semibold text-brand-700">{initials(displayName, email)}</span>
+        <PersonPhoto name={displayName || email} photo={photo} />
         {!folded && (
           <>
             <span className="min-w-0 flex-1">
@@ -192,6 +192,7 @@ export default function AppFrame({
   activeClientId,
   workspaceName,
   displayName,
+  photo,
   email,
   trial,
   signOut,
@@ -252,7 +253,7 @@ export default function AppFrame({
         ))}
       </nav>
 
-      <UserMenu folded={folded} displayName={displayName} email={email} trial={trial} signOut={signOut} />
+      <UserMenu folded={folded} displayName={displayName} email={email} photo={photo} trial={trial} signOut={signOut} />
     </div>
   );
 
@@ -287,7 +288,7 @@ export default function AppFrame({
               <Icon d={ICONS.search} className="h-[18px] w-[18px]" />
             </button>
             <div className="lg:hidden">
-              <UserMenu folded displayName={displayName} email={email} trial={trial} signOut={signOut} align="down" />
+              <UserMenu folded displayName={displayName} email={email} photo={photo} trial={trial} signOut={signOut} align="down" />
             </div>
           </div>
 

@@ -66,3 +66,31 @@ export async function updateAlertDays(_prev, formData) {
   revalidatePath("/settings");
   return { notice: `Saved. Alerts go out ${days.join(", ")} days before each deadline, and once when it's passed.`, value: days.join(", ") };
 }
+
+const AVATAR_BUCKET = "cred-avatars";
+
+// Your photo, uploaded by the browser to your own folder; this only records it
+// on your login and removes the one it replaces.
+export async function savePhoto(path) {
+  const { supabaseAll, user } = await getAppContext();
+  if (!user || typeof path !== "string" || !path.startsWith(`${user.id}/`)) return { error: "That upload doesn't belong to you." };
+
+  const { data } = supabaseAll.storage.from(AVATAR_BUCKET).getPublicUrl(path);
+  const previous = user.user_metadata?.photo_path;
+  const { error } = await supabaseAll.auth.updateUser({ data: { photo_url: data.publicUrl, photo_path: path } });
+  if (error) return { error: `Couldn't save the photo: ${error.message}` };
+  if (previous && previous !== path) await supabaseAll.storage.from(AVATAR_BUCKET).remove([previous]);
+  revalidatePath("/", "layout");
+  return { notice: "Photo saved." };
+}
+
+export async function removePhoto() {
+  const { supabaseAll, user } = await getAppContext();
+  if (!user) return { error: "Sign in again." };
+  const previous = user.user_metadata?.photo_path;
+  const { error } = await supabaseAll.auth.updateUser({ data: { photo_url: null, photo_path: null } });
+  if (error) return { error: `Couldn't remove the photo: ${error.message}` };
+  if (previous) await supabaseAll.storage.from(AVATAR_BUCKET).remove([previous]);
+  revalidatePath("/", "layout");
+  return { notice: "Photo removed." };
+}

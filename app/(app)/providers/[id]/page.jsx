@@ -4,7 +4,6 @@ import { canReach, getAppContext } from "@/lib/org";
 import { practiceServiceAddress, providerIssues } from "@/lib/consistency";
 import { daysUntil, formatDate } from "@/lib/credentials";
 import {
-  Avatar,
   Badge,
   Card,
   CardHeader,
@@ -138,18 +137,19 @@ export default async function ProviderPage({ params, searchParams }) {
 
       {/* Who this is, and where they stand — before any form. */}
       <Card className="flex flex-col gap-5 px-5 py-5 sm:flex-row sm:items-center sm:gap-8">
-        <div className="flex min-w-0 items-center gap-4">
-          <Avatar name={`${provider.first_name} ${provider.last_name}`} size="lg" />
-          <div className="min-w-0">
-            <p className="text-lg font-semibold text-ink-900">
-              {provider.first_name} {provider.last_name}
-            </p>
-            <p className="truncate text-sm text-ink-700">{provider.specialty ?? "No specialty on file"}</p>
-            <p className="truncate text-xs text-ink-500">
-              {[provider.email, provider.phone].filter(Boolean).join(" · ") || "No contact details yet"}
-            </p>
-          </div>
-        </div>
+        <dl className="grid min-w-0 grid-cols-2 gap-x-8 gap-y-3 text-sm sm:grid-cols-2">
+          {[
+            ["NPI", provider.npi || "Not on file"],
+            ["CAQH ID", provider.caqh_id || "Not on file"],
+            ["Email", provider.email || "—"],
+            ["Phone", provider.phone ? provider.phone.replace(/(\d{3})(\d{3})(\d{4})/, "($1) $2-$3") : "—"],
+          ].map(([label, value]) => (
+            <div key={label} className="min-w-0">
+              <dt className="text-xs text-ink-500">{label}</dt>
+              <dd className="truncate font-medium text-ink-900">{value}</dd>
+            </div>
+          ))}
+        </dl>
 
         <div className="flex flex-1 flex-wrap items-center gap-6 sm:justify-end">
           <div className="flex items-center gap-3">
