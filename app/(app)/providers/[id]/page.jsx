@@ -35,7 +35,7 @@ import {
 import ProviderForm from "../ProviderForm";
 import CredentialForm from "./CredentialForm";
 import CredentialItem from "./CredentialItem";
-import SubmitButton from "@/components/app/SubmitButton";
+import DeleteProviderForm from "./DeleteProviderForm";
 
 const TYPE_ORDER = ["state_license", "dea", "malpractice", "board_cert", "caqh_attestation"];
 const TAB_KEYS = ["credentials", "applications", "documents", "profile"];
@@ -77,7 +77,7 @@ export default async function ProviderPage({ params, searchParams }) {
   const readOnly = writable === false;
   const accountEnded = !accountAccess(org).writable;
 
-  const issues = providerIssues(provider, practice, siblings ?? []);
+  const issues = providerIssues(provider, practice, siblings ?? [], credentials ?? []);
   const documents = (docRows ?? []).map((d) => ({
     ...d,
     payerName: d.cred_enrollments?.cred_payers_org ? resolvePayer(d.cred_enrollments.cred_payers_org).name : null,
@@ -329,9 +329,9 @@ export default async function ProviderPage({ params, searchParams }) {
                     This removes {provider.first_name} {provider.last_name} with all of their credentials, enrollments and documents. It can&apos;t be
                     undone. If they just left the practice, mark them Inactive instead.
                   </p>
-                  <form action={deleteProvider.bind(null, id)} className="mt-4">
-                    <SubmitButton className={buttonClass("danger", "sm")}>Delete permanently</SubmitButton>
-                  </form>
+                  <div className="mt-4">
+                    <DeleteProviderForm action={deleteProvider.bind(null, id)} fullName={`${provider.first_name} ${provider.last_name}`} />
+                  </div>
                 </Card>
               )}
             </>

@@ -130,7 +130,7 @@ export default function CredentialForm({ action, initial, caqhIntervalDays, subm
         </div>
       );
     }
-    return <input {...common} placeholder={config.placeholders?.[field]} autoComplete="off" />;
+    return <input {...common} placeholder={config.placeholders?.[field]} maxLength={field === "custom_name" ? 80 : undefined} autoComplete="off" />;
   };
 
   return (

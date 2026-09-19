@@ -277,7 +277,7 @@ export default async function DashboardPage({ searchParams }) {
           icon={ICONS.alert}
           tone={infoRequested.length ? "amber" : "green"}
           hint="Applications waiting on you."
-          href="/enrollments"
+          href="/follow-ups#requests"
           Link={Link}
         />
       </StatRow>

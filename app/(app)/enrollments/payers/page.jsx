@@ -7,7 +7,7 @@ import { CatalogPicker, OwnPayerForm } from "./PayerPickers";
 import SubmitButton from "@/components/app/SubmitButton";
 
 export default async function PayersPage() {
-  const { supabase } = await getAppContext();
+  const { supabase, client, clients } = await getAppContext();
 
   const [{ data: payerRows }, { data: catalog }, { data: enrollments }] = await Promise.all([
     supabase.from("cred_payers_org").select(PAYER_SELECT),
@@ -25,8 +25,12 @@ export default async function PayersPage() {
     <div className="flex flex-col gap-8">
       <PageHeader
         eyebrow={<Link href="/enrollments" className="hover:text-ink-900">← Enrollments</Link>}
-        title="Your payers"
-        description="The insurers and programs you enroll providers with. Each one is a column in the matrix."
+        title={clients.length > 1 ? `Payers · ${client.name}` : "Your payers"}
+        description={
+          clients.length > 1
+            ? "The insurers and programs this client's providers enroll with. Each one is a column in this client's matrix — other clients keep their own list."
+            : "The insurers and programs you enroll providers with. Each one is a column in the matrix."
+        }
       />
 
       <div className="grid gap-8 lg:grid-cols-5">
@@ -56,16 +60,18 @@ export default async function PayersPage() {
               return (
                 <li key={p.id} className="flex flex-col gap-2 px-5 py-3 sm:flex-row sm:items-center sm:justify-between">
                   <div>
-                    <p className="text-sm font-medium text-ink-900">{p.name}</p>
+                    <p className="text-sm font-semibold text-ink-900">{p.name}</p>
                     <p className="text-xs text-ink-500">
                       {PAYER_TYPE_LABELS[p.payer_type]} · revalidates every {p.revalidation_months} months
                       {!p.fromCatalog && " · your own payer"}
                     </p>
                   </div>
                   {count > 0 ? (
-                    <Badge tone="neutral">
-                      {count} enrollment{count > 1 ? "s" : ""}
-                    </Badge>
+                    <span className="flex items-center gap-2" title="A payer with applications can't be removed — their history would go with it.">
+                      <Badge tone="neutral">
+                        {count} application{count > 1 ? "s" : ""}
+                      </Badge>
+                    </span>
                   ) : (
                     <form action={removePayer.bind(null, p.id)}>
                       <SubmitButton className={buttonClass("ghost", "sm")}>

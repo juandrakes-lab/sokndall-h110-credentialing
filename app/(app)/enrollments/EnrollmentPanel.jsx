@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { canReach, getAppContext } from "@/lib/org";
-import { daysUntil, formatDate, todayISO } from "@/lib/credentials";
+import { businessDate, daysUntil, formatDate, todayISO } from "@/lib/credentials";
 import {
   CHANNEL_LABELS,
   ENROLLMENT_STATUSES,
@@ -18,19 +18,11 @@ import ScrollLock from "@/components/app/ScrollLock";
 import DocumentList from "@/components/app/DocumentList";
 import DocumentUploader from "@/components/app/DocumentUploader";
 import { checklistFor } from "@/lib/checklist";
-import { deleteCommunication, logFollowUp, setEnrollmentStatus, updateEnrollmentDetails } from "./actions";
-import { DetailsForm, FollowUpForm } from "./EnrollmentForms";
+import { deleteCommunication, logFollowUp, markInfoRequested, resolveRequest, setEnrollmentStatus, updateEnrollmentDetails } from "./actions";
+import { DetailsForm, FollowUpForm, RequestForm } from "./EnrollmentForms";
+import StatusPicker from "./StatusPicker";
 import SubmitButton from "@/components/app/SubmitButton";
-import StatusChip from "./StatusChip";
 
-const ACTIVE_STATUS = {
-  not_started: "border-ink-500 bg-ink-100 text-ink-900",
-  submitted: "border-brand-600 bg-brand-50 text-brand-700",
-  in_review: "border-sky-600 bg-sky-50 text-sky-800",
-  info_requested: "border-status-expiring bg-status-expiring-bg text-status-expiring",
-  approved: "border-status-active bg-status-active-bg text-status-active",
-  denied: "border-status-expired bg-status-expired-bg text-status-expired",
-};
 
 function when(iso) {
   return new Date(iso).toLocaleString("en-US", { month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit", timeZone: "America/New_York" });
@@ -47,7 +39,7 @@ export default async function EnrollmentPanel({ providerId, payerId, closeHref }
       supabase.from("cred_payers_org").select(PAYER_SELECT).eq("id", payerId).maybeSingle(),
       supabase.from("cred_enrollments").select("*").eq("provider_id", providerId).eq("payer_id", payerId).maybeSingle(),
       supabase.rpc("cred_org_directory"),
-      supabase.from("cred_credentials").select("type, expiration_date").eq("provider_id", providerId),
+      supabase.from("cred_credentials").select("type, expiration_date, renewed_at").eq("provider_id", providerId),
       supabase.from("cred_documents").select("*").eq("provider_id", providerId).order("created_at", { ascending: false }),
       supabase.rpc("cred_provider_writable", { p_provider_id: providerId }),
     ]);
@@ -109,6 +101,38 @@ export default async function EnrollmentPanel({ providerId, payerId, closeHref }
         </header>
 
         <div className="flex flex-col gap-8 px-6 py-6">
+          {status === "info_requested" && (
+            <section className="rounded-2xl bg-status-expiring-bg px-5 py-4 ring-1 ring-inset ring-status-expiring/25">
+              {enrollment?.pending_request ? (
+                <>
+                  <p className="text-xs font-semibold text-status-expiring">
+                    The payer is waiting on this{enrollment.pending_request_at ? ` · since ${formatDate(businessDate(enrollment.pending_request_at))}` : ""}
+                  </p>
+                  <p className="mt-1 whitespace-pre-line text-[0.9375rem] font-medium text-ink-900">{enrollment.pending_request}</p>
+                  {!readOnly && (
+                    <form action={resolveRequest.bind(null, providerId, payerId)} className="mt-3">
+                      <SubmitButton className={buttonClass("secondary", "sm")}>
+                        <Icon d={ICONS.check} className="h-4 w-4" /> Mark as resolved
+                      </SubmitButton>
+                    </form>
+                  )}
+                </>
+              ) : (
+                <>
+                  <p className="text-sm font-medium text-ink-900">No open request on file.</p>
+                  <p className="mt-0.5 text-xs text-ink-700">If the payer is still waiting on something, write it down so it stays visible.</p>
+                  {!readOnly && (
+                    <div className="mt-3">
+                      <Disclosure label="Add what they asked for" title="What the payer asked for" icon={ICONS.plus} size="sm">
+                        <RequestForm action={markInfoRequested.bind(null, providerId, payerId)} />
+                      </Disclosure>
+                    </div>
+                  )}
+                </>
+              )}
+            </section>
+          )}
+
           <section>
             <h3 className="mb-3 text-sm font-semibold text-ink-900">Status</h3>
             {readOnly && (
@@ -117,27 +141,23 @@ export default async function EnrollmentPanel({ providerId, payerId, closeHref }
                 everything here.
               </p>
             )}
-            <form action={statusAction} className="flex flex-wrap gap-2">
-              <fieldset disabled={readOnly} className="contents">
-              {ENROLLMENT_STATUSES.map((s) => (
-                <StatusChip
-                  key={s}
-                  value={s}
-                  active={s === status}
-                  className={`rounded-full border px-3 py-1.5 text-sm font-medium transition ${
-                    s === status ? ACTIVE_STATUS[s] : "border-ink-200 bg-white text-ink-700 hover:border-ink-500"
-                  }`}
-                >
-                  {ENROLLMENT_STATUS_LABELS[s]}
-                </StatusChip>
-              ))}
-              </fieldset>
-            </form>
+            <StatusPicker
+              status={status}
+              statusAction={statusAction}
+              requestAction={markInfoRequested.bind(null, providerId, payerId)}
+              readOnly={readOnly}
+            />
             <p className="mt-2.5 text-xs text-ink-500">Every change is saved to the history below with your name and the time.</p>
             {missing.length > 0 && ["not_started", "denied"].includes(status) && (
               <div className="mt-4 rounded-lg border border-status-expiring/30 bg-status-expiring-bg px-4 py-3 text-sm">
                 <p className="font-medium text-ink-900">Before you submit, this provider is missing:</p>
-                <p className="mt-0.5 text-ink-700">{missing.map((i) => i.label).join(" · ")}</p>
+                <ul className="mt-1 flex flex-col gap-0.5 text-ink-700">
+                  {missing.map((i) => (
+                    <li key={i.key}>
+                      <span className="font-medium text-ink-900">{i.label}</span> — {i.todo}
+                    </li>
+                  ))}
+                </ul>
                 <Link href={`/providers/${providerId}`} className="mt-1 inline-block font-medium text-brand-600 hover:underline">
                   Complete the provider&apos;s file →
                 </Link>

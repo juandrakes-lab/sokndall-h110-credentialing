@@ -324,7 +324,7 @@ export default function AppFrame({
       <div className="min-w-0 flex-1 lg:py-3 lg:pl-0 lg:pr-3">
         <main className="min-h-screen bg-canvas lg:min-h-[calc(100vh-1.5rem)] lg:rounded-[1.5rem] lg:shadow-[0_1px_2px_rgba(14,42,46,0.05),0_16px_48px_-12px_rgba(14,42,46,0.16)] lg:ring-1 lg:ring-ink-900/[0.05]">
           {/* Top bar: search on a laptop; on a phone the workspace and a search button. */}
-          <div className="sticky top-0 z-30 flex h-16 items-center gap-3 border-b border-ink-900/[0.06] bg-canvas/[0.97] px-4 sm:px-6 lg:rounded-t-[1.5rem] lg:px-8">
+          <div className="sticky top-0 z-30 flex h-16 items-center gap-3 border-b border-ink-900/[0.06] bg-canvas px-4 sm:px-6 lg:rounded-t-[1.5rem] lg:px-8">
             <div className="flex min-w-0 flex-1 items-center gap-3 lg:max-w-2xl">
               <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] bg-brand-700 text-sm font-semibold text-white lg:hidden">S</span>
               <div className="hidden min-w-0 flex-1 lg:block">

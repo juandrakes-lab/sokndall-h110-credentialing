@@ -192,6 +192,7 @@ async function main() {
       ["cred_credentials", { provider_id: A.providerId, type: "dea", number: "7890987", expiration_date: "2027-01-01" }, "a DEA number without its letters"],
       ["cred_credentials", { provider_id: A.providerId, type: "state_license", state: "Texas", number: "1", expiration_date: "2027-01-01" }, "a state that isn't a 2-letter code"],
       ["cred_credentials", { provider_id: A.providerId, type: "state_license", state: "TX", number: "1", issue_date: "2027-01-01", expiration_date: "2026-01-01" }, "an expiration before the issue date"],
+      ["cred_credentials", { provider_id: A.providerId, type: "other", expiration_date: "2027-01-01" }, "an Other credential without its name"],
     ];
     for (const [table, row, what] of bad) {
       const { error } = await a.client.from(table).insert(row);
@@ -239,6 +240,22 @@ async function main() {
     const { count } = await admin.from("cred_providers").select("id", { count: "exact", head: true }).eq("org_id", A.orgId);
     check("Solo plan: 4th provider is refused by the database", !!error && count === 3, error?.message);
   }
+  {
+    const { data: third } = await admin.from("cred_providers").select("id").eq("org_id", A.orgId).eq("last_name", "3").single();
+    const { error: offErr } = await a.client.from("cred_providers").update({ status: "inactive" }).eq("id", third.id);
+    const { data: fourth, error: fourthErr } = await a.client
+      .from("cred_providers")
+      .insert({ practice_id: A.practiceId, first_name: "P", last_name: "4" })
+      .select("id")
+      .single();
+    check("An inactive provider frees its seat for a new one", !offErr && !fourthErr && !!fourth, (offErr ?? fourthErr)?.message);
+    const { data: usage } = await a.client.rpc("cred_provider_usage", { p_org_id: A.orgId });
+    check("Inactive providers don't count toward the plan", usage?.[0]?.provider_count === 3, JSON.stringify(usage));
+    const { error: backErr } = await a.client.from("cred_providers").update({ status: "active" }).eq("id", third.id);
+    check("Reactivating a provider needs a free seat", !!backErr && /PROVIDER_LIMIT_REACHED/.test(backErr.message), backErr?.message);
+    if (fourth) await admin.from("cred_providers").delete().eq("id", fourth.id);
+    await a.client.from("cred_providers").update({ status: "active" }).eq("id", third.id);
+  }
 
   // --- One practice per Solo/Practice organization -------------------------
   {
@@ -266,6 +283,15 @@ async function main() {
       .select("status")
       .single();
     check("Credential status is derived, not taken from the app", data?.status === "expired", data?.status);
+  }
+  {
+    const { data: lic } = await a.client
+      .from("cred_credentials")
+      .insert({ provider_id: A.providerId, type: "state_license", state: "TX", number: "RN1", expiration_date: "2026-10-01" })
+      .select("id, renewed_at")
+      .single();
+    const { data: renewed } = await a.client.from("cred_credentials").update({ expiration_date: "2028-10-01" }).eq("id", lic.id).select("renewed_at").single();
+    check("A later expiration date is recorded as a renewal", !lic.renewed_at && !!renewed?.renewed_at, JSON.stringify(renewed));
   }
 
   // --- Fase 2: payers, enrollments, history, communications ---------------
@@ -303,6 +329,16 @@ async function main() {
     await a.client.from("cred_enrollments").update({ status: "in_review" }).eq("id", enrA.id);
     const { data: after } = await a.client.from("cred_enrollment_events").select("from_status, to_status").eq("enrollment_id", enrA.id);
     check("A status change adds a from → to history row", after?.some((e) => e.from_status === "submitted" && e.to_status === "in_review"));
+
+    const { data: asked } = await a.client
+      .from("cred_enrollments")
+      .update({ status: "info_requested", pending_request: "Signed W-9" })
+      .eq("id", enrA.id)
+      .select("pending_request, pending_request_at")
+      .single();
+    check("An info request is kept on the application, dated", asked?.pending_request === "Signed W-9" && !!asked?.pending_request_at, JSON.stringify(asked));
+    const { data: moved } = await a.client.from("cred_enrollments").update({ status: "in_review" }).eq("id", enrA.id).select("pending_request").single();
+    check("Leaving Info requested clears the request", moved?.pending_request === null, JSON.stringify(moved));
   }
   {
     const { error } = await a.client
@@ -477,9 +513,19 @@ async function main() {
     const { data: bSeen } = await b.client.from("cred_providers").select("id");
     check("The owner sees every client", (bSeen ?? []).some((r) => r.id === provider2.id) && bSeen.some((r) => r.id === B.providerId));
 
+    const { error: crossPayer } = await b.client.from("cred_enrollments").insert({ provider_id: provider2.id, payer_id: payerB.id, status: "submitted" });
+    check("An application can't use another client's payer", !!crossPayer && /PAYER_OTHER_CLIENT/.test(crossPayer.message), crossPayer?.message);
+    const { data: payer2, error: p2Err } = await b.client
+      .from("cred_payers_org")
+      .insert({ org_id: B.orgId, client_org_id: client2.id, payer_global_id: aetna.id })
+      .select("id")
+      .single();
+    check("The same catalog payer can be on two clients' lists", !p2Err && !!payer2, p2Err?.message);
+    const { data: mPayers } = await m.client.from("cred_payers_org").select("id");
+    check("A member limited to one client doesn't see the other client's payers", !(mPayers ?? []).some((r) => r.id === payer2?.id));
     const { data: enr2 } = await b.client
       .from("cred_enrollments")
-      .insert({ provider_id: provider2.id, payer_id: payerB.id, status: "submitted" })
+      .insert({ provider_id: provider2.id, payer_id: payer2.id, status: "submitted" })
       .select("id")
       .single();
     const { data: mEnr } = await m.client.from("cred_enrollments").select("id");

@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { getAppContext } from "@/lib/org";
 import { todayISO } from "@/lib/credentials";
 import { ENROLLMENT_STATUSES, IN_FLIGHT, proposedFollowUp } from "@/lib/enrollments";
-import { REVALIDATION_CHOICES, detailsErrors, followUpErrors } from "@/lib/enrollment-rules";
+import { REVALIDATION_CHOICES, detailsErrors, followUpErrors, requestErrors } from "@/lib/enrollment-rules";
 
 function text(formData, key) {
   const value = formData.get(key)?.toString().trim();
@@ -88,14 +88,55 @@ export async function logFollowUp(providerId, payerId, _prev, formData) {
     .insert({ ...values, enrollment_id: enrollment.id });
   if (insertError) return { error: `Couldn't save the entry: ${insertError.message}` };
 
-  const { error: updateError } = await supabase
-    .from("cred_enrollments")
-    .update({ next_follow_up_date: nextFollowUp })
-    .eq("id", enrollment.id);
+  const patch = { next_follow_up_date: nextFollowUp };
+  if (values.requested && enrollment.status === "info_requested") patch.pending_request = values.requested.slice(0, 500);
+  const { error: updateError } = await supabase.from("cred_enrollments").update(patch).eq("id", enrollment.id);
   if (updateError) return { error: `Saved the entry, but not the next follow-up: ${updateError.message}` };
 
   refresh();
   return { saved: Date.now() };
+}
+
+// The payer asked for something (alcance §3.7, rev. 2026-09-18): the
+// application moves to "Info requested" with the request on it, and the
+// request goes into the call log too.
+export async function markInfoRequested(providerId, payerId, _prev, formData) {
+  const values = { request: text(formData, "request"), channel: text(formData, "channel") };
+  const fieldErrors = requestErrors(values);
+  if (Object.keys(fieldErrors).length) return { fieldErrors };
+
+  const { supabase } = await getAppContext();
+  const { enrollment, error } = await ensureEnrollment(supabase, providerId, payerId);
+  if (error || !enrollment) return { error: `Couldn't open this enrollment: ${error?.message}` };
+
+  const patch = { status: "info_requested", pending_request: values.request };
+  if (!enrollment.next_follow_up_date) patch.next_follow_up_date = proposedFollowUp();
+  const { error: updateError } = await supabase.from("cred_enrollments").update(patch).eq("id", enrollment.id);
+  if (updateError) return { error: `Couldn't save: ${updateError.message}` };
+
+  await supabase.from("cred_communications").insert({
+    enrollment_id: enrollment.id,
+    contact_date: todayISO(),
+    channel: values.channel,
+    outcome: "The payer asked for more information.",
+    requested: values.request,
+  });
+
+  refresh();
+  return { saved: Date.now() };
+}
+
+// The request was answered. The status stays as it is — moving it on (for
+// example back to "In review") is still a separate, deliberate step.
+export async function resolveRequest(providerId, payerId) {
+  const { supabase } = await getAppContext();
+  const { error } = await supabase
+    .from("cred_enrollments")
+    .update({ pending_request: null })
+    .eq("provider_id", providerId)
+    .eq("payer_id", payerId);
+  if (error) throw new Error(error.message);
+  refresh();
 }
 
 export async function updateEnrollmentDetails(providerId, payerId, _prev, formData) {
@@ -146,23 +187,25 @@ export async function deleteCommunication(communicationId) {
   refresh();
 }
 
-// --- The organization's payer list -----------------------------------------
+// --- The client's payer list (alcance §3.4, rev. 2026-09-18) ------------------
+// Each client has its own list: a Billing Co client in Ohio doesn't get the
+// New York client's payers as columns.
 
 export async function addCatalogPayers(formData) {
   const ids = formData.getAll("payer_global_id").map(String).filter(Boolean);
   if (ids.length === 0) return;
 
-  const { supabase, org } = await getAppContext();
-  // The "once per org" rule is a partial unique index, which ON CONFLICT
+  const { supabase, org, client } = await getAppContext();
+  // The "once per client" rule is a partial unique index, which ON CONFLICT
   // can't target — so skip what's already on the list, and let the index
   // catch a double submit.
   const { data: existing } = await supabase
     .from("cred_payers_org")
     .select("payer_global_id")
-    .eq("org_id", org.id)
+    .eq("client_org_id", client.id)
     .not("payer_global_id", "is", null);
   const have = new Set((existing ?? []).map((r) => r.payer_global_id));
-  const rows = ids.filter((id) => !have.has(id)).map((id) => ({ org_id: org.id, payer_global_id: id }));
+  const rows = ids.filter((id) => !have.has(id)).map((id) => ({ org_id: org.id, client_org_id: client.id, payer_global_id: id }));
 
   if (rows.length) {
     const { error } = await supabase.from("cred_payers_org").insert(rows);
@@ -183,10 +226,10 @@ export async function addOwnPayer(_prev, formData) {
   if (!REVALIDATION_CHOICES.includes(months)) fieldErrors.revalidation_months = "Choose a cycle.";
   if (Object.keys(fieldErrors).length) return { fieldErrors };
 
-  const { supabase, org } = await getAppContext();
+  const { supabase, org, client } = await getAppContext();
   const { error } = await supabase
     .from("cred_payers_org")
-    .insert({ org_id: org.id, name, payer_type: payerType, revalidation_months: months });
+    .insert({ org_id: org.id, client_org_id: client.id, name, payer_type: payerType, revalidation_months: months });
   if (error) {
     if (error.code === "23505") return { fieldErrors: { name: "You already have a payer with this name." } };
     return { error: `Couldn't add the payer: ${error.message}` };

@@ -137,7 +137,7 @@ export async function importCredentials(rows) {
   rows.forEach((r, i) => {
     const who = [r.provider_first_name, r.provider_last_name].filter(Boolean).join(" ") || r.provider_npi || "unknown provider";
     const type = credentialTypeFrom(r.type);
-    if (!type) return errors.push(`${line(i)} (${who}): "${r.type ?? ""}" isn't a credential type we know (license, DEA, malpractice, board certification, CAQH).`);
+    if (!type) return errors.push(`${line(i)} (${who}): "${r.type ?? ""}" isn't a credential type we know (license, DEA, malpractice, board certification, CAQH, state CDS, other).`);
 
     const npi = r.provider_npi?.replace(/\D/g, "");
     let providerId = npi ? byNpi.get(npi) : null;

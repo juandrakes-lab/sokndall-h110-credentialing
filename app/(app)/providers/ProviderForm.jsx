@@ -146,7 +146,7 @@ export default function ProviderForm({ action, initial, submitLabel, cancelHref,
       <fieldset className="grid gap-5 sm:grid-cols-2">
         <legend className="mb-4 text-sm font-semibold text-ink-900">{editing ? "Status and notes" : "Notes"}</legend>
         {editing && (
-          <Field label="Status" htmlFor="status">
+          <Field label="Status" htmlFor="status" error={errorFor("status")} hint="Inactive providers keep their history, get no alerts and don't take a seat on your plan.">
             <select id="status" name="status" value={values.status} onChange={bind("status")} className={inputClass}>
               <option value="active">Active</option>
               <option value="inactive">Inactive — no longer with the practice</option>

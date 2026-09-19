@@ -28,7 +28,7 @@ export default function CredentialItem({ credential, updateAction, deleteAction,
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
-            <span className="font-semibold text-ink-900">{config.label}</span>
+            <span className="font-semibold text-ink-900">{credential.type === "other" ? credential.custom_name : config.label}</span>
             <ExpiryBadge date={credential.expiration_date} />
           </div>
           {summary && <p className="mt-0.5 text-sm text-ink-900">{summary}</p>}

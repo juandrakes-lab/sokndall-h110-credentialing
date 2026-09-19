@@ -104,7 +104,13 @@ export async function updateProvider(providerId, _prev, formData) {
     .update({ ...values, ...registry })
     .eq("id", providerId);
 
-  if (error) return { error: `Couldn't save: ${error.message}` };
+  if (error) {
+    // Inactive providers free their seat (alcance §4.3); coming back takes one.
+    if (error.message.includes("PROVIDER_LIMIT_REACHED")) {
+      return { fieldErrors: { status: "Your plan has no free seat to make this provider active again. Mark another provider inactive, or upgrade." } };
+    }
+    return { error: `Couldn't save: ${error.message}` };
+  }
 
   revalidatePath(`/providers/${providerId}`);
   revalidatePath("/providers");
@@ -129,8 +135,16 @@ export async function recheckProviderNppes(providerId) {
   revalidatePath("/providers");
 }
 
-export async function deleteProvider(providerId) {
+export async function deleteProvider(providerId, _prev, formData) {
   const { supabase } = await getAppContext();
+
+  // The typed name is checked here too, not only in the browser.
+  const { data: provider } = await supabase.from("cred_providers").select("first_name, last_name").eq("id", providerId).maybeSingle();
+  if (!provider) return { error: "This provider no longer exists." };
+  const typed = formData?.get("confirm")?.toString().trim().toLowerCase() ?? "";
+  if (typed !== `${provider.first_name} ${provider.last_name}`.trim().toLowerCase()) {
+    return { error: "Type the provider's full name exactly to delete them." };
+  }
 
   // Stored files don't cascade with the provider row, so they go first.
   const { data: docs } = await supabase.from("cred_documents").select("storage_path").eq("provider_id", providerId);

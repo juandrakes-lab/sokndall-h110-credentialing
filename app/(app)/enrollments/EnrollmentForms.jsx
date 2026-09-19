@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import { Field, FormError, FormNotice, buttonClass, inputClass } from "@/components/app/ui";
 import { CHANNEL_LABELS } from "@/lib/enrollments";
-import { REVALIDATION_CHOICES, detailsErrors, followUpErrors } from "@/lib/enrollment-rules";
+import { REQUEST_MAX, REVALIDATION_CHOICES, detailsErrors, followUpErrors, requestErrors } from "@/lib/enrollment-rules";
 import useSmartForm from "@/components/app/useSmartForm";
 import SubmitButton from "@/components/app/SubmitButton";
 
@@ -56,6 +56,46 @@ export function FollowUpForm({ action, today, proposed }) {
         <SubmitButton pending={pending} className={buttonClass("primary")}>
           {pending ? "Saving…" : "Log follow-up"}
         </SubmitButton>
+      </div>
+    </form>
+  );
+}
+
+// "Info requested" asks what the payer wants first (alcance §3.7, rev.
+// 2026-09-18), so the request can stay on the application until it's answered.
+export function RequestForm({ action, onCancel, initialRequest = "" }) {
+  const form = useSmartForm(action, { initial: { request: initialRequest, channel: "portal" }, validate: requestErrors });
+  const { values, bind, errorFor, state, pending } = form;
+
+  useEffect(() => {
+    if (state?.saved) onCancel?.();
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- close once per save
+  }, [state?.saved]);
+
+  return (
+    <form onSubmit={form.onSubmit} onBlur={form.onBlur} noValidate className="flex flex-col gap-4 rounded-2xl bg-status-expiring-bg/60 p-4 ring-1 ring-inset ring-status-expiring/20">
+      <FormError message={state?.error} />
+      <Field label="What did the payer ask for?" htmlFor="rq-text" required error={errorFor("request")} hint={`Stays on the application until someone marks it resolved. ${values.request.length}/${REQUEST_MAX}`}>
+        <textarea id="rq-text" name="request" rows={3} maxLength={REQUEST_MAX} value={values.request} onChange={bind("request")} className={inputClass} placeholder="e.g. Signed W-9 dated this year, and the malpractice certificate" />
+      </Field>
+      <Field label="How did they ask?" htmlFor="rq-channel" error={errorFor("channel")}>
+        <select id="rq-channel" name="channel" value={values.channel} onChange={bind("channel")} className={`${inputClass} sm:max-w-[12rem]`}>
+          {Object.entries(CHANNEL_LABELS).map(([key, label]) => (
+            <option key={key} value={key}>
+              {label}
+            </option>
+          ))}
+        </select>
+      </Field>
+      <div className="flex flex-wrap gap-2">
+        <SubmitButton pending={pending} className={buttonClass("primary")}>
+          {pending ? "Saving…" : "Mark as info requested"}
+        </SubmitButton>
+        {onCancel && (
+          <button type="button" onClick={onCancel} className={buttonClass("ghost")}>
+            Cancel
+          </button>
+        )}
       </div>
     </form>
   );

@@ -45,7 +45,7 @@ export default async function ProvidersPage() {
   const { supabase, org, practice, clients } = await getAppContext();
 
   const [{ data: providers, error }, usage, { data: enrollments }] = await Promise.all([
-    supabase.from("cred_providers").select("*, cred_credentials(expiration_date)").order("last_name", { ascending: true }),
+    supabase.from("cred_providers").select("*, cred_credentials(type, state, number, expiration_date)").order("last_name", { ascending: true }),
     providerUsage(supabase, org.id),
     supabase.from("cred_enrollments").select("provider_id, status"),
   ]);
@@ -67,7 +67,7 @@ export default async function ProvidersPage() {
   const rows = providers.map((p) => ({
     ...p,
     standing: standing(p.cred_credentials ?? []),
-    issues: providerIssues(p, practice, providers),
+    issues: providerIssues(p, practice, providers, p.cred_credentials ?? []),
     pipeline: byProvider.get(p.id) ?? {},
   }));
 

@@ -34,11 +34,15 @@ export default function FollowUpList({ items, lastContact, directory, basePath, 
             >
               <Avatar name={`${e.provider.first_name} ${e.provider.last_name}`} />
               <div className="min-w-0 flex-1">
-                <p className="truncate">
+                {/* On a phone the payer gets its own line — it's who to call. */}
+                <p className="sm:truncate">
                   <span className="font-semibold text-ink-900">
                     {e.provider.first_name} {e.provider.last_name}
                   </span>
-                  <span className="text-sm text-ink-700"> · {e.payer.name}</span>
+                  <span className="block text-sm text-ink-700 sm:inline">
+                    <span className="hidden sm:inline"> · </span>
+                    {e.payer.name}
+                  </span>
                 </p>
                 <p className="mt-0.5 flex min-w-0 items-center gap-1.5 text-xs text-ink-500">
                   <span className="h-1.5 w-1.5 shrink-0 rounded-full" style={{ background: STATUS_FILL[e.status] }} aria-hidden="true" />
@@ -46,13 +50,17 @@ export default function FollowUpList({ items, lastContact, directory, basePath, 
                   <span className="truncate">
                     {" · "}
                     {last ? `Last ${CHANNEL_LABELS[last.channel].toLowerCase()} ${formatDate(last.contact_date)}` : "No contact yet"}
-                    {team && ` · ${firstName(who(e.assigned_user_id))}`}
+                    {team && ` · Responsible: ${firstName(who(e.assigned_user_id))}`}
                   </span>
                 </p>
+                {e.pending_request && (
+                  <p className="mt-1 line-clamp-2 text-xs font-medium text-status-expiring">Payer asked for: {e.pending_request}</p>
+                )}
               </div>
               <div className="shrink-0">
                 {mode === "queue" && fu && <Badge tone={fu.tone}>{fu.text}</Badge>}
                 {mode === "stalled" && stalled && <Badge tone="amber">{stalled} days quiet</Badge>}
+                {mode === "requests" && <Badge tone="amber">{e.pending_request ? "Waiting on you" : "Request not written down"}</Badge>}
               </div>
             </Link>
           </li>

@@ -22,17 +22,21 @@ export default function ChecklistCard({ items }) {
             <span
               aria-hidden="true"
               className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-xs font-bold ${
-                item.done ? "bg-status-active-bg text-status-active" : "border border-dashed border-ink-500 text-transparent"
+                item.done
+                  ? "bg-status-active-bg text-status-active"
+                  : item.warn
+                    ? "bg-status-expiring-bg text-status-expiring"
+                    : "border border-dashed border-ink-500 text-transparent"
               }`}
             >
-              ✓
+              {item.warn && !item.done ? "!" : "✓"}
             </span>
             <div>
               <p className={`text-sm ${item.done ? "text-ink-700" : "font-semibold text-ink-900"}`}>
                 {item.label}
-                <span className="sr-only">{item.done ? " — done" : " — missing"}</span>
+                <span className="sr-only">{item.done ? " — done" : item.warn ? " — needs attention" : " — missing"}</span>
               </p>
-              {!item.done && <p className="text-xs text-ink-500">{item.todo}</p>}
+              {!item.done && <p className={`text-xs ${item.warn ? "text-status-expiring" : "text-ink-500"}`}>{item.todo}</p>}
             </div>
           </li>
         ))}
