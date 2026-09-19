@@ -5,13 +5,15 @@ import {
   IconUsers, IconGrid, IconDoc, IconMail, IconShield, IconCalendar, IconBell, IconRefresh, IconSearch,
 } from "@/components/neo/icons";
 import LandingTemplate, {
-  IconRowSection, CardGridSection, ProseBandSection, PanelSection, CtaSection, HeroStrip, ScreenSlot,
+  IconRowSection, CardGridSection, ProseBandSection, PanelSection, CtaSection, HeroStrip,
 } from "@/components/neo/LandingTemplate";
 import { FAQ_HEAD } from "@/components/neo/neoData";
 import { TEMPLATE_CTA } from "@/components/neo/templateCta";
 import { JsonLd, faqSchema } from "@/components/neo/schema";
 import { pageMeta } from "@/lib/seo";
-import { META, HERO, FIELDS, LIMITS, ENOUGH, FAQ, CLOSING, FILE_SCREEN } from "./data";
+import { META, HERO, FIELDS, LIMITS, ENOUGH, FAQ, CLOSING } from "./data";
+import ProductShot from "@/components/app/showcase/ProductShot";
+import { TemplateSheet } from "@/components/app/showcase/scenes";
 
 // `/credentialing-spreadsheet-template` — page 4 of the v3.1 map, on
 // LandingTemplate. Its function is email capture and a linkable asset, so the
@@ -55,7 +57,7 @@ export default function SpreadsheetTemplatePage() {
             />
           ),
           form: <EmailCapture heading={TEMPLATE_CTA.heading} id={FORM_ID} />,
-          figure: <ScreenSlot screen={FILE_SCREEN} ratio="21:9" todo="Reserved for a capture of the file" />,
+          figure: <ProductShot scene={TemplateSheet} w={1040} h={370} backdrop="ground" label="The free template's credentials tab" />,
         }}
       >
         <IconRowSection

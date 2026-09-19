@@ -1,11 +1,9 @@
 import Shell from "@/components/neo/Shell";
 import Faq from "@/components/neo/Faq";
-import Matrix, { MatrixLegend } from "@/components/neo/Matrix";
-import { StatusTrack, StageCompare } from "@/components/neo/Schematics";
 import { IconGrid, IconClock, IconDoc, IconCalendar, IconBan, IconRefresh, IconUsers } from "@/components/neo/icons";
 import LandingTemplate, {
   ProseBandSection, StatusTableSection, IconRowSection, DiagramSection, CardGridSection,
-  PanelSection, CtaSection, HeroStrip, ScreenSlot,
+  PanelSection, CtaSection, HeroStrip,
 } from "@/components/neo/LandingTemplate";
 import { FAQ_HEAD } from "@/components/neo/neoData";
 import { JsonLd, faqSchema } from "@/components/neo/schema";
@@ -14,6 +12,8 @@ import {
   META, HERO, TWO_STEPS, TIMELINE, STATUSES, EFFECTIVE, MISMATCH, MATRIX, SCOPE, FAQ, CLOSING,
   TRACK, EFFECTIVE_SCREEN, STAGES,
 } from "./data";
+import ProductShot from "@/components/app/showcase/ProductShot";
+import { EffectiveDate, EnrollmentMatrix, Stages, StatusPath } from "@/components/app/showcase/scenes";
 
 // `/payer-enrollment-software` — page 9 of the v3.1 map, on LandingTemplate.
 // Recomposed 2026-09-11 (DESIGN_DECISIONS.md):
@@ -60,9 +60,7 @@ export default function PayerEnrollmentSoftwarePage() {
             />
           ),
           figure: (
-            <ScreenSlot screen={TRACK.screen} ratio="16:6" tone="white" note={TRACK.note}>
-              <StatusTrack steps={TRACK.steps} end={TRACK.end} branch={TRACK.branch} />
-            </ScreenSlot>
+            <ProductShot scene={StatusPath} props={{ steps: TRACK.steps, end: TRACK.end, branch: TRACK.branch }} w={1040} h={290} backdrop="ground" label={TRACK.screen} />
           ),
         }}
       >
@@ -71,7 +69,7 @@ export default function PayerEnrollmentSoftwarePage() {
           head={TWO_STEPS.head}
           paras={TWO_STEPS.paras}
           closing={TWO_STEPS.closing}
-          media={<StageCompare stages={STAGES} />}
+          media={<ProductShot scene={Stages} props={{ stages: STAGES }} w={560} h={420} backdrop="ground" label="Credentialing and enrollment, the two stages" />}
         />
 
         <ProseBandSection
@@ -96,7 +94,7 @@ export default function PayerEnrollmentSoftwarePage() {
           head={EFFECTIVE.head}
           paras={EFFECTIVE.paras}
           closing={EFFECTIVE.closing}
-          media={<ScreenSlot screen={EFFECTIVE_SCREEN} ratio="4:3" />}
+          media={<ProductShot scene={EffectiveDate} w={560} h={420} label={EFFECTIVE_SCREEN} />}
           flip
         />
 
@@ -115,11 +113,8 @@ export default function PayerEnrollmentSoftwarePage() {
           // says "the six" twice, so the grid shows six. The home's 5 x 5 is a
           // different density.
           diagram={
-            <ScreenSlot screen="Provider × payer matrix" ratio="16:9" tone="white" note={MATRIX.note}>
-              <Matrix compact rows={6} cols={5} infoCount={3} quietCount={3} reviewCount={5} />
-            </ScreenSlot>
+            <ProductShot scene={EnrollmentMatrix} w={600} h={440} label="The enrollments matrix with the book's totals" />
           }
-          legend={<MatrixLegend />}
           points={MATRIX.points}
           aside={MATRIX.aside}
         />

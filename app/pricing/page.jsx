@@ -1,7 +1,6 @@
 import Shell from "@/components/neo/Shell";
 import Faq from "@/components/neo/Faq";
 import Rich from "@/components/neo/rich";
-import { CountDiagram } from "@/components/neo/Schematics";
 import LandingTemplate, {
   PlanList, PlanFeatureMatrix, EntityChooser, ProseBandSection, FigureBandSection, CardGridSection, PanelSection, CtaSection,
 } from "@/components/neo/LandingTemplate";
@@ -9,6 +8,8 @@ import { FAQ_HEAD, PLAN_PERIOD } from "@/components/neo/neoData";
 import { JsonLd, faqSchema, softwareSchema, PLAN_PRICES } from "@/components/neo/schema";
 import { pageMeta } from "@/lib/seo";
 import { META, HERO, PLANS, ENTITY, MATRIX, UNITS, UNITS_DIAGRAM, ANCHOR, TRIAL, FAQ, CLOSING } from "./data";
+import ProductShot from "@/components/app/showcase/ProductShot";
+import { UsersProviders } from "@/components/app/showcase/scenes";
 
 // `/pricing` — page 2 of the v3.1 map, on LandingTemplate.
 //
@@ -83,7 +84,7 @@ export default function PricingPage() {
           head={UNITS.head}
           paras={UNITS.paras}
           closing={UNITS.closing}
-          media={<CountDiagram rows={UNITS_DIAGRAM.rows} caption={UNITS_DIAGRAM.caption} />}
+          media={<ProductShot scene={UsersProviders} props={{ rows: UNITS_DIAGRAM.rows, caption: UNITS_DIAGRAM.caption }} w={560} h={420} backdrop="ground" label={UNITS_DIAGRAM.caption} />}
         />
 
         {/* The four anchors in two groups that do not compare with each other:

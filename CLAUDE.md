@@ -114,10 +114,18 @@ frame for a product screen), `InkTile` (dark tile inside a light section),
 `Schematics.jsx`, and the `surface="block"` grey band. The rules they carry are
 DESIGN_RULES.md §13-§19.
 
-**Diagrams stay diagrams.** The matrix, timeline, follow-up log, cadence chart,
-alert ladder, digest and portal-check are deliberately real HTML/CSS at low
-fidelity. They get replaced with actual product screenshots once the
-corresponding screen exists — never with better-drawn mockups now.
+**Product shots replaced the schematics (2026-09-19, founder's call once the
+app existed).** Every former `ScreenSlot`/schematic on the landings (home hero,
+matrix and Monday digest; the payer-enrollment status path, stages, effective
+date and matrix; the billing-company client book and report; the spreadsheet
+template's tab; /pricing's users-vs-providers) is now a `ProductShot`
+(`components/app/showcase/`): a scene built from the app's own components on a
+fixed canvas, scaled by the client `Stage` (never below 55%, so phones crop
+instead of shrinking). Scenes use the demo client's test data; signed-in people
+get generic names + Pexels portraits; providers keep initials. Concept
+diagrams use the same app style with `backdrop="ground"`. The same parts drive
+the access screens' stories (`AuthStories`). `ScreenSlot` and the old
+schematics remain only on /styleguide.
 
 **Two CSS traps this skin hit, both fixed and both easy to reintroduce:**
 

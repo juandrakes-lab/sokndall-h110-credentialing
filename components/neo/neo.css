@@ -4611,6 +4611,7 @@ html:has(.sk-fnav) { scroll-padding-top: 88px; }
 .sk-nav--dark .sk-nav__login { color: #fff; }
 @media (max-width: 420px) {
   .sk-nav__access { gap: var(--s-3); }
+}
 
 /* ---- /pricing header: the keyword H2 as a label (2026-09-14) ------------ */
 /* It stays the page's first H2 with the exact keyword (on-page-seo.md §4), but

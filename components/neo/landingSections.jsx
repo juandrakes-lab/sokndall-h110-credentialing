@@ -158,7 +158,7 @@ export function QuadSection({ head, blocks, imageRatio = "3:2", labels = {}, wid
  * body, points?, icon? }. `photo`: the applications card's picture.
  * `screen`: the follow-up card's frame label.
  */
-export function LayersSection({ head, blocks, photo, screen }) {
+export function LayersSection({ head, blocks, photo, visual }) {
   const { applications: a, credentials: c, detail: d, followup: f } = blocks;
   return (
     <Band>
@@ -207,7 +207,7 @@ export function LayersSection({ head, blocks, photo, screen }) {
               <Rich text={f.body} linkClassName="sk-link" />
             </p>
           </div>
-          <ScreenSlot screen={screen} ratio="4:3" tone="white" className="sk-layers__visual" />
+          {visual}
         </article>
       </div>
     </Band>

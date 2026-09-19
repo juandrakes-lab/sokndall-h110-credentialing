@@ -1,11 +1,10 @@
 import Shell from "@/components/neo/Shell";
 import Faq from "@/components/neo/Faq";
-import { ClientStructure } from "@/components/neo/Schematics";
 import {
   IconShield, IconRefresh, IconUsers, IconCalendar, IconGrid, IconMail, IconLock,
 } from "@/components/neo/icons";
 import LandingTemplate, {
-  ProseBandSection, CardGridSection, FigureBandSection, PanelSection, CtaSection, HeroStrip, ScreenSlot,
+  ProseBandSection, CardGridSection, FigureBandSection, PanelSection, CtaSection, HeroStrip,
   PlanCard,
 } from "@/components/neo/LandingTemplate";
 import { FAQ_HEAD, PLAN_PERIOD } from "@/components/neo/neoData";
@@ -15,6 +14,8 @@ import { pageMeta } from "@/lib/seo";
 import {
   META, HERO, PROBLEM, STRUCTURE, REPORT, ANCHOR, ARCHITECTURE, FAQ, CLOSING, ORGS, REPORT_SCREEN,
 } from "./data";
+import ProductShot from "@/components/app/showcase/ProductShot";
+import { ClientBook, ClientReport } from "@/components/app/showcase/scenes";
 
 // `/for-billing-companies` — page 11 of the v3.1 map, on LandingTemplate.
 // Segment page, optimised for conversion. Recomposed 2026-09-11
@@ -70,15 +71,7 @@ export default function ForBillingCompaniesPage() {
             />
           ),
           figure: (
-            <ScreenSlot screen={ORGS.screen} ratio="16:7" tone="white" note={ORGS.note}>
-              <ClientStructure
-                login={ORGS.login}
-                clients={ORGS.clients}
-                tileNote={ORGS.tileNote}
-                scopes={ORGS.scopes}
-                aggregate={ORGS.aggregate}
-              />
-            </ScreenSlot>
+            <ProductShot scene={ClientBook} w={1040} h={440} label={ORGS.screen} />
           ),
         }}
       >
@@ -107,7 +100,7 @@ export default function ForBillingCompaniesPage() {
           head={REPORT.head}
           paras={REPORT.paras}
           closing={REPORT.closing}
-          media={<ScreenSlot screen={REPORT_SCREEN} ratio="4:3" />}
+          media={<ProductShot scene={ClientReport} w={560} h={420} label={REPORT_SCREEN} />}
         />
 
         <FigureBandSection head={ANCHOR.head} figures={ANCHOR.figures} closing={ANCHOR.closing} />

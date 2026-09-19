@@ -1,6 +1,5 @@
 import Shell from "@/components/neo/Shell";
 import Faq from "@/components/neo/Faq";
-import Matrix, { MatrixLegend } from "@/components/neo/Matrix";
 import HeroPanel from "@/components/neo/HeroPanel";
 import {
   IconBan, IconDoc, IconGrid, IconCalendar, IconMail, IconClock, IconBell,
@@ -8,15 +7,15 @@ import {
 } from "@/components/neo/icons";
 import LandingTemplate, {
   SplitListSection, LayersSection, DiagramSection, FigureBandSection,
-  PlanListSection, CardGridSection, PanelSection, CtaSection, HeroStrip, ScreenSlot, Indicator, FactStrip,
+  PlanListSection, CardGridSection, PanelSection, CtaSection, HeroStrip, Indicator, FactStrip,
 } from "@/components/neo/LandingTemplate";
 import { FAQ_HEAD, PLAN_PERIOD } from "@/components/neo/neoData";
 import { PHOTOS } from "@/components/neo/photos";
 import { JsonLd, faqSchema, softwareSchema, PLAN_PRICES } from "@/components/neo/schema";
 import { pageMeta } from "@/lib/seo";
-import {
-  META, HERO, PROBLEM, LAYERS, MATRIX, ANCHOR, PRICING, SCOPE, FAQ, CLOSING, SLOTS, FACTS,
-} from "./homeData";
+import { META, HERO, PROBLEM, LAYERS, MATRIX, ANCHOR, PRICING, SCOPE, FAQ, CLOSING, FACTS } from "./homeData";
+import ProductShot from "@/components/app/showcase/ProductShot";
+import { HeroMatrix, HomeMatrix, MondayDigest } from "@/components/app/showcase/scenes";
 
 // `/` — page 1 of the v3.1 map, on LandingTemplate. Composition only: which
 // sections, in which order, with what in them. Copy is in ./homeData.js.
@@ -41,18 +40,7 @@ function Hero() {
         // The data model at hero size, in the frame the real matrix screen
         // will fill. Four providers by four payers is the home's own density;
         // /payer-enrollment-software draws a different grid.
-        <ScreenSlot screen="Provider × payer matrix" ratio="4:3" tone="white" note={HERO.caption}>
-          <Matrix
-            compact
-            rows={4}
-            cols={4}
-            infoCount={2}
-            quietCount={2}
-            reviewCount={4}
-            providers={["P 01", "P 02", "P 03", "P 04"]}
-            payers={["A", "B", "C", "D"]}
-          />
-        </ScreenSlot>
+        <ProductShot scene={HeroMatrix} w={560} h={420} backdrop="none" label="The enrollments matrix: providers down the side, payers across, a status in every cell" />
       }
       indicators={HERO.indicators.map((ind, i) => {
         const Icon = [IconBell, IconClock][i];
@@ -97,17 +85,14 @@ export default function HomePage() {
             followup: { ...LAYERS.small1, icon: <IconMail /> },
           }}
           photo={PHOTOS.phoneDesk}
-          screen={SLOTS.quadCorner}
+          visual={<ProductShot scene={MondayDigest} w={400} h={340} className="sk-layers__visual" label="The Monday digest email: follow-ups this week, stalled applications, what expires" />}
         />
 
         <DiagramSection
           head={MATRIX.head}
           diagram={
-            <ScreenSlot screen="Provider × payer matrix" ratio="16:9" tone="white" note={MATRIX.note}>
-              <Matrix rows={5} cols={5} infoCount={3} quietCount={3} reviewCount={6} />
-            </ScreenSlot>
+            <ProductShot scene={HomeMatrix} w={1040} h={500} label="The enrollments matrix, with a payer request open on one cell" />
           }
-          legend={<MatrixLegend />}
           points={MATRIX.points}
           aside={MATRIX.aside}
         />

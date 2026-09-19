@@ -204,3 +204,14 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .auth-float { animation: none; }
 }
+
+/* The app ground as a box of its own (a product shot's diagram backdrop on a
+   marketing page): the same wash as .app-ground, without the fixed
+   attachment, which only makes sense for a full page. */
+.app-ground-flat {
+  background-color: #eef1ef;
+  background-image:
+    radial-gradient(70% 80% at 0% 0%, rgba(44, 95, 100, 0.28), transparent 70%),
+    radial-gradient(60% 70% at 100% 100%, rgba(242, 193, 78, 0.3), transparent 70%),
+    linear-gradient(180deg, #eef2f1 0%, #f3f1eb 100%);
+}
