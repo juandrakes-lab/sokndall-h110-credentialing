@@ -7,7 +7,7 @@ import { ENROLLMENT_STATUS_LABELS } from "@/lib/enrollments";
 // The access screens' panel: five "stories", each one sentence and a scene
 // rebuilt in HTML from the app's own parts — never a screenshot. A scene is a
 // big app window in perspective that runs off the panel's edge, with detail
-// cards floating in front of it. Scenes are drawn on a fixed 720×600 canvas
+// cards floating in front of it. Scenes are drawn on a fixed 560×460 canvas
 // and scaled to fit the room the panel has, so nothing overlaps or stretches
 // at any window size. They advance like Instagram stories (paused on hover;
 // never on their own with reduced motion); the bars jump to one.
@@ -23,8 +23,8 @@ const PEOPLE = {
   ana: { name: "Ana Ruiz", photo: "/app/people/ana.jpg" }, // Alvaro Balderas — pexels.com/photo/33680700
 };
 
-const W = 720;
-const H = 600;
+const W = 560;
+const H = 460;
 const DURATION = 7000;
 
 // The matrix cell, exactly as the app draws it (enrollments/page.jsx).
@@ -43,21 +43,21 @@ const deep = "shadow-[0_2px_6px_rgba(0,0,0,0.14),0_30px_60px_-18px_rgba(0,0,0,0.
 
 // A window of the app, tilted away from the reader and anchored on its left
 // edge, so its far side runs past the panel's edge.
-function AppWindow({ x, y, w, h, nav = "dashboard", tilt = -11, children }) {
+function AppWindow({ x, y, w, h, nav = "dashboard", tilt = -8, children }) {
   const items = ["dashboard", "followUps", "providers", "enrollments", "documents"];
   return (
     <div
       className="absolute overflow-hidden rounded-[20px] bg-[#eef1ef] ring-1 ring-black/5 shadow-[0_40px_90px_-20px_rgba(0,0,0,0.65)]"
-      style={{ left: x, top: y, width: w, height: h, transform: `perspective(2200px) rotateY(${tilt}deg) rotateX(4deg)`, transformOrigin: "left center" }}
+      style={{ left: x, top: y, width: w, height: h, transform: `perspective(2200px) rotateY(${tilt}deg) rotateX(2deg)`, transformOrigin: "left center" }}
     >
       <div className="flex h-11 items-center gap-2 border-b border-ink-900/[0.06] bg-white/80 px-4">
         <span className="h-2.5 w-2.5 rounded-full bg-ink-200" />
         <span className="h-2.5 w-2.5 rounded-full bg-ink-200" />
         <span className="h-2.5 w-2.5 rounded-full bg-ink-200" />
-        <span className="ml-16 flex h-7 w-72 items-center gap-2 rounded-lg border border-ink-200 bg-white px-3 text-[0.6875rem] text-ink-500">
-          <Icon d={ICONS.search} className="h-3.5 w-3.5" /> Search providers, payers, documents…
+        <span className="ml-6 flex h-7 w-40 items-center whitespace-nowrap gap-2 rounded-lg border border-ink-200 bg-white px-3 text-[0.6875rem] text-ink-500">
+          <Icon d={ICONS.search} className="h-3.5 w-3.5" /> Search…
         </span>
-        <span className="ml-auto mr-24 flex h-7 items-center gap-1 rounded-lg bg-brand-700 px-3 text-[0.6875rem] font-medium text-white">
+        <span className="ml-auto mr-2 flex h-7 items-center gap-1 rounded-lg bg-brand-700 px-3 text-[0.6875rem] font-medium text-white">
           <Icon d={ICONS.plus} className="h-3 w-3" strokeWidth={2.4} /> New
         </span>
       </div>
@@ -136,64 +136,63 @@ function Row({ name, detail, children }) {
 }
 
 // ---- the five scenes -------------------------------------------------------
+// Few things per scene, drawn large: a scene is read at a glance while it
+// plays, so it shows one idea, not a whole screen.
 
 function Board() {
   return (
     <>
-      <AppWindow x={40} y={34} w={860} h={520}>
-        <Title sub="Saturday, September 19 · Riverside Pediatrics PLLC">Dashboard</Title>
-        <div className="grid grid-cols-3 gap-3">
-          <Stat accent label="Need you this week" value="31" hint="Expiring soon, overdue and payer requests." icon={ICONS.pulse} />
-          <Stat label="Expiring within 14 days" value="7" hint="Credentials and payer revalidations." icon={ICONS.calendar} tone="red" />
-          <Stat label="Follow-ups overdue" value="18" hint="20 due this week in all." icon={ICONS.phone} tone="amber" />
+      <AppWindow x={24} y={52} w={528} h={400}>
+        <Title>Dashboard</Title>
+        <div className="grid grid-cols-2 gap-3">
+          <Stat accent label="Need you this week" value="31" hint="Expiring, overdue and payer requests." icon={ICONS.pulse} />
+          <Stat label="Expiring within 14 days" value="7" hint="Credentials and revalidations." icon={ICONS.calendar} tone="red" />
         </div>
-        <div className="mt-3 grid grid-cols-[1.35fr_1fr] gap-3">
-          <div className={`${cardClass} overflow-hidden`}>
-            <p className="flex items-center gap-2 px-4 py-3 text-sm font-semibold text-ink-900">
-              <Icon d={ICONS.arrowRight} className="h-4 w-4" /> Start here
-            </p>
-            <Row name="Lauren Mitchell" detail="Payer revalidation · Aetna"><Badge tone="red">Expired</Badge></Row>
-            <Row name="Maya Chen" detail="State license"><Badge tone="red">Expired</Badge></Row>
-            <Row name="Daniel Okafor" detail="DEA registration"><Badge tone="red">1 day left</Badge></Row>
-          </div>
-          <div className={`${cardClass} p-4`}>
-            <p className="flex items-center gap-2 text-sm font-semibold text-ink-900">
-              <Icon d={ICONS.shield} className="h-4 w-4 text-brand-600" /> Credentials current
-            </p>
-            <div className="mt-3 flex flex-col gap-2 text-xs text-ink-700">
-              <span className="flex items-center justify-between"><span className="flex items-center gap-2"><span className="h-2 w-2 rounded-full bg-status-expired" />Something expired</span><b className="text-ink-900">2</b></span>
-              <span className="flex items-center justify-between"><span className="flex items-center gap-2"><span className="h-2 w-2 rounded-full bg-status-expiring" />Due within 30 days</span><b className="text-ink-900">6</b></span>
-              <span className="flex items-center justify-between"><span className="flex items-center gap-2"><span className="h-2 w-2 rounded-full bg-status-active" />Current</span><b className="text-ink-900">6</b></span>
-            </div>
-          </div>
+        <div className={`${cardClass} mt-3 overflow-hidden`}>
+          <p className="flex items-center gap-2 px-4 py-3 text-sm font-semibold text-ink-900">
+            <Icon d={ICONS.arrowRight} className="h-4 w-4" /> Start here
+          </p>
+          <Row name="Maya Chen" detail="State license">
+            <Badge tone="red">Expired</Badge>
+          </Row>
+          <Row name="Daniel Okafor" detail="DEA registration">
+            <Badge tone="red">1 day left</Badge>
+          </Row>
         </div>
       </AppWindow>
-      <Float x={0} y={508} w={250} bob={0}>
-        <div className="flex items-center gap-3 p-3.5">
-          <Ring value={0.4} size={60} tone="red"><span className="text-xs font-semibold text-ink-900">40%</span></Ring>
-          <p className="text-xs leading-snug text-ink-700"><span className="text-sm font-semibold text-ink-900">6 of 15</span><br />providers fully current</p>
-        </div>
-      </Float>
-      <Float x={424} y={0} w={286} bob={1.6}>
+      <Float x={300} y={0} w={256} bob={1.6}>
         <div className="flex gap-3 p-4">
-          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-status-expired-bg text-status-expired"><Icon d={ICONS.mail} className="h-[18px] w-[18px]" /></span>
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-status-expired-bg text-status-expired">
+            <Icon d={ICONS.mail} className="h-5 w-5" />
+          </span>
           <div className="min-w-0">
             <p className="text-[0.6875rem] font-semibold uppercase tracking-wide text-status-expired">Expiration alert</p>
-            <p className="mt-0.5 text-[0.8125rem] font-medium leading-snug text-ink-900">Daniel Okafor · DEA registration expires tomorrow</p>
+            <p className="mt-0.5 text-sm font-medium leading-snug text-ink-900">Daniel Okafor&apos;s DEA expires tomorrow</p>
           </div>
+        </div>
+      </Float>
+      <Float x={0} y={0} w={220} bob={0}>
+        <div className="flex items-center gap-3 p-4">
+          <Ring value={0.4} size={60} tone="red">
+            <span className="text-sm font-semibold text-ink-900">40%</span>
+          </Ring>
+          <p className="text-sm leading-snug text-ink-700">
+            <span className="font-semibold text-ink-900">6 of 15</span>
+            <br />
+            fully current
+          </p>
         </div>
       </Float>
     </>
   );
 }
 
-const PAYERS = ["Aetna", "Cigna Healthcare", "UnitedHealthcare", "Excellus BCBS", "EmblemHealth"];
+const PAYERS = ["Aetna", "Cigna", "UHC"];
 const MATRIX = [
-  ["Bello, Aisha", "Pediatric Nurse Practitioner", ["in_review", "approved", "in_review", "info_requested", "in_review"]],
-  ["Brooks, Ethan", "Pediatric Cardiology", ["submitted", "not_started", "approved", "approved", "info_requested"]],
-  ["Chen, Maya", "Pediatrics", ["approved", "approved", "not_started", "approved", "approved"]],
-  ["Fischer, Noah", "Neonatal-Perinatal Medicine", ["not_started", "info_requested", "approved", "in_review", "in_review"]],
-  ["Kowalski, Hannah", "Physician Assistant", ["denied", "approved", "approved", "approved", "approved"]],
+  ["Bello, Aisha", ["in_review", "approved", "in_review"]],
+  ["Brooks, Ethan", ["submitted", "not_started", "approved"]],
+  ["Chen, Maya", ["approved", "approved", "not_started"]],
+  ["Fischer, Noah", ["not_started", "info_requested", "approved"]],
 ];
 const PIPELINE = [
   ["approved", 48],
@@ -207,35 +206,32 @@ const PIPELINE = [
 function Matrix() {
   return (
     <>
-      <AppWindow x={40} y={20} w={900} h={540} nav="enrollments">
-        <Title sub="Every provider against every payer you work with.">Enrollments</Title>
+      <AppWindow x={24} y={24} w={528} h={420} nav="enrollments">
+        <Title>Enrollments</Title>
         <div className={`${cardClass} overflow-hidden`}>
-          <table className="w-full border-separate border-spacing-0 text-xs">
+          <table className="w-full border-separate border-spacing-0 text-sm">
             <thead>
               <tr>
-                <th className="w-44 border-b border-r border-ink-100 px-3 py-2.5 text-left font-medium text-ink-700">Provider</th>
+                <th className="w-44 border-b border-r border-ink-100 px-4 py-3 text-left text-xs font-medium text-ink-700">Provider</th>
                 {PAYERS.map((p) => (
-                  <th key={p} className="border-b border-ink-100 px-2 py-2.5 text-left font-semibold text-ink-900">{p}</th>
+                  <th key={p} className="border-b border-ink-100 px-2 py-3 text-left text-xs font-semibold text-ink-900">
+                    {p}
+                  </th>
                 ))}
               </tr>
             </thead>
             <tbody>
-              {MATRIX.map(([name, spec, cells]) => (
+              {MATRIX.map(([name, cells]) => (
                 <tr key={name}>
-                  <th className="border-b border-r border-ink-100 px-3 py-2 text-left font-normal">
-                    <div className="flex items-center gap-2">
+                  <th className="border-b border-r border-ink-100 px-4 py-2.5 text-left font-normal">
+                    <span className="flex items-center gap-2.5">
                       <Avatar name={name.split(", ").reverse().join(" ")} size="sm" />
-                      <div className="min-w-0">
-                        <p className="truncate font-semibold text-ink-900">{name}</p>
-                        <p className="truncate text-[0.625rem] text-ink-500">{spec}</p>
-                      </div>
-                    </div>
+                      <span className="truncate font-semibold text-ink-900">{name}</span>
+                    </span>
                   </th>
                   {cells.map((s, i) => (
-                    <td key={i} className="border-b border-ink-100 px-1.5 py-2">
-                      <span className={`flex items-center justify-between gap-1 rounded-lg px-2 py-1.5 font-medium ${CHIP[s]}`}>
-                        <span className="truncate">{ENROLLMENT_STATUS_LABELS[s]}</span>
-                      </span>
+                    <td key={i} className="border-b border-ink-100 px-1.5 py-2.5">
+                      <span className={`block truncate rounded-lg px-2.5 py-1.5 text-xs font-medium ${CHIP[s]}`}>{ENROLLMENT_STATUS_LABELS[s]}</span>
                     </td>
                   ))}
                 </tr>
@@ -244,29 +240,25 @@ function Matrix() {
           </table>
         </div>
       </AppWindow>
-      <Float x={0} y={392} w={330} bob={0}>
+      <Float x={0} y={352} w={290} bob={0}>
         <div className="p-4">
           <p className="flex items-center justify-between text-sm font-semibold text-ink-900">
-            Where every application stands <Badge>105</Badge>
+            All applications <Badge>105</Badge>
           </p>
           <div className="mt-3">
             <SegmentBar segments={PIPELINE.map(([k, v]) => ({ key: k, label: ENROLLMENT_STATUS_LABELS[k], value: v, color: STATUS_FILL[k] }))} height={10} />
           </div>
-          <div className="mt-3 grid grid-cols-3 gap-x-3 gap-y-2">
-            {PIPELINE.map(([k, v]) => (
-              <span key={k} className="flex min-w-0 items-center gap-1.5">
-                <span className="h-2 w-2 shrink-0 rounded-full" style={{ background: STATUS_FILL[k] }} />
-                <span className="text-sm font-semibold text-ink-900">{v}</span>
-                <span className="truncate text-[0.625rem] text-ink-500">{ENROLLMENT_STATUS_LABELS[k]}</span>
+          <div className="mt-3 flex justify-between">
+            {PIPELINE.slice(0, 3).map(([k, v]) => (
+              <span key={k} className="flex flex-col">
+                <span className="text-lg font-semibold leading-none text-ink-900">{v}</span>
+                <span className="mt-1 flex items-center gap-1.5 text-xs text-ink-500">
+                  <span className="h-2 w-2 rounded-full" style={{ background: STATUS_FILL[k] }} />
+                  {ENROLLMENT_STATUS_LABELS[k]}
+                </span>
               </span>
             ))}
           </div>
-        </div>
-      </Float>
-      <Float x={500} y={0} w={210} bob={1.4}>
-        <div className="flex flex-col gap-2 p-3.5 text-xs text-ink-700">
-          <span className="flex items-center gap-2"><span className="h-2 w-2 rounded-full bg-red-600" /> Follow-up due today</span>
-          <span className="flex items-center gap-2"><Icon d={ICONS.pause} className="h-3.5 w-3.5 text-amber-600" strokeWidth={2.2} /> Stalled 30+ days</span>
         </div>
       </Float>
     </>
@@ -274,79 +266,45 @@ function Matrix() {
 }
 
 function PayerRequest() {
-  const queue = [
-    ["Ethan Brooks", "UnitedHealthcare Community Plan", "Current CAQH attestation"],
-    ["Noah Fischer", "Cigna Healthcare", "Signed W-9 dated this year"],
-    ["Aisha Bello", "Excellus BlueCross BlueShield", "Signed W-9 dated this year"],
-    ["Lauren Mitchell", "New York Medicaid", "Signed W-9 dated this year"],
-  ];
-  const statuses = ["not_started", "submitted", "in_review", "info_requested", "approved", "denied"];
   return (
     <>
-      <AppWindow x={0} y={60} w={560} h={500} nav="followUps" tilt={-14}>
+      <AppWindow x={0} y={70} w={420} h={360} nav="followUps" tilt={-12}>
         <Title>Follow-ups</Title>
-        <div className="grid grid-cols-2 gap-3">
-          <Stat label="Payer requests" value="6" hint="Payers waiting on you." icon={ICONS.alert} tone="amber" />
-          <Stat label="Overdue" value="18" hint="Call these first." icon={ICONS.phone} tone="red" />
-        </div>
+        <Stat label="Payer requests" value="6" hint="Payers waiting on you." icon={ICONS.alert} tone="amber" />
         <div className={`${cardClass} mt-3 overflow-hidden`}>
-          {queue.map(([n, p, asked]) => (
-            <div key={n} className="flex gap-3 border-t border-ink-100 px-4 py-2.5 first:border-t-0">
+          {["Ethan Brooks", "Noah Fischer"].map((n) => (
+            <div key={n} className="flex items-center gap-3 border-t border-ink-100 px-4 py-2.5 first:border-t-0">
               <Avatar name={n} size="sm" />
-              <div className="min-w-0">
-                <p className="truncate text-[0.8125rem] font-medium text-ink-900">
-                  {n} <span className="font-normal text-ink-500">· {p}</span>
-                </p>
-                <p className="truncate text-[0.6875rem] text-status-expiring">Payer asked for: {asked}</p>
-              </div>
+              <span className="truncate text-sm font-medium text-ink-900">{n}</span>
             </div>
           ))}
         </div>
       </AppWindow>
       <div
         className={`absolute overflow-hidden rounded-[20px] bg-white ${deep}`}
-        style={{ left: 330, top: 0, width: 470, height: 560, transform: "perspective(2200px) rotateY(-7deg)", transformOrigin: "left center" }}
+        style={{ left: 200, top: 20, width: 350, height: 400, transform: "perspective(2200px) rotateY(-6deg)", transformOrigin: "left center" }}
       >
-        <div className="border-b border-ink-100 bg-ink-50/80 px-6 py-4">
-          <p className="text-xs text-ink-500">UnitedHealthcare Community Plan · Medicaid</p>
-          <p className="mt-0.5 text-xl font-semibold text-ink-900">Ethan Brooks</p>
-          <p className="mt-1.5 flex items-center gap-2">
+        <div className="border-b border-ink-100 bg-ink-50/80 px-6 py-5">
+          <p className="text-xs text-ink-500">UnitedHealthcare Community Plan</p>
+          <p className="mt-1 text-xl font-semibold text-ink-900">Ethan Brooks</p>
+          <div className="mt-2">
             <Badge tone="amber">Info requested</Badge>
-            <span className="text-xs text-ink-500">Next follow-up Sep 23, 2026</span>
-          </p>
+          </div>
         </div>
-        <div className="flex flex-col gap-5 p-6">
+        <div className="p-6">
           <div className="rounded-2xl bg-status-expiring-bg px-5 py-4 ring-1 ring-inset ring-status-expiring/25">
-            <p className="text-xs font-semibold text-status-expiring">The payer is waiting on this · since Sep 18, 2026</p>
-            <p className="mt-1 text-[0.9375rem] font-medium text-ink-900">Current CAQH attestation</p>
-            <span className="mt-3 inline-flex h-8 items-center gap-1.5 rounded-xl bg-brand-700 px-3 text-xs font-medium text-white">
-              <Icon d={ICONS.check} className="h-3.5 w-3.5" /> Mark as resolved
+            <p className="text-xs font-semibold text-status-expiring">The payer is waiting on this</p>
+            <p className="mt-1 text-base font-medium text-ink-900">Current CAQH attestation</p>
+            <span className="mt-4 inline-flex h-9 items-center gap-1.5 rounded-xl bg-brand-700 px-3.5 text-sm font-medium text-white">
+              <Icon d={ICONS.check} className="h-4 w-4" /> Mark as resolved
             </span>
-          </div>
-          <div>
-            <p className="mb-2 text-sm font-semibold text-ink-900">Status</p>
-            <div className="flex flex-wrap gap-1.5">
-              {statuses.map((s) => (
-                <span key={s} className={`rounded-full px-3 py-1.5 text-xs ${s === "info_requested" ? "bg-status-expiring-bg text-status-expiring ring-1 ring-status-expiring" : "bg-white text-ink-700 ring-1 ring-ink-200"}`}>
-                  {ENROLLMENT_STATUS_LABELS[s]}
-                </span>
-              ))}
-            </div>
-          </div>
-          <div>
-            <p className="mb-2 text-sm font-semibold text-ink-900">Application details</p>
-            <div className="grid grid-cols-3 gap-3 rounded-xl bg-ink-50 p-3.5 text-xs">
-              <span><span className="block text-ink-500">Submitted</span><span className="text-ink-900">Jan 30, 2023</span></span>
-              <span><span className="block text-ink-500">Reference</span><span className="text-ink-900">APP-9668868</span></span>
-              <span><span className="block text-ink-500">Owner</span><span className="text-ink-900">{PEOPLE.erin.name}</span></span>
-            </div>
           </div>
         </div>
       </div>
-      <Float x={120} y={536} w={196} bob={0.8}>
-        <div className="flex items-center gap-2.5 py-2.5 pl-2.5 pr-4">
-          <Avatar name={PEOPLE.erin.name} photo={PEOPLE.erin.photo} size="sm" />
-          <span className="text-xs leading-snug text-ink-700">
+      <Float x={170} y={400} w={210} bob={0.8}>
+        <div className="flex items-center gap-3 py-3 pl-3 pr-4">
+          <Avatar name={PEOPLE.erin.name} photo={PEOPLE.erin.photo} size="md" />
+          <span className="text-sm leading-snug text-ink-700">
             Assigned to
             <br />
             <span className="font-semibold text-ink-900">{PEOPLE.erin.name}</span>
@@ -358,60 +316,31 @@ function PayerRequest() {
 }
 
 function Calls() {
-  const calls = [
-    { who: PEOPLE.ana, head: "Grace Liu · EmblemHealth", line: "Phone · Sep 18 · Rita, EmblemHealth enrollment", body: "Moved to committee review", ref: "EH-5521903" },
-    { who: PEOPLE.luis, head: "Aisha Bello · UnitedHealthcare", line: "Phone · Sep 18 · Mark, UHC provider services", body: "Still in credentialing committee queue, no ETA", ref: "UHC-88120045" },
-  ];
   const field = (label, value, wide) => (
     <div className={wide ? "col-span-2" : ""}>
-      <p className="mb-1 text-xs font-medium text-ink-900">{label}</p>
-      <div className="flex h-9 items-center rounded-xl border border-ink-200 bg-white px-3 text-xs text-ink-900">{value}</div>
+      <p className="mb-1.5 text-xs font-medium text-ink-900">{label}</p>
+      <div className="flex h-10 items-center rounded-xl border border-ink-200 bg-white px-3 text-sm text-ink-900">{value}</div>
     </div>
   );
   return (
     <>
-      <AppWindow x={40} y={20} w={860} h={520} nav="followUps">
+      <AppWindow x={24} y={24} w={528} h={420} nav="followUps">
         <Title sub="EmblemHealth · Grace Liu">Log a follow-up</Title>
-        <div className={`${cardClass} grid max-w-[560px] grid-cols-2 gap-3 p-5`}>
-          {field("Date", "Sep 18, 2026")}
-          {field("How", "Phone")}
-          {field("Who you spoke with", "Rita, EmblemHealth enrollment")}
-          {field("Reference / ticket number", "EH-5521903")}
+        <div className={`${cardClass} grid max-w-[440px] grid-cols-2 gap-3 p-5`}>
+          {field("Who you spoke with", "Rita, enrollment", true)}
           {field("What happened", "Moved to committee review", true)}
-          {field("Next follow-up", "Sep 25, 2026")}
-          <div className="flex items-end">
-            <span className="flex h-9 items-center rounded-xl bg-brand-700 px-4 text-xs font-medium text-white">Log follow-up</span>
-          </div>
+          {field("Reference", "EH-5521903")}
+          {field("Next follow-up", "Sep 25")}
         </div>
       </AppWindow>
-      <Float x={350} y={300} w={360} bob={0}>
-        <div className="p-5">
-          <p className="text-sm font-semibold text-ink-900">Latest calls</p>
-          <ol className="mt-3 flex flex-col gap-4">
-            {calls.map((c) => (
-              <li key={c.ref} className="flex gap-3">
-                <Avatar name={c.who.name} photo={c.who.photo} size="sm" />
-                <div className="min-w-0">
-                  <p className="text-xs font-semibold text-ink-900">{c.head}</p>
-                  <p className="mt-0.5 text-xs text-ink-700">{c.line}</p>
-                  <p className="mt-0.5 text-xs text-ink-700">{c.body}</p>
-                  <p className="mt-0.5 text-[0.6875rem] text-ink-500">Ref. {c.ref} · by {c.who.name}</p>
-                </div>
-              </li>
-            ))}
-          </ol>
-        </div>
-      </Float>
-      <Float x={0} y={470} w={220} bob={1.3}>
-        <div className="flex items-center gap-2.5 p-3.5">
-          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-50 text-brand-600">
-            <Icon d={ICONS.calendar} className="h-[18px] w-[18px]" />
-          </span>
-          <span className="text-xs text-ink-700">
-            Next follow-up
-            <br />
-            <b className="text-ink-900">Sep 25, 2026</b>
-          </span>
+      <Float x={280} y={290} w={272} bob={0}>
+        <div className="flex gap-3 p-4">
+          <Avatar name={PEOPLE.ana.name} photo={PEOPLE.ana.photo} size="md" />
+          <div className="min-w-0">
+            <p className="text-sm font-semibold text-ink-900">Phone · Sep 18</p>
+            <p className="mt-0.5 text-sm text-ink-700">Moved to committee review</p>
+            <p className="mt-1 text-xs text-ink-500">Logged by {PEOPLE.ana.name}</p>
+          </div>
         </div>
       </Float>
     </>
@@ -420,33 +349,27 @@ function Calls() {
 
 function ProviderFile() {
   const creds = [
-    ["State license", "NY 041510 · NYS Education Department", "Expired", "red"],
-    ["CAQH attestation", "Due Oct 19, 2026", "30 days left", "amber"],
-    ["DEA registration", "NY FC7882172 · May 8, 2027", "Current", "green"],
-    ["Board certification", "American Board of Pediatrics · Oct 16, 2027", "Current", "green"],
-    ["Malpractice insurance", "Medical Protective · Feb 2, 2028", "Current", "green"],
+    ["State license", "Expired", "red"],
+    ["CAQH attestation", "30 days left", "amber"],
+    ["DEA registration", "Current", "green"],
   ];
-  const kept = ["State licenses", "DEA", "Malpractice", "Board certifications", "CAQH", "Payer applications"];
   return (
     <>
-      <AppWindow x={40} y={20} w={860} h={530} nav="providers">
-        <div className="mb-4 flex items-center gap-3">
+      <AppWindow x={24} y={24} w={528} h={420} nav="providers">
+        <div className="mb-5 flex items-center gap-3">
           <Avatar name="Maya Chen" size="lg" />
           <div>
             <p className="text-[1.625rem] font-normal leading-none tracking-[-0.03em] text-ink-900">Maya Chen</p>
-            <p className="mt-1.5 text-xs text-ink-500">Pediatrics · Riverside Pediatrics PLLC</p>
+            <p className="mt-1.5 text-sm text-ink-500">Pediatrics</p>
           </div>
         </div>
-        <div className={`${cardClass} max-w-[600px] overflow-hidden`}>
+        <div className={`${cardClass} max-w-[440px] overflow-hidden`}>
           <p className="flex items-center gap-2 px-4 py-3 text-sm font-semibold text-ink-900">
             <Icon d={ICONS.shield} className="h-4 w-4 text-brand-600" /> Credentials
           </p>
-          {creds.map(([t, d, b, tone]) => (
-            <div key={t} className="flex items-center justify-between gap-3 border-t border-ink-100 px-4 py-2.5">
-              <div className="min-w-0">
-                <p className="text-[0.8125rem] font-medium text-ink-900">{t}</p>
-                <p className="truncate text-[0.6875rem] text-ink-500">{d}</p>
-              </div>
+          {creds.map(([t, b, tone]) => (
+            <div key={t} className="flex items-center justify-between gap-3 border-t border-ink-100 px-4 py-3">
+              <span className="text-sm font-medium text-ink-900">{t}</span>
               <Badge tone={tone} dot>
                 {b}
               </Badge>
@@ -454,20 +377,14 @@ function ProviderFile() {
           ))}
         </div>
       </AppWindow>
-      <Float x={400} y={318} w={310} bob={0}>
+      <Float x={300} y={300} w={252} bob={0}>
         <div className="p-5">
           <p className="flex items-center gap-2 text-sm font-semibold text-ink-900">
-            <Icon d={ICONS.shield} className="h-4 w-4 text-brand-600" /> What Sokndall keeps
+            <Icon d={ICONS.shield} className="h-4 w-4 text-brand-600" /> Kept on file
           </p>
-          <div className="mt-3 flex flex-wrap gap-1.5">
-            {kept.map((k) => (
-              <Badge key={k} tone="green">
-                {k}
-              </Badge>
-            ))}
-          </div>
-          <div className="mt-4 flex items-center justify-between rounded-xl bg-ink-50 px-3.5 py-2.5">
-            <span className="text-xs text-ink-500 line-through">Patient records</span>
+          <p className="mt-2 text-sm text-ink-700">Licenses, DEA, malpractice, CAQH, payer applications.</p>
+          <div className="mt-3 flex items-center justify-between rounded-xl bg-ink-50 px-3.5 py-2.5">
+            <span className="text-sm text-ink-500 line-through">Patient records</span>
             <Badge tone="neutral">Never</Badge>
           </div>
         </div>

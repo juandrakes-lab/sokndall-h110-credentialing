@@ -3,7 +3,8 @@ import { redirect } from "next/navigation";
 import { getAppContext } from "@/lib/org";
 import { PLANS, PLAN_ORDER } from "@/lib/plans";
 import { startTrial } from "@/lib/billing-actions";
-import { buttonClass } from "@/components/app/ui";
+import { ICONS, Icon } from "@/components/app/ui";
+import { PLANS as SITE_PLANS } from "@/app/pricing/data";
 import { signOut } from "@/app/(app)/actions";
 import SubmitButton from "@/components/app/SubmitButton";
 import RecoverSubscription from "./RecoverSubscription";
@@ -11,11 +12,8 @@ import { AuthShell } from "@/components/app/AuthParts";
 
 export const metadata = { title: "Choose your plan — Sokndall", robots: { index: false, follow: false } };
 
-const FEATURES = {
-  solo: ["1 user", "1 GB of documents"],
-  practice: ["Up to 3 users", "5 GB of documents"],
-  billing_co: ["10 users included, $39/month each after that", "20 GB of documents", "Separate workspace per client"],
-};
+// "[text](/route)" → "text": the site's inline links, as plain words here.
+const plainText = (s) => s.replace(/\[([^\]]+)\]\([^)]+\)/g, "$1");
 
 // Step 2 of signup (alcance §10.1): signed in, no account yet. Choosing a plan
 // goes to Polar's checkout; the account exists once the payment is confirmed.
@@ -34,31 +32,48 @@ export default async function StartPage({ searchParams }) {
     </form>
   );
 
+  // The plan card of the public /pricing page, in the app's own classes: the
+  // same copy (app/pricing/data.js), the round checks, the amber trial pill and
+  // the dark tag on Practice. The button sits at the foot of every card, so the
+  // three line up whatever their lists' lengths.
   const card = (key, { chosen = false } = {}) => {
     const plan = PLANS[key];
+    const copy = SITE_PLANS.plans[PLAN_ORDER.indexOf(key)];
+    const ring = chosen || (!picked && copy.highlighted) ? "ring-2 ring-brand-700" : "ring-1 ring-ink-900/[0.08]";
     return (
       <form
         key={key}
         action={startTrial}
-        className={`flex flex-col rounded-2xl bg-white p-6 shadow-[0_1px_2px_rgba(14,42,46,0.05),0_6px_20px_-6px_rgba(14,42,46,0.08)] ring-1 ${chosen ? "ring-2 ring-brand-600" : "ring-ink-900/[0.08]"}`}
+        className={`relative flex flex-col rounded-3xl bg-white p-7 shadow-[0_1px_2px_rgba(14,42,46,0.05),0_18px_40px_-18px_rgba(14,42,46,0.25)] ${ring}`}
       >
         <input type="hidden" name="plan" value={key} />
+        {copy.tag && !picked && (
+          <span className="absolute -top-3 left-6 rounded-full bg-brand-700 px-3 py-1 text-[0.6875rem] font-semibold text-white">{copy.tag}</span>
+        )}
         <h2 className="text-lg font-semibold text-ink-900">{plan.label}</h2>
-        <p className="mt-2">
-          <span className="text-3xl font-semibold tabular-nums text-ink-900">${plan.price}</span>
-          <span className="text-sm text-ink-500"> /month</span>
+        <p className="mt-2 flex items-baseline gap-1">
+          <span className="text-[2.75rem] font-semibold leading-none tracking-[-0.03em] tabular-nums text-ink-900">${plan.price}</span>
+          <span className="text-sm text-ink-500">/month</span>
         </p>
-        <p className="mt-1 text-sm text-ink-500">
-          Up to {plan.providerLimit} providers · ${plan.perProvider} per provider
-        </p>
-        <ul className="mt-4 flex flex-col gap-1.5 text-sm text-ink-700">
-          {FEATURES[key].map((f) => (
-            <li key={f}>✓ {f}</li>
+        <p className="mt-5 text-sm font-semibold text-ink-900">{plainText(copy.desc)}</p>
+        <ul className="mt-3 flex flex-col gap-2.5 text-sm text-ink-700">
+          {copy.features.map((f) => (
+            <li key={f} className="flex items-start gap-2.5">
+              <span className="mt-px flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-full bg-brand-700 text-white" aria-hidden="true">
+                <Icon d={ICONS.check} className="h-3 w-3" strokeWidth={2.6} />
+              </span>
+              {f}
+            </li>
           ))}
         </ul>
-        <SubmitButton className={`${buttonClass(chosen || picked ? "primary" : "secondary")} mt-6 w-full`} pendingLabel="Opening the payment step…">
-          {picked ? "Continue to payment" : "Start 14-day trial"}
-        </SubmitButton>
+        <div className="mt-auto pt-7">
+          <SubmitButton
+            className="h-11 w-full rounded-full bg-accent-400 px-5 text-sm font-semibold text-ink-900 shadow-[0_1px_2px_rgba(14,42,46,0.14),0_8px_18px_-8px_rgba(14,42,46,0.32)] transition-colors hover:bg-[color-mix(in_srgb,var(--color-accent-400)_88%,var(--color-brand-700))]"
+            pendingLabel="Opening the payment step…"
+          >
+            {picked ? "Continue to payment" : "Start 14-day trial"} <span aria-hidden="true">↗</span>
+          </SubmitButton>
+        </div>
       </form>
     );
   };
@@ -106,7 +121,7 @@ export default async function StartPage({ searchParams }) {
       }
     >
       <RecoverSubscription />
-      <div className="mt-8 grid gap-4 md:grid-cols-3">{PLAN_ORDER.map((key) => card(key))}</div>
+      <div className="mt-10 grid gap-5 md:grid-cols-3">{PLAN_ORDER.map((key) => card(key))}</div>
     </AuthShell>
   );
 }
