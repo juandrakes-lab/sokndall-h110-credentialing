@@ -29,7 +29,7 @@ export default function ImportExportPage() {
         <Card className="flex flex-col">
           <CardHeader icon={ICONS.shield} title="Import credentials" description="One row per license, DEA, policy, board certification or CAQH attestation. Import providers first." />
           <div className="mt-auto px-5 py-4">
-            <Link href="/import-export/credentials" className={buttonClass("primary")}>
+            <Link href="/import-export/credentials" className={buttonClass("secondary")}>
               Import credentials
             </Link>
           </div>

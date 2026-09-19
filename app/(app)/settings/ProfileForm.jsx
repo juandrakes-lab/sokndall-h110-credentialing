@@ -31,7 +31,7 @@ export default function ProfileForm({ action, firstName, lastName, email }) {
         </Field>
       </div>
       <div>
-        <SubmitButton pending={pending} className={buttonClass("secondary")}>
+        <SubmitButton pending={pending} className={buttonClass("primary")}>
           {pending ? "Saving…" : "Save name"}
         </SubmitButton>
       </div>

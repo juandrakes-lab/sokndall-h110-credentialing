@@ -113,11 +113,11 @@ export default function AppSearch({ onDone, autoFocus = false, showClients = fal
 
   function choose(item) {
     if (!item) return;
+    // Navigate first: clearing the box unmounts the list this click came from.
+    item.go();
     setOpen(false);
     setQ("");
-    setResults(null);
     onDone?.();
-    item.go();
   }
 
   function onKeyDown(e) {
@@ -181,6 +181,8 @@ export default function AppSearch({ onDone, autoFocus = false, showClients = fal
                   <button
                     type="button"
                     onMouseEnter={() => setCursor(i)}
+                    // Keep focus in the box so nothing closes the list mid-click.
+                    onMouseDown={(e) => e.preventDefault()}
                     onClick={() => choose(item)}
                     className={`flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left ${i === cursor ? "bg-ink-50" : ""}`}
                   >

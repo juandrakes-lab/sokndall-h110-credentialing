@@ -20,13 +20,13 @@ export function buttonClass(variant = "primary", size = "md") {
 
 export function PageHeader({ title, description, actions, eyebrow }) {
   return (
-    <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+    <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
       <div className="min-w-0">
         {eyebrow && <div className="mb-2 text-sm font-medium text-ink-700">{eyebrow}</div>}
         <h1 className="text-[2rem] font-normal leading-[1.1] tracking-[-0.03em] text-ink-900 sm:text-[2.375rem]">{title}</h1>
         {description && <p className="mt-2 max-w-2xl text-[0.9375rem] leading-relaxed text-ink-500">{description}</p>}
       </div>
-      {actions && <div className="flex flex-wrap items-center gap-2">{actions}</div>}
+      {actions && <div className="flex flex-wrap items-center gap-2 lg:shrink-0">{actions}</div>}
     </div>
   );
 }
@@ -392,6 +392,8 @@ export const ICONS = {
   more: "M5 12h.01M12 12h.01M19 12h.01",
   arrowRight: "M5 12h14M13 6l6 6-6 6",
   chevronDown: "M6 9l6 6 6-6",
+  chevronRight: "M9 6l6 6-6 6",
+  download: "M12 4v12M7 11l5 5 5-5M4 20h16",
   switch: "M8 9l4-4 4 4M16 15l-4 4-4-4",
   logout: "M15 17l5-5-5-5M20 12H9M12 21H6a2 2 0 01-2-2V5a2 2 0 012-2h6",
 };

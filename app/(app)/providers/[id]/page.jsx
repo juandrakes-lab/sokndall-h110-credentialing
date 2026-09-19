@@ -197,7 +197,7 @@ export default async function ProviderPage({ params, searchParams }) {
           {tab === "credentials" && (
             <>
               {!readOnly && (
-                <Disclosure label="Add a credential" title="Add a credential" className="self-start">
+                <Disclosure label="Add a credential" title="Add a credential" variant="primary" className="self-start">
                   <CredentialForm
                     action={createCredential.bind(null, id)}
                     caqhIntervalDays={org.caqh_reattestation_interval_days}

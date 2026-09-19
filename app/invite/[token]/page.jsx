@@ -73,7 +73,7 @@ export default async function InvitePage({ params, searchParams }) {
           It was sent to <strong className="text-ink-900">{invite.email}</strong>, and you&apos;re signed in as {user.email}.
         </p>
         <form action={signOut} className="mt-6">
-          <SubmitButton className={buttonClass("secondary")}>
+          <SubmitButton className={buttonClass("primary")}>
             Sign out and switch
           </SubmitButton>
         </form>

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import HeaderActions from "@/components/app/HeaderActions";
 import { getAppContext, providerUsage } from "@/lib/org";
 import { providerIssues } from "@/lib/consistency";
 import { daysUntil } from "@/lib/credentials";
@@ -82,22 +83,20 @@ export default async function ProvidersPage() {
         title="Providers"
         description={`${providers.length} provider${providers.length === 1 ? "" : "s"}${across} — their credentials, paperwork and where each payer application stands.`}
         actions={
-          <>
-            {/* eslint-disable-next-line @next/next/no-html-link-for-pages -- file download, not a page */}
-            <a href="/export/providers" className={buttonClass("secondary")}>
-              Export CSV
-            </a>
-            {writable && (
-              <Link href="/import-export/providers" className={buttonClass("secondary")}>
-                Import CSV
-              </Link>
-            )}
-            {writable && !atLimit && (
-              <Link href="/providers/new" className={buttonClass("primary")}>
-                New provider
-              </Link>
-            )}
-          </>
+          <HeaderActions
+            secondary={[
+              { label: "Export CSV", href: "/export/providers", download: true },
+              ...(writable ? [{ label: "Import CSV", href: "/import-export/providers", icon: ICONS.upload }] : []),
+            ]}
+            primary={
+              writable &&
+              !atLimit && (
+                <Link href="/providers/new" className={buttonClass("primary")}>
+                  New provider
+                </Link>
+              )
+            }
+          />
         }
       />
 

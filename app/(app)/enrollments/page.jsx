@@ -1,4 +1,5 @@
 import Link from "next/link";
+import HeaderActions from "@/components/app/HeaderActions";
 import { getAppContext } from "@/lib/org";
 import { daysUntil } from "@/lib/credentials";
 import {
@@ -45,15 +46,12 @@ export default async function EnrollmentsPage({ searchParams }) {
       title="Enrollments"
       description="Every provider against every payer you work with. Click a cell to update it."
       actions={
-        <>
-          {/* eslint-disable-next-line @next/next/no-html-link-for-pages -- file download, not a page */}
-          <a href="/export/enrollments" className={buttonClass("secondary")}>
-            Export CSV
-          </a>
-          <Link href="/enrollments/payers" className={buttonClass("secondary")}>
-            {payers.length ? "Edit payer list" : "Choose payers"}
-          </Link>
-        </>
+        <HeaderActions
+          secondary={[
+            { label: "Export CSV", href: "/export/enrollments", download: true },
+            { label: payers.length ? "Edit payer list" : "Choose payers", href: "/enrollments/payers" },
+          ]}
+        />
       }
     />
   );

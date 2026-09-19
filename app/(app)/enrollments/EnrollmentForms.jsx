@@ -174,7 +174,7 @@ export function DetailsForm({ action, enrollment, members, ownerEmail: ownerName
         <textarea id="d-notes" name="notes" rows={2} value={values.notes} onChange={bind("notes")} className={inputClass} />
       </Field>
       <div>
-        <SubmitButton pending={pending} className={buttonClass("secondary")}>
+        <SubmitButton pending={pending} className={buttonClass("primary")}>
           {pending ? "Saving…" : "Save details"}
         </SubmitButton>
       </div>

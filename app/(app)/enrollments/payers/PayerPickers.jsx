@@ -180,7 +180,7 @@ export function OwnPayerForm({ action, catalogNames = [], ownNames = [] }) {
         </Field>
       </div>
       <div>
-        <SubmitButton pending={pending} className={buttonClass("secondary")}>
+        <SubmitButton pending={pending} className={buttonClass("primary")}>
           {pending ? "Adding…" : "Add payer"}
         </SubmitButton>
       </div>

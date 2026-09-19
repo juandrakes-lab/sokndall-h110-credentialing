@@ -68,7 +68,7 @@ export default function AlertDaysForm({ action, initial, canEdit }) {
       </div>
       {canEdit && (
         <div>
-          <SubmitButton pending={pending} className={buttonClass("secondary")}>
+          <SubmitButton pending={pending} className={buttonClass("primary")}>
             {pending ? "Saving…" : "Save alert days"}
           </SubmitButton>
         </div>

@@ -62,7 +62,7 @@ export function MemberAccessForm({ action, clients, initial, disabled, idPrefix 
       <FormError message={state?.error} />
       {state?.notice && <p className="text-sm text-status-active">{state.notice}</p>}
       <div>
-        <SubmitButton disabled={disabled} className={buttonClass("secondary", "sm")}>
+        <SubmitButton disabled={disabled} className={buttonClass("primary", "sm")}>
           Save access
         </SubmitButton>
       </div>

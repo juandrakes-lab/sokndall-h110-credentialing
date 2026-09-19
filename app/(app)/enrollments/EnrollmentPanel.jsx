@@ -111,7 +111,7 @@ export default async function EnrollmentPanel({ providerId, payerId, closeHref }
                   <p className="mt-1 whitespace-pre-line text-[0.9375rem] font-medium text-ink-900">{enrollment.pending_request}</p>
                   {!readOnly && (
                     <form action={resolveRequest.bind(null, providerId, payerId)} className="mt-3">
-                      <SubmitButton className={buttonClass("secondary", "sm")}>
+                      <SubmitButton className={buttonClass("primary", "sm")}>
                         <Icon d={ICONS.check} className="h-4 w-4" /> Mark as resolved
                       </SubmitButton>
                     </form>
@@ -123,7 +123,7 @@ export default async function EnrollmentPanel({ providerId, payerId, closeHref }
                   <p className="mt-0.5 text-xs text-ink-700">If the payer is still waiting on something, write it down so it stays visible.</p>
                   {!readOnly && (
                     <div className="mt-3">
-                      <Disclosure label="Add what they asked for" title="What the payer asked for" icon={ICONS.plus} size="sm">
+                      <Disclosure label="Add what they asked for" title="What the payer asked for" icon={ICONS.plus} variant="primary" size="sm">
                         <RequestForm action={markInfoRequested.bind(null, providerId, payerId)} />
                       </Disclosure>
                     </div>
@@ -170,7 +170,8 @@ export default async function EnrollmentPanel({ providerId, payerId, closeHref }
               label="Log a follow-up"
               title="Log a follow-up"
               icon={ICONS.phone}
-              variant="primary"
+              // One petrol button per panel: while the payer waits on us, it's the request block's.
+              variant={status === "info_requested" ? "secondary" : "primary"}
               className="self-start"
               defaultOpen={Boolean(enrollment.next_follow_up_date) && daysUntil(enrollment.next_follow_up_date) <= 0}
             >
