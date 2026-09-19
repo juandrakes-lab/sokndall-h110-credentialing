@@ -404,7 +404,9 @@ Párrafo 1                     [SIN MEDIR]         A provider is a record being 
                                                   users and forty providers. A solo practitioner who does
                                                   her own paperwork is one of each.
 Párrafo 2                     [SIN MEDIR]         Sokndall charges by provider and includes users up to
-                                                  the plan's limit. MedTrainer states in its own FAQ that
+                                                  each plan's limit, with one exception: past ten users
+                                                  on Billing Co, each additional one is $39 a month.
+                                                  MedTrainer states in its own FAQ that
                                                   its pricing scales with the number of users and modules.
                                                   Neither model is wrong. They are simply not comparable,
                                                   and every published comparison of this category that
@@ -503,11 +505,10 @@ Q3  (42 car.)  What happens if I cancel during the trial?
 Q4  (39 car.)  Do you charge per provider or per user?
     Per provider. A provider is a clinician whose credentials and enrollments
     you track; a user is someone who logs in. Solo includes 3 providers and 1
-    user, Practice 15 providers and 3 users, Billing Co 50 providers and 10
-    users. Users are included rather than billed, which is the opposite of how
-    most of this category prices, and it is why the per-unit figures do not
-    compare directly.
-    → 68 palabras · 384 car.
+    user, Practice 15 and 3, Billing Co 50 and 10. Users are included up to
+    those limits rather than billed on top. Billing Co is the one exception:
+    past ten users, each additional one is $39 a month.
+    → 68 palabras · 378 car.
 
 Q5  (27 car.)  Is there an onboarding fee?
     No. There is no setup fee, no implementation cost, no paid migration and

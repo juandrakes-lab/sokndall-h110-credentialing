@@ -476,11 +476,43 @@ characters of noise as everything above.
 | **H2** (one line, card-title size) | 35 | **≤ 70** for one line | Since 2026-09-12 the table sits under the price list, inside the header, and its H2 is set at 28px like the list's own. The authored two-line break is joined into one line. |
 | **Intro note** | 110 | **≤ 120** for 2 lines | Centred, capped at 60ch (559px). |
 | **Row label** | 14 – 33 | **≤ 50** for one line | A 387px column at 15px semibold, left-aligned. Past 50 the row grows one line; nothing breaks. |
-| **Value cell** | 1 – 2 digits | **≤ 15** | 250px per plan column, centred. Status cells print no word any more (symbol only, the word is screen-reader text), so they have no limit. |
+| **Value cell** | 1 – 16 | **≤ 18** · counts large, words at 15px | 250px per plan column, centred. Status cells print no word any more (symbol only, the word is screen-reader text), so they have no limit. |
 | **Column head** | 4 – 10 | **≤ 22** | White on the petrol head row, centred. |
-| **Caption** | 150 | **≤ 200** for one line | Full table width, 13px. |
+| **Caption** | 140 | **≤ 200** for one line | Rewritten 2026-09-14 against the seven rows; one line at 1280. |
 | **Security line** | 144 | **≤ 90 per line** · 2 lines up to ~180 | Closing line with its accent rule, 671px. |
-| **Row count** | 5 | **4 – 7** *(judgment)* | The brief's argument: parity said once, the differing rows shown. Past 7 the table becomes the feature list it was designed not to be. |
+| **Row count** | 7 | **4 – 7** *(judgment)* — now at the ceiling | The brief's argument: parity said once, the differing rows shown. Past 7 the table becomes the feature list it was designed not to be. |
 
 Re-measured 2026-09-12 at a 1348px viewport after the move under the plans
 (the numbers at 1280 are a few characters lower). Below 640px each row is a card and every limit above grows.
+
+---
+
+# Copy limits — EntityChooser (`/pricing`)
+
+Added 2026-09-14; re-measured the same day on the section layout (split: pill
+row, section-size heading left, two small cards right). Measured at 1280px.
+
+| Slot | Now | Range | Notes |
+|---|---|---|---|
+| **Pill** | 23 | **≤ 28** | |
+| **Heading** (authored lines) | 17 · 19 · 14 | **≤ 18 per line** | 502px column at 54px. "How many separate" (17) measures 456px; 19 fits at 451px only because of the letter shapes. Three lines. |
+| **Lead** | 164 | **92 – 179** | Copywriting's range (Intro note), confirmed on the block: 164 sets in 4 lines under the 3-line heading at 477px. |
+| **Answer label (H4)** | 24 · 20 | **≤ 20** for one line | 243px card. "One practice, one tax ID" takes 2 lines; nothing breaks. |
+| **Answer body** | 65 · 68 | **≤ 70** for 3 lines | |
+| **Closing** | 169 | **≤ 180** for 3 lines | Under the cards, 502px. |
+| **Options** | 2 | **2** | Side by side; a third does not fit the column. |
+
+# Copy limits — FigureBandSection `groups` (`/pricing` anchors)
+
+Re-measured 2026-09-14 on the three-block layout. Measured at 1280px.
+
+| Slot | Now | Range | Notes |
+|---|---|---|---|
+| **H2** (authored lines) | 14 · 18 | **≤ 21 per line** | Unchanged from the standard head. |
+| **Aside** | 262 | **≤ 300** for 5 lines | Right half of the dark tile. |
+| **Group title (H3)** | 29 · 19 | **≤ 50** for one line | 532px block, 18px, accent colour. |
+| **Figure label** | 27 – 37 | **≤ 50** | Range set large with an en dash (§21), unit under it. |
+| **Figure note** | 70 – 76 | **≤ 120** for 2 lines | |
+| **Group closing** | — | — | Removed 2026-09-14: the groups carry none. |
+| **Section closing** | 212 | **≤ 216** | Under the three blocks, the standard closing line (72ch, 775px): 212 sets in 3 lines of ~80, not 2 of ~105 — the full-width measure would be ~125 a line, past a readable length. |
+| **Figures per group** | 2 | **1 – 3** | The layout is built for this data: the first group spans two rows. |

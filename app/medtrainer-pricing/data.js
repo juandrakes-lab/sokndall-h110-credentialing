@@ -71,7 +71,8 @@ export const PURCHASE = {
       criterion: "Charging unit",
       unit: "what the vendor counts to reach the number",
       theirs: "Users and modules, by utilisation. Stated by MedTrainer in its own product FAQ.",
-      ours: "Providers tracked. Users are included up to the plan limit, not billed separately.",
+      // Replaced by copywriting on 2026-09-14 (the $39 additional user on Billing Co).
+      ours: "Providers tracked. Users included up to each plan's limit; Billing Co bills $39 past ten.",
     },
     {
       criterion: "First step to buy",

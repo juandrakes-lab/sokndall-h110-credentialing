@@ -41,7 +41,10 @@ export const PLANS = {
     },
     {
       name: "Billing Co",
-      desc: "[Separate client organizations, one login](/for-billing-companies)",
+      // Brief 2026-09-09: names both audiences. The link to
+      // /for-billing-companies stays, on "billing companies" only — that page
+      // is written for them, not for a multi-TIN group (the brief's open item).
+      desc: "For [billing companies](/for-billing-companies) and multi-TIN groups",
       features: [
         "Up to 50 providers across all clients",
         "Up to 10 users, scoped to their clients",
@@ -51,7 +54,29 @@ export const PLANS = {
     },
   ],
   note:
-    "Every plan is monthly and cancels from Settings. Fourteen-day trial, card up front, nothing charged before day 15. What the per-provider figures compare against, below.",
+    "Every plan is monthly and cancels from Settings. Billing Co includes 10 users; each one after that is $39 a month. Fourteen-day trial, card up front, nothing charged before day 15.",
+};
+
+// EntityChooser — copy brief of 2026-09-09 ("selector por entidad"). Under the
+// keyword H2 and above the price list, as an H3: the keyword H2 has to stay the
+// page's first H2 (on-page-seo.md §4).
+//
+// Restructured by the founder on 2026-09-14, every word from the brief: the
+// question becomes the heading, the old heading's first half becomes the pill,
+// and the rest of the lead stays under the question. Confirmed by copywriting
+// on 2026-09-14, which extended the lead back into its 92-179 range.
+export const ENTITY = {
+  pill: "Start with one question",
+  // Authored lines for the section-size heading (≤21 per line).
+  title: ["How many separate", "tax IDs do you need", "to keep apart?"],
+  lead:
+    "That answer picks your plan faster than counting providers does. Solo and Practice are built for one practice; Billing Co is the only one that keeps entities apart.",
+  options: [
+    { label: "One practice, one tax ID", body: "Solo or Practice. Choose on provider count: up to 3, or up to 15." },
+    { label: "More than one tax ID", body: "Billing Co, even at six providers. No other plan separates entities." },
+  ],
+  closing:
+    "Solo and Practice hold one practice. If you run an ASC on its own tax ID, or grew by acquisition and each site bills under a different one, that is more than one entity.",
 };
 
 // COPY_LIMITS: ≤21 per authored H2 line. Line 4 is 22 — one over. Kept as
@@ -64,39 +89,54 @@ export const UNITS = {
   },
   paras: [
     "A provider is a record being tracked: one clinician, with their credentials and their enrollment applications. A user is a person who logs in. A three-person front office managing forty clinicians is three users and forty providers. A solo practitioner who does her own paperwork is one of each.",
-    "Sokndall charges by provider and includes users up to the plan's limit. MedTrainer states in [its own FAQ](src:medtrainerProduct) that its pricing scales with the number of users and modules. Neither model is wrong. They are simply not comparable, and every published comparison of this category that puts two per-unit figures side by side without saying which unit is measuring something it did not measure.",
+    "Sokndall charges by provider and includes users up to each plan's limit, with one exception: past ten users on Billing Co, each additional one is $39 a month. MedTrainer states in [its own FAQ](src:medtrainerProduct) that its pricing scales with the number of users and modules. Neither model is wrong. They are simply not comparable, and every published comparison of this category that puts two per-unit figures side by side without saying which unit is measuring something it did not measure.",
   ],
   closing: "When you ask a vendor what it costs, the first question back should be yours: costs per what?",
 };
 
+// Replaced whole by the copy brief of 2026-09-09: the same four figures, in
+// two groups that are not comparable with each other (FigureBandSection
+// `groups`). The two group closings were replaced on 2026-09-14 by one
+// section closing under the three blocks (copywriting's reply of that date). Figure 4 is arithmetic on our own published price: $299 × 12 =
+// $3,588, ÷ 15 = $239.20.
 export const ANCHOR = {
   head: {
     pill: "Cost anchors",
-    title: ["What this costs", "next to what you", "already pay"],
+    title: ["What this costs", "next to what else"],
     aside:
-      "Four published figures, and they do not measure the same thing. Two count providers handed to an outside team. One counts staff seats inside software. The last one is this product. Every figure states its unit, because that is exactly where this comparison usually goes wrong.",
+      "Four published figures, in two groups that are not comparable with each other. Two of them buy the work. Two of them buy software. Every figure states the unit it counts in, because that is where this comparison goes wrong.",
   },
-  figures: [
+  groups: [
     {
-      label: "$600 to $2,400 per provider, per year",
-      note: "Outsourced ongoing maintenance. Unit: one provider, per year. [Medicotech](src:medicotech) and [Medwave](src:medwave).",
+      title: "Paying someone to do the work",
+      figures: [
+        {
+          label: "$600 to $2,400 per provider, per year",
+          note: "Ongoing maintenance, outsourced. Unit: one provider. [Medicotech](src:medicotech) and [Medwave](src:medwave).",
+        },
+        {
+          label: "$1,500 to $5,000 per provider, once",
+          note: "Initial submissions across core payers. Unit: one provider. [Medicotech](src:medicotech).",
+        },
+      ],
     },
     {
-      label: "$1,500 to $5,000 per provider, once",
-      note: "Full initial outsourcing across core payers. Unit: one provider, once. [Medicotech](src:medicotech).",
-    },
-    {
-      label: "$3,600 to $9,000 a year, 15 users",
-      note: "[MedTrainer's own published category guidance](src:medtrainerBlog). Unit: staff seats, not providers.",
-    },
-    {
-      label: "$3,588 a year, 15 providers",
-      note: "Sokndall Practice, $299 a month. Unit: providers tracked. $239 each per year.",
-      ours: true,
+      title: "Paying for software",
+      figures: [
+        {
+          label: "$3,600 to $9,000 a year, 15 users",
+          note: "[MedTrainer's own published guidance](src:medtrainerBlog). Unit: staff seats, not providers.",
+        },
+        {
+          label: "$3,588 a year, 15 providers",
+          note: "Sokndall Practice at $299 a month. Unit: providers tracked. $239 each.",
+          ours: true,
+        },
+      ],
     },
   ],
   closing:
-    "Buying the work and tracking the work are different purchases at different prices. If you want someone to submit the applications, buy that instead.",
+    "Outsourcing buys the work \u2014 nobody here verifies a licence with a board, files an application or calls a payer. Against software, this sits at the bottom of the same range, counted in providers rather than seats.",
 };
 
 // TrialTermsBlock. Each item in the copy is "label — explanation"; the row card
@@ -145,7 +185,9 @@ export const FAQ = [
   },
   {
     q: "Do you charge per provider or per user?",
-    a: "Per provider. A provider is a clinician whose credentials and enrollments you track; a user is someone who logs in. Solo includes 3 providers and 1 user, Practice 15 providers and 3 users, Billing Co 50 providers and 10 users. Users are included rather than billed, which is the opposite of how most of this category prices, and it is why the per-unit figures do not compare directly.",
+    // Answer replaced by copywriting on 2026-09-14: the old one said users are
+    // "included rather than billed", half false since the $39 additional user.
+    a: "Per provider. A provider is a clinician whose credentials and enrollments you track; a user is someone who logs in. Solo includes 3 providers and 1 user, Practice 15 and 3, Billing Co 50 and 10. Users are included up to those limits rather than billed on top. Billing Co is the one exception: past ten users, each additional one is $39 a month.",
   },
   {
     q: "Is there an onboarding fee?",
@@ -185,13 +227,26 @@ export const MATRIX = {
       "Three plans, one product. What changes is how many providers you track and whether you track them for clients.",
   },
   plans: ["Solo", "Practice", "Billing Co"],
+  // Brief 2026-09-09 (entity chooser), cell 0.3 corrected by copy on
+  // 2026-09-14 ("Several" → "No limit"): the first row, above "Providers
+  // tracked" — the decision axis; below, the table reads as a size ladder.
+  first: [{ label: "Separate tax IDs", cells: ["One", "One", "No limit"] }],
+  // Brief 2026-09-09 (anchors): after "Users included". "Not available" is
+  // printed as text, never an empty cell or a dash (DESIGN_RULES §2 regla 3).
+  afterUsers: [{ label: "Additional users", cells: ["Not available", "Not available", "$39 a month each"] }],
   rows: [
     { label: "Separate client organizations", cells: ["Not included", "Not included", "Included"] },
     { label: "Aggregate and scoped client views", cells: ["Not included", "Not included", "Included"] },
     { label: "Every tracking feature", cells: ["Included", "Included", "Included"] },
   ],
+  // Caption rewritten by copywriting on 2026-09-14 against the seven rows
+  // (the first one stopped being true with the tax-ID and additional-users
+  // rows; a first rewrite named a storage row the table does not have). It
+  // covers every row without naming any but the decision axis: capability,
+  // scale, or parity. If a different capability enters the table, it stops
+  // being true and copy has to hear about it.
   caption:
-    "The only two rows where a plan is missing something are the multi-client rows, and those are the Billing Co structure rather than a feature held back.",
+    "One capability changes between plans, and it is keeping separate tax IDs apart. The other rows are scale, or identical in all three columns.",
   // The security line, stated as a fact rather than as an answer to SOC 2
   // (the brief's reasoning). No badge, shield or seal may be added beside it:
   // that would imply an accreditation that does not exist (DESIGN_RULES §2

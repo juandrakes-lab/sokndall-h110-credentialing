@@ -1090,3 +1090,182 @@ celdas de los planes centradas.
   matriz sigue siendo el segundo H2).
 Política de imagen: ninguna.
 Regla de DESIGN_RULES.md que aplica: §2 reglas 3 (enmendada) y 4, §6, §13, §15, §18.
+
+## /pricing — selector por tax ID, anclas en dos grupos (encargo de copy 2026-09-09)
+Fecha: 2026-09-14
+Decisión: entra el encargo "selector por entidad + anclas de costo
+reestructuradas" completo, con dos componentes nuevos o ampliados.
+- `EntityChooser` (nuevo): la pregunta del tax ID va dentro del encabezado,
+  debajo del H2 de la keyword y antes de la lista de precios, como H3 (las
+  opciones como H4). Verificado en el HTML: la keyword sigue siendo el primer
+  H2, un solo H1, sin saltos de jerarquía. Panel gris suave: pregunta y lead a
+  la izquierda, las dos respuestas como cards blancas a la derecha, el
+  closing al pie con la regla de acento. Estático, no es un toggle: no hay
+  nada que filtrar. Sin amarillo, sin numeración, sin ícono.
+- Descripción de Billing Co reemplazada. El enlace a /for-billing-companies
+  queda solo sobre "billing companies": esa página está escrita para ellas y
+  no para un grupo multi-TIN (el pendiente que el mismo encargo declara).
+- Nota de precio reemplazada (sale el enlace a las anclas, entra el usuario
+  adicional a $39).
+- Matriz: "Separate tax IDs" (One / One / Several) como primera fila, y
+  "Additional users" (Not available / … / $39 a month each) después de "Users
+  included". Las celdas de palabra se imprimen enteras a tamaño de cuerpo; las
+  cantidades siguen grandes. Siete filas: el techo de COPY_LIMITS.
+- Caption de la matriz retirado (decisión del fundador): con las filas nuevas
+  deja de ser cierto ("the only two rows…", ahora son cuatro). Vuelve cuando
+  copy lo reescriba; el texto aprobado queda comentado en `data.js`.
+- Anclas (`FigureBandSection groups`, modo nuevo; el modo de una fila no
+  cambia en la home ni en /for-billing-companies): el tile oscuro va arriba a
+  todo el ancho, H2 a la izquierda y aside a la derecha; debajo, los dos grupos
+  como paneles grises separados, cada uno con su H3, sus dos cifras apiladas y
+  su closing. Así las cuatro cifras no se leen como una sola escala. La cifra
+  propia sigue siendo el único amarillo de la sección.
+- Para el copywriter / producto:
+  - El usuario adicional a $39 no existe en `lib/plans.js` ni en Polar. La
+    página lo promete antes de que el checkout lo cobre, igual que la
+    discrepancia de precios ya conocida.
+  - La FAQ "Do you charge per provider or per user?" dice "Users are included
+    rather than billed". Con el usuario adicional pago eso queda a medias.
+  - El pendiente del encargo sigue abierto: ninguna página le explica al
+    grupo multi-TIN qué compra.
+Política de imagen: ninguna.
+Regla de DESIGN_RULES.md que aplica: §2 reglas 2, 3 y 4, §6, §13, §14, §18.
+
+## /pricing — la zona antes de los planes, sin cajas dentro de cajas
+Fecha: 2026-09-14
+Decisión: a pedido del fundador ("cuadros dentro de un cuadro gris", ruido
+antes de los planes), rediseño de la zona entre el subtítulo del hero y la
+lista de precios, y de las anclas de costo.
+- El H2 "Credentialing software pricing: three plans, published" NO sale: es
+  el primer H2 con la keyword exacta (on-page-seo.md §4, y el encargo del
+  2026-09-09 lo exige). El fundador pidió sacarlo por redundante con el H1 y
+  el subtítulo; se discutió y se acordó mantenerlo como H2 pero con aspecto de
+  etiqueta: 15px, seminegrita, centrado entre dos filetes. Sigue siendo el
+  primer H2 (verificado en el DOM).
+- `EntityChooser` plano: sin panel gris ni cards. Tres columnas: la pregunta
+  (H3 + lead) y las dos respuestas, cada una detrás de una regla petróleo; el
+  closing en letra chica debajo de las respuestas. De 304px a 161px de alto a
+  1280.
+- Anclas en grupos: sin paneles grises ni una card por cifra. Cada grupo es
+  una columna abierta con regla petróleo arriba, título, cifras como filas
+  separadas por filetes y el closing al pie; la cifra propia sigue siendo el
+  único bloque lleno, en amarillo (§18). El canal ancho entre columnas marca
+  que no se comparan.
+- Copy: celda 0.3 de la matriz "Several" → "No limit" (corrección del
+  copywriter, 2026-09-14).
+Política de imagen: ninguna.
+Regla de DESIGN_RULES.md que aplica: §2 regla 4, §6, §14, §18; on-page-seo.md §4.
+
+## /pricing — anclas en tres bloques, selector como el FAQ, intervalos con guión
+Fecha: 2026-09-14
+Decisión: el rediseño plano anterior se descarta (el fundador: sin jerarquía
+clara, texto desordenado, fuera del estilo de la página). Se vuelve al
+lenguaje de cards del kit.
+- Anclas: tile oscuro arriba a todo el ancho, y debajo tres bloques. A la
+  izquierda, a doble alto, "Paying someone to do the work" con sus dos cifras
+  (separadas por un filete) y su closing. A la derecha, "Paying for
+  software" con la cifra de MedTrainer, y debajo el bloque amarillo con la
+  cifra propia. El closing del grupo 2 va dentro del amarillo, porque habla de
+  esa cifra ("this sits at the bottom of the same range"). Es el layout que
+  propuso el fundador. El tile no va a la izquierda como en la home: dos
+  columnas de bloques en ~620px romperían las cifras grandes.
+- Jerarquía dentro de cada bloque, en este orden:
+  1. La cifra (la misma de la home y billing).
+  2. El título del grupo, en el color de acento de la segunda línea de los
+     H2, a tamaño de título de card y seminegrita.
+  3. La unidad, en negrita chica.
+  4. La nota con su fuente.
+- Selector: el layout del FAQ. A la izquierda la pastilla, la pregunta como
+  encabezado y el lead; a la derecha las dos respuestas como row cards
+  (respuesta a la izquierda, qué significa a la derecha) y el closing debajo.
+  Cambio de copy por decisión del fundador, sin palabras nuevas:
+  - La pregunta del lead pasa a ser el H3.
+  - La pastilla es "Start with one question".
+  - Se cae ", not with provider count".
+  - El resto del lead queda debajo de la pregunta.
+  Pendiente de revisión del copywriter.
+- Intervalos: en cifras de display se dibujan con guión en lugar de "to"
+  (§21 nueva). `RangeText` lo resuelve en las cifras de FigureBandSection y en
+  los chips del hero, así que la home, billing, pricing y el chip de
+  payer-enrollment cambian juntos. El copy no se toca, y "to" queda para
+  lectores de pantalla. La prosa sigue con "to".
+Política de imagen: ninguna.
+Regla de DESIGN_RULES.md que aplica: §13, §14, §18, §21 (nueva).
+
+## /pricing — el selector como sección; títulos de grupo más chicos; encargo de copy
+Fecha: 2026-09-14
+Decisión:
+- `EntityChooser` se arma con las reglas de sección (pedido del fundador): la
+  distribución split de `ProseBandSection`.
+  - La pastilla va en su propia fila.
+  - El encabezado va a tamaño de H2 de sección, con las líneas autorales
+    "How many separate / tax IDs do you need / to keep apart?", la última en
+    acento. Sigue siendo `<h3>` en el HTML, porque va debajo del H2 de la
+    keyword.
+  - El lead va debajo del encabezado.
+  - A la derecha, a la altura del encabezado y no de la pastilla, las dos
+    respuestas como cards chicas lado a lado, y el closing debajo de ambas.
+  - Columnas 1fr/1fr como el split estándar. A 0.9fr la primera línea
+    (456px) no entraba.
+  - Margen de sección arriba y abajo dentro del encabezado. En móvil se apila
+    igual que antes.
+- Anclas: el título de cada grupo baja de 22px a 18px (acento, seminegrita).
+  A 22px competía con la cifra.
+- Encargo pendiente para el copywriter (el fundador prefirió pedirlo antes que
+  usar un texto provisional): fusionar los dos closings de las anclas en una
+  sola nota de cierre debajo de la sección, ≤216 caracteres. Pegados tal cual
+  no sirven: "a fraction of these" pierde a qué cifras se refiere, y juntos
+  suman ~350. Hasta que llegue, cada closing sigue en su bloque (el del grupo
+  2 dentro del amarillo).
+Política de imagen: ninguna.
+Regla de DESIGN_RULES.md que aplica: §13, §14, §18.
+
+## /pricing — respuesta de copy del 2026-09-14 (closing único, lead, FAQ Q4)
+Fecha: 2026-09-14
+Decisión: entra la respuesta de copywriting a la solicitud del mismo día.
+- Anclas: los dos closings de grupo se borran y entra un solo closing de
+  sección debajo de los tres bloques, con la línea de cierre estándar (regla de
+  acento, sin ámbar). El bloque amarillo queda solo con su cifra. Los bloques
+  quedan parejos: 387px a la izquierda, 387px a la derecha.
+  - El copy pedía dos líneas de ~105 cortadas en el punto. La línea de cierre
+    estándar mide 72ch (775px) y lo pone en tres líneas de ~80. A todo el
+    ancho serían ~125 caracteres por línea, más de lo legible. Se mantiene el
+    estándar y el corte queda natural.
+- Selector: el lead vuelve a su rango con la extensión del copywriter (164).
+  Reestructura confirmada.
+- FAQ Q4 reemplazada (usuario adicional de Billing Co). El schema FAQPage lee
+  la misma data (verificado en el JSON-LD).
+- Caption de la matriz: la versión propuesta NO entra y el caption sigue
+  retirado. Nombra una fila de almacenamiento ("providers, users, storage")
+  que la tabla no tiene: salió el 2026-09-12 con cifras [PEND]. La respuesta
+  de copy también cuenta "tres filas de multi-cliente", y hoy son dos (se
+  consolidaron). Vuelve a copy.
+- Para producto/fundador (bloqueante, según copy): el usuario adicional a $39
+  se promete en la nota de precio, en la matriz y en la FAQ Q4, y no existe en
+  `lib/plans.js` ni en Polar. Opciones de copy: implementarlo antes de
+  publicar, o sacar las tres menciones (tope duro de 10 usuarios).
+- Para copy (fuera de mi alcance, página editorial): `/medtrainer-pricing`
+  dice "Users are included up to the plan limit, not billed separately", que
+  queda a medias por el mismo motivo.
+Política de imagen: ninguna.
+Regla de DESIGN_RULES.md que aplica: §2 regla 4, §18.
+
+## /pricing y /medtrainer-pricing — segunda respuesta de copy (caption, cobro de usuarios)
+Fecha: 2026-09-14
+Decisión: entra la segunda respuesta de copywriting del día.
+- El caption de la matriz vuelve, reescrito contra las siete filas: capacidad,
+  escala o paridad, sin nombrar filas salvo el tax ID. Entra en una línea a
+  1280.
+- /pricing, sección proveedor/usuario, párrafo 2: la primera frase suma la
+  excepción del usuario adicional de Billing Co. Copy la encontró buscando por
+  significado; no dice "billed", así que ningún grep la encontraba.
+- /medtrainer-pricing, celda "ours" de la comparación: reemplazada (89, dentro
+  de 62–95). Es un cambio de copy en una página editorial. El diseño de la
+  página no se toca.
+- Se reemplazaron `docs/H110_COPY_TANDA_A_LANDING.md` y
+  `docs/H110_COPY_TANDA_B_COMPARACION.md` por las versiones sincronizadas del
+  copywriter. El diff contra las anteriores son solo esos cambios y la FAQ
+  Q4, así que archivo y código dicen lo mismo.
+- El cobro del usuario adicional a $39 sigue pendiente en desarrollo
+  (`lib/plans.js`, Polar) y bloquea la publicación de /pricing.
+Regla de DESIGN_RULES.md que aplica: §2 regla 3.
