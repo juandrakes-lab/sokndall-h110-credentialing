@@ -4585,3 +4585,30 @@ html:has(.sk-fnav) { scroll-padding-top: 88px; }
   .sk-pfm__g { width: 22px; height: 22px; }
   .sk-pfm__cap { padding: var(--s-2) 0 0; border: 0; background: none; }
 }
+
+/* ---- the way in: "Log in" beside the trial button (2026-09-19) ---------- */
+/* The trial stays the only loud thing in the bar; the login is plain text in
+   the bar's own colour, and stays visible on a phone when the links fold. */
+.sk-nav__access {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-4);
+  flex: none;
+}
+.sk-nav__access .sk-nav__cta { margin-left: 0; }
+.sk-nav__login {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: inherit;
+  opacity: 0.85;
+  transition: opacity 0.16s ease;
+}
+.sk-nav__login:hover { opacity: 1; text-decoration: underline; text-underline-offset: 4px; }
+.sk-nav--light .sk-nav__login,
+.sk-nav--plain .sk-nav__login,
+.sk-fnav .sk-nav__login { color: var(--black); }
+.sk-nav--dark .sk-nav__login { color: #fff; }
+@media (max-width: 420px) {
+  .sk-nav__access { gap: var(--s-3); }
+}

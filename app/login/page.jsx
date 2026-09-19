@@ -80,13 +80,13 @@ function Login() {
 
   return (
     <AuthShell
-      title="Sign in"
-      subtitle="Credential and payer enrollment tracking."
+      title="Log in"
+      subtitle="Welcome back. Your dashboard is one step away."
       footer={
         <>
           New to Sokndall?{" "}
           <Link href={signUpHref} className="font-medium text-brand-600 hover:underline">
-            Create an account
+            Start a 14-day trial
           </Link>
         </>
       }
@@ -113,7 +113,7 @@ function Login() {
         <Captcha onToken={setCaptcha} />
         {error && <p role="alert" className="text-sm text-status-expired">{error}</p>}
         <SubmitButton pending={loading} className={`${buttonClass("primary")} w-full`}>
-          {loading ? "Signing in…" : "Sign in"}
+          {loading ? "Logging in…" : "Log in"}
         </SubmitButton>
       </form>
     </AuthShell>

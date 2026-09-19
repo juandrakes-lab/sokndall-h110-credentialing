@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { buttonClass } from "@/components/app/ui";
 import { signOut } from "@/app/(app)/actions";
 import SubmitButton from "@/components/app/SubmitButton";
+import { AuthShell } from "@/components/app/AuthParts";
 
 export const metadata = { title: "Join a team — Sokndall", robots: { index: false, follow: false } };
 
@@ -37,69 +38,64 @@ export default async function InvitePage({ params, searchParams }) {
   const user = auth?.user;
   const next = `/invite/${token}`;
 
-  let body;
+  let view;
   if (!invite || invite.status !== "pending") {
-    body = (
-      <>
-        <h1 className="text-xl font-semibold text-ink-900">
-          {invite?.status === "accepted" ? "Invitation already used" : invite?.status === "expired" ? "Invitation expired" : "Invitation not found"}
-        </h1>
-        <p className="mt-2 text-sm text-ink-500">Ask the account owner to send you a new one.</p>
-      </>
-    );
+    view = {
+      title: invite?.status === "accepted" ? "Invitation already used" : invite?.status === "expired" ? "Invitation expired" : "Invitation not found",
+      subtitle: "Ask the account owner to send you a new one.",
+    };
   } else if (!user) {
-    body = (
-      <>
-        <h1 className="text-xl font-semibold text-ink-900">Join {invite.org_name}</h1>
-        <p className="mt-2 text-sm text-ink-500">
-          You were invited as <strong className="text-ink-900">{invite.email}</strong>. Create a login with that address,
-          or sign in if you already have one.
-        </p>
-        <div className="mt-6 flex flex-col gap-3">
+    view = {
+      title: `Join ${invite.org_name}`,
+      subtitle: (
+        <>
+          You were invited as <strong className="font-medium text-ink-900">{invite.email}</strong>. Create a login with that
+          address, or log in if you already have one.
+        </>
+      ),
+      body: (
+        <div className="mt-8 flex flex-col gap-3">
           <Link href={`/signup?email=${encodeURIComponent(invite.email)}&next=${encodeURIComponent(next)}`} className={buttonClass("primary")}>
             Create a login
           </Link>
           <Link href={`/login?email=${encodeURIComponent(invite.email)}&next=${encodeURIComponent(next)}`} className={buttonClass("secondary")}>
-            I already have one — sign in
+            I already have one — log in
           </Link>
         </div>
-      </>
-    );
+      ),
+    };
   } else if (user.email.toLowerCase() !== invite.email) {
-    body = (
-      <>
-        <h1 className="text-xl font-semibold text-ink-900">Wrong login for this invitation</h1>
-        <p className="mt-2 text-sm text-ink-500">
-          It was sent to <strong className="text-ink-900">{invite.email}</strong>, and you&apos;re signed in as {user.email}.
-        </p>
-        <form action={signOut} className="mt-6">
-          <SubmitButton className={buttonClass("primary")}>
-            Sign out and switch
-          </SubmitButton>
+    view = {
+      title: "Wrong login for this invitation",
+      subtitle: (
+        <>
+          It was sent to <strong className="font-medium text-ink-900">{invite.email}</strong>, and you&apos;re signed in as {user.email}.
+        </>
+      ),
+      body: (
+        <form action={signOut} className="mt-8">
+          <SubmitButton className={`${buttonClass("primary")} w-full`}>Sign out and switch</SubmitButton>
         </form>
-      </>
-    );
+      ),
+    };
   } else {
-    body = (
-      <>
-        <h1 className="text-xl font-semibold text-ink-900">Join {invite.org_name}</h1>
-        <p className="mt-2 text-sm text-ink-500">You&apos;ll see the providers, enrollments and follow-ups your team works on.</p>
-        {sp.error && <p className="mt-4 text-sm text-status-expired">{ERRORS[sp.error] ?? "Something went wrong joining the account."}</p>}
-        <form action={accept.bind(null, token)} className="mt-6">
-          <SubmitButton className={`${buttonClass("primary")} w-full`}>
-            Join {invite.org_name}
-          </SubmitButton>
-        </form>
-      </>
-    );
+    view = {
+      title: `Join ${invite.org_name}`,
+      subtitle: "You'll see the providers, enrollments and follow-ups your team works on.",
+      body: (
+        <>
+          {sp.error && <p className="mt-4 text-sm text-status-expired">{ERRORS[sp.error] ?? "Something went wrong joining the account."}</p>}
+          <form action={accept.bind(null, token)} className="mt-8">
+            <SubmitButton className={`${buttonClass("primary")} w-full`}>Join {invite.org_name}</SubmitButton>
+          </form>
+        </>
+      ),
+    };
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center app-ground app-type px-5">
-      <div className="w-full max-w-md">
-        <p className="text-center text-lg font-semibold tracking-tight text-brand-700">Sokndall</p>
-        <div className="mt-6 rounded-xl border border-ink-200 bg-white px-6 py-7 shadow-sm">{body}</div>
-      </div>
-    </main>
+    <AuthShell title={view.title} subtitle={view.subtitle}>
+      {view.body}
+    </AuthShell>
   );
 }

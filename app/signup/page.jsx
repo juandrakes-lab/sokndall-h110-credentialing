@@ -5,6 +5,7 @@ import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { buttonClass, inputClass } from "@/components/app/ui";
+import { PLANS } from "@/lib/plans";
 import SubmitButton from "@/components/app/SubmitButton";
 import { emailError } from "@/lib/validation";
 import { TERMS_VERSION, passwordChecks } from "@/lib/password-rules";
@@ -25,8 +26,6 @@ function signupErrors(v) {
   if (!v.email.trim()) e.email = "Enter your work email.";
   else if (emailError(v.email)) e.email = emailError(v.email);
   if (!passwordChecks(v.password, { email: v.email, name: v.first_name }).every((c) => c.ok)) e.password = "The password doesn't meet the requirements below.";
-  if (!v.confirm) e.confirm = "Type the password again.";
-  else if (v.confirm !== v.password) e.confirm = "The two passwords don't match.";
   if (!v.terms) e.terms = "Accept the Terms and Privacy Policy to continue.";
   return e;
 }
@@ -41,7 +40,7 @@ function Signup() {
   const next = safeNext(params.get("next")) ?? "/start";
   const callback = `${typeof window === "undefined" ? "" : window.location.origin}/auth/callback?next=${encodeURIComponent(next)}`;
 
-  const [v, setV] = useState({ first_name: "", last_name: "", email: params.get("email") ?? "", password: "", confirm: "", terms: false });
+  const [v, setV] = useState({ first_name: "", last_name: "", email: params.get("email") ?? "", password: "", terms: false });
   const [touched, setTouched] = useState({});
   const [attempted, setAttempted] = useState(false);
   const [captcha, setCaptcha] = useState(null);
@@ -66,7 +65,7 @@ function Signup() {
     setError(null);
     if (Object.keys(errors).length) {
       setAttempted(true);
-      const first = ["first_name", "last_name", "email", "password", "confirm", "terms"].find((f) => errors[f]);
+      const first = ["first_name", "last_name", "email", "password", "terms"].find((f) => errors[f]);
       document.getElementById(`su-${first}`)?.focus();
       return;
     }
@@ -116,17 +115,40 @@ function Signup() {
     );
   }
 
+  // Came from a plan's own button (/start?plan=…): say which, and offer the way back.
+  const planKey = new URLSearchParams(next.split("?")[1] ?? "").get("plan");
+  const plan = next.startsWith("/start") ? PLANS[planKey] : null;
+
+  const joining = next.startsWith("/invite/");
+
   const signInHref = `/login${params.toString() ? `?${params.toString()}` : ""}`;
 
   return (
     <AuthShell
-      title="Create your account"
-      subtitle="14 days free. Your card goes in on the next step; you're not charged until day 15."
+      step={joining ? undefined : 1}
+      title={joining ? "Create your login" : "Start your 14-day trial"}
+      subtitle={
+        joining
+          ? "Then you'll join the account that invited you. Nothing to pay — the owner's plan covers you."
+          : "Create your account first. Your card goes in on the payment step; you're not charged until day 15."
+      }
+      eyebrow={
+        plan && (
+          <p className="mb-4 flex w-fit items-center gap-2 rounded-full bg-brand-50 px-3 py-1 text-sm text-brand-700">
+            <span className="font-medium">
+              {plan.label} plan · ${plan.price}/month
+            </span>
+            <Link href={`/signup${params.get("email") ? `?email=${encodeURIComponent(params.get("email"))}` : ""}`} className="text-brand-600 underline underline-offset-2 hover:text-brand-700">
+              Change
+            </Link>
+          </p>
+        )
+      }
       footer={
         <>
           Already have an account?{" "}
           <Link href={signInHref} className="font-medium text-brand-600 hover:underline">
-            Sign in
+            Log in
           </Link>
         </>
       }
@@ -157,9 +179,6 @@ function Signup() {
           <PasswordInput id="su-password" value={v.password} onChange={set("password")} onBlur={blur("password")} autoComplete="new-password" />
         </AuthField>
         <PasswordChecklist checks={checks} />
-        <AuthField id="su-confirm" label="Confirm password" error={show("confirm")}>
-          <PasswordInput id="su-confirm" value={v.confirm} onChange={set("confirm")} onBlur={blur("confirm")} autoComplete="new-password" />
-        </AuthField>
         <div className="flex flex-col gap-1">
           <label className="flex items-start gap-2 text-sm text-ink-700">
             <input id="su-terms" type="checkbox" checked={v.terms} onChange={set("terms")} className="mt-0.5 h-4 w-4 accent-brand-700" />
@@ -175,7 +194,7 @@ function Signup() {
         {error && <p role="alert" className="text-sm text-status-expired">{error}</p>}
 
         <SubmitButton pending={loading} className={`${buttonClass("primary")} w-full`}>
-          {loading ? "Creating your account…" : "Create account"}
+          {loading ? "Creating your account…" : "Create account and continue"}
         </SubmitButton>
       </form>
     </AuthShell>

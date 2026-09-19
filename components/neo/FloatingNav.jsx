@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 
-import { NAV_LINKS, TRIAL_HREF } from "@/components/neo/neoData";
+import { NAV_LINKS } from "@/components/neo/neoData";
+import NavAccess from "@/components/neo/NavAccess";
 import { Wordmark } from "@/components/neo/icons";
 
 /**
@@ -64,9 +65,7 @@ export default function FloatingNav({ current, reveal = false }) {
             </Link>
           ))}
         </nav>
-        <Link href={TRIAL_HREF} className="sk-nav__cta">
-          Start free trial
-        </Link>
+        <NavAccess />
       </header>
     </div>
   );

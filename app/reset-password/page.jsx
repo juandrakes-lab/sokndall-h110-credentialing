@@ -55,7 +55,7 @@ export default function ResetPasswordPage() {
       <AuthShell
         title="This link has expired"
         subtitle="Reset links work once and for one hour. Ask for a new one."
-        footer={<Link href="/login" className="font-medium text-brand-600 hover:underline">Back to sign in</Link>}
+        footer={<Link href="/login" className="font-medium text-brand-600 hover:underline">Back to log in</Link>}
       >
         <Link href="/forgot-password" className={`${buttonClass("primary")} mt-6 w-full`}>
           Send a new link

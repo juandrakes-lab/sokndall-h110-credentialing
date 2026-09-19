@@ -4,22 +4,75 @@ import Link from "next/link";
 import { useEffect, useId, useRef, useState } from "react";
 import { inputClass } from "@/components/app/ui";
 
-// The frame every access screen shares: sign up, sign in, forgot/reset password.
-export function AuthShell({ title, subtitle, children, footer }) {
+// The frame every access screen shares — sign up, log in, forgot/reset
+// password, choosing a plan, an invitation. The form on white on the left; on
+// a laptop, a petrol panel on the right with the real dashboard, so the first
+// screen already shows what's behind the door. On a phone only the form.
+const STEPS = ["Your account", "Plan and payment", "Your practice"];
+
+// `panel={false}` gives the whole width to content that needs it (the three plans).
+export function AuthShell({ title, subtitle, children, footer, eyebrow, step, wide = false, panel = true }) {
   return (
-    <main className="flex min-h-screen items-center justify-center app-ground app-type px-5 py-12">
-      <div className="w-full max-w-md">
-        <Link href="/" className="flex items-center justify-center gap-2.5 text-lg font-semibold tracking-tight text-ink-900">
+    <main className={`app-type grid min-h-screen bg-white lg:gap-4 lg:p-4 ${panel ? "lg:grid-cols-[minmax(0,1fr)_minmax(0,1.08fr)]" : ""}`}>
+      <div className="flex min-h-screen flex-col px-5 py-6 sm:px-10 lg:min-h-[calc(100vh-2rem)] lg:py-4">
+        <Link href="/" className="flex w-fit items-center gap-2.5 text-lg font-semibold tracking-tight text-ink-900">
           <span className="flex h-9 w-9 items-center justify-center rounded-[11px] bg-brand-700 text-base font-semibold text-white">S</span>
           Sokndall
         </Link>
-        <div className="mt-6 rounded-3xl bg-white px-6 py-8 shadow-[0_1px_2px_rgba(14,42,46,0.05),0_20px_50px_-20px_rgba(14,42,46,0.25)] ring-1 ring-ink-900/[0.06] sm:px-8">
-          <h1 className="text-2xl font-semibold tracking-[-0.02em] text-ink-900">{title}</h1>
-          {subtitle && <p className="mt-1 text-sm text-ink-500">{subtitle}</p>}
+
+        <div className={`mx-auto flex w-full flex-1 flex-col justify-center py-10 ${wide ? (panel ? "max-w-3xl" : "max-w-5xl") : "max-w-[400px]"}`}>
+          {step && (
+            <ol className="mb-6 flex items-center gap-2" aria-label={`Step ${step} of ${STEPS.length}: ${STEPS[step - 1]}`}>
+              {STEPS.map((label, i) => (
+                <li key={label} className="flex items-center gap-2">
+                  <span className={`h-1.5 rounded-full ${i + 1 === step ? "w-8 bg-brand-700" : i + 1 < step ? "w-4 bg-brand-500" : "w-4 bg-ink-200"}`} />
+                </li>
+              ))}
+              <li className="ml-1 text-xs font-medium text-ink-500">
+                Step {step} of {STEPS.length} · {STEPS[step - 1]}
+              </li>
+            </ol>
+          )}
+          {eyebrow}
+          {title && <h1 className="text-[2rem] font-normal leading-[1.1] tracking-[-0.03em] text-ink-900">{title}</h1>}
+          {subtitle && <p className="mt-2 text-[0.9375rem] leading-relaxed text-ink-500">{subtitle}</p>}
           {children}
+          {footer && <div className="mt-8 text-sm text-ink-700">{footer}</div>}
         </div>
-        {footer && <div className="mt-4 text-center text-sm text-ink-700">{footer}</div>}
+
+        <div className="flex flex-wrap items-center justify-between gap-3 text-xs text-ink-500">
+          <span>© {new Date().getFullYear()} Sokndall</span>
+          <span className="flex gap-4">
+            <Link href="/security" className="hover:text-ink-900">Security</Link>
+            <Link href="/privacy" className="hover:text-ink-900">Privacy</Link>
+            <Link href="/terms" className="hover:text-ink-900">Terms</Link>
+          </span>
+        </div>
       </div>
+
+      {panel && (
+        <aside className="relative hidden overflow-hidden rounded-[28px] bg-brand-700 lg:flex lg:flex-col" aria-hidden="true">
+          <div className="px-12 pt-14 xl:px-16 xl:pt-16">
+            <p className="max-w-md text-[2rem] font-normal leading-[1.15] tracking-[-0.03em] text-white">
+              Every expiration and every payer application, on one board.
+            </p>
+            <p className="mt-4 max-w-md text-[0.9375rem] leading-relaxed text-brand-100/80">
+              Licenses, DEA, malpractice and CAQH dates, and where each enrollment stands — with the follow-ups that are due
+              this week.
+            </p>
+          </div>
+          <div className="relative mt-12 flex-1">
+            {/* eslint-disable-next-line @next/next/no-img-element -- a fixed product shot, no resizing needed */}
+            <img
+              src="/app/auth-dashboard.png"
+              alt=""
+              width={1280}
+              height={860}
+              className="absolute left-12 top-0 w-[900px] max-w-none rounded-tl-2xl shadow-[0_24px_60px_-20px_rgba(0,0,0,0.55)] ring-1 ring-white/10 xl:left-16"
+            />
+          </div>
+        </aside>
+      )}
     </main>
   );
 }
@@ -47,7 +100,7 @@ export function Divider() {
   return (
     <div className="my-5 flex items-center gap-3 text-xs text-ink-500">
       <div className="h-px flex-1 bg-ink-200" />
-      or
+      or with email
       <div className="h-px flex-1 bg-ink-200" />
     </div>
   );

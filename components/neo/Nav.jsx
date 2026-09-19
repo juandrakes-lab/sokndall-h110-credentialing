@@ -1,6 +1,7 @@
 import Link from "next/link";
-import { NAV_LINKS, TRIAL_HREF } from "@/components/neo/neoData";
-import { Wordmark, IconArrowUpRight } from "@/components/neo/icons";
+import { NAV_LINKS } from "@/components/neo/neoData";
+import { Wordmark } from "@/components/neo/icons";
+import NavAccess from "@/components/neo/NavAccess";
 
 export function Brand() {
   return (
@@ -21,10 +22,7 @@ export function NavLinks({ current }) {
           </Link>
         ))}
       </nav>
-      <Link href={TRIAL_HREF} className="sk-nav__cta">
-        Start free trial
-        <IconArrowUpRight className="sk-arr-ico" />
-      </Link>
+      <NavAccess />
     </>
   );
 }

@@ -179,7 +179,7 @@ export default async function DashboardPage({ searchParams }) {
       key: i.id,
       title: i.who,
       detail: i.kind === "Payer revalidation" ? `Payer revalidation · ${i.detail}` : i.kind,
-      badge: daysUntil(i.date) < 0 ? "Expired" : daysUntil(i.date) === 0 ? "Expires today" : `${daysUntil(i.date)} days left`,
+      badge: daysUntil(i.date) < 0 ? "Expired" : daysUntil(i.date) === 0 ? "Expires today" : daysUntil(i.date) === 1 ? "1 day left" : `${daysUntil(i.date)} days left`,
       tone: daysUntil(i.date) <= 7 ? "red" : "amber",
       href: i.href,
     })),

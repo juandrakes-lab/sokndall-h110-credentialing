@@ -101,7 +101,7 @@ The earlier `ComparisonTemplate.jsx` (its own 780px column) and `Comparison.jsx`
 (an `Article` wrapper) both did this job before and are **deleted** — there is
 one comparison mould now, not three.
 
-**Client components, and only these four:** `Faq` (the accordion — every answer
+**Client components, and only these five:** `NavAccess` (the nav's "Log in" + trial pair, swapped for "Go to app" when a session cookie is present — the pages stay static), `Faq` (the accordion — every answer
 is in the SSR HTML whether open or not, `hidden` rather than absent, so the copy
 stays crawlable), `Toc` / `EditorialToc` (the scroll-spy), `EmailCapture` (the
 form) and `FloatingNav` (the sticky petrol-ink nav bar; on the home it appears

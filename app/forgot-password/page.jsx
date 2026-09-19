@@ -54,7 +54,7 @@ export default function ForgotPasswordPage() {
       <AuthShell
         title="Check your inbox"
         subtitle={`If an account exists for ${email.trim()}, we sent it a link to choose a new password. The link works for one hour.`}
-        footer={<Link href="/login" className="font-medium text-brand-600 hover:underline">Back to sign in</Link>}
+        footer={<Link href="/login" className="font-medium text-brand-600 hover:underline">Back to log in</Link>}
       >
         <p className="mt-5 text-sm text-ink-500">Nothing after a few minutes? Check spam, or make sure it&apos;s the email you signed up with.</p>
       </AuthShell>
@@ -65,7 +65,7 @@ export default function ForgotPasswordPage() {
     <AuthShell
       title="Reset your password"
       subtitle="Enter the email you signed up with and we'll send you a link to choose a new password."
-      footer={<Link href="/login" className="font-medium text-brand-600 hover:underline">Back to sign in</Link>}
+      footer={<Link href="/login" className="font-medium text-brand-600 hover:underline">Back to log in</Link>}
     >
       <form onSubmit={submit} noValidate className="mt-6 flex flex-col gap-4">
         <AuthField id="fp-email" label="Email">

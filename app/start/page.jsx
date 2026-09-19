@@ -7,6 +7,7 @@ import { buttonClass } from "@/components/app/ui";
 import { signOut } from "@/app/(app)/actions";
 import SubmitButton from "@/components/app/SubmitButton";
 import RecoverSubscription from "./RecoverSubscription";
+import { AuthShell } from "@/components/app/AuthParts";
 
 export const metadata = { title: "Choose your plan — Sokndall", robots: { index: false, follow: false } };
 
@@ -26,63 +27,86 @@ export default async function StartPage({ searchParams }) {
   if (!user) redirect(`/signup?next=${encodeURIComponent(picked ? `/start?plan=${picked}` : "/start")}`);
   if (org) redirect("/dashboard");
 
-  return (
-    <main className="min-h-screen app-ground app-type px-5 py-12">
-      <div className="mx-auto max-w-5xl">
-        <div className="flex items-center justify-between">
-          <p className="text-lg font-semibold tracking-tight text-brand-700">Sokndall</p>
-          <form action={signOut}>
-            <SubmitButton className="text-sm text-ink-500 hover:text-ink-900">
-              Sign out ({user.email})
-            </SubmitButton>
-          </form>
-        </div>
+  const signOutForm = (
+    <form action={signOut} className="text-ink-500">
+      Signed in as {user.email} ·{" "}
+      <SubmitButton className="font-medium text-brand-600 hover:underline">Use another account</SubmitButton>
+    </form>
+  );
 
+  const card = (key, { chosen = false } = {}) => {
+    const plan = PLANS[key];
+    return (
+      <form
+        key={key}
+        action={startTrial}
+        className={`flex flex-col rounded-2xl bg-white p-6 shadow-[0_1px_2px_rgba(14,42,46,0.05),0_6px_20px_-6px_rgba(14,42,46,0.08)] ring-1 ${chosen ? "ring-2 ring-brand-600" : "ring-ink-900/[0.08]"}`}
+      >
+        <input type="hidden" name="plan" value={key} />
+        <h2 className="text-lg font-semibold text-ink-900">{plan.label}</h2>
+        <p className="mt-2">
+          <span className="text-3xl font-semibold tabular-nums text-ink-900">${plan.price}</span>
+          <span className="text-sm text-ink-500"> /month</span>
+        </p>
+        <p className="mt-1 text-sm text-ink-500">
+          Up to {plan.providerLimit} providers · ${plan.perProvider} per provider
+        </p>
+        <ul className="mt-4 flex flex-col gap-1.5 text-sm text-ink-700">
+          {FEATURES[key].map((f) => (
+            <li key={f}>✓ {f}</li>
+          ))}
+        </ul>
+        <SubmitButton className={`${buttonClass(chosen || picked ? "primary" : "secondary")} mt-6 w-full`} pendingLabel="Opening the payment step…">
+          {picked ? "Continue to payment" : "Start 14-day trial"}
+        </SubmitButton>
+      </form>
+    );
+  };
+
+  // Came from a plan's own button: that plan, one click to the payment step.
+  if (picked) {
+    return (
+      <AuthShell
+        step={2}
+        title={`Your ${PLANS[picked].label} trial`}
+        subtitle="14 days free. Your card goes in on the next step, handled by Polar; the first charge is on day 15, and you can cancel from Settings any time before."
+        footer={
+          <div className="flex flex-col gap-3">
+            <Link href="/start" className="font-medium text-brand-600 hover:underline">
+              Choose a different plan
+            </Link>
+            {signOutForm}
+          </div>
+        }
+      >
         <RecoverSubscription />
+        <div className="mt-6">{card(picked, { chosen: true })}</div>
+      </AuthShell>
+    );
+  }
 
-        <h1 className="mt-10 text-2xl font-semibold tracking-tight text-ink-900">Choose your plan</h1>
-        <p className="mt-2 max-w-2xl text-sm text-ink-500">
-          Every plan has every feature — they differ in how many providers and people they hold. Start with 14 days
-          free: your card goes in now, the first charge is on day 15, and you can cancel from Settings any time before.
-        </p>
-
-        <div className="mt-8 grid gap-5 md:grid-cols-3">
-          {PLAN_ORDER.map((key) => {
-            const plan = PLANS[key];
-            const chosen = key === picked;
-            return (
-              <form
-                key={key}
-                action={startTrial}
-                className={`flex flex-col rounded-xl border bg-white p-6 shadow-sm ${chosen ? "border-brand-600 ring-2 ring-brand-100" : "border-ink-200"}`}
-              >
-                <input type="hidden" name="plan" value={key} />
-                <h2 className="text-lg font-semibold text-ink-900">{plan.label}</h2>
-                <p className="mt-2">
-                  <span className="text-3xl font-semibold tabular-nums text-ink-900">${plan.price}</span>
-                  <span className="text-sm text-ink-500"> /month</span>
-                </p>
-                <p className="mt-1 text-sm text-ink-500">
-                  Up to {plan.providerLimit} providers · ${plan.perProvider} per provider
-                </p>
-                <ul className="mt-4 flex flex-col gap-1.5 text-sm text-ink-700">
-                  {FEATURES[key].map((f) => (
-                    <li key={f}>✓ {f}</li>
-                  ))}
-                </ul>
-                <SubmitButton className={`${buttonClass(chosen ? "primary" : "secondary")} mt-6`}>
-                  Start 14-day trial
-                </SubmitButton>
-              </form>
-            );
-          })}
+  return (
+    <AuthShell
+      wide
+      panel={false}
+      step={2}
+      title="Choose your plan"
+      subtitle="Every plan has every feature — they differ in how many providers and people they hold. 14 days free: your card goes in now, the first charge is on day 15, and you can cancel from Settings any time before."
+      footer={
+        <div className="flex flex-col gap-3">
+          <p className="text-xs text-ink-500">
+            Payments are handled by Polar, our merchant of record.{" "}
+            <Link href="/pricing" className="underline">
+              Compare plans in detail
+            </Link>
+            .
+          </p>
+          {signOutForm}
         </div>
-
-        <p className="mt-8 text-xs text-ink-500">
-          Payments are handled by Polar, our merchant of record. We don&apos;t sell verification or a managed service —
-          that&apos;s why it costs a fraction. <Link href="/pricing" className="underline">Compare plans in detail</Link>.
-        </p>
-      </div>
-    </main>
+      }
+    >
+      <RecoverSubscription />
+      <div className="mt-8 grid gap-4 md:grid-cols-3">{PLAN_ORDER.map((key) => card(key))}</div>
+    </AuthShell>
   );
 }
