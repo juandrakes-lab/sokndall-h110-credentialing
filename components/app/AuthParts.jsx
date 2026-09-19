@@ -3,17 +3,18 @@
 import Link from "next/link";
 import { useEffect, useId, useRef, useState } from "react";
 import { inputClass } from "@/components/app/ui";
+import AuthStories from "@/components/app/AuthStories";
 
 // The frame every access screen shares — sign up, log in, forgot/reset
-// password, choosing a plan, an invitation. The form on white on the left; on
-// a laptop, a petrol panel on the right with the real dashboard, so the first
-// screen already shows what's behind the door. On a phone only the form.
+// password, choosing a plan, an invitation. The form on the app ground; on
+// a laptop, a petrol panel on the right with short stories of the product
+// (AuthStories) that stays put while the form scrolls. On a phone only the form.
 const STEPS = ["Your account", "Plan and payment", "Your practice"];
 
 // `panel={false}` gives the whole width to content that needs it (the three plans).
-export function AuthShell({ title, subtitle, children, footer, eyebrow, step, wide = false, panel = true }) {
+export function AuthShell({ title, subtitle, children, footer, eyebrow, step, wide = false, panel = true, story = 0 }) {
   return (
-    <main className={`app-type grid min-h-screen bg-white lg:gap-4 lg:p-4 ${panel ? "lg:grid-cols-[minmax(0,1fr)_minmax(0,1.08fr)]" : ""}`}>
+    <main className={`app-ground app-type grid min-h-screen lg:gap-4 lg:p-4 ${panel ? "lg:grid-cols-[minmax(0,1fr)_minmax(0,1.08fr)]" : ""}`}>
       <div className="flex min-h-screen flex-col px-5 py-6 sm:px-10 lg:min-h-[calc(100vh-2rem)] lg:py-4">
         <Link href="/" className="flex w-fit items-center gap-2.5 text-lg font-semibold tracking-tight text-ink-900">
           <span className="flex h-9 w-9 items-center justify-center rounded-[11px] bg-brand-700 text-base font-semibold text-white">S</span>
@@ -51,26 +52,8 @@ export function AuthShell({ title, subtitle, children, footer, eyebrow, step, wi
       </div>
 
       {panel && (
-        <aside className="relative hidden overflow-hidden rounded-[28px] bg-brand-700 lg:flex lg:flex-col" aria-hidden="true">
-          <div className="px-12 pt-14 xl:px-16 xl:pt-16">
-            <p className="max-w-md text-[2rem] font-normal leading-[1.15] tracking-[-0.03em] text-white">
-              Every expiration and every payer application, on one board.
-            </p>
-            <p className="mt-4 max-w-md text-[0.9375rem] leading-relaxed text-brand-100/80">
-              Licenses, DEA, malpractice and CAQH dates, and where each enrollment stands — with the follow-ups that are due
-              this week.
-            </p>
-          </div>
-          <div className="relative mt-12 flex-1">
-            {/* eslint-disable-next-line @next/next/no-img-element -- a fixed product shot, no resizing needed */}
-            <img
-              src="/app/auth-dashboard.png"
-              alt=""
-              width={1280}
-              height={860}
-              className="absolute left-12 top-0 w-[900px] max-w-none rounded-tl-2xl shadow-[0_24px_60px_-20px_rgba(0,0,0,0.55)] ring-1 ring-white/10 xl:left-16"
-            />
-          </div>
+        <aside className="auth-panel sticky top-4 hidden h-[calc(100vh-2rem)] overflow-hidden rounded-[28px] lg:block">
+          <AuthStories start={story} />
         </aside>
       )}
     </main>

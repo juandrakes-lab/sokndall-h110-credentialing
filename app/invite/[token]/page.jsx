@@ -94,7 +94,7 @@ export default async function InvitePage({ params, searchParams }) {
   }
 
   return (
-    <AuthShell title={view.title} subtitle={view.subtitle}>
+    <AuthShell story={3} title={view.title} subtitle={view.subtitle}>
       {view.body}
     </AuthShell>
   );

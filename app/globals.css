@@ -167,3 +167,29 @@ body {
   /* TILE: contained on a dark surface with a diagonal cut, top-right (§4). */
   .corner-cut { clip-path: polygon(0 0, calc(100% - 1rem) 0, 100% 1rem, 100% 100%, 0 100%); }
 }
+
+/* The access screens' panel: the site's ink tile — dotted rings from the top
+   right corner and a soft glow under them (neo.css .sk-tex-rings), plus a
+   faint warm light low on the left so the mockups have something to sit in. */
+.auth-panel {
+  background-color: var(--color-brand-700);
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 1000 700%27 preserveAspectRatio=%27xMaxYMin slice%27%3E%3Cg fill=%27none%27 stroke=%27white%27 stroke-opacity=%270.10%27 stroke-width=%271.2%27%3E%3Ccircle cx=%271000%27 cy=%27-40%27 r=%2790%27 stroke-dasharray=%271 7%27/%3E%3Ccircle cx=%271000%27 cy=%27-40%27 r=%27160%27 stroke-dasharray=%273 8%27/%3E%3Ccircle cx=%271000%27 cy=%27-40%27 r=%27230%27 stroke-dasharray=%271 9%27/%3E%3Ccircle cx=%271000%27 cy=%27-40%27 r=%27300%27 stroke-dasharray=%273 10%27/%3E%3Ccircle cx=%271000%27 cy=%27-40%27 r=%27370%27 stroke-dasharray=%271 11%27/%3E%3Ccircle cx=%271000%27 cy=%27-40%27 r=%27440%27 stroke-dasharray=%273 12%27/%3E%3Ccircle cx=%271000%27 cy=%27-40%27 r=%27510%27 stroke-dasharray=%271 13%27/%3E%3Ccircle cx=%271000%27 cy=%27-40%27 r=%27580%27 stroke-dasharray=%273 14%27/%3E%3Ccircle cx=%271000%27 cy=%27-40%27 r=%27650%27 stroke-dasharray=%271 15%27/%3E%3Ccircle cx=%271000%27 cy=%27-40%27 r=%27720%27 stroke-dasharray=%273 16%27/%3E%3Ccircle cx=%271000%27 cy=%27-40%27 r=%27790%27 stroke-dasharray=%271 17%27/%3E%3Ccircle cx=%271000%27 cy=%27-40%27 r=%27860%27 stroke-dasharray=%273 18%27/%3E%3Ccircle cx=%271000%27 cy=%27-40%27 r=%27930%27 stroke-dasharray=%271 19%27/%3E%3Ccircle cx=%271000%27 cy=%27-40%27 r=%271000%27 stroke-dasharray=%273 20%27/%3E%3Ccircle cx=%271000%27 cy=%27-40%27 r=%271070%27 stroke-dasharray=%271 21%27/%3E%3Ccircle cx=%271000%27 cy=%27-40%27 r=%271140%27 stroke-dasharray=%273 22%27/%3E%3C/g%3E%3C/svg%3E"),
+    radial-gradient(90% 70% at 100% 0%, rgba(61, 106, 107, 0.55), transparent 62%),
+    radial-gradient(60% 45% at 0% 100%, rgba(242, 193, 78, 0.16), transparent 70%);
+  background-size: cover, 100% 100%, 100% 100%;
+  background-position: top right, center, center;
+  background-repeat: no-repeat;
+}
+
+/* A story's progress bar filling over its duration; paused with the panel. */
+@keyframes auth-story-fill {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+.auth-story-fill { transform-origin: left; animation: auth-story-fill var(--story-ms, 7000ms) linear forwards; }
+.auth-stories:hover .auth-story-fill,
+.auth-stories:focus-within .auth-story-fill { animation-play-state: paused; }
+@media (prefers-reduced-motion: reduce) {
+  .auth-story-fill { animation: none; transform: scaleX(1); }
+}

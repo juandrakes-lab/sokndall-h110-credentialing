@@ -66,7 +66,7 @@ export default async function StartPage({ searchParams }) {
   // Came from a plan's own button: that plan, one click to the payment step.
   if (picked) {
     return (
-      <AuthShell
+      <AuthShell story={2}
         step={2}
         title={`Your ${PLANS[picked].label} trial`}
         subtitle="14 days free. Your card goes in on the next step, handled by Polar; the first charge is on day 15, and you can cancel from Settings any time before."
@@ -86,7 +86,7 @@ export default async function StartPage({ searchParams }) {
   }
 
   return (
-    <AuthShell
+    <AuthShell story={2}
       wide
       panel={false}
       step={2}

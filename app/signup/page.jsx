@@ -109,7 +109,7 @@ function Signup() {
 
   if (sentTo) {
     return (
-      <AuthShell title="Check your inbox" subtitle={`We sent a confirmation link to ${sentTo}. Open it to continue — it's valid for 24 hours.`}>
+      <AuthShell story={1} title="Check your inbox" subtitle={`We sent a confirmation link to ${sentTo}. Open it to continue — it's valid for 24 hours.`}>
         <p className="mt-5 text-sm text-ink-500">Didn&apos;t get it? Check spam, or wait a minute and sign up again with the same address.</p>
       </AuthShell>
     );
@@ -124,7 +124,7 @@ function Signup() {
   const signInHref = `/login${params.toString() ? `?${params.toString()}` : ""}`;
 
   return (
-    <AuthShell
+    <AuthShell story={1}
       step={joining ? undefined : 1}
       title={joining ? "Create your login" : "Start your 14-day trial"}
       subtitle={
