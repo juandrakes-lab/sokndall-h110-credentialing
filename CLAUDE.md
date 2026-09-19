@@ -120,8 +120,13 @@ matrix and Monday digest; the payer-enrollment status path, stages, effective
 date and matrix; the billing-company client book and report; the spreadsheet
 template's tab; /pricing's users-vs-providers) is now a `ProductShot`
 (`components/app/showcase/`): a scene built from the app's own components on a
-fixed canvas, scaled by the client `Stage` (never below 55%, so phones crop
-instead of shrinking). Scenes use the demo client's test data; signed-in people
+fixed canvas, scaled by the client `Stage`. Two rules keep a shot sharp and
+worth looking at: it is **only ever scaled down** (a canvas is at least as wide
+as the figure renders, never tilted in 3D — upscaled or perspective-warped type
+blurs), and a large figure carries a whole screen (`AppScreen`: sidebar, top
+bar, page) with one or two small indicator cards floating over its lower edge,
+not one lonely card. Phones crop at the right edge below 40% rather than shrink.
+The shot sits on the section's own ground — no box around it. Scenes use the demo client's test data; signed-in people
 get generic names + Pexels portraits; providers keep initials. Concept
 diagrams use the same app style with `backdrop="ground"`. The same parts drive
 the access screens' stories (`AuthStories`). `ScreenSlot` and the old

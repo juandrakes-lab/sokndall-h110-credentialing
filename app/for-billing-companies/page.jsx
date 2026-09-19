@@ -71,7 +71,7 @@ export default function ForBillingCompaniesPage() {
             />
           ),
           figure: (
-            <ProductShot scene={ClientBook} w={1040} h={440} label={ORGS.screen} />
+            <ProductShot scene={ClientBook} w={1240} h={820} label={ORGS.screen} />
           ),
         }}
       >
@@ -100,7 +100,7 @@ export default function ForBillingCompaniesPage() {
           head={REPORT.head}
           paras={REPORT.paras}
           closing={REPORT.closing}
-          media={<ProductShot scene={ClientReport} w={560} h={420} label={REPORT_SCREEN} />}
+          media={<ProductShot scene={ClientReport} w={760} h={580} label={REPORT_SCREEN} />}
         />
 
         <FigureBandSection head={ANCHOR.head} figures={ANCHOR.figures} closing={ANCHOR.closing} />

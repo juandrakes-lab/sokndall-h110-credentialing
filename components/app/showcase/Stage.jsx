@@ -7,10 +7,10 @@ import { useLayoutEffect, useRef, useState } from "react";
 // `align` anchors the canvas left (the stories, bleeding off the right edge)
 // or centred (a product shot in a figure).
 //
-// `fluid` (product shots): the box takes the canvas's proportions from its
-// width. Below `minScale` the scene stops shrinking — on a phone a full-width
-// scene would drop to unreadable type — and the box keeps that size's height,
-// anchored left, so the far side runs off the edge instead.
+// `fluid` (product shots): the box's height follows the scale its width gives,
+// capped at 1 (never drawn larger than designed — upscaled type blurs). Below
+// `minScale` the scene stops shrinking — on a phone a full-width scene would
+// drop to unreadable type — and anchors left, so the far side runs off the edge.
 export default function Stage({ w, h, align = "left", className = "relative min-h-0 flex-1", label, fluid = false, minScale = 0, children }) {
   const box = useRef(null);
   const [scale, setScale] = useState(0);
@@ -21,7 +21,7 @@ export default function Stage({ w, h, align = "left", className = "relative min-
       if (fluid) {
         const s = el.clientWidth / w;
         setFloor(s < minScale);
-        setScale(Math.max(s, minScale));
+        setScale(Math.min(1, Math.max(s, minScale)));
       } else {
         setScale(Math.min(el.clientWidth / w, el.clientHeight / h));
       }
@@ -32,7 +32,7 @@ export default function Stage({ w, h, align = "left", className = "relative min-
     return () => ro.disconnect();
   }, [w, h, fluid, minScale]);
   const centred = align === "center" && !floor;
-  const style = fluid ? (floor ? { height: h * scale } : { aspectRatio: `${w} / ${h}` }) : undefined;
+  const style = fluid ? (scale ? { height: h * scale } : { aspectRatio: `${w} / ${h}` }) : undefined;
   return (
     <div ref={box} className={className} style={style} role={label ? "img" : undefined} aria-label={label}>
       <div

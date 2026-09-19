@@ -57,7 +57,7 @@ export default function SpreadsheetTemplatePage() {
             />
           ),
           form: <EmailCapture heading={TEMPLATE_CTA.heading} id={FORM_ID} />,
-          figure: <ProductShot scene={TemplateSheet} w={1040} h={370} backdrop="ground" label="The free template's credentials tab" />,
+          figure: <ProductShot scene={TemplateSheet} w={1200} h={420} label="The free template's credentials tab" />,
         }}
       >
         <IconRowSection

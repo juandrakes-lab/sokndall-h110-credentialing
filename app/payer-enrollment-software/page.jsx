@@ -60,7 +60,7 @@ export default function PayerEnrollmentSoftwarePage() {
             />
           ),
           figure: (
-            <ProductShot scene={StatusPath} props={{ steps: TRACK.steps, end: TRACK.end, branch: TRACK.branch }} w={1040} h={290} backdrop="ground" label={TRACK.screen} />
+            <ProductShot scene={StatusPath} props={{ steps: TRACK.steps, end: TRACK.end, branch: TRACK.branch }} w={1200} h={300} label={TRACK.screen} />
           ),
         }}
       >
@@ -69,7 +69,7 @@ export default function PayerEnrollmentSoftwarePage() {
           head={TWO_STEPS.head}
           paras={TWO_STEPS.paras}
           closing={TWO_STEPS.closing}
-          media={<ProductShot scene={Stages} props={{ stages: STAGES }} w={560} h={420} backdrop="ground" label="Credentialing and enrollment, the two stages" />}
+          media={<ProductShot scene={Stages} props={{ stages: STAGES }} w={600} h={460} label="Credentialing and enrollment, the two stages" />}
         />
 
         <ProseBandSection
@@ -94,7 +94,7 @@ export default function PayerEnrollmentSoftwarePage() {
           head={EFFECTIVE.head}
           paras={EFFECTIVE.paras}
           closing={EFFECTIVE.closing}
-          media={<ProductShot scene={EffectiveDate} w={560} h={420} label={EFFECTIVE_SCREEN} />}
+          media={<ProductShot scene={EffectiveDate} w={700} h={560} label={EFFECTIVE_SCREEN} />}
           flip
         />
 
@@ -113,7 +113,7 @@ export default function PayerEnrollmentSoftwarePage() {
           // says "the six" twice, so the grid shows six. The home's 5 x 5 is a
           // different density.
           diagram={
-            <ProductShot scene={EnrollmentMatrix} w={600} h={440} label="The enrollments matrix with the book's totals" />
+            <ProductShot scene={EnrollmentMatrix} w={900} h={720} label="The enrollments matrix with the book's totals" />
           }
           points={MATRIX.points}
           aside={MATRIX.aside}
