@@ -193,3 +193,14 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .auth-story-fill { animation: none; transform: scaleX(1); }
 }
+
+/* The cards floating in front of a story's window drift a few pixels, each on
+   its own delay, so the scene reads as layers rather than a flat picture. */
+@keyframes auth-float {
+  from { transform: translateY(0); }
+  to { transform: translateY(-8px); }
+}
+.auth-float { animation: auth-float 3.6s ease-in-out infinite alternate; }
+@media (prefers-reduced-motion: reduce) {
+  .auth-float { animation: none; }
+}
