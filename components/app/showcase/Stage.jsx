@@ -33,8 +33,10 @@ export default function Stage({ w, h, align = "left", className = "relative min-
   }, [w, h, fluid, minScale]);
   const centred = align === "center" && !floor;
   const style = fluid ? (scale ? { height: h * scale } : { aspectRatio: `${w} / ${h}` }) : undefined;
+  // Only clipped when the scene is wider than its box (a phone): otherwise the
+  // clip would cut the window's shadow at the section's edges.
   return (
-    <div ref={box} className={className} style={style} role={label ? "img" : undefined} aria-label={label}>
+    <div ref={box} className={`${className}${floor ? " overflow-x-clip" : ""}`} style={style} role={label ? "img" : undefined} aria-label={label}>
       <div
         className={`absolute top-1/2 ${centred ? "left-1/2" : "left-0"}`}
         style={{

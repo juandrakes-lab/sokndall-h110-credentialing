@@ -1,22 +1,51 @@
-import Stage from "@/components/app/showcase/Stage";
+"use client";
 
-// A product shot on a marketing page: one scene (scenes.jsx) drawn on its fixed
-// canvas and scaled to the figure's width. It replaces the low-fidelity
-// schematics and the empty screen frames of the neo pages (2026-09-19, the
-// founder's call once the app existed) — the app's own parts, in the app's
-// type, set in their own box so neither stylesheet leaks into the other.
+import { useLayoutEffect, useRef, useState } from "react";
+import Stage from "@/components/app/showcase/Stage";
+import * as SCENES from "@/components/app/showcase/scenes";
+
+// A product shot on a marketing page: a scene (scenes.jsx) drawn on its fixed
+// canvas and scaled to the figure's width — only ever down, never up, so the
+// type stays sharp. It sits on the section's own ground, with the window's own
+// shadow and nothing around it.
 //
-// No box of its own: the shot sits on the section's ground like the schematic
-// it replaced, with the app window's own shadow. It is drawn at its canvas size
-// at most — a shot is only ever scaled down, never up (upscaled type blurs).
-export default function ProductShot({ scene: Scene, props = {}, w, h, label, className = "" }) {
+// Scenes are named rather than passed: the pages that use a shot are server
+// components, and a function cannot cross that boundary.
+//
+// `narrow`: the scene to draw on a phone instead (below `narrow.upTo`, 640px
+// of viewport — the viewport, not the figure: a hero figure is narrow on a
+// laptop too, and there the whole screen is exactly what should be shown). A
+// whole screen is unreadable on a phone, so the narrow variant is the part
+// that matters — one card, a list, a panel — at a size that can be read.
+export default function ProductShot({ scene, props = {}, w, h, narrow, label, className = "" }) {
+  const box = useRef(null);
+  const [ready, setReady] = useState(false);
+  const [small, setSmall] = useState(false);
+  useLayoutEffect(() => {
+    if (!narrow) {
+      setReady(true);
+      return undefined;
+    }
+    const mq = window.matchMedia(`(max-width: ${narrow.upTo ?? 640}px)`);
+    const read = () => {
+      setSmall(mq.matches);
+      setReady(true);
+    };
+    read();
+    mq.addEventListener("change", read);
+    return () => mq.removeEventListener("change", read);
+  }, [narrow]);
+  const Chosen = SCENES[small ? narrow.scene : scene];
+  const cw = small ? narrow.w : w;
+  const ch = small ? narrow.h : h;
+
   return (
-    <figure className={`app-type relative m-0 w-full ${className}`}>
-      {/* Never below 40%: on a phone a wide scene crops at the right edge
-          rather than shrinking to unreadable type. */}
-      <Stage w={w} h={h} align="center" className="relative w-full overflow-x-clip" fluid minScale={0.4} label={label}>
-        <Scene {...props} />
-      </Stage>
+    <figure ref={box} className={`app-type relative m-0 w-full ${className}`}>
+      {ready && (
+        <Stage w={cw} h={ch} align="center" className="relative w-full" fluid minScale={0.5} label={label}>
+          <Chosen {...props} />
+        </Stage>
+      )}
     </figure>
   );
 }

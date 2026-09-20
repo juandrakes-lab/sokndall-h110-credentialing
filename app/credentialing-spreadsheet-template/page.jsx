@@ -13,7 +13,6 @@ import { JsonLd, faqSchema } from "@/components/neo/schema";
 import { pageMeta } from "@/lib/seo";
 import { META, HERO, FIELDS, LIMITS, ENOUGH, FAQ, CLOSING } from "./data";
 import ProductShot from "@/components/app/showcase/ProductShot";
-import { TemplateSheet } from "@/components/app/showcase/scenes";
 
 // `/credentialing-spreadsheet-template` — page 4 of the v3.1 map, on
 // LandingTemplate. Its function is email capture and a linkable asset, so the
@@ -57,7 +56,7 @@ export default function SpreadsheetTemplatePage() {
             />
           ),
           form: <EmailCapture heading={TEMPLATE_CTA.heading} id={FORM_ID} />,
-          figure: <ProductShot scene={TemplateSheet} w={1200} h={420} label="The free template's credentials tab" />,
+          figure: <ProductShot scene="TemplateSheet" w={1330} h={470} narrow={{ scene: "NarrowSheet", w: 460, h: 420 }} label="The free template's credentials tab" />,
         }}
       >
         <IconRowSection

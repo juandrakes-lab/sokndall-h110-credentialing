@@ -4744,3 +4744,15 @@ html:has(.sk-fnav) { scroll-padding-top: 88px; }
   .sk-figgrid { grid-template-columns: minmax(0, 1fr); }
   .sk-figgrid > :first-child { grid-row: auto; }
 }
+
+/* The third "three things" column (2026-09-19): a white card with the product
+   shot under it, aligned to the card's edges, rather than a screen sunk into a
+   tinted box. The stack keeps the card at the top and the shot at the foot, so
+   the three columns still line up. */
+.sk-layers__stack {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  gap: var(--s-4);
+  align-content: start;
+}
+.sk-layers__stack .sk-layers__visual { margin-top: 0; align-self: end; }

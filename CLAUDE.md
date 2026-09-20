@@ -120,7 +120,12 @@ matrix and Monday digest; the payer-enrollment status path, stages, effective
 date and matrix; the billing-company client book and report; the spreadsheet
 template's tab; /pricing's users-vs-providers) is now a `ProductShot`
 (`components/app/showcase/`): a scene built from the app's own components on a
-fixed canvas, scaled by the client `Stage`. Two rules keep a shot sharp and
+fixed canvas, scaled by the client `Stage`. Shots carry no browser chrome, sit
+on the section's own ground (no box), share one depth system (`lift` /
+`chipLift` in `AppScreen.jsx`), and name their scene as a string — the pages
+are server components, so a function cannot cross the boundary. Each wide shot
+declares a `narrow` scene, picked by viewport (≤640px), because a whole screen
+is unreadable on a phone. Two rules keep a shot sharp and
 worth looking at: it is **only ever scaled down** (a canvas is at least as wide
 as the figure renders, never tilted in 3D — upscaled or perspective-warped type
 blurs), and a large figure carries a whole screen (`AppScreen`: sidebar, top

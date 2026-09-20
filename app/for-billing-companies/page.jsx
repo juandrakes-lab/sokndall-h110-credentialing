@@ -15,7 +15,6 @@ import {
   META, HERO, PROBLEM, STRUCTURE, REPORT, ANCHOR, ARCHITECTURE, FAQ, CLOSING, ORGS, REPORT_SCREEN,
 } from "./data";
 import ProductShot from "@/components/app/showcase/ProductShot";
-import { ClientBook, ClientReport } from "@/components/app/showcase/scenes";
 
 // `/for-billing-companies` — page 11 of the v3.1 map, on LandingTemplate.
 // Segment page, optimised for conversion. Recomposed 2026-09-11
@@ -71,7 +70,7 @@ export default function ForBillingCompaniesPage() {
             />
           ),
           figure: (
-            <ProductShot scene={ClientBook} w={1240} h={820} label={ORGS.screen} />
+            <ProductShot scene="ClientBook" w={1160} h={760} narrow={{ scene: "NarrowClients", w: 440, h: 520 }} label={ORGS.screen} />
           ),
         }}
       >
@@ -100,7 +99,7 @@ export default function ForBillingCompaniesPage() {
           head={REPORT.head}
           paras={REPORT.paras}
           closing={REPORT.closing}
-          media={<ProductShot scene={ClientReport} w={760} h={580} label={REPORT_SCREEN} />}
+          media={<ProductShot scene="ClientReport" w={800} h={660} narrow={{ scene: "NarrowReport", w: 440, h: 560 }} label={REPORT_SCREEN} />}
         />
 
         <FigureBandSection head={ANCHOR.head} figures={ANCHOR.figures} closing={ANCHOR.closing} />

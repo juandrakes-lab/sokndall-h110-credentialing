@@ -199,16 +199,20 @@ export function LayersSection({ head, blocks, photo, visual }) {
           </div>
         </article>
 
-        <article className="sk-card sk-card--soft sk-card--pad sk-layers__card">
-          <div className="sk-layers__top">
-            {f.icon ? <span className="sk-tile">{f.icon}</span> : null}
-            <h3 className="sk-h4">{f.title}</h3>
-            <p className="sk-body">
-              <Rich text={f.body} linkClassName="sk-link" />
-            </p>
-          </div>
+        {/* The third column: a white card, and the product shot under it rather
+            than inside it — a screen in a tinted box reads as decoration. */}
+        <div className="sk-layers__stack">
+          <article className="sk-card sk-card--pad sk-layers__card">
+            <div className="sk-layers__top">
+              {f.icon ? <span className="sk-tile">{f.icon}</span> : null}
+              <h3 className="sk-h4">{f.title}</h3>
+              <p className="sk-body">
+                <Rich text={f.body} linkClassName="sk-link" />
+              </p>
+            </div>
+          </article>
           {visual}
-        </article>
+        </div>
       </div>
     </Band>
   );

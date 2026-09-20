@@ -15,7 +15,6 @@ import { JsonLd, faqSchema, softwareSchema, PLAN_PRICES } from "@/components/neo
 import { pageMeta } from "@/lib/seo";
 import { META, HERO, PROBLEM, LAYERS, MATRIX, ANCHOR, PRICING, SCOPE, FAQ, CLOSING, FACTS } from "./homeData";
 import ProductShot from "@/components/app/showcase/ProductShot";
-import { HeroMatrix, HomeMatrix, MondayDigest } from "@/components/app/showcase/scenes";
 
 // `/` — page 1 of the v3.1 map, on LandingTemplate. Composition only: which
 // sections, in which order, with what in them. Copy is in ./homeData.js.
@@ -40,7 +39,7 @@ function Hero() {
         // The data model at hero size, in the frame the real matrix screen
         // will fill. Four providers by four payers is the home's own density;
         // /payer-enrollment-software draws a different grid.
-        <ProductShot scene={HeroMatrix} w={1000} h={680} label="The Sokndall dashboard: what needs you this week, what expires, where every application stands" />
+        <ProductShot scene="HeroMatrix" w={880} h={660} narrow={{ scene: "NarrowDashboard", w: 420, h: 540 }} label="The Sokndall dashboard: what needs you this week, what expires, where every application stands" />
       }
       indicators={HERO.indicators.map((ind, i) => {
         const Icon = [IconBell, IconClock][i];
@@ -85,13 +84,13 @@ export default function HomePage() {
             followup: { ...LAYERS.small1, icon: <IconMail /> },
           }}
           photo={PHOTOS.phoneDesk}
-          visual={<ProductShot scene={MondayDigest} w={560} h={520} className="sk-layers__visual" label="The Monday digest email: follow-ups this week, stalled applications, what expires" />}
+          visual={<ProductShot scene="MondayDigest" w={560} h={560} className="sk-layers__visual" label="The Monday digest email: follow-ups this week, stalled applications, what expires" />}
         />
 
         <DiagramSection
           head={MATRIX.head}
           diagram={
-            <ProductShot scene={HomeMatrix} w={1240} h={820} label="The enrollments matrix, with a payer request open on one cell" />
+            <ProductShot scene="HomeMatrix" w={1240} h={760} narrow={{ scene: "NarrowMatrix", w: 460, h: 580 }} label="The enrollments matrix, with a payer request open on one cell" />
           }
           points={MATRIX.points}
           aside={MATRIX.aside}

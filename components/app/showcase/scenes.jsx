@@ -1,8 +1,9 @@
-// The marketing pages' product shots. A large figure gets a whole screen of
-// the app at its real size (AppScreen) with a small indicator card or two
-// floating over it; a small figure gets one panel. Every canvas is at least as
-// big as the figure shows it, so a shot is only ever scaled down — never up,
-// never tilted — which is what keeps the type sharp.
+// The marketing pages' product shots. A shot shows only as much of the app as
+// its space can carry at a readable size: a whole screen where the section is
+// about the screen, one card or one panel where it is about a thing on it.
+// Every canvas is at least as wide as the figure renders, so a shot is only
+// ever scaled down — never up, never tilted — which is what keeps type sharp,
+// and every wide one has a narrow variant for a phone (ProductShot picks it).
 //
 // Built from the app's own components (StatCard, Badge, Avatar, Ring,
 // SegmentBar, the matrix chips) and the demo client's test data (Riverside
@@ -14,7 +15,7 @@
 import { Avatar, Badge, ICONS, Icon, IconTile, PersonPhoto, Ring, STATUS_FILL, SegmentBar, StatCard, cardClass } from "@/components/app/ui";
 import { ENROLLMENT_STATUS_LABELS } from "@/lib/enrollments";
 import { CHIP, PEOPLE } from "@/components/app/showcase/parts";
-import AppScreen, { Chip, floatShadow } from "@/components/app/showcase/AppScreen";
+import AppScreen, { Chip, chipLift, lift } from "@/components/app/showcase/AppScreen";
 
 // ---- data --------------------------------------------------------------------
 
@@ -25,6 +26,7 @@ const GRID = [
   ["Chen, Maya", "Pediatrics", ["approved", "approved", "not_started", "approved", "approved"]],
   ["Fischer, Noah", "Neonatal-Perinatal Medicine", ["not_started", "info_requested", "approved", "in_review", "in_review"]],
   ["Kowalski, Hannah", "Physician Assistant", ["denied", "approved", "approved", "approved", "approved"]],
+  ["Okafor, Daniel", "Pediatrics", ["approved", "in_review", "not_started", "submitted", "approved"]],
 ];
 const PIPELINE = [
   ["approved", 48],
@@ -34,7 +36,7 @@ const PIPELINE = [
   ["denied", 1],
   ["not_started", 22],
 ];
-const pipelineSegments = PIPELINE.map(([k, v]) => ({ key: k, label: ENROLLMENT_STATUS_LABELS[k], value: v, color: STATUS_FILL[k] }));
+const segments = PIPELINE.map(([k, v]) => ({ key: k, label: ENROLLMENT_STATUS_LABELS[k], value: v, color: STATUS_FILL[k] }));
 
 // ---- pieces --------------------------------------------------------------------
 
@@ -45,17 +47,22 @@ function ScreenTitle({ title, sub, actions }) {
         <p className="text-[2rem] font-normal leading-[1.1] tracking-[-0.03em] text-ink-900">{title}</p>
         {sub && <p className="mt-1.5 text-[0.9375rem] text-ink-500">{sub}</p>}
       </div>
-      {actions && <div className="flex gap-2">{actions}</div>}
+      {actions && <div className="flex shrink-0 gap-2">{actions}</div>}
     </div>
   );
 }
 
 function Btn({ children, primary = false }) {
   return (
-    <span className={`flex h-10 items-center gap-2 rounded-xl px-4 text-sm font-medium ${primary ? "bg-brand-700 text-white" : "bg-white text-ink-900 ring-1 ring-inset ring-ink-200"}`}>
+    <span className={`flex h-10 items-center gap-2 whitespace-nowrap rounded-xl px-4 text-sm font-medium ${primary ? "bg-brand-700 text-white" : "bg-white text-ink-900 ring-1 ring-inset ring-ink-200"}`}>
       {children}
     </span>
   );
+}
+
+// A card of the app; `floating` lifts it off the page when it stands alone.
+function Card({ className = "", floating = false, children }) {
+  return <div className={`${floating ? `rounded-2xl bg-white ${lift}` : cardClass} ${className}`}>{children}</div>;
 }
 
 function CardHead({ icon, title, sub, right }) {
@@ -100,9 +107,23 @@ function Legend({ items = PIPELINE, cols = 3 }) {
   );
 }
 
-function MatrixCard({ cols = [0, 1, 2, 3, 4], rows = 5, first = 220 }) {
+function PipelineCard({ cols = 3, floating = false, className = "" }) {
   return (
-    <div className={`${cardClass} overflow-hidden`}>
+    <Card floating={floating} className={`px-5 py-4 ${className}`}>
+      <p className="mb-3 flex items-center justify-between text-sm font-semibold text-ink-900">
+        Where every application stands <Badge>105</Badge>
+      </p>
+      <SegmentBar segments={segments} height={12} />
+      <div className="mt-3">
+        <Legend cols={cols} />
+      </div>
+    </Card>
+  );
+}
+
+function MatrixCard({ cols = [0, 1, 2, 3, 4], rows = 6, first = 220, floating = false }) {
+  return (
+    <Card floating={floating} className="overflow-hidden">
       <table className="w-full table-fixed border-separate border-spacing-0 text-sm">
         <thead>
           <tr>
@@ -140,77 +161,117 @@ function MatrixCard({ cols = [0, 1, 2, 3, 4], rows = 5, first = 220 }) {
           ))}
         </tbody>
       </table>
-    </div>
+    </Card>
+  );
+}
+
+const START_HERE = [
+  ["Lauren Mitchell", "Payer revalidation · Aetna", "Expired"],
+  ["Maya Chen", "State license", "Expired"],
+  ["Daniel Okafor", "Malpractice insurance", "Expired"],
+  ["Daniel Okafor", "DEA registration", "1 day left"],
+];
+
+function StartHereCard({ rows = 4, floating = false }) {
+  return (
+    <Card floating={floating} className="overflow-hidden">
+      <CardHead icon={ICONS.arrowRight} title="Start here" sub="The most urgent items first. Open one to act on it." />
+      {START_HERE.slice(0, rows).map(([n, d, b]) => (
+        <PersonRow key={n + d} name={n} detail={d}>
+          <Badge tone="red">{b}</Badge>
+        </PersonRow>
+      ))}
+    </Card>
+  );
+}
+
+function CredentialsCard({ floating = false }) {
+  return (
+    <Card floating={floating} className="overflow-hidden">
+      <CardHead icon={ICONS.shield} title="Credentials current" sub="Nothing expired or due within 30 days." />
+      <div className="px-5 py-4">
+        <div className="flex items-center gap-4">
+          <Ring value={0.4} size={84} tone="red">
+            <span className="text-base font-semibold text-ink-900">40%</span>
+          </Ring>
+          <p className="text-sm text-ink-700">
+            <b className="text-ink-900">6</b> of 15 providers are fully current.
+          </p>
+        </div>
+        <div className="mt-4 flex flex-col gap-2 text-sm text-ink-700">
+          {[
+            ["Something expired", 2, "bg-status-expired"],
+            ["Due within 30 days", 6, "bg-status-expiring"],
+            ["Current", 6, "bg-status-active"],
+            ["No credentials on file", 1, "bg-ink-200"],
+          ].map(([l, n, c]) => (
+            <span key={l} className="flex items-center justify-between">
+              <span className="flex items-center gap-2">
+                <span className={`h-2 w-2 rounded-full ${c}`} />
+                {l}
+              </span>
+              <b className="text-ink-900">{n}</b>
+            </span>
+          ))}
+        </div>
+      </div>
+    </Card>
   );
 }
 
 // ---- home ----------------------------------------------------------------------
 
-// Hero, 1000×680 (shown at about half): the dashboard, whole.
+// Hero, 880×660: the dashboard with the sidebar folded to its rail (the app's
+// own fold), so the content carries the shot at half size.
 export function HeroMatrix() {
   return (
-    <AppScreen w={1000} h={680} active="dashboard" url="dashboard">
-      <ScreenTitle title="Dashboard" sub="Saturday, September 19 · Riverside Pediatrics PLLC" actions={<Btn>Export CSV</Btn>} />
-      <div className="grid grid-cols-3 gap-4">
-        <StatCard accent label="Need you this week" value="31" hint="Expiring soon, overdue and payer requests." icon={ICONS.pulse} />
-        <StatCard label="Expiring within 14 days" value="7" hint="Credentials and payer revalidations." icon={ICONS.calendar} tone="red" />
-        <StatCard label="Follow-ups overdue" value="18" hint="20 due this week in all." icon={ICONS.phone} tone="amber" />
-      </div>
-      <div className="mt-4 grid grid-cols-[1.4fr_1fr] gap-4">
-        <div className={`${cardClass} overflow-hidden`}>
-          <CardHead icon={ICONS.arrowRight} title="Start here" sub="The most urgent items first. Open one to act on it." />
-          <PersonRow name="Lauren Mitchell" detail="Payer revalidation · Aetna">
-            <Badge tone="red">Expired</Badge>
-          </PersonRow>
-          <PersonRow name="Maya Chen" detail="State license">
-            <Badge tone="red">Expired</Badge>
-          </PersonRow>
-          <PersonRow name="Daniel Okafor" detail="Malpractice insurance">
-            <Badge tone="red">Expired</Badge>
-          </PersonRow>
-          <PersonRow name="Daniel Okafor" detail="DEA registration">
-            <Badge tone="red">1 day left</Badge>
-          </PersonRow>
+    <>
+      <AppScreen x={0} y={0} w={880} h={620} active="dashboard" collapsed>
+        <ScreenTitle title="Dashboard" sub="Saturday, September 19 · Riverside Pediatrics PLLC" />
+        <div className="grid grid-cols-3 gap-4">
+          <StatCard accent label="Need you this week" value="31" hint="Expiring soon, overdue and payer requests." icon={ICONS.pulse} />
+          <StatCard label="Expiring within 14 days" value="7" hint="Credentials and revalidations." icon={ICONS.calendar} tone="red" />
+          <StatCard label="Follow-ups overdue" value="18" hint="20 due this week in all." icon={ICONS.phone} tone="amber" />
         </div>
-        <div className={`${cardClass} overflow-hidden`}>
-          <CardHead icon={ICONS.shield} title="Credentials current" sub="Nothing expired or due within 30 days." />
-          <div className="px-5 py-4">
-            <div className="flex items-center gap-4">
-              <Ring value={0.4} size={84} tone="red">
-                <span className="text-base font-semibold text-ink-900">40%</span>
-              </Ring>
-              <p className="text-sm text-ink-700">
-                <b className="text-ink-900">6</b> of 15 providers are fully current.
-              </p>
-            </div>
-            <div className="mt-4 flex flex-col gap-2 text-sm text-ink-700">
-              {[
-                ["Something expired", 2, "bg-status-expired"],
-                ["Due within 30 days", 6, "bg-status-expiring"],
-                ["Current", 6, "bg-status-active"],
-                ["No credentials on file", 1, "bg-ink-200"],
-              ].map(([l, n, c]) => (
-                <span key={l} className="flex items-center justify-between">
-                  <span className="flex items-center gap-2">
-                    <span className={`h-2 w-2 rounded-full ${c}`} />
-                    {l}
-                  </span>
-                  <b className="text-ink-900">{n}</b>
-                </span>
-              ))}
-            </div>
+        <div className="mt-4 grid grid-cols-[1.35fr_1fr] gap-4">
+          <StartHereCard />
+          <CredentialsCard />
+        </div>
+      </AppScreen>
+      <Chip x={330} y={540} w={520}>
+        <div className="px-5 py-4">
+          <p className="mb-3 flex items-center justify-between text-sm font-semibold text-ink-900">
+            Where every application stands <Badge>105</Badge>
+          </p>
+          <SegmentBar segments={segments} height={12} />
+          <div className="mt-3">
+            <Legend items={PIPELINE.slice(0, 4)} cols={4} />
           </div>
         </div>
-      </div>
-    </AppScreen>
+      </Chip>
+    </>
   );
 }
 
-// "The screen this is really about", 1240×700 (shown at about full size).
+// The dashboard on a phone: the numbers and the list, nothing else.
+export function NarrowDashboard() {
+  return (
+    <div className="absolute inset-x-0 top-0 flex flex-col gap-3">
+      <div className="grid grid-cols-2 gap-3">
+        <StatCard accent label="Need you this week" value="31" hint="Expiring, overdue and requests." icon={ICONS.pulse} />
+        <StatCard label="Follow-ups overdue" value="18" hint="20 due this week." icon={ICONS.phone} tone="amber" />
+      </div>
+      <StartHereCard rows={3} floating />
+    </div>
+  );
+}
+
+// "The screen this is really about", 1240×760: the whole screen, sidebar and
+// all — this section is about the screen itself, not one card on it.
 export function HomeMatrix() {
   return (
     <>
-      <AppScreen x={0} y={0} w={1240} h={690} active="enrollments" url="enrollments">
+      <AppScreen x={0} y={0} w={1240} h={690} active="enrollments">
         <ScreenTitle
           title="Enrollments"
           sub="Every provider against every payer you work with. Click a cell to update it."
@@ -221,18 +282,12 @@ export function HomeMatrix() {
             </>
           }
         />
-        <div className={`${cardClass} mb-4 px-5 py-4`}>
-          <p className="mb-3 flex items-center justify-between text-sm font-semibold text-ink-900">
-            Where every application stands <Badge>105</Badge>
-          </p>
-          <SegmentBar segments={pipelineSegments} height={12} />
-          <div className="mt-3">
-            <Legend cols={6} />
-          </div>
+        <div className="mb-4">
+          <PipelineCard cols={6} />
         </div>
-        <MatrixCard />
+        <MatrixCard rows={5} />
       </AppScreen>
-      <Chip x={700} y={620} w={320} bob={1.2}>
+      <Chip x={700} y={620} w={320}>
         <div className="p-4">
           <p className="text-xs text-ink-500">Aisha Bello · Excellus BCBS</p>
           <div className="mt-2 rounded-xl bg-status-expiring-bg px-3.5 py-3 ring-1 ring-inset ring-status-expiring/25">
@@ -249,7 +304,7 @@ export function HomeMatrix() {
           </div>
         </div>
       </Chip>
-      <Chip x={1050} y={650} w={190} bob={0.4}>
+      <Chip x={1050} y={650} w={190}>
         <div className="p-4">
           <p className="text-xs font-medium text-ink-500">Stalled 30+ days</p>
           <p className="mt-1 flex items-center gap-2 text-[1.75rem] font-semibold leading-none text-ink-900">
@@ -261,7 +316,17 @@ export function HomeMatrix() {
   );
 }
 
-// The Monday digest, 560×520 (a narrow card column): the real email, whole.
+// The matrix on a phone: three payers, the pipeline under it.
+export function NarrowMatrix() {
+  return (
+    <div className="absolute inset-x-0 top-0 flex flex-col gap-3">
+      <MatrixCard cols={[0, 1, 2]} rows={5} first={150} floating />
+      <PipelineCard cols={3} floating />
+    </div>
+  );
+}
+
+// The Monday digest, 560×560: an email as it arrives — envelope first.
 export function MondayDigest() {
   const section = (title, rows) => (
     <>
@@ -280,20 +345,27 @@ export function MondayDigest() {
     </>
   );
   return (
-    <div className={`absolute left-4 top-4 overflow-hidden rounded-[18px] bg-white ${floatShadow}`} style={{ width: 528, height: 488 }}>
-      <div className="border-b border-ink-100 bg-ink-50 px-5 py-3.5">
-        <p className="truncate text-sm font-semibold text-ink-900">Your week: 20 follow-ups, 23 expiring — Riverside Pediatrics PLLC</p>
-        <p className="mt-0.5 text-xs text-ink-500">Sokndall · Monday</p>
+    <div className={`absolute inset-x-0 top-0 overflow-hidden rounded-[18px] bg-white ${lift}`}>
+      <div className="flex items-start gap-3 border-b border-ink-100 bg-ink-50 px-5 py-4">
+        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-700 text-sm font-semibold text-white">S</span>
+        <div className="min-w-0 flex-1">
+          <p className="flex items-baseline justify-between gap-2">
+            <span className="truncate text-sm font-semibold text-ink-900">Sokndall</span>
+            <span className="shrink-0 text-xs text-ink-500">Mon 9:02</span>
+          </p>
+          <p className="truncate text-xs text-ink-500">to erin.walsh@riversidepeds.com</p>
+          <p className="mt-1.5 text-sm font-semibold text-ink-900">Your week: 20 follow-ups, 23 expiring</p>
+        </div>
       </div>
-      <div className="px-6 pt-4">
-        <p className="text-base font-bold text-brand-700">Sokndall</p>
-        <p className="mt-1 text-xl font-bold text-ink-900">Your week in credentialing</p>
+      <div className="px-5 pb-5 pt-4">
+        <p className="text-xl font-bold text-ink-900">Your week in credentialing</p>
         <p className="mt-1 text-sm text-ink-500">Who to call this week, what&apos;s stuck with a payer, and what expires in the next 90 days.</p>
         {section("Follow-ups this week · 20", [
           ["Olivia Grant · EmblemHealth", "In review", "Overdue since Sep 15", "red"],
           ["Grace Liu · Cigna Healthcare", "In review", "Overdue since Sep 15", "red"],
         ])}
         {section("Stalled 30+ days · 11", [["Samuel Park · EmblemHealth", "In review", "Stalled", "amber"]])}
+        <span className="mt-5 inline-flex h-10 items-center rounded-xl bg-brand-700 px-4 text-sm font-medium text-white">Open this week&apos;s follow-ups</span>
       </div>
     </div>
   );
@@ -303,51 +375,93 @@ export function MondayDigest() {
 
 const TONE_OF = { "Not started": "not_started", Submitted: "submitted", "In review": "in_review", "Info requested": "info_requested", Approved: "approved" };
 
-// One application's path, full width, 1200×300 — TRACK's words on the panel's chips.
+function StepChip({ step, big = false }) {
+  return (
+    <span
+      className={`whitespace-nowrap rounded-full font-medium ${big ? "px-4 py-2 text-[0.9375rem]" : "px-3.5 py-1.5 text-sm"} ${
+        step.action ? "bg-status-expiring-bg text-status-expiring ring-1 ring-status-expiring" : CHIP[TONE_OF[step.label]]
+      }`}
+    >
+      {step.label}
+    </span>
+  );
+}
+
+// One application's path, 1000×340 — TRACK's words on the panel's own chips,
+// inside a card of the app rather than a plain box.
 export function StatusPath({ steps, end, branch }) {
   return (
-    <div className={`${cardClass} absolute inset-x-0 top-2 px-9 py-8`} style={{ height: 284 }}>
-      <p className="flex items-center gap-2.5 text-[1.0625rem] font-semibold text-ink-900">
-        <IconTile d={ICONS.enrollments} size="sm" /> One application, from submitted to effective date
-      </p>
-      <ol className="mt-8 flex items-start justify-between gap-2">
-        {steps.map((s) => (
-          <li key={s.label} className="flex items-start gap-2">
-            <span className="flex flex-col items-start">
-              <span className={`whitespace-nowrap rounded-full px-4 py-2 text-sm font-medium ${s.action ? "bg-status-expiring-bg text-status-expiring ring-1 ring-status-expiring" : CHIP[TONE_OF[s.label]]}`}>
-                {s.label}
+    <div className={`absolute inset-x-0 top-0 overflow-hidden rounded-2xl bg-white ${lift}`}>
+      <CardHead
+        icon={ICONS.enrollments}
+        title="One application"
+        sub="Ethan Brooks · UnitedHealthcare Community Plan"
+        right={<Badge tone="amber">Info requested</Badge>}
+      />
+      <div className="px-6 py-6">
+        <ol className="flex items-start justify-between gap-1">
+          {steps.map((s) => (
+            <li key={s.label} className="flex items-start gap-1">
+              <span className="flex flex-col items-start">
+                <StepChip step={s} big />
+                {s.hint && <span className="mt-2 max-w-[11rem] text-xs leading-snug text-status-expiring">{s.hint}</span>}
               </span>
-              {s.hint && <span className="mt-2 text-xs text-status-expiring">{s.hint}</span>}
+              <Icon d={ICONS.chevronRight} className="mt-3 h-4 w-4 shrink-0 text-ink-300" />
+            </li>
+          ))}
+          <li>
+            <span className="flex items-center gap-2 whitespace-nowrap rounded-full bg-brand-700 px-4 py-2 text-[0.9375rem] font-medium text-white">
+              <Icon d={ICONS.calendar} className="h-4 w-4" /> {end}
             </span>
-            <Icon d={ICONS.chevronRight} className="mt-2.5 h-4 w-4 shrink-0 text-ink-300" />
           </li>
-        ))}
-        <li>
-          <span className="flex items-center gap-2 whitespace-nowrap rounded-full bg-brand-700 px-4 py-2 text-sm font-medium text-white">
-            <Icon d={ICONS.calendar} className="h-4 w-4" /> {end}
-          </span>
-        </li>
-      </ol>
-      <div className="mt-8 flex items-center gap-3 border-t border-ink-100 pt-5">
-        <span className="rounded-full bg-status-expired-bg px-4 py-2 text-sm font-medium text-status-expired">{branch.label}</span>
-        <span className="text-sm text-ink-500">{branch.hint}</span>
+        </ol>
+        <div className="mt-7 flex items-center gap-3 rounded-2xl bg-ink-50 px-5 py-4">
+          <span className="whitespace-nowrap rounded-full bg-status-expired-bg px-4 py-2 text-sm font-medium text-status-expired">{branch.label}</span>
+          <span className="text-sm text-ink-700">{branch.hint}</span>
+        </div>
       </div>
     </div>
   );
 }
 
-// The two stages, 600×460 — the section's own words in two app cards.
+// The same path on a phone: one column.
+export function NarrowStatusPath({ steps, end, branch }) {
+  return (
+    <div className={`absolute inset-x-0 top-0 overflow-hidden rounded-2xl bg-white ${lift}`}>
+      <CardHead icon={ICONS.enrollments} title="One application" sub="UnitedHealthcare Community Plan" />
+      <ol className="flex flex-col gap-2.5 px-5 py-5">
+        {steps.map((s) => (
+          <li key={s.label} className="flex flex-col items-start">
+            <StepChip step={s} />
+            {s.hint && <span className="mt-1.5 text-xs text-status-expiring">{s.hint}</span>}
+          </li>
+        ))}
+        <li>
+          <span className="flex w-fit items-center gap-2 rounded-full bg-brand-700 px-3.5 py-1.5 text-sm font-medium text-white">
+            <Icon d={ICONS.calendar} className="h-4 w-4" /> {end}
+          </span>
+        </li>
+      </ol>
+      <div className="flex flex-col gap-2 border-t border-ink-100 px-5 py-4">
+        <span className="w-fit rounded-full bg-status-expired-bg px-3.5 py-1.5 text-sm font-medium text-status-expired">{branch.label}</span>
+        <span className="text-xs text-ink-500">{branch.hint}</span>
+      </div>
+    </div>
+  );
+}
+
+// The two stages, 560×440 — the section's own words in two cards of the app.
 export function Stages({ stages }) {
   return (
-    <div className="absolute inset-x-0 top-6 flex flex-col gap-4">
+    <div className="absolute inset-x-0 top-0 flex flex-col gap-4">
       {stages.map((st, i) => (
-        <div key={st.name} className={`${cardClass} px-6 py-5`}>
+        <div key={st.name} className={`rounded-2xl bg-white px-6 py-5 ${lift}`}>
           <div className="flex items-center gap-3">
-            <span className="flex h-8 w-8 items-center justify-center rounded-full bg-brand-700 text-sm font-semibold text-white">{i + 1}</span>
-            <p className="text-lg font-semibold text-ink-900">{st.name}</p>
+            <span className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-700 text-[0.9375rem] font-semibold text-white">{i + 1}</span>
+            <p className="text-xl font-semibold text-ink-900">{st.name}</p>
           </div>
-          <p className="mt-2 text-[0.9375rem] leading-relaxed text-ink-700">{st.is}</p>
-          <div className="mt-3 flex items-center gap-2">
+          <p className="mt-2.5 text-[0.9375rem] leading-relaxed text-ink-700">{st.is}</p>
+          <div className="mt-3.5 flex items-center gap-2">
             <Badge tone="amber">Stalls on</Badge>
             <span className="text-sm text-ink-900">{st.stalls}</span>
           </div>
@@ -357,12 +471,13 @@ export function Stages({ stages }) {
   );
 }
 
-// One application's confirmed effective date, 700×560: the application panel.
+// One application's confirmed effective date, 620×620: the panel, with the
+// date it all turns on repeated on a card of its own.
 export function EffectiveDate() {
   const statuses = ["not_started", "submitted", "in_review", "info_requested", "approved", "denied"];
   return (
     <>
-      <div className={`absolute left-0 top-0 overflow-hidden rounded-[18px] bg-white ${floatShadow}`} style={{ width: 600, height: 520 }}>
+      <div className={`absolute left-0 top-0 overflow-hidden rounded-[18px] bg-white ${lift}`} style={{ width: 560, height: 520 }}>
         <div className="border-b border-ink-100 bg-ink-50/80 px-6 py-5">
           <p className="text-sm text-ink-500">Cigna Healthcare</p>
           <p className="mt-0.5 text-2xl font-semibold text-ink-900">Tomás Herrera</p>
@@ -412,15 +527,15 @@ export function EffectiveDate() {
           </div>
         </div>
       </div>
-      <Chip x={440} y={440} w={240} bob={0.9}>
-        <div className="flex items-center gap-3 p-4">
-          <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-status-active-bg text-status-active">
-            <Icon d={ICONS.calendar} className="h-5 w-5" />
+      <Chip x={260} y={470} w={360}>
+        <div className="flex items-center gap-3.5 p-4">
+          <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-status-active-bg text-status-active">
+            <Icon d={ICONS.calendar} className="h-6 w-6" />
           </span>
           <span className="text-sm leading-snug text-ink-700">
-            In network from
+            In network — bill from
             <br />
-            <b className="text-base text-ink-900">Mar 17, 2026</b>
+            <b className="text-lg text-ink-900">Mar 17, 2026</b>
           </span>
         </div>
       </Chip>
@@ -428,22 +543,22 @@ export function EffectiveDate() {
   );
 }
 
-// The matrix with the book's totals, 900×640 (beside a dark tile).
+// The matrix and its totals, 780×640: the card itself, not the whole screen —
+// the section beside it is already a full-height tile.
 export function EnrollmentMatrix() {
   return (
     <>
-      <AppScreen x={0} y={0} w={880} h={600} active="enrollments" url="enrollments">
-        <ScreenTitle title="Enrollments" sub="Riverside Pediatrics PLLC" />
-        <MatrixCard cols={[0, 1, 2]} rows={5} first={230} />
-      </AppScreen>
-      <Chip x={520} y={540} w={340} bob={0.7}>
-        <div className="p-4">
-          <p className="mb-3 flex items-center justify-between text-sm font-semibold text-ink-900">
-            All applications <Badge>105</Badge>
+      <div className="absolute inset-x-0 top-0">
+        <MatrixCard cols={[0, 1, 2]} rows={6} first={210} floating />
+      </div>
+      <Chip x={40} y={410} w={700}>
+        <div className="px-5 py-4">
+          <p className="mb-3 flex items-center justify-between text-[0.9375rem] font-semibold text-ink-900">
+            Where every application stands <Badge>105</Badge>
           </p>
-          <SegmentBar segments={pipelineSegments} height={10} />
-          <div className="mt-3">
-            <Legend items={PIPELINE.slice(0, 3)} />
+          <SegmentBar segments={segments} height={14} />
+          <div className="mt-3.5">
+            <Legend cols={6} />
           </div>
         </div>
       </Chip>
@@ -454,38 +569,44 @@ export function EnrollmentMatrix() {
 // ---- /for-billing-companies ------------------------------------------------------
 
 const CLIENTS = [
-  { name: "Riverside Pediatrics PLLC", providers: 15, due: 20, renew: 25, team: [PEOPLE.erin, PEOPLE.ana] },
-  { name: "Lakeview Behavioral Health LLC", providers: 3, due: 0, renew: 3, team: [PEOPLE.erin, PEOPLE.luis] },
-  { name: "Clinical Neuroscience Research Associates, Inc.", providers: 3, due: 1, renew: 3, team: [PEOPLE.erin, PEOPLE.ana, PEOPLE.luis] },
+  { name: "Riverside Pediatrics PLLC", providers: 15, due: 20, renew: 25, apps: { approved: 48, in_review: 19, submitted: 9, info_requested: 6, denied: 1, not_started: 22 }, team: [PEOPLE.erin, PEOPLE.ana] },
+  { name: "Lakeview Behavioral Health LLC", providers: 3, due: 0, renew: 3, apps: { approved: 14, in_review: 2, not_started: 5 }, team: [PEOPLE.erin, PEOPLE.luis] },
+  { name: "Clinical Neuroscience Research Associates, Inc.", providers: 3, due: 1, renew: 3, apps: { approved: 9, in_review: 4, submitted: 2, not_started: 6 }, team: [PEOPLE.erin, PEOPLE.ana, PEOPLE.luis] },
 ];
 
-// Client organizations, scoped access and the aggregate view, 1240×700.
-export function ClientBook() {
+function ClientsTable({ compact = false, floating = false }) {
+  const grid = compact ? "grid-cols-[1.7fr_0.8fr]" : "grid-cols-[2fr_0.7fr_0.9fr_0.7fr_1.4fr_0.9fr]";
   return (
-    <>
-      <AppScreen x={0} y={0} w={1240} h={690} active="clients" url="clients">
-        <ScreenTitle title="Clients" sub="21 applications need follow-up this week across 3 clients." actions={<Btn primary>Add client</Btn>} />
-        <div className="grid grid-cols-3 gap-4">
-          <StatCard accent label="Follow-ups this week" value="21" hint="Across every client." icon={ICONS.phone} />
-          <StatCard label="Credentials to renew" value="31" hint="Expired or expiring, all clients." icon={ICONS.calendar} tone="red" />
-          <StatCard label="Providers" value="21" suffix="of 50" hint="On the Billing Co plan." icon={ICONS.providers} meter={0.42} />
-        </div>
-        <div className={`${cardClass} mt-4 overflow-hidden`}>
-          <div className="grid grid-cols-[2.2fr_0.8fr_1.2fr_1fr_0.9fr] gap-3 border-b border-ink-100 px-5 py-3 text-xs font-medium text-ink-700">
-            <span>Client</span>
-            <span>Providers</span>
-            <span>Follow-ups this week</span>
+    <Card floating={floating} className="overflow-hidden">
+      <div className={`grid ${grid} gap-3 border-b border-ink-100 px-5 py-3 text-xs font-medium text-ink-700`}>
+        <span>Client</span>
+        {!compact && <span>Providers</span>}
+        <span>Follow-ups</span>
+        {!compact && (
+          <>
             <span>To renew</span>
+            <span>Applications</span>
             <span>Team</span>
-          </div>
-          {CLIENTS.map((c) => (
-            <div key={c.name} className="grid grid-cols-[2.2fr_0.8fr_1.2fr_1fr_0.9fr] items-center gap-3 border-b border-ink-100 px-5 py-3.5 last:border-b-0">
-              <span className="truncate text-[0.9375rem] font-semibold text-ink-900">{c.name}</span>
-              <span className="text-sm text-ink-700">{c.providers}</span>
-              <span>
-                <Badge tone={c.due ? "amber" : "green"}>{c.due ? `${c.due} due` : "Nothing due"}</Badge>
-              </span>
+          </>
+        )}
+      </div>
+      {CLIENTS.map((c) => (
+        <div key={c.name} className={`grid ${grid} items-center gap-3 border-b border-ink-100 px-5 py-4 last:border-b-0`}>
+          <span className="min-w-0">
+            <span className="block truncate text-[0.9375rem] font-semibold text-ink-900">{c.name}</span>
+            {compact && <span className="block text-xs text-ink-500">{c.providers} providers</span>}
+          </span>
+          {!compact && <span className="text-sm text-ink-700">{c.providers}</span>}
+          <span>
+            <Badge tone={c.due ? "amber" : "green"}>{c.due ? `${c.due} due` : "None due"}</Badge>
+          </span>
+          {!compact && (
+            <>
               <span className="text-sm text-ink-700">{c.renew}</span>
+              <span>
+                <SegmentBar segments={Object.entries(c.apps).map(([k, v]) => ({ key: k, label: k, value: v, color: STATUS_FILL[k] }))} height={8} />
+                <span className="mt-1 block text-xs text-ink-500">{Object.values(c.apps).reduce((a, b) => a + b, 0)} applications</span>
+              </span>
               <span className="flex -space-x-2">
                 {c.team.map((p) => (
                   <span key={p.name} className="rounded-full ring-2 ring-white">
@@ -493,11 +614,31 @@ export function ClientBook() {
                   </span>
                 ))}
               </span>
-            </div>
-          ))}
+            </>
+          )}
+        </div>
+      ))}
+    </Card>
+  );
+}
+
+// Client organizations, scoped access and the aggregate view, 1160×760.
+export function ClientBook() {
+  return (
+    <>
+      <AppScreen x={0} y={0} w={1160} h={660} active="clients" collapsed>
+        <ScreenTitle title="Clients" sub="21 applications need follow-up this week across 3 clients." actions={<Btn primary>Add client</Btn>} />
+        <div className="grid grid-cols-4 gap-4">
+          <StatCard accent label="Follow-ups this week" value="21" hint="Across every client." icon={ICONS.phone} />
+          <StatCard label="Credentials to renew" value="31" hint="Expired or expiring, all clients." icon={ICONS.calendar} tone="red" />
+          <StatCard label="Payer requests" value="7" hint="Payers waiting on you." icon={ICONS.alert} tone="amber" />
+          <StatCard label="Providers" value="21" suffix="of 50" hint="On the Billing Co plan." icon={ICONS.providers} meter={0.42} />
+        </div>
+        <div className="mt-4">
+          <ClientsTable />
         </div>
       </AppScreen>
-      <Chip x={880} y={610} w={330} bob={1}>
+      <Chip x={660} y={590} w={460}>
         <div className="p-4">
           <div className="flex items-center gap-3">
             <PersonPhoto name={PEOPLE.ana.name} photo={PEOPLE.ana.photo} size="md" />
@@ -506,11 +647,12 @@ export function ClientBook() {
               <span className="text-xs text-ink-500">Coordinator · sees 2 of 3 clients</span>
             </span>
           </div>
-          <div className="mt-3 flex flex-col gap-1.5 text-sm">
+          <div className="mt-3 grid grid-cols-2 gap-x-4 gap-y-1.5 text-sm">
             {[
               ["Riverside Pediatrics PLLC", true],
-              ["Lakeview Behavioral Health LLC", false],
-              ["Clinical Neuroscience Research…", true],
+              ["Lakeview Behavioral Health", false],
+              ["Clinical Neuroscience Res…", true],
+              ["Everything else", false],
             ].map(([n, on]) => (
               <span key={n} className="flex items-center justify-between gap-2">
                 <span className={`truncate ${on ? "text-ink-900" : "text-ink-500 line-through"}`}>{n}</span>
@@ -524,62 +666,82 @@ export function ClientBook() {
   );
 }
 
-// Per-client report: dates, statuses, last follow-up, 760×580.
+// The book on a phone: the clients and what each one owes you this week.
+export function NarrowClients() {
+  return (
+    <div className="absolute inset-x-0 top-0 flex flex-col gap-3">
+      <div className="grid grid-cols-2 gap-3">
+        <StatCard accent label="Follow-ups this week" value="21" hint="Across every client." icon={ICONS.phone} />
+        <StatCard label="To renew" value="31" hint="All clients." icon={ICONS.calendar} tone="red" />
+      </div>
+      <ClientsTable compact floating />
+    </div>
+  );
+}
+
+const REPORT = [
+  ["Aisha Bello", "Pediatric Nurse Practitioner", "All current", "green", { approved: 1, in_review: 4, info_requested: 1, not_started: 1 }],
+  ["Ethan Brooks", "Pediatric Cardiology", "1 due within 30 days", "red", { approved: 3, submitted: 1, info_requested: 2, not_started: 1 }],
+  ["Maya Chen", "Pediatrics", "1 expired", "red", { approved: 6, not_started: 1 }],
+  ["Noah Fischer", "Neonatal-Perinatal Medicine", "2 due within 30 days", "red", { approved: 1, in_review: 2, submitted: 1, info_requested: 1, not_started: 2 }],
+  ["Hannah Kowalski", "Physician Assistant", "2 due within 30 days", "red", { approved: 6, denied: 1 }],
+  ["Daniel Okafor", "Pediatrics", "1 expired", "red", { approved: 4, in_review: 1, submitted: 1, not_started: 1 }],
+];
+
+function ReportCard({ rows = 6 }) {
+  return (
+    <Card floating className="overflow-hidden">
+      <CardHead icon={ICONS.providers} title="Providers" sub="Riverside Pediatrics PLLC · 15 providers" right={<Btn>Export CSV</Btn>} />
+      <div className="grid grid-cols-[1.6fr_1.2fr_1.3fr] gap-3 border-b border-ink-100 px-5 py-2.5 text-xs font-medium text-ink-700">
+        <span>Provider</span>
+        <span>Credentials</span>
+        <span>Applications</span>
+      </div>
+      {REPORT.slice(0, rows).map(([n, s, cred, tone, apps]) => {
+        const total = Object.values(apps).reduce((a, b) => a + b, 0);
+        return (
+          <div key={n} className="grid grid-cols-[1.6fr_1.2fr_1.3fr] items-center gap-3 border-b border-ink-100 px-5 py-3 last:border-b-0">
+            <span className="flex min-w-0 items-center gap-2.5">
+              <Avatar name={n} size="sm" />
+              <span className="min-w-0">
+                <span className="block truncate text-sm font-semibold text-ink-900">{n}</span>
+                <span className="block truncate text-xs text-ink-500">{s}</span>
+              </span>
+            </span>
+            <span>
+              <Badge tone={tone} dot>
+                {cred}
+              </Badge>
+            </span>
+            <span>
+              <SegmentBar segments={Object.entries(apps).map(([k, v]) => ({ key: k, label: k, value: v, color: STATUS_FILL[k] }))} height={8} />
+              <span className="mt-1 block text-xs text-ink-500">
+                {apps.approved} approved of {total}
+              </span>
+            </span>
+          </div>
+        );
+      })}
+    </Card>
+  );
+}
+
+// Per-client report, 800×660: the card a client is sent, not the whole screen.
 export function ClientReport() {
-  const rows = [
-    ["Aisha Bello", "Pediatric Nurse Practitioner", "All current", "green", { approved: 1, in_review: 4, info_requested: 1, not_started: 1 }],
-    ["Ethan Brooks", "Pediatric Cardiology", "1 due within 30 days", "red", { approved: 3, submitted: 1, info_requested: 2, not_started: 1 }],
-    ["Maya Chen", "Pediatrics", "1 expired", "red", { approved: 6, not_started: 1 }],
-    ["Daniel Okafor", "Pediatrics", "1 expired", "red", { approved: 4, in_review: 1, submitted: 1, not_started: 1 }],
-  ];
   return (
     <>
-      <div className={`absolute left-0 top-0 overflow-hidden rounded-[18px] bg-canvas ${floatShadow}`} style={{ width: 700, height: 520 }}>
-        <div className="px-6 pt-6">
-          <ScreenTitle title="Providers" sub="Riverside Pediatrics PLLC · 15 providers" actions={<Btn>Export CSV</Btn>} />
-        </div>
-        <div className={`${cardClass} mx-6 overflow-hidden`}>
-          <div className="grid grid-cols-[1.6fr_1.2fr_1.3fr] gap-3 border-b border-ink-100 px-5 py-3 text-xs font-medium text-ink-700">
-            <span>Provider</span>
-            <span>Credentials</span>
-            <span>Applications</span>
-          </div>
-          {rows.map(([n, s, cred, tone, apps]) => {
-            const total = Object.values(apps).reduce((a, b) => a + b, 0);
-            return (
-              <div key={n} className="grid grid-cols-[1.6fr_1.2fr_1.3fr] items-center gap-3 border-b border-ink-100 px-5 py-3 last:border-b-0">
-                <span className="flex min-w-0 items-center gap-2.5">
-                  <Avatar name={n} size="sm" />
-                  <span className="min-w-0">
-                    <span className="block truncate text-sm font-semibold text-ink-900">{n}</span>
-                    <span className="block truncate text-xs text-ink-500">{s}</span>
-                  </span>
-                </span>
-                <span>
-                  <Badge tone={tone} dot>
-                    {cred}
-                  </Badge>
-                </span>
-                <span>
-                  <SegmentBar segments={Object.entries(apps).map(([k, v]) => ({ key: k, label: k, value: v, color: STATUS_FILL[k] }))} height={8} />
-                  <span className="mt-1 block text-xs text-ink-500">
-                    {apps.approved} approved of {total}
-                  </span>
-                </span>
-              </div>
-            );
-          })}
-        </div>
+      <div className="absolute inset-x-0 top-0">
+        <ReportCard />
       </div>
-      <Chip x={500} y={450} w={250} bob={0.8}>
-        <div className="flex items-center gap-3 p-4">
-          <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-status-active-bg text-status-active">
-            <Icon d={ICONS.file} className="h-5 w-5" />
+      <Chip x={380} y={555} w={400}>
+        <div className="flex items-center gap-3.5 p-4">
+          <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-status-active-bg text-status-active">
+            <Icon d={ICONS.file} className="h-6 w-6" />
           </span>
           <span className="text-sm leading-snug text-ink-700">
-            <b className="text-ink-900">riverside-providers.csv</b>
+            <b className="text-base text-ink-900">riverside-providers.csv</b>
             <br />
-            ready to send
+            every date, status and last follow-up
           </span>
         </div>
       </Chip>
@@ -587,63 +749,96 @@ export function ClientReport() {
   );
 }
 
+export function NarrowReport() {
+  return (
+    <div className="absolute inset-x-0 top-0">
+      <ReportCard rows={4} />
+    </div>
+  );
+}
+
 // ---- /credentialing-spreadsheet-template -----------------------------------------
 
-// The free file's credentials tab, 1200×420 — its own columns (docs/spreadsheet-
-// template.csv) and example rows, with the days counted to Sep 19, 2026.
-export function TemplateSheet() {
-  const cols = ["Provider Name", "Credential Type", "State", "Identifier", "Issue Date", "Expiration Date", "Days Until Expiration", "Status"];
-  const rows = [
-    ["Dr. Jane Smith", "State License", "CA", "MD-12345", "2024-01-15", "2027-01-15", "118", ["Current", "green"]],
-    ["Dr. Jane Smith", "DEA Registration", "CA", "BS1234567", "2023-06-01", "2026-06-01", "-110", ["Expired", "red"]],
-    ["Dr. John Doe", "Malpractice Insurance", "CA", "POL-98765", "2025-03-01", "2026-03-01", "-202", ["Expired", "red"]],
-  ];
-  const tabs = ["Providers", "Credentials", "Payer enrollment", "CAQH", "Dashboard", "How to use"];
+// The free file's Credentials tab: its real columns and example row (the file
+// in Drive, read 2026-09-19), its colour legend — yellow you type in, grey
+// calculated — and the file's own six tabs along the bottom.
+const SHEET_COLS = [
+  ["Provider Name", 150],
+  ["Credential Type", 155],
+  ["State / Issuing Body", 135],
+  ["ID / Number", 110],
+  ["Issue Date", 100],
+  ["Expiration Date", 120],
+  ["Days Left", 90, true],
+  ["Status", 110, true],
+  ["Renewal Started?", 125],
+  ["Responsible Person", 150],
+];
+const SHEET_ROW = {
+  "Provider Name": "Alvarez, Maria",
+  "Credential Type": "State Medical License",
+  "State / Issuing Body": "TX",
+  "ID / Number": "TX-J1234",
+  "Issue Date": "2024-01-15",
+  "Expiration Date": "2026-01-31",
+  "Days Left": "-207",
+  Status: "EXPIRED",
+  "Renewal Started?": "No",
+  "Responsible Person": "Front office — Dana",
+};
+const SHEET_TABS = ["How to use", "Dashboard", "Providers", "Credentials", "Payer Enrollment", "CAQH"];
+
+function Sheet({ cols, rows = 4 }) {
   return (
-    <div className={`absolute inset-x-0 top-2 flex flex-col overflow-hidden rounded-[18px] bg-white ${floatShadow}`} style={{ height: 404 }}>
+    <div className={`absolute inset-x-0 top-0 flex flex-col overflow-hidden rounded-[18px] bg-white ${lift}`}>
       <div className="flex items-center gap-2 border-b border-ink-100 bg-ink-50 px-5 py-3">
-        <Icon d={ICONS.file} className="h-4 w-4 text-status-active" />
-        <span className="text-sm font-semibold text-ink-900">Credentialing tracker</span>
-        <span className="text-sm text-ink-500">· Excel or Google Sheets</span>
+        <Icon d={ICONS.file} className="h-4 w-4 shrink-0 text-status-active" />
+        <span className="truncate text-sm font-semibold text-ink-900">Provider Credentialing &amp; Payer Enrollment Tracker</span>
+        <span className="ml-auto flex shrink-0 items-center gap-3 text-xs text-ink-500">
+          <span className="flex items-center gap-1.5">
+            <span className="h-2.5 w-2.5 rounded-[3px] bg-accent-100 ring-1 ring-accent-400/60" /> you type
+          </span>
+          <span className="flex items-center gap-1.5">
+            <span className="h-2.5 w-2.5 rounded-[3px] bg-ink-100 ring-1 ring-ink-200" /> calculated
+          </span>
+        </span>
       </div>
-      <table className="w-full border-collapse text-sm">
+      <table className="w-full table-fixed border-collapse text-sm">
         <thead>
-          <tr className="bg-ink-50/60">
-            <th className="w-10 border border-ink-100" />
-            {cols.map((c) => (
-              <th key={c} className="border border-ink-100 px-3 py-2.5 text-left text-xs font-semibold text-ink-900">
+          <tr className="bg-ink-50/70">
+            <th className="w-9 border border-ink-100" />
+            {cols.map(([c, width]) => (
+              <th key={c} style={{ width }} className="truncate border border-ink-100 px-2.5 py-2.5 text-left text-xs font-semibold text-ink-900">
                 {c}
               </th>
             ))}
           </tr>
         </thead>
         <tbody>
-          {rows.map((r, i) => (
-            <tr key={i}>
-              <td className="border border-ink-100 bg-ink-50/60 text-center text-xs text-ink-500">{i + 2}</td>
-              {r.slice(0, 7).map((v, j) => (
-                <td key={j} className={`border border-ink-100 px-3 py-2.5 text-ink-900 ${j === 6 ? "text-right tabular-nums" : ""}`}>
-                  {v}
-                </td>
-              ))}
-              <td className="border border-ink-100 px-3 py-2">
-                <Badge tone={r[7][1]}>{r[7][0]}</Badge>
+          <tr>
+            <td className="border border-ink-100 bg-ink-50/70 text-center text-xs text-ink-500">2</td>
+            {cols.map(([c, , calculated]) => (
+              <td
+                key={c}
+                className={`truncate border border-ink-100 px-2.5 py-2.5 ${calculated ? "bg-ink-100/70 font-medium text-ink-900" : "bg-accent-100/40 text-ink-900"} ${c === "Days Left" ? "text-right tabular-nums" : ""}`}
+              >
+                {c === "Status" ? <Badge tone="red">{SHEET_ROW[c]}</Badge> : SHEET_ROW[c]}
               </td>
-            </tr>
-          ))}
-          {[5, 6, 7].map((n) => (
+            ))}
+          </tr>
+          {Array.from({ length: rows }, (_, n) => (
             <tr key={n}>
-              <td className="border border-ink-100 bg-ink-50/60 text-center text-xs text-ink-500">{n}</td>
-              {cols.map((c) => (
-                <td key={c} className="h-10 border border-ink-100" />
+              <td className="border border-ink-100 bg-ink-50/70 text-center text-xs text-ink-500">{n + 3}</td>
+              {cols.map(([c, , calculated]) => (
+                <td key={c} className={`h-10 border border-ink-100 ${calculated ? "bg-ink-100/70" : "bg-accent-100/40"}`} />
               ))}
             </tr>
           ))}
         </tbody>
       </table>
       <div className="mt-auto flex gap-1 border-t border-ink-100 bg-ink-50 px-3 py-2">
-        {tabs.map((t) => (
-          <span key={t} className={`rounded-md px-3 py-1 text-xs ${t === "Credentials" ? "bg-white font-semibold text-ink-900 shadow-[0_1px_2px_rgba(14,42,46,0.12)]" : "text-ink-500"}`}>
+        {SHEET_TABS.map((t) => (
+          <span key={t} className={`whitespace-nowrap rounded-md px-3 py-1 text-xs ${t === "Credentials" ? "bg-white font-semibold text-ink-900 shadow-[0_1px_2px_rgba(14,42,46,0.12)]" : "text-ink-500"}`}>
             {t}
           </span>
         ))}
@@ -652,23 +847,32 @@ export function TemplateSheet() {
   );
 }
 
+export function TemplateSheet() {
+  return <Sheet cols={SHEET_COLS} rows={4} />;
+}
+
+// On a phone: the four columns that carry the point.
+export function NarrowSheet() {
+  return <Sheet cols={SHEET_COLS.filter(([c]) => ["Provider Name", "Expiration Date", "Days Left", "Status"].includes(c))} rows={4} />;
+}
+
 // ---- /pricing ------------------------------------------------------------------
 
-// Users against providers, 600×460 — the section's rows and caption.
+// Users against providers, 560×470 — the section's rows and caption.
 export function UsersProviders({ rows, caption }) {
   const people = [PEOPLE.erin, PEOPLE.luis, PEOPLE.ana];
   // The demo client's fifteen providers, round and round.
   const names = ["Aisha Bello", "Ethan Brooks", "Maya Chen", "Gregory Daytona", "Noah Fischer", "Olivia Grant", "Hannah Kowalski", "Grace Liu", "Lauren Mitchell", "Priya Natarajan", "Daniel Okafor", "Samuel Park", "Sofia Ramirez", "Marcus Reed", "James Whitaker"];
   return (
-    <div className="absolute inset-x-0 top-4 flex flex-col gap-4">
+    <div className="absolute inset-x-0 top-0 flex flex-col gap-4">
       {rows.map((r) => (
-        <div key={r.unit} className={`${cardClass} px-6 py-5`}>
+        <div key={r.unit} className={`rounded-2xl bg-white px-6 py-5 ${lift}`}>
           <div className="flex items-baseline gap-2">
-            <span className="text-[2.25rem] font-semibold leading-none tracking-[-0.02em] text-ink-900">{r.count}</span>
-            <span className="text-base font-semibold text-ink-900">{r.unit}</span>
+            <span className="text-[2.5rem] font-semibold leading-none tracking-[-0.02em] text-ink-900">{r.count}</span>
+            <span className="text-lg font-semibold text-ink-900">{r.unit}</span>
             <span className="ml-auto text-sm text-ink-500">{r.note}</span>
           </div>
-          <div className={`mt-4 flex flex-wrap ${r.kind === "person" ? "gap-2.5" : "gap-1.5"}`}>
+          <div className={`mt-4 flex flex-wrap ${r.kind === "person" ? "gap-3" : "gap-2"}`}>
             {r.kind === "person"
               ? people.slice(0, r.count).map((p) => <PersonPhoto key={p.name} name={p.name} photo={p.photo} size="md" />)
               : Array.from({ length: r.count }, (_, i) => <Avatar key={i} name={names[i % names.length]} size="sm" />)}
@@ -676,10 +880,10 @@ export function UsersProviders({ rows, caption }) {
         </div>
       ))}
       {caption && (
-        <p className="flex items-center gap-2.5 px-1 text-[0.9375rem] text-ink-700">
+        <div className={`flex items-center gap-3 rounded-2xl bg-white px-5 py-4 ${chipLift}`}>
           <IconTile d={ICONS.team} size="sm" />
-          {caption}
-        </p>
+          <p className="text-[0.9375rem] text-ink-700">{caption}</p>
+        </div>
       )}
     </div>
   );
