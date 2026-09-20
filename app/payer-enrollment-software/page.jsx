@@ -112,7 +112,7 @@ export default function PayerEnrollmentSoftwarePage() {
           // says "the six" twice, so the grid shows six. The home's 5 x 5 is a
           // different density.
           diagram={
-            <ProductShot scene="EnrollmentMatrix" w={780} h={530} narrow={{ scene: "NarrowMatrix", w: 460, h: 580 }} label="The enrollments matrix with the book's totals" />
+            <ProductShot scene="EnrollmentMatrix" w={690} h={486} narrow={{ scene: "NarrowMatrix", w: 460, h: 580 }} label="The enrollments matrix with the book's totals" />
           }
           points={MATRIX.points}
           aside={MATRIX.aside}

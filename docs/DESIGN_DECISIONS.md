@@ -1555,3 +1555,30 @@ dentro de una tarjeta blanca del sistema de la app.
   columna visible, en el mismo marcado: no hay copia duplicada en el DOM.
 Política de imagen: ninguna.
 Regla de DESIGN_RULES.md que aplica: §2 regla 3, §3.
+
+## /payer-enrollment-software — la matriz: columnas a medida y el total pisando la tarjeta
+Fecha: 2026-09-20
+Decisión: punto 5 del fundador, hecho a medias a propósito (ver el pendiente al
+final). Medido antes de tocar, a 1440:
+- El bloque tinta de la izquierda mide **660px** de alto y la figura **470**:
+  190px de columna vacía. Es lo que el fundador marcó en rojo.
+- Cada celda medía **190px** y su texto **50**: 124px muertos por celda.
+Cambios:
+- El lienzo baja de 780 a **690**, que es exactamente el ancho de su columna a
+  1440, así que la escena se dibuja a **1,000** en vez de 0,886 — el texto de la
+  matriz queda 13% más grande y a 1:1. La columna de proveedor queda en 215
+  (a 190 truncaba los apellidos) y las de pagador en 158.
+- La tarjeta de totales pasa a **pisar** la matriz por 20px, en vez de flotar
+  debajo con aire en el medio, y con la sombra de un chip que va encima
+  (`chipOver`). Las dos tienen que leerse como un objeto contra el tile.
+- Su leyenda pasa de seis columnas a tres: a seis cada entrada tenía 108px y
+  **todas** las etiquetas truncaban ("Appr…", "Submi…").
+- El lienzo queda en 690×486, que es lo que el contenido usa.
+Pendiente, y es el corazón del pedido: **la figura sigue 190px más baja que el
+bloque tinta**, y eso solo se cierra con más filas de proveedores (unas tres).
+La consulta al libro demo en Supabase quedó bloqueada por tratarse de datos
+personales, y PRODUCT_SHOTS §7 prohíbe inventar los datos de las figuras. El
+fundador ofreció las dos vías; queda a su decisión.
+Política de imagen: ninguna foto; figura de producto sin fondo (el tile tinta ya
+separa las capas, criterio del fundador).
+Regla de DESIGN_RULES.md que aplica: §3, §14; PRODUCT_SHOTS §1 y §7.

@@ -681,16 +681,21 @@ export function EnrollmentMatrix() {
   return (
     <>
       <div className="absolute inset-x-0 top-0">
-        <MatrixCard cols={[0, 1, 2]} rows={6} first={210} floating />
+        <MatrixCard cols={[0, 1, 2]} rows={6} first={215} floating />
       </div>
-      <Chip x={40} y={410} w={700}>
+      {/* Overlapping the card's bottom edge rather than sitting under it: the
+          section beside this one is a full-height tile, and the two cards have
+          to read as one object against it. 2026-09-20. */}
+      <Chip x={20} y={339} w={650} over>
         <div className="px-5 py-4">
           <p className="mb-3 flex items-center justify-between text-[0.9375rem] font-semibold text-ink-900">
             Where every application stands <Badge>105</Badge>
           </p>
           <SegmentBar segments={segments} height={14} />
+          {/* Three columns, not six: at six the legend is 108px per entry and
+              every label truncates ("Appr…", "Submi…"). Measured 2026-09-20. */}
           <div className="mt-3.5">
-            <Legend cols={6} />
+            <Legend cols={3} />
           </div>
         </div>
       </Chip>
