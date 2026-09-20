@@ -84,8 +84,8 @@ export default function HomePage() {
             <ProductShot
               scene="MondayDigest"
               w={600}
-              h={780}
-              narrow={{ scene: "NarrowDigest", w: 380, h: 470 }}
+              h={588}
+              narrow={{ scene: "NarrowDigest", w: 380, h: 408 }}
               label="The Monday digest email: follow-ups this week, stalled applications, and what expires in the next 90 days"
             />
           }

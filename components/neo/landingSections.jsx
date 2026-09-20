@@ -164,7 +164,7 @@ export function LayersSection({ head, items, aside, closing }) {
       <div className="sk-layers">
         <ol className="sk-layers__list">
           {items.map((it) => (
-            <li className="sk-card sk-card--pad sk-layers__row" key={it.title}>
+            <li className="sk-layers__row" key={it.title}>
               {it.icon ? <span className="sk-tile">{it.icon}</span> : null}
               <div className="sk-layers__rowtext">
                 <h3 className="sk-h4">{it.title}</h3>

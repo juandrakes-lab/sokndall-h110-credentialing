@@ -4387,15 +4387,16 @@ html:has(.sk-fnav) { scroll-padding-top: 88px; }
   .sk-prose2--list .sk-prose2__head { position: static; }
 }
 
-/* ---- LayersSection: three things, three cards --------------------------- */
-/* Recomposed 2026-09-20: the three things on the left, the digest they arrive
-   in on the right. The rows stretch to the digest's height so the two columns
-   end together; the digest is drawn at its own size and never scaled up. */
+/* ---- LayersSection: three things, and the place they arrive ------------- */
+/* Recomposed 2026-09-20; hierarchy fixed 2026-09-20 (round 2). The three
+   things are page text, not objects: they lost their cards, so the digest is
+   the only card in the section and reads as the thing being shown rather than
+   a fourth peer. See DESIGN_DECISIONS.md. */
 .sk-layers {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: var(--gap) clamp(32px, 4vw, 64px);
-  align-items: stretch;
+  align-items: center;
 }
 .sk-layers__list {
   list-style: none;
@@ -4403,50 +4404,36 @@ html:has(.sk-fnav) { scroll-padding-top: 88px; }
   padding: 0;
   display: grid;
   grid-auto-rows: auto;
-  /* Compact rows, spread over the digest's height: the three sit level with
-     the email's top and foot instead of floating in the middle of the row. */
-  align-content: space-between;
-  gap: var(--gap);
+  /* Natural height, centred against the digest. `space-between` stretched two
+     16px gaps to 168px each — 335px of air inside a 734px column. */
+  align-content: center;
+  gap: var(--s-6);
 }
-/* Each row is as tall as what it says. Stretched to the digest's height they
-   were 234px of card around two lines of text. */
+/* A row is an icon, a title and a line, on the section's own white. The
+   hairline is the separation; a card around each one made four peers. */
 .sk-layers__row {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
   align-items: start;
   gap: var(--s-4);
 }
+.sk-layers__row + .sk-layers__row {
+  padding-top: var(--s-6);
+  border-top: 1px solid var(--line);
+}
 .sk-layers__row .sk-tile { margin-top: 1px; }
 .sk-layers__rowtext { display: grid; gap: var(--s-2); }
 .sk-layers__aside { display: grid; align-content: start; min-width: 0; }
-@media (max-width: 900px) {
-  .sk-layers { grid-template-columns: minmax(0, 1fr); }
+/* One column below 1080: in two columns the digest's 600px canvas draws at
+   0.52 at 768 and 0.67 at 980 — its 13px type at 7px. Stacked, the column is
+   wide enough to draw it at 1. The old rule stacked at 900 and a later
+   `max-width: 980` block, left from the card layout, put the two columns back
+   by source order, so the section never stacked at all between 640 and 980. */
+@media (max-width: 1080px) {
+  /* Stacked, the 16px column gutter becomes the seam between the last row and
+     the digest, which glued them together. */
+  .sk-layers { grid-template-columns: minmax(0, 1fr); gap: var(--s-7); }
   .sk-layers__list { grid-auto-rows: auto; }
-}
-.sk-layers__card { display: flex; flex-direction: column; gap: var(--s-5); }
-.sk-layers__top { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--s-3); }
-.sk-layers__top > .sk-tile { margin-bottom: var(--s-1); }
-.sk-layers__list { margin-top: var(--s-2); }
-.sk-layers__visual { margin-top: auto; }
-.sk-layers__card > .sk-photoframe {
-  margin: auto calc(var(--card-pad) * -1) calc(var(--card-pad) * -1);
-  border-radius: var(--r-card);
-}
-.sk-layers__detail {
-  margin-top: auto;
-  display: grid;
-  gap: var(--s-2);
-  padding: var(--s-4);
-  border-radius: var(--r-inner);
-  background: var(--paper);
-}
-.sk-layers__detail .sk-tile svg { width: 20px; height: 20px; }
-@media (max-width: 980px) {
-  .sk-layers { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
-  .sk-layers > :first-child { grid-column: 1 / -1; }
-}
-@media (max-width: 640px) {
-  .sk-layers { grid-template-columns: minmax(0, 1fr); }
 }
 
 /* The closing line under the figures, as their caption card (round 3). */
@@ -4774,18 +4761,6 @@ html:has(.sk-fnav) { scroll-padding-top: 88px; }
   .sk-figgrid { grid-template-columns: minmax(0, 1fr); }
   .sk-figgrid > :first-child { grid-row: auto; }
 }
-
-/* The third "three things" column (2026-09-19): a white card with the product
-   shot under it, aligned to the card's edges, rather than a screen sunk into a
-   tinted box. The stack keeps the card at the top and the shot at the foot, so
-   the three columns still line up. */
-.sk-layers__stack {
-  display: grid;
-  grid-template-rows: auto 1fr;
-  gap: var(--s-4);
-  align-content: start;
-}
-.sk-layers__stack .sk-layers__visual { margin-top: 0; align-self: end; }
 
 /* ---- the home hero's product shot, bleeding off the panel (2026-09-19) --- */
 /* The shot used to sit inside the right column: at 1440 that column is 486px

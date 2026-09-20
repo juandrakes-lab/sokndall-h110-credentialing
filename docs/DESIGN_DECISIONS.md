@@ -1337,3 +1337,36 @@ adentro, y la tercera con el correo colgando por fuera.
   pantallas reales; lo prohibido ahora es la pantalla inventada.
 Política de imagen: ninguna foto; una figura de producto.
 Regla de DESIGN_RULES.md que aplica: §2 regla 1 (enmendada), §13, §14, §19.
+
+## Home — "Three things": las filas dejan de ser tarjetas; el correo queda como único objeto
+Fecha: 2026-09-20
+Decisión: segunda ronda sobre la sección recompuesta el mismo día, a pedido del
+fundador (tres problemas: tarjetas demasiado separadas, correo chico en
+pantallas medianas, y los cuatro cuadros leyéndose como pares).
+- **Jerarquía.** Las tres filas salen de `sk-card`: pasan a ser ícono + título +
+  línea sobre el blanco de la sección, separadas por un filete (`--line`). El
+  correo queda como la única tarjeta de la sección, así que se lee como lo que
+  se está mostrando y no como un cuarto par. Los cuatro cuadros tenían el mismo
+  borde, el mismo radio y la misma sombra: la página decía que eran lo mismo.
+  No se le agrega cromo de cliente de correo al shot (§16 lo prohíbe).
+- **Separación.** `align-content: space-between` estiraba dos gaps de 16px a
+  **168px cada uno** — 335px de aire dentro de una columna de 734. Pasa a
+  `center` con `gap: var(--s-6)`. La lista queda centrada contra el correo.
+- **Pantallas medianas (el bug real).** `@media (max-width: 900px)` apilaba la
+  sección, pero un bloque posterior `@media (max-width: 980px)`, resto del
+  layout de tarjetas anterior, volvía a poner dos columnas y ganaba por orden
+  de aparición: entre 640 y 980 la sección nunca apilaba. Con dos columnas de
+  313px el lienzo de 600 del correo se dibujaba a **0,52** a 768 y a 0,67 a
+  980 — su tipografía de 13px a 7. Se borran las reglas muertas y el quiebre
+  queda en **1080px**, donde la escala caería por debajo de ~0,8. Apilada, la
+  columna alcanza para dibujarlo a 1,0 en 768 y en 980. El gutter apilado sube
+  a `--s-7`: a 16px la última fila quedaba pegada al correo.
+- **Lienzo de la escena.** `MondayDigest` declaraba 600×780 y su contenido mide
+  600×588: 192px de lienzo vacío al pie, que en la página eran 183px de hueco
+  entre el correo y la línea de cierre. Pasa a 588, y `NarrowDigest` de 470 a
+  408 (contenido 408). La sección baja de 1261px a 1079 a 1440.
+- Se borran de `neo.css` las reglas muertas `.sk-layers__card/__top/__visual/
+  __detail/__stack`: ningún JSX las usa desde la recomposición.
+Política de imagen: ninguna foto; una figura de producto.
+Regla de DESIGN_RULES.md que aplica: §3 (blanco vs. gris es jerarquía), §4,
+§16.
