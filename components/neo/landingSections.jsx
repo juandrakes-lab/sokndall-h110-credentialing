@@ -4,6 +4,7 @@ import {
   Band, SectionHead, ReservedSlot, ScreenSlot, RowCard, Lines, Pill, InkTile, PhotoFrame, RangeText,
 } from "@/components/neo/landingPrimitives";
 import Rich from "@/components/neo/rich";
+import StatusTable from "@/components/app/showcase/StatusTable";
 
 // The section kit of LandingTemplate. Every section takes its content as
 // props and holds no copy of its own.
@@ -864,35 +865,14 @@ export function ProseBandSection({ head, paras = [], closing, id, media, flip = 
  * Image policy: none.
  */
 export function StatusTableSection({ head, rows, closing, columns, id, surface = "card" }) {
-  const [c1, c2, c3] = columns;
   return (
     <Band id={id} surface={surface}>
       <SectionHead {...head} />
-      <div className="sk-tablewrap sk-statustable">
-        <table className="sk-table">
-          <thead>
-            <tr>
-              <th scope="col">{c1}</th>
-              <th scope="col">{c2}</th>
-              <th scope="col">{c3}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map((r) => (
-              <tr key={r.status} className={r.needsAction ? "is-action" : undefined}>
-                <th scope="row">
-                  <span className={`sk-mark ${r.needsAction ? "sk-mark--warn" : "sk-mark--calm"}`}>
-                    <span className="sk-mark__g" aria-hidden="true">{r.glyph}</span>
-                    {r.status}
-                  </span>
-                </th>
-                <td data-label={c2}>{r.meaning}</td>
-                <td data-label={c3}>{r.action}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      {/* The six statuses are the app's own vocabulary, so they are drawn in
+          the app's own system (StatusTable). It is not a product shot: the
+          meanings and actions are the page's copy, so it stays a real table
+          that reflows and that a crawler reads. 2026-09-20. */}
+      <StatusTable columns={columns} rows={rows} />
       {closing ? (
         <p className="sk-body sk-body--lg sk-closing">
           <Rich text={closing} linkClassName="sk-link" />

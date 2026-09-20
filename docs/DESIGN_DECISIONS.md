@@ -1532,3 +1532,26 @@ Decisión: pedido del fundador.
   escena cae de 0,853 a 0,776 a 1440.
 Política de imagen: ninguna foto; figuras de producto.
 Regla de DESIGN_RULES.md que aplica: §3.
+
+## /payer-enrollment-software — la tabla de estados pasa al sistema de la app
+Fecha: 2026-09-20
+Decisión: pedido del fundador. La sección dibujaba los seis estados con las
+marcas propias de la tabla de marketing (`.sk-mark`), o sea que la página tenía
+un segundo vocabulario, inventado, para la cosa que el producto ya nombra.
+Ahora usa los chips reales de la herramienta (`CHIP` de `showcase/parts`),
+dentro de una tarjeta blanca del sistema de la app.
+- **No es un product shot.** Un shot es un lienzo fijo que escala; esto es copy
+  —seis significados y seis acciones—, así que sigue siendo una `<table>` real
+  y fluida, que reflowea y que un crawler lee. De la app viene la tarjeta y los
+  chips de la columna de estado, nada más.
+- **El glifo queda adentro del chip.** §2 regla 3: un estado es glifo +
+  etiqueta, nunca color solo, y los chips de la app son color + etiqueta. Sin
+  el glifo adentro, pasar al sistema de la app habría roto la regla.
+- **Sin fondo**, por decisión del fundador: la sección ya es un bloque gris y
+  una tarjeta blanca con su sombra alcanza para separar las capas (§3).
+- La fila de acción conserva su tinte ámbar y suma el anillo del estado, que es
+  como la app marca lo que pide acción.
+- Debajo de 640 la tabla se apila fila por fila con la etiqueta de la tercera
+  columna visible, en el mismo marcado: no hay copia duplicada en el DOM.
+Política de imagen: ninguna.
+Regla de DESIGN_RULES.md que aplica: §2 regla 3, §3.
