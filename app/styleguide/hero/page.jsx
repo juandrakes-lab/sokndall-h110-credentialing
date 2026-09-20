@@ -14,6 +14,7 @@ export const metadata = {
 };
 
 const TILT = "perspective(2200px) rotateY(-13deg) rotateX(4deg) rotate(0.6deg)";
+const TILT_SOFT = "perspective(2600px) rotateY(-7deg) rotateX(2deg)";
 
 function Variant({ label, tilt }) {
   return (
@@ -44,11 +45,21 @@ function Variant({ label, tilt }) {
   );
 }
 
-export default function HeroVariants() {
+// `?v=a|b|c` renders one variant alone, so a screenshot of each lands at the
+// same page coordinates and the three can be compared pixel for pixel.
+export default async function HeroVariants({ searchParams }) {
+  const v = (await searchParams)?.v;
+  const all = [
+    ["a", "A · straight, bleeding off the right edge", ""],
+    ["b", "B · tilted 13°", TILT],
+    ["c", "C · tilted 7°", TILT_SOFT],
+  ];
+  const shown = all.filter(([k]) => !v || v === k);
   return (
     <Shell>
-      <Variant label="A · straight, bleeding off the right edge" />
-      <Variant label="B · the same shot tilted (for comparison only)" tilt={TILT} />
+      {shown.map(([k, label, tilt]) => (
+        <Variant key={k} label={label} tilt={tilt} />
+      ))}
     </Shell>
   );
 }

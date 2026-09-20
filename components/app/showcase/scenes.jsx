@@ -268,7 +268,7 @@ export function HeroDashboard({ notes = [] }) {
   const ICON = [ICONS.calendar, ICONS.phone];
   return (
     <>
-      <AppScreen x={0} y={0} w={1120} h={612} active="dashboard">
+      <AppScreen x={0} y={0} w={1120} h={612} active="dashboard" onInk>
         <ScreenTitle title="Dashboard" sub="Saturday, September 19 · Riverside Pediatrics PLLC" />
         <div className="grid grid-cols-3 gap-4">
           <StatCard accent label="Need you this week" value="31" hint="Expiring soon, overdue and payer requests." icon={ICONS.pulse} />
@@ -281,7 +281,7 @@ export function HeroDashboard({ notes = [] }) {
         </div>
       </AppScreen>
       {notes.map((n, i) => (
-        <Chip key={n.label} x={i === 0 ? 16 : 344} y={588} w={300}>
+        <Chip key={n.label} x={i === 0 ? 16 : 344} y={588} w={300} onInk>
           <div className="flex items-start gap-3 px-4 py-3.5">
             <IconTile d={ICON[i] ?? ICONS.pulse} size="sm" />
             <div className="min-w-0">

@@ -4763,12 +4763,42 @@ html:has(.sk-fnav) { scroll-padding-top: 88px; }
    allows — and read as a stamp. Now it is drawn 1:1 and runs off the panel's
    right edge, which the panel clips. `clip-path` rather than `overflow`, and
    open at the bottom, so the tongue under the panel survives the clip. */
-.sk-hero--panel { clip-path: inset(0 0 -400px 0 round var(--r-block)); }
+.sk-hero--panel {
+  clip-path: inset(0 0 -400px 0 round var(--r-block));
+  /* Depth on the panel itself (2026-09-19): a hairline of light on the inside
+     edge, under the content. */
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.055);
+}
+/* The vignette goes OVER the shot, not under it (the founder, 2026-09-19): the
+   shot runs off the right edge, and a shadow that passes above it makes it
+   sink into the panel instead of being sliced by it. Asymmetric on purpose —
+   heaviest on the right where the cut is, a touch top and bottom, nothing over
+   the copy column, so it does not dim the data the shot exists to show. */
+.sk-hero--panel::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  border-radius: inherit;
+  box-shadow:
+    inset -90px 0 90px -60px rgba(0, 0, 0, 0.75),
+    inset 0 40px 70px -50px rgba(0, 0, 0, 0.6),
+    inset 0 -50px 90px -60px rgba(0, 0, 0, 0.55);
+}
+/* The white notch and the nav ride above the vignette: they are the panel's
+   edge furniture, not something for it to shade. */
+.sk-hero--panel .sk-hero__bar { z-index: 3; }
+/* The home's H1 one step down from the shared display size (2026-09-19): at
+   72px the copy column needed 620px for three lines and the shot was left
+   with 490. At 64px it needs ~560, and the shot takes the difference. Scoped
+   to the panel hero — the four product pages keep the display scale. */
+.sk-hero--panel .sk-display { font-size: clamp(2.375rem, 1.1rem + 5.15vw, 4rem); }
 .sk-hero--panel .sk-hero__top--bleed {
-  /* The column split stays the panel's own (1.15/0.85): the H1's first line
-     needs 567px at 72px type and "tells you what went" 614, so a narrower
-     copy column costs a fourth line. The shot gets its size from bleeding and
-     from being drawn at 0.8 rather than at the 0.5 floor. */
+  /* Half and half, which the smaller H1 pays for: at 64px its longest line
+     needs ~560px, so the copy column can drop from 620 to 576 and the shot
+     takes the 86px. */
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   align-items: center;
   gap: var(--s-7);
 }
