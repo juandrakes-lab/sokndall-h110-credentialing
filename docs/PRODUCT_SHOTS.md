@@ -29,6 +29,17 @@ fed the demo client's data. This file is the contract — read it before touchin
    the straight one reads as the better product. So: no tilt, and if it is ever
    revisited, the test is whether the transform pushes any part above 1:1, not
    the tilt itself.
+   *Rotation on Z, measured 2026-09-20* (the digest at 0°, 1.2° and 2.5°, 2×
+   crops of the same rows): the **type survives** — same reason as the 7° tilt,
+   the shot is drawn at 0.871, so a rotation is a resample and not an upscale.
+   What does not survive is the **1px rule**. The row separators go from crisp
+   at 0° to soft and uneven in weight along their run at 1.2°, and uniformly
+   soft at 2.5°. So the test for a rotation is not the type, it is whether the
+   scene's structure is drawn in hairlines: the digest, the matrix, the client
+   book and the template sheet are built out of them and stay straight. A
+   card-and-chip scene (`Stages`, `UsersProviders`) could carry one, and then
+   never under 2° — 1° is too small to read as deliberate and big enough to
+   make every line look badly drawn.
 2. **A hero shot bleeds instead of shrinking.** `ProductShot bleed={n}` draws
    the scene 1:1 and lets it run off the right edge of the panel, which clips
    it; `n` is the slice that must stay visible inside the figure, and below
