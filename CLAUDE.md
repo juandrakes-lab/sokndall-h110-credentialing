@@ -116,7 +116,7 @@ DESIGN_RULES.md §13-§19.
 
 **Product shots replaced the schematics** (2026-09-19, the founder's call once
 the app existed). The contract is `docs/PRODUCT_SHOTS.md` — read it before
-touching a figure.** Every former `ScreenSlot`/schematic on the landings (home hero,
+touching a figure. Every former `ScreenSlot`/schematic on the landings (home hero,
 matrix and Monday digest; the payer-enrollment status path, stages, effective
 date and matrix; the billing-company client book and report; the spreadsheet
 template's tab; /pricing's users-vs-providers) is now a `ProductShot`
