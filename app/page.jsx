@@ -2,12 +2,12 @@ import Shell from "@/components/neo/Shell";
 import Faq from "@/components/neo/Faq";
 import HeroPanel from "@/components/neo/HeroPanel";
 import {
-  IconBan, IconDoc, IconGrid, IconCalendar, IconMail, IconClock, IconBell,
+  IconDoc, IconGrid, IconMail, IconClock,
   IconSearch, IconRefresh, IconShield, IconUsers,
 } from "@/components/neo/icons";
 import LandingTemplate, {
   SplitListSection, LayersSection, DiagramSection, FigureBandSection,
-  PlanListSection, CardGridSection, PanelSection, CtaSection, HeroStrip, Indicator, FactStrip,
+  PlanListSection, CardGridSection, PanelSection, CtaSection, FactStrip,
 } from "@/components/neo/LandingTemplate";
 import { FAQ_HEAD, PLAN_PERIOD } from "@/components/neo/neoData";
 import { PHOTOS } from "@/components/neo/photos";
@@ -23,7 +23,6 @@ import ProductShot from "@/components/app/showcase/ProductShot";
 // forwarded to /dashboard by middleware.js before this page is served.
 export const metadata = pageMeta({ title: META.title, description: META.description, path: "/" });
 
-const STRIP_ICONS = [IconBan, IconDoc, IconGrid, IconCalendar];
 const SCOPE_ICONS = [IconSearch, IconRefresh, IconShield, IconUsers];
 
 function Hero() {
@@ -35,24 +34,23 @@ function Hero() {
       sub={HERO.sub}
       primary={HERO.primary}
       secondary={HERO.secondary}
+      bleed
       figure={
-        // The data model at hero size, in the frame the real matrix screen
-        // will fill. Four providers by four payers is the home's own density;
-        // /payer-enrollment-software draws a different grid.
-        <ProductShot scene="HeroMatrix" w={880} h={660} narrow={{ scene: "NarrowDashboard", w: 420, h: 540 }} label="The Sokndall dashboard: what needs you this week, what expires, where every application stands" />
+        // The dashboard at 1:1, running off the panel's right edge (2026-09-19,
+        // the founder's review: inside the column it drew at half size). The
+        // two facts ride on it as the app's own chips, so the hero carries no
+        // furniture from outside the app.
+        <ProductShot
+          scene="HeroDashboard"
+          props={{ notes: HERO.indicators }}
+          w={1120}
+          h={700}
+          bleed={660}
+          narrow={{ scene: "NarrowDashboard", w: 420, h: 540 }}
+          label="The Sokndall dashboard: what needs you this week, what expires, where every application stands"
+        />
       }
-      indicators={HERO.indicators.map((ind, i) => {
-        const Icon = [IconBell, IconClock][i];
-        return <Indicator key={ind.label} icon={<Icon />} value={ind.value} label={ind.label} />;
-      })}
-    >
-      <HeroStrip
-        items={HERO.strip.map((label, i) => {
-          const Icon = STRIP_ICONS[i];
-          return { label, icon: <Icon /> };
-        })}
-      />
-    </HeroPanel>
+    />
   );
 }
 

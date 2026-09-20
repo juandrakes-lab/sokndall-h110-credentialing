@@ -12,12 +12,17 @@ import * as SCENES from "@/components/app/showcase/scenes";
 // Scenes are named rather than passed: the pages that use a shot are server
 // components, and a function cannot cross that boundary.
 //
+// `bleed`: the scene runs off the right edge of the figure instead of fitting
+// inside it (the home hero), drawn 1:1. The number is the slice that must stay
+// visible; the panel around the figure does the clipping. The narrow scene
+// never bleeds.
+//
 // `narrow`: the scene to draw on a phone instead (below `narrow.upTo`, 640px
 // of viewport — the viewport, not the figure: a hero figure is narrow on a
 // laptop too, and there the whole screen is exactly what should be shown). A
 // whole screen is unreadable on a phone, so the narrow variant is the part
 // that matters — one card, a list, a panel — at a size that can be read.
-export default function ProductShot({ scene, props = {}, w, h, narrow, label, className = "" }) {
+export default function ProductShot({ scene, props = {}, w, h, narrow, label, className = "", bleed = 0, tilt = "" }) {
   const box = useRef(null);
   const [ready, setReady] = useState(false);
   const [small, setSmall] = useState(false);
@@ -42,7 +47,17 @@ export default function ProductShot({ scene, props = {}, w, h, narrow, label, cl
   return (
     <figure ref={box} className={`app-type relative m-0 w-full ${className}`}>
       {ready && (
-        <Stage w={cw} h={ch} align="center" className="relative w-full" fluid minScale={0.5} label={label}>
+        <Stage
+          w={cw}
+          h={ch}
+          align="center"
+          className="relative w-full"
+          fluid={!bleed || small}
+          minScale={0.5}
+          bleed={small ? 0 : bleed}
+          tilt={small ? "" : tilt}
+          label={label}
+        >
           <Chosen {...props} />
         </Stage>
       )}

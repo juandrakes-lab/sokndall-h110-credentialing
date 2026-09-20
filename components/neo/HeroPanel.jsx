@@ -43,6 +43,7 @@ export default function HeroPanel({
   secondary,
   current,
   figure,
+  bleed = false,
   form,
   indicators,
   backdrop = "lines",
@@ -140,7 +141,7 @@ export default function HeroPanel({
       </div>
 
       <div className="sk-wrap sk-hero__inner">
-        <div className={`sk-hero__top${figure || form ? "" : " sk-hero__top--solo"}`}>
+        <div className={`sk-hero__top${figure || form ? "" : " sk-hero__top--solo"}${bleed ? " sk-hero__top--bleed" : ""}`}>
           <div className="sk-hero__copy">
             {eyebrow ? <Pill>{eyebrow}</Pill> : null}
 
@@ -154,7 +155,7 @@ export default function HeroPanel({
           </div>
 
           {figure ? (
-            <div className="sk-hero__media">
+            <div className={`sk-hero__media${bleed ? " sk-hero__media--bleed" : ""}`}>
               {figure}
               {indicators ? <div className="sk-hero__inds">{indicators}</div> : null}
             </div>

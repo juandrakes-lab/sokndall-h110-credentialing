@@ -253,6 +253,48 @@ export function HeroMatrix() {
   );
 }
 
+// The home hero, 1120×720: the whole dashboard at 1:1, running off the right
+// edge of the panel (ProductShot `bleed`) instead of shrunk to fit a column —
+// at the column's width the old shot was drawn at half size, the floor the
+// Stage allows. Sidebar open, not folded: what the crop keeps is the left of
+// the screen, and there the nav names the six things the product tracks and
+// the client selector shows it holds more than one practice. Folded, that
+// space says nothing.
+//
+// The two facts float as the app's own chips (they were the marketing kit's
+// cards before, the only figure on the page with furniture from outside the
+// app). Their words come from the page's data.js — `notes`.
+export function HeroDashboard({ notes = [] }) {
+  const ICON = [ICONS.calendar, ICONS.phone];
+  return (
+    <>
+      <AppScreen x={0} y={0} w={1120} h={612} active="dashboard">
+        <ScreenTitle title="Dashboard" sub="Saturday, September 19 · Riverside Pediatrics PLLC" />
+        <div className="grid grid-cols-3 gap-4">
+          <StatCard accent label="Need you this week" value="31" hint="Expiring soon, overdue and payer requests." icon={ICONS.pulse} />
+          <StatCard label="Expiring within 14 days" value="7" hint="Credentials and revalidations." icon={ICONS.calendar} tone="red" />
+          <StatCard label="Follow-ups overdue" value="18" hint="20 due this week in all." icon={ICONS.phone} tone="amber" />
+        </div>
+        <div className="mt-4 grid grid-cols-[1.35fr_1fr] gap-4">
+          <StartHereCard />
+          <CredentialsCard />
+        </div>
+      </AppScreen>
+      {notes.map((n, i) => (
+        <Chip key={n.label} x={i === 0 ? 16 : 344} y={588} w={300}>
+          <div className="flex items-start gap-3 px-4 py-3.5">
+            <IconTile d={ICON[i] ?? ICONS.pulse} size="sm" />
+            <div className="min-w-0">
+              <p className="text-[0.9375rem] font-semibold leading-tight text-ink-900">{n.value}</p>
+              <p className="mt-1 text-xs leading-snug text-ink-500">{n.label}</p>
+            </div>
+          </div>
+        </Chip>
+      ))}
+    </>
+  );
+}
+
 // The dashboard on a phone: the numbers and the list, nothing else.
 export function NarrowDashboard() {
   return (

@@ -4756,3 +4756,26 @@ html:has(.sk-fnav) { scroll-padding-top: 88px; }
   align-content: start;
 }
 .sk-layers__stack .sk-layers__visual { margin-top: 0; align-self: end; }
+
+/* ---- the home hero's product shot, bleeding off the panel (2026-09-19) --- */
+/* The shot used to sit inside the right column: at 1440 that column is 486px
+   and the scene's canvas is 880, so it drew at 0.5 — the floor the Stage
+   allows — and read as a stamp. Now it is drawn 1:1 and runs off the panel's
+   right edge, which the panel clips. `clip-path` rather than `overflow`, and
+   open at the bottom, so the tongue under the panel survives the clip. */
+.sk-hero--panel { clip-path: inset(0 0 -400px 0 round var(--r-block)); }
+.sk-hero--panel .sk-hero__top--bleed {
+  /* The column split stays the panel's own (1.15/0.85): the H1's first line
+     needs 567px at 72px type and "tells you what went" 614, so a narrower
+     copy column costs a fourth line. The shot gets its size from bleeding and
+     from being drawn at 0.8 rather than at the 0.5 floor. */
+  align-items: center;
+  gap: var(--s-7);
+}
+.sk-hero__media--bleed { overflow: visible; }
+.sk-hero__media--bleed > .app-type { overflow: visible; }
+@media (max-width: 900px) {
+  /* Stacked: the figure is the narrow scene and fits its box, so nothing
+     bleeds and the column rule goes back to one. */
+  .sk-hero--panel .sk-hero__top--bleed { grid-template-columns: minmax(0, 1fr); }
+}
