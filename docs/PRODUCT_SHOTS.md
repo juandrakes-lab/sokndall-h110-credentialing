@@ -19,32 +19,48 @@ fed the demo client's data. This file is the contract — read it before touchin
 
 1. **A shot is only ever scaled down.** Its canvas is at least as wide as the
    figure renders. Upscaled type blurs, which is what the first two attempts
-   got wrong. No 3D tilt, no `perspective()`, for the same reason.
-2. **One depth system.** `lift` for windows, cards and panels; `chipLift` for
-   the small indicator cards. Never a bespoke shadow. Nothing animates: a
+   got wrong.
+   *No 3D tilt* — but the reason is narrower than it was written here.
+   Measured on 2026-09-19 against the home hero at 7° and 13°, captured at
+   2× and compared crop for crop: with the shot drawn at 0.92 the tilt never
+   takes any part of it above 1:1, so it is a resample rather than an upscale
+   and the 7° version is all but indistinguishable from the straight one; 13°
+   is visibly soft in the small grey type. The founder chose straight anyway —
+   the straight one reads as the better product. So: no tilt, and if it is ever
+   revisited, the test is whether the transform pushes any part above 1:1, not
+   the tilt itself.
+2. **A hero shot bleeds instead of shrinking.** `ProductShot bleed={n}` draws
+   the scene 1:1 and lets it run off the right edge of the panel, which clips
+   it; `n` is the slice that must stay visible inside the figure, and below
+   that the scene scales down. Fitting a whole screen inside a hero column is
+   what made the first version draw at 0.5, the Stage's floor.
+3. **One depth system, two grounds.** `lift` for windows, cards and panels;
+   `chipLift` for the small indicator cards; `liftOnInk` / `chipLiftOnInk` for
+   a shot standing on the ink panel, where an ink-coloured shadow is invisible.
+   Never a bespoke shadow. Nothing animates: a
    transform animation inside a scaled canvas rasterizes blurry.
-3. **No box around a shot** and no browser chrome. It sits on the section's own
+4. **No box around a shot** and no browser chrome. It sits on the section's own
    ground with its own shadow.
-4. **A whole screen only when the section is about the screen** (today: the
+5. **A whole screen only when the section is about the screen** (today: the
    home's matrix section, the billing companies' client book). When the section
    is about a thing on the screen, show that thing — a card, a panel, a table.
    An `AppScreen` padded out with white space is a worse shot than a card.
-5. **Every wide shot declares a `narrow` scene**, picked by viewport (≤640px).
+6. **Every wide shot declares a `narrow` scene**, picked by viewport (≤640px).
    A whole screen is unreadable on a phone.
-6. **Real data only.** The figures come from the demo Billing Co book in
+7. **Real data only.** The figures come from the demo Billing Co book in
    Supabase (Riverside Pediatrics PLLC, Lakeview Behavioral Health, Clinical
    Neuroscience Research Associates). Query it rather than inventing numbers;
    if a number cannot be sourced, leave it out. Provider names keep initials
    avatars (providers are records, never users); signed-in people are the
    generic `PEOPLE` with Pexels portraits — never the founder's name.
-7. **Copy stays in the page's `data.js`.** A scene that carries approved words
+8. **Copy stays in the page's `data.js`.** A scene that carries approved words
    (`StatusPath`, `Stages`, `UsersProviders`) takes them as props.
 
 ## The figures
 
 | Page · section | Scene (canvas) | Narrow | Shows |
 | --- | --- | --- | --- |
-| `/` hero | `HeroMatrix` 880×660 | `NarrowDashboard` 420×540 | The dashboard, sidebar folded: three stats, "Start here", the credentials breakdown; the pipeline bar floats below. |
+| `/` hero | `HeroDashboard` 1120×700, `bleed` 660 | `NarrowDashboard` 420×540 | The dashboard **sidebar open**, bleeding off the panel's right edge: three stats, "Start here", the credentials breakdown, and the hero's two facts as app chips crossing the window's bottom edge. What the crop keeps is the left of the screen, where the nav names the six things tracked. (`HeroMatrix`, the 880 version that drew at 0.5, is gone.) |
 | `/` "Three things" third card | `MondayDigest` 560×560 | — | The weekly digest as an email: sender, recipient, subject, two sections, the CTA. Sits **under** the white card (`.sk-layers__stack`), not inside it. |
 | `/` "The matrix" | `HomeMatrix` 1240×760 | `NarrowMatrix` 460×580 | The whole enrollments screen: pipeline card + 5×5 matrix. Floating: a payer request and the stalled count. |
 | `/payer-enrollment-software` statuses | `StatusPath` 1000×340 | `NarrowStatusPath` 380×560 | One application's path on the panel's own status chips, in an app card. Words from `TRACK`. |
@@ -80,3 +96,28 @@ fed the demo client's data. This file is the contract — read it before touchin
   concept diagrams, not screens. They use the app's visual system by the
   founder's call, and they are the two figures most likely to drift back into
   looking like plain boxes.
+
+## The hero panel itself (2026-09-19)
+
+Three things the shot depends on, all in `neo.css`:
+
+- **The waves are their own layer** (`.sk-hero__tex` > `.sk-hero__texi`), not
+  the panel's background, so they can be taller than the panel and move.
+- **The vignette is over the shot**, in `.sk-hero--panel::after`: heaviest on
+  the right, where the shot is cut, so it sinks into the panel instead of being
+  sliced by it. The white notch and the nav sit above it. Keep it light — it
+  was dialled back once already for dimming the data.
+- **Parallax**, scroll-driven (`animation-timeline: view()`): the waves travel
+  ±7% and the shot ∓26px, so the ground moves slower than the page and the shot
+  a touch faster. No scroll listener, no client component. Browsers without
+  scroll-driven animations (Safari and Firefox today) show it still, and so
+  does anyone asking for reduced motion. Transforms only: a translation does
+  not re-rasterise, so the type stays as sharp as it is at rest.
+
+The home's H1 is one step under the shared display size
+(`.sk-hero--panel .sk-display`, 4rem against 4.5rem): at 4.5rem the copy column
+needed 620px for three lines and left the shot 490. Product pages keep the
+shared size.
+
+`/styleguide/hero` is deleted, as its own note said it should be once a version
+was chosen.

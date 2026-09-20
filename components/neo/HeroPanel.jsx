@@ -123,6 +123,11 @@ export default function HeroPanel({
         </>
       ) : null}
       {panel ? (
+        <span className="sk-hero__tex" aria-hidden="true">
+          <span className="sk-hero__texi" />
+        </span>
+      ) : null}
+      {panel ? (
         <div className="sk-hero__bar">
           <div className="sk-hero__notch">
             <Brand />
@@ -171,7 +176,13 @@ export default function HeroPanel({
         ) : null}
       </div>
 
-      {panel ? <span className="sk-hero__tongue" aria-hidden="true" /> : null}
+      {panel ? (
+        <span className="sk-hero__tongue" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M6 9l6 6 6-6" />
+          </svg>
+        </span>
+      ) : null}
     </section>
   );
 }

@@ -12,15 +12,14 @@ import { useLayoutEffect, useRef, useState } from "react";
 // large without upscaling it. The number is the width that must stay visible
 // inside the box; below it the scene scales down so that slice always fits.
 //
-// `tilt`: a 3D transform on the canvas, for the styleguide comparison only.
-// Product shots do not tilt — a transformed canvas rasterises soft, which is
-// the whole reason PRODUCT_SHOTS.md forbids it.
+// No tilt: measured against a 7° and a 13° version on 2026-09-19 and dropped
+// by the founder — see PRODUCT_SHOTS.md.
 //
 // `fluid` (product shots): the box's height follows the scale its width gives,
 // capped at 1 (never drawn larger than designed — upscaled type blurs). Below
 // `minScale` the scene stops shrinking — on a phone a full-width scene would
 // drop to unreadable type — and anchors left, so the far side runs off the edge.
-export default function Stage({ w, h, align = "left", className = "relative min-h-0 flex-1", label, fluid = false, minScale = 0, bleed = 0, tilt = "", children }) {
+export default function Stage({ w, h, align = "left", className = "relative min-h-0 flex-1", label, fluid = false, minScale = 0, bleed = 0, children }) {
   const box = useRef(null);
   const [scale, setScale] = useState(0);
   const [floor, setFloor] = useState(false);
@@ -54,7 +53,7 @@ export default function Stage({ w, h, align = "left", className = "relative min-
         style={{
           width: w,
           height: h,
-          transform: `${centred ? "translate(-50%, -50%)" : "translateY(-50%)"} scale(${scale})${tilt ? ` ${tilt}` : ""}`,
+          transform: `${centred ? "translate(-50%, -50%)" : "translateY(-50%)"} scale(${scale})`,
           transformOrigin: centred ? "center" : "left center",
           opacity: scale ? 1 : 0,
         }}

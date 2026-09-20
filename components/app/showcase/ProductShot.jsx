@@ -22,7 +22,7 @@ import * as SCENES from "@/components/app/showcase/scenes";
 // laptop too, and there the whole screen is exactly what should be shown). A
 // whole screen is unreadable on a phone, so the narrow variant is the part
 // that matters — one card, a list, a panel — at a size that can be read.
-export default function ProductShot({ scene, props = {}, w, h, narrow, label, className = "", bleed = 0, tilt = "" }) {
+export default function ProductShot({ scene, props = {}, w, h, narrow, label, className = "", bleed = 0 }) {
   const box = useRef(null);
   const [ready, setReady] = useState(false);
   const [small, setSmall] = useState(false);
@@ -55,7 +55,6 @@ export default function ProductShot({ scene, props = {}, w, h, narrow, label, cl
           fluid={!bleed || small}
           minScale={0.5}
           bleed={small ? 0 : bleed}
-          tilt={small ? "" : tilt}
           label={label}
         >
           <Chosen {...props} />

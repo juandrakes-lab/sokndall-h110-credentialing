@@ -1269,3 +1269,34 @@ Decisión: entra la segunda respuesta de copywriting del día.
 - El cobro del usuario adicional a $39 sigue pendiente en desarrollo
   (`lib/plans.js`, Polar) y bloquea la publicación de /pricing.
 Regla de DESIGN_RULES.md que aplica: §2 regla 3.
+
+## Home — el hero: shot sangrado, viñeta por encima, parallax
+Fecha: 2026-09-19
+Decisión: el mockup de baja fidelidad ya no existe y el shot del dashboard
+quedó chico dentro de la columna (0,5, el piso del Stage). Rediseño del hero:
+- El shot se dibuja 1:1 y sale por el borde derecho del panel, que lo recorta
+  (`bleed`). Sidebar desplegada: el recorte deja a la vista el lado izquierdo,
+  y ahí la nav nombra las seis cosas que el producto sigue.
+- Las dos cifras del hero pasan de tarjetas del kit de marketing a chips de la
+  app, con sombras propias para fondo oscuro (`liftOnInk`, `chipLiftOnInk`):
+  una sombra color tinta sobre tinta no se ve.
+- Salen los cuatro chips del strip: duplicaban la fila de datos que va 200px
+  más abajo. "No demo call" y "No quote request" no están en ningún otro lado
+  — pendiente de copy.
+- El H1 del hero de la home baja de 4,5rem a 4rem. La columna de texto pasa de
+  620 a 576px y el shot se queda con la diferencia (de 0,74 a 0,92).
+- La viñeta del panel va por encima del shot (pedido del fundador), asimétrica
+  y fuerte en el borde derecho, para que el shot se hunda en el panel en lugar
+  de quedar rebanado. Se bajó de intensidad una vez: apagaba los datos.
+- La pestaña de abajo lleva ahora un chevron: era una forma suelta y pasa a ser
+  la señal de scroll, lo único del hero que apunta hacia abajo.
+- Parallax con animaciones ligadas al scroll (`animation-timeline: view()`):
+  las ondas ±7%, el shot ∓26px. Sin listener y sin componente cliente; donde el
+  navegador no lo soporta (Safari, Firefox) no se mueve nada, igual que para
+  quien pide menos movimiento.
+- Inclinación descartada: se midió a 7° y 13° con recortes a 2×. A 7° la
+  pérdida de nitidez es casi nula (el shot se dibuja por debajo de 1:1, así que
+  no hay agrandado), a 13° se nota en el texto chico gris. El fundador eligió
+  la recta igual. Queda escrito en PRODUCT_SHOTS.md con el porqué, y
+  /styleguide/hero se borró.
+Regla de DESIGN_RULES.md que aplica: §5, §16, §17.
