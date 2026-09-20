@@ -29,27 +29,31 @@ import * as SCENES from "@/components/app/showcase/scenes";
 // white content cards, reads as a fourth content card. A figure that is a
 // whole screen carries its own sidebar and top bar and needs no ground; a
 // loose card, panel or email does. The founder's call, 2026-09-20.
-export default function ProductShot({ scene, props = {}, w, h, narrow, label, className = "", bleed = 0, backdrop = "none" }) {
+export default function ProductShot({ scene, props = {}, w, h, narrow, mid, label, className = "", bleed = 0, backdrop = "none" }) {
   const box = useRef(null);
   const [ready, setReady] = useState(false);
-  const [small, setSmall] = useState(false);
+  const [variant, setVariant] = useState(null);
   useLayoutEffect(() => {
-    if (!narrow) {
+    // Narrowest first: the first one whose query matches wins.
+    const steps = [narrow, mid].filter(Boolean);
+    if (!steps.length) {
       setReady(true);
       return undefined;
     }
-    const mq = window.matchMedia(`(max-width: ${narrow.upTo ?? 640}px)`);
+    const mqs = steps.map((v, i) => window.matchMedia(`(max-width: ${v.upTo ?? (i === 0 ? 640 : 1023)}px)`));
     const read = () => {
-      setSmall(mq.matches);
+      const i = mqs.findIndex((m) => m.matches);
+      setVariant(i === -1 ? null : steps[i]);
       setReady(true);
     };
     read();
-    mq.addEventListener("change", read);
-    return () => mq.removeEventListener("change", read);
-  }, [narrow]);
-  const Chosen = SCENES[small ? narrow.scene : scene];
-  const cw = small ? narrow.w : w;
-  const ch = small ? narrow.h : h;
+    mqs.forEach((m) => m.addEventListener("change", read));
+    return () => mqs.forEach((m) => m.removeEventListener("change", read));
+  }, [narrow, mid]);
+  const small = variant === narrow && !!narrow;
+  const Chosen = SCENES[variant ? variant.scene : scene];
+  const cw = variant ? variant.w : w;
+  const ch = variant ? variant.h : h;
 
   return (
     <figure

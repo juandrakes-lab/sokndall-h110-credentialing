@@ -59,7 +59,7 @@ export default function PayerEnrollmentSoftwarePage() {
             />
           ),
           figure: (
-            <ProductShot scene="StatusPath" props={{ steps: TRACK.steps, end: TRACK.end, branch: TRACK.branch }} w={1000} h={340} narrow={{ scene: "NarrowStatusPath", w: 380, h: 560 }} label={TRACK.screen} />
+            <ProductShot scene="StatusPath" props={{ steps: TRACK.steps, end: TRACK.end, branch: TRACK.branch }} w={1000} h={306} mid={{ scene: "MidStatusPath", w: 640, h: 306 }} narrow={{ scene: "NarrowStatusPath", w: 380, h: 478 }} label={TRACK.screen} />
           ),
         }}
       >
@@ -68,7 +68,7 @@ export default function PayerEnrollmentSoftwarePage() {
           head={TWO_STEPS.head}
           paras={TWO_STEPS.paras}
           closing={TWO_STEPS.closing}
-          media={<ProductShot scene="Stages" props={{ stages: STAGES }} w={560} h={440} label="Credentialing and enrollment, the two stages" />}
+          media={<ProductShot scene="Stages" props={{ stages: STAGES }} backdrop="ground" w={560} h={310} label="Credentialing and enrollment, the two stages" />}
         />
 
         <ProseBandSection
@@ -93,7 +93,7 @@ export default function PayerEnrollmentSoftwarePage() {
           head={EFFECTIVE.head}
           paras={EFFECTIVE.paras}
           closing={EFFECTIVE.closing}
-          media={<ProductShot scene="EffectiveDate" w={620} h={620} label={EFFECTIVE_SCREEN} />}
+          media={<ProductShot scene="EffectiveDate" backdrop="ground" w={620} h={560} label={EFFECTIVE_SCREEN} />}
           flip
         />
 
@@ -112,7 +112,7 @@ export default function PayerEnrollmentSoftwarePage() {
           // says "the six" twice, so the grid shows six. The home's 5 x 5 is a
           // different density.
           diagram={
-            <ProductShot scene="EnrollmentMatrix" w={780} h={580} narrow={{ scene: "NarrowMatrix", w: 460, h: 580 }} label="The enrollments matrix with the book's totals" />
+            <ProductShot scene="EnrollmentMatrix" w={780} h={530} narrow={{ scene: "NarrowMatrix", w: 460, h: 580 }} label="The enrollments matrix with the book's totals" />
           }
           points={MATRIX.points}
           aside={MATRIX.aside}

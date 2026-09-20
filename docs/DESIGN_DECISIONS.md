@@ -1492,3 +1492,43 @@ Queda en pie, porque es lo que se aprendió midiendo y no depende de la decisió
   dibuja a 0,871 a 1440 y a 0,784 en teléfono, contra 0,951 y 0,847 con el
   fondo detrás. Es el único número que quedó abierto de esta ronda.
 Política de imagen: sin cambios.
+
+## /payer-enrollment-software — el recorrido de estados gana una forma intermedia
+Fecha: 2026-09-20
+Decisión: pedido del fundador (la figura del hero "no se adapta y queda muy
+chica en pantallas medianas"). Medido antes de tocar: el lienzo de `StatusPath`
+mide 1000px y es una fila de seis chips que no puede plegarse, así que de 1024
+para abajo solo se achica — 0,88 a 1024, 0,77 a 900, 0,66 a 768 y **0,55 a
+641**, que pone sus chips de 15px en 8.
+- Entra `MidStatusPath`, 640×306: la misma tarjeta con la fila de chips
+  plegada (`flex-wrap`). Y `ProductShot` acepta ahora un escalón intermedio
+  además del de teléfono: elige de más angosto a más ancho, el primero que
+  matchea gana.
+- Reparto: teléfono ≤640 (`NarrowStatusPath`), medio 641–1023 (`MidStatusPath`),
+  ancho ≥1024 (`StatusPath`). Peor caso de toda la banda: **0,86** contra 0,55.
+- Los tres lienzos declaraban más alto del que usan (340/430/560 contra
+  301/300/472). Quedan en 306/306/478.
+- Lo mismo en las otras dos figuras de la página: `Stages` declaraba 440 y usa
+  305 (queda en 310), la matriz declaraba 580 y usa 525 (queda en 530).
+Política de imagen: ninguna foto; figuras de producto.
+Regla de DESIGN_RULES.md que aplica: §5 (el hueco declara su relación y no la
+cambia), contrato de PRODUCT_SHOTS §6.
+
+## /payer-enrollment-software — fondo en dos figuras, y el chip que pisa la tarjeta
+Fecha: 2026-09-20
+Decisión: pedido del fundador.
+- `Stages` y `EffectiveDate` pasan a `backdrop="ground"`. La tabla de estados
+  **no** lo lleva: su sección ya es un bloque gris, y ahí la tarjeta blanca con
+  su sombra alcanza para separar las capas (criterio del fundador, y coincide
+  con §3: blanco contra gris ya es jerarquía).
+- `EffectiveDate` queda centrada en su lienzo: la tarjeta pasa de `left: 0` a
+  `left: 30` y el chip de x=260 a x=230, así el contenido ocupa 30..590 de un
+  lienzo de 620 en lugar de 0..620 con el peso a la izquierda.
+- El chip flotante gana profundidad propia (`chipOver`, nueva en AppScreen). El
+  `chipLift` es más suave que el `lift` de una tarjeta, lo cual está bien para
+  un chip que flota al lado de una pantalla y está al revés para uno que la
+  **pisa**: el que está encima tiene que ser el más cercano de los dos.
+- Costo medido del fondo en esta figura: el padding le come 48px, así que la
+  escena cae de 0,853 a 0,776 a 1440.
+Política de imagen: ninguna foto; figuras de producto.
+Regla de DESIGN_RULES.md que aplica: §3.

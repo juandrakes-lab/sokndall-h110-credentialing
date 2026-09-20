@@ -514,6 +514,46 @@ export function StatusPath({ steps, end, branch }) {
   );
 }
 
+// The same path between a phone and a wide desktop, 640×430. The wide scene is
+// one unbroken row of six chips on a 1000px canvas: it cannot reflow, so from
+// 1024 down it just shrank — 0.66 at 768 and 0.55 at 641, which put its 15px
+// chips at 8. Measured 2026-09-20. This one wraps the row instead, so the
+// worst case across the whole middle band is 0.86.
+export function MidStatusPath({ steps, end, branch }) {
+  return (
+    <div className={`absolute inset-x-0 top-0 overflow-hidden rounded-2xl bg-white ${lift}`}>
+      <CardHead
+        icon={ICONS.enrollments}
+        title="One application"
+        sub="Ethan Brooks · UnitedHealthcare Community Plan"
+        right={<Badge tone="amber">Info requested</Badge>}
+      />
+      <div className="px-5 py-5">
+        <ol className="flex flex-wrap items-start gap-x-1.5 gap-y-3">
+          {steps.map((s) => (
+            <li key={s.label} className="flex items-start gap-1.5">
+              <span className="flex flex-col items-start">
+                <StepChip step={s} />
+                {s.hint && <span className="mt-1.5 max-w-[10rem] text-xs leading-snug text-status-expiring">{s.hint}</span>}
+              </span>
+              <Icon d={ICONS.chevronRight} className="mt-2 h-4 w-4 shrink-0 text-ink-300" />
+            </li>
+          ))}
+          <li>
+            <span className="flex items-center gap-2 whitespace-nowrap rounded-full bg-brand-700 px-3.5 py-1.5 text-sm font-medium text-white">
+              <Icon d={ICONS.calendar} className="h-4 w-4" /> {end}
+            </span>
+          </li>
+        </ol>
+        <div className="mt-6 flex items-center gap-3 rounded-2xl bg-ink-50 px-4 py-3.5">
+          <span className="whitespace-nowrap rounded-full bg-status-expired-bg px-3.5 py-1.5 text-sm font-medium text-status-expired">{branch.label}</span>
+          <span className="text-sm text-ink-700">{branch.hint}</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // The same path on a phone: one column.
 export function NarrowStatusPath({ steps, end, branch }) {
   return (
@@ -567,7 +607,7 @@ export function EffectiveDate() {
   const statuses = ["not_started", "submitted", "in_review", "info_requested", "approved", "denied"];
   return (
     <>
-      <div className={`absolute left-0 top-0 overflow-hidden rounded-[18px] bg-white ${lift}`} style={{ width: 560, height: 520 }}>
+      <div className={`absolute top-0 overflow-hidden rounded-[18px] bg-white ${lift}`} style={{ left: 30, width: 560, height: 520 }}>
         <div className="border-b border-ink-100 bg-ink-50/80 px-6 py-5">
           <p className="text-sm text-ink-500">Cigna Healthcare</p>
           <p className="mt-0.5 text-2xl font-semibold text-ink-900">Tomás Herrera</p>
@@ -617,7 +657,9 @@ export function EffectiveDate() {
           </div>
         </div>
       </div>
-      <Chip x={260} y={470} w={360}>
+      {/* Centred with the card (30..590 on a 620 canvas) and deeper than it:
+          the chip sits ON the card, so it has to read as the nearer of the two. */}
+      <Chip x={230} y={470} w={360} over>
         <div className="flex items-center gap-3.5 p-4">
           <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-status-active-bg text-status-active">
             <Icon d={ICONS.calendar} className="h-6 w-6" />

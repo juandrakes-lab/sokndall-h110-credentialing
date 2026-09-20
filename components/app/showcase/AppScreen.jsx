@@ -24,6 +24,10 @@ const NAV = [
 // indicator cards `chipLift` — nothing invents its own.
 export const lift = "shadow-[0_1px_2px_rgba(14,42,46,0.06),0_28px_56px_-18px_rgba(14,42,46,0.45)] ring-1 ring-ink-900/[0.07]";
 export const chipLift = "shadow-[0_1px_2px_rgba(14,42,46,0.08),0_18px_36px_-14px_rgba(14,42,46,0.42)] ring-1 ring-ink-900/[0.07]";
+// A chip that sits ON a card rather than beside it needs to read as the nearer
+// of the two, so its shadow is deeper than the card's, not lighter. `chipLift`
+// is for a chip floating over the section's own ground. 2026-09-20.
+export const chipOver = "shadow-[0_2px_4px_rgba(14,42,46,0.10),0_12px_24px_-6px_rgba(14,42,46,0.22),0_36px_64px_-20px_rgba(14,42,46,0.55)] ring-1 ring-ink-900/[0.08]";
 // The same two, for a shot standing on the ink panel (the home hero): an ink
 // shadow on ink is invisible, so on that ground the shadow is black and
 // deeper. Same system, second ground — never a bespoke shadow per scene.
@@ -31,9 +35,9 @@ export const liftOnInk = "shadow-[0_2px_6px_rgba(0,0,0,0.30),0_40px_80px_-24px_r
 export const chipLiftOnInk = "shadow-[0_2px_6px_rgba(0,0,0,0.28),0_26px_50px_-16px_rgba(0,0,0,0.70)] ring-1 ring-black/10";
 
 // A small indicator card floating over a shot, placed on the scene's canvas.
-export function Chip({ x, y, w, onInk = false, children }) {
+export function Chip({ x, y, w, onInk = false, over = false, children }) {
   return (
-    <div className={`absolute rounded-2xl bg-white ${onInk ? chipLiftOnInk : chipLift}`} style={{ left: x, top: y, width: w }}>
+    <div className={`absolute rounded-2xl bg-white ${onInk ? chipLiftOnInk : over ? chipOver : chipLift}`} style={{ left: x, top: y, width: w }}>
       {children}
     </div>
   );
