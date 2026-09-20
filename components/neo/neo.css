@@ -4783,9 +4783,9 @@ html:has(.sk-fnav) { scroll-padding-top: 88px; }
   pointer-events: none;
   border-radius: inherit;
   box-shadow:
-    inset -70px 0 80px -65px rgba(0, 0, 0, 0.42),
-    inset 0 40px 70px -55px rgba(0, 0, 0, 0.38),
-    inset 0 -50px 90px -65px rgba(0, 0, 0, 0.35);
+    inset -70px 0 80px -70px rgba(0, 0, 0, 0.26),
+    inset 0 40px 70px -60px rgba(0, 0, 0, 0.22),
+    inset 0 -50px 90px -70px rgba(0, 0, 0, 0.2);
 }
 /* The white notch and the nav ride above the vignette: they are the panel's
    edge furniture, not something for it to shade. */
@@ -4819,13 +4819,19 @@ html:has(.sk-fnav) { scroll-padding-top: 88px; }
 .sk-hero__tex {
   position: absolute;
   inset: 0;
-  overflow: hidden;
+  /* Clipped with clip-path, NOT overflow: hidden. `overflow` here would make
+     this box a scroll container, and a scroll container is the scrollport a
+     `view()` timeline measures against — the waves' animation then sat at a
+     fixed progress and nothing moved (2026-09-19). */
+  clip-path: inset(0 round var(--r-block));
   border-radius: inherit;
   pointer-events: none;
 }
 .sk-hero__texi {
   position: absolute;
-  inset: -9% 0;
+  /* The overhang has to be bigger than the travel below (8%), or the waves
+     leave a gap at one edge at the end of the range. */
+  inset: -12% 0;
   display: block;
   background-image: url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 1200 720%27 preserveAspectRatio=%27none%27%3E%3Cg fill=%27none%27 stroke=%27white%27 stroke-opacity=%270.075%27 stroke-width=%271%27%3E%3Cpath d=%27M-20 60 C 300 34 520 101.6 800 65.2 S 1100 34 1220 75.6%27/%3E%3Cpath d=%27M-20 140 C 300 111 520 186.4 800 145.8 S 1100 111 1220 157.4%27/%3E%3Cpath d=%27M-20 220 C 300 188 520 271.2 800 226.4 S 1100 188 1220 239.2%27/%3E%3Cpath d=%27M-20 300 C 300 265 520 356.0 800 307.0 S 1100 265 1220 321.0%27/%3E%3Cpath d=%27M-20 380 C 300 342 520 440.8 800 387.6 S 1100 342 1220 402.8%27/%3E%3Cpath d=%27M-20 460 C 300 419 520 525.6 800 468.2 S 1100 419 1220 484.6%27/%3E%3Cpath d=%27M-20 540 C 300 496 520 610.4 800 548.8 S 1100 496 1220 566.4%27/%3E%3Cpath d=%27M-20 620 C 300 573 520 695.2 800 629.4 S 1100 573 1220 648.2%27/%3E%3Cpath d=%27M-20 700 C 300 650 520 780.0 800 710.0 S 1100 650 1220 730.0%27/%3E%3Cpath d=%27M80 -20 C 120 180 48.0 420 104.0 740%27/%3E%3Cpath d=%27M190 -20 C 236 180 153.2 420 217.6 740%27/%3E%3Cpath d=%27M300 -20 C 352 180 258.4 420 331.2 740%27/%3E%3Cpath d=%27M410 -20 C 468 180 363.6 420 444.8 740%27/%3E%3Cpath d=%27M520 -20 C 584 180 468.8 420 558.4 740%27/%3E%3Cpath d=%27M630 -20 C 700 180 574.0 420 672.0 740%27/%3E%3Cpath d=%27M740 -20 C 816 180 679.2 420 785.6 740%27/%3E%3Cpath d=%27M850 -20 C 932 180 784.4 420 899.2 740%27/%3E%3Cpath d=%27M960 -20 C 1048 180 889.6 420 1012.8 740%27/%3E%3Cpath d=%27M1070 -20 C 1164 180 994.8 420 1126.4 740%27/%3E%3Cpath d=%27M1180 -20 C 1280 180 1100.0 420 1240.0 740%27/%3E%3C/g%3E%3C/svg%3E");
   background-size: 100% 100%;
@@ -4855,23 +4861,23 @@ html:has(.sk-fnav) { scroll-padding-top: 88px; }
    Off entirely when the reader asks for less motion. */
 @supports (animation-timeline: view()) {
   @media (prefers-reduced-motion: no-preference) {
+    /* Timed against the page's own scroll, not the panel's visibility: the
+       hero starts at the top of the page, where a `view()` timeline is already
+       half spent and the first screenful of scrolling barely moves anything.
+       On the root scroller the travel starts at the first pixel. */
+    /* Only the ground moves. The shot was moving too until 2026-09-19: an
+       animated transform promotes it to a composited layer, and the founder
+       read the result as less than crisp on his own screen. The shot is the
+       one thing on this page that has to be pixel-perfect, so it stays put
+       and the parallax comes from the layer behind it. */
     .sk-hero__texi {
       animation: sk-par-bg linear both;
-      animation-timeline: view();
-      animation-range: cover 0% cover 100%;
-    }
-    .sk-hero__media--bleed {
-      animation: sk-par-shot linear both;
-      animation-timeline: view();
-      animation-range: cover 0% cover 100%;
+      animation-timeline: scroll(root block);
+      animation-range: 0 900px;
     }
   }
 }
 @keyframes sk-par-bg {
-  from { transform: translate3d(0, -7%, 0); }
-  to { transform: translate3d(0, 7%, 0); }
-}
-@keyframes sk-par-shot {
-  from { transform: translate3d(0, 26px, 0); }
-  to { transform: translate3d(0, -26px, 0); }
+  from { transform: translate3d(0, -8%, 0); }
+  to { transform: translate3d(0, 8%, 0); }
 }

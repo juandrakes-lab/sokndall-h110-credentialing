@@ -107,12 +107,20 @@ Three things the shot depends on, all in `neo.css`:
   the right, where the shot is cut, so it sinks into the panel instead of being
   sliced by it. The white notch and the nav sit above it. Keep it light — it
   was dialled back once already for dimming the data.
-- **Parallax**, scroll-driven (`animation-timeline: view()`): the waves travel
-  ±7% and the shot ∓26px, so the ground moves slower than the page and the shot
-  a touch faster. No scroll listener, no client component. Browsers without
-  scroll-driven animations (Safari and Firefox today) show it still, and so
-  does anyone asking for reduced motion. Transforms only: a translation does
-  not re-rasterise, so the type stays as sharp as it is at rest.
+- **Parallax on the ground only**, scroll-driven
+  (`animation-timeline: scroll(root block)`, range 0–900px): the waves travel
+  ±8%, so the panel moves slower than the page. No scroll listener, no client
+  component; browsers without scroll-driven animations (Safari and Firefox
+  today) show it still, and so does anyone asking for reduced motion.
+  **The shot itself does not move.** It did for one round, ∓44px, and the
+  founder read the result as less than crisp: an animated transform promotes
+  the element to a composited layer, and a composited layer holding a scaled
+  canvas can be rasterised below the display's scale. Sharpness wins here —
+  the shot is the argument. Two traps if this is ever revisited: the mask
+  around the waves must be `clip-path`, never `overflow: hidden` (that makes it
+  a scroll container, and a `view()` timeline then measures against a box that
+  never scrolls — the waves sat frozen), and the travel must stay under the
+  layer's overhang or the waves leave a gap at one edge.
 
 The home's H1 is one step under the shared display size
 (`.sk-hero--panel .sk-display`, 4rem against 4.5rem): at 4.5rem the copy column

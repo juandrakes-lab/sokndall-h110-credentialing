@@ -1290,8 +1290,10 @@ quedó chico dentro de la columna (0,5, el piso del Stage). Rediseño del hero:
   de quedar rebanado. Se bajó de intensidad una vez: apagaba los datos.
 - La pestaña de abajo lleva ahora un chevron: era una forma suelta y pasa a ser
   la señal de scroll, lo único del hero que apunta hacia abajo.
-- Parallax con animaciones ligadas al scroll (`animation-timeline: view()`):
-  las ondas ±7%, el shot ∓26px. Sin listener y sin componente cliente; donde el
+- Parallax con animaciones ligadas al scroll: solo el fondo, ±8% sobre el
+  scroll de la página (0–900px). El shot se movía ∓44px y se sacó: al animarlo
+  pasa a ser una capa compuesta y el fundador lo vio menos nítido en su
+  pantalla. Entre movimiento y nitidez, manda la nitidez. Sin listener y sin componente cliente; donde el
   navegador no lo soporta (Safari, Firefox) no se mueve nada, igual que para
   quien pide menos movimiento.
 - Inclinación descartada: se midió a 7° y 13° con recortes a 2×. A 7° la
