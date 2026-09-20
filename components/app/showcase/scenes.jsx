@@ -996,6 +996,40 @@ export function NarrowSheet() {
 // ---- /pricing ------------------------------------------------------------------
 
 // Users against providers, 560×470 — the section's rows and caption.
+// The same two units on a phone, 330 wide. The wide scene is a 560px canvas,
+// and a phone column is ~332: it drew at 0.59, which put the 32px avatars at
+// 19 and the numeral at 24. Measured 2026-09-20. Here the note drops under the
+// count instead of sitting beside it (at 332 the two do not share a line) and
+// the chips are a size smaller, so the whole thing draws at 1.
+export function NarrowUsersProviders({ rows, caption }) {
+  const people = [PEOPLE.erin, PEOPLE.luis, PEOPLE.ana];
+  const names = ["Aisha Bello", "Ethan Brooks", "Maya Chen", "Gregory Daytona", "Noah Fischer", "Olivia Grant", "Hannah Kowalski", "Grace Liu", "Lauren Mitchell", "Priya Natarajan", "Daniel Okafor", "Samuel Park", "Sofia Ramirez", "Marcus Reed", "James Whitaker"];
+  return (
+    <div className="absolute inset-x-0 top-0 flex flex-col gap-3">
+      {rows.map((r) => (
+        <div key={r.unit} className={`rounded-2xl bg-white px-5 py-4 ${lift}`}>
+          <div className="flex items-baseline gap-2">
+            <span className="text-[2.125rem] font-semibold leading-none tracking-[-0.02em] text-ink-900">{r.count}</span>
+            <span className="text-base font-semibold text-ink-900">{r.unit}</span>
+          </div>
+          <p className="mt-1.5 text-[0.8125rem] leading-snug text-ink-500">{r.note}</p>
+          <div className={`mt-3 flex flex-wrap ${r.kind === "person" ? "gap-2.5" : "gap-1.5"}`}>
+            {r.kind === "person"
+              ? people.slice(0, r.count).map((p) => <PersonPhoto key={p.name} name={p.name} photo={p.photo} size="md" />)
+              : Array.from({ length: r.count }, (_, i) => <Avatar key={i} name={names[i % names.length]} size="sm" />)}
+          </div>
+        </div>
+      ))}
+      {caption && (
+        <div className={`flex items-start gap-3 rounded-2xl bg-white px-4 py-3.5 ${chipLift}`}>
+          <IconTile d={ICONS.team} size="sm" />
+          <p className="text-[0.875rem] leading-snug text-ink-700">{caption}</p>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export function UsersProviders({ rows, caption }) {
   const people = [PEOPLE.erin, PEOPLE.luis, PEOPLE.ana];
   // The demo client's fifteen providers, round and round.

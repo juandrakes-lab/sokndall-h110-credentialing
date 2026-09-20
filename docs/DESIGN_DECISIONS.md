@@ -1617,3 +1617,26 @@ bloque tinta en vez de alinearse arriba: el tile mide 660 y la figura 486, y
 alineada arriba los 174px de diferencia colgaban todos abajo. Ahora quedan 87
 arriba y 87 abajo. Apilada no hay contra qué centrar y vuelve a arriba.
 Regla de DESIGN_RULES.md que aplica: §14.
+
+## /pricing — la figura de unidades gana versión de teléfono; la comparativa, su cabecera tinta
+Fecha: 2026-09-20
+Decisión: dos pedidos del fundador.
+- **La figura de unidades se queda sin fondo.** Criterio del fundador y es
+  correcto por la misma regla que el resto: son dos tarjetas blancas que ya se
+  leen como objeto, y la sección no tiene nada con qué confundirlas. El fondo se
+  reserva para donde una tarjeta suelta de la app compite con tarjetas de
+  contenido.
+- **Versión angosta.** El lienzo ancho mide 560 y una columna de teléfono ~332:
+  se dibujaba a **0,593**, lo que ponía los avatares de 32px en 19 y la cifra de
+  40px en 24. Entra `NarrowUsersProviders`, 330×580: la nota baja debajo de la
+  cifra (a 332 no comparten línea) y los chips van un tamaño menos. Se dibuja a
+  **1,000** y los avatares vuelven a 32px.
+- **La comparativa de los tres planes, en teléfono**, pasa a llevar la misma
+  cabecera tinta que la tabla entera lleva en pantalla grande. Ahí la fila de
+  encabezado está oculta, así que las seis tarjetas no tenían ancla y se leían
+  como seis listas sueltas. Lo que va en la barra es el nombre de la fila, que
+  es de lo que trata la tarjeta. La tarjeta pierde su padding y recorta
+  (`overflow: hidden`), para que la barra corra de canto a canto; el padding se
+  muda a las celdas.
+Política de imagen: ninguna.
+Regla de DESIGN_RULES.md que aplica: §3, §0 (capturas a 390).

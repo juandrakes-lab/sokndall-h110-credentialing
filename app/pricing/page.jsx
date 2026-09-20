@@ -83,7 +83,7 @@ export default function PricingPage() {
           head={UNITS.head}
           paras={UNITS.paras}
           closing={UNITS.closing}
-          media={<ProductShot scene="UsersProviders" props={{ rows: UNITS_DIAGRAM.rows, caption: UNITS_DIAGRAM.caption }} w={560} h={470} label={UNITS_DIAGRAM.caption} />}
+          media={<ProductShot scene="UsersProviders" props={{ rows: UNITS_DIAGRAM.rows, caption: UNITS_DIAGRAM.caption }} w={560} h={470} narrow={{ scene: "NarrowUsersProviders", w: 330, h: 580 }} label={UNITS_DIAGRAM.caption} />}
         />
 
         {/* The four anchors in two groups that do not compare with each other:

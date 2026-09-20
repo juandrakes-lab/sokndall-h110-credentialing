@@ -4611,22 +4611,39 @@ html:has(.sk-fnav) { scroll-padding-top: 88px; }
   .sk-pfm__table th,
   .sk-pfm__table td { display: block; width: 100%; }
   .sk-pfm__table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  /* Each card carries the same ink head the whole table carries on a wide
+     screen (the founder, 2026-09-20). On a phone the head row is hidden, so
+     without this the cards had no anchor and read as six loose lists. The
+     row's own name is what goes in it: that is what the card is about.
+     The card loses its padding and clips instead, so the bar runs edge to
+     edge; the padding moves to the cells. */
   .sk-pfm__table tbody tr {
     background: var(--card);
     border-radius: var(--r-card);
     border: var(--hairline) solid var(--line);
     box-shadow: var(--sh-white);
-    padding: var(--s-4);
+    padding: 0;
+    overflow: hidden;
     margin-bottom: var(--s-3);
   }
   .sk-pfm__table th,
   .sk-pfm__table td { padding: 0; border: 0; background: none; }
   .sk-pfm__table td.is-hi,
   .sk-pfm__table th.is-hi { background: none; }
-  .sk-pfm__table tbody th { margin-bottom: var(--s-3); }
-  .sk-pfm__table td { display: flex; justify-content: space-between; align-items: center; padding: var(--s-2) 0; border-top: 1px solid var(--line); }
+  .sk-pfm__table tbody th {
+    margin-bottom: 0;
+    text-align: left;
+    background: var(--ink);
+    color: #fff;
+    font-size: 0.9375rem;
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    padding: 10px var(--s-4);
+  }
+  .sk-pfm__table td { display: flex; justify-content: space-between; align-items: center; padding: var(--s-2) var(--s-4); border-top: 1px solid var(--line); }
+  .sk-pfm__table tbody td:first-of-type { border-top: 0; padding-top: var(--s-3); }
+  .sk-pfm__table tbody td:last-of-type { padding-bottom: var(--s-3); }
   .sk-pfm__table td::before { content: attr(data-label); font-size: 0.8125rem; font-weight: 600; }
-  .sk-pfm__table tbody th { text-align: left; }
   .sk-pfm__v { font-size: 1rem; }
   .sk-pfm__g { width: 22px; height: 22px; }
   .sk-pfm__cap { padding: var(--s-2) 0 0; border: 0; background: none; }
