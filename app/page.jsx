@@ -84,6 +84,7 @@ export default function HomePage() {
             <ProductShot
               scene="MondayDigest"
               backdrop="ground"
+              tilt
               w={600}
               h={588}
               narrow={{ scene: "NarrowDigest", w: 380, h: 408 }}

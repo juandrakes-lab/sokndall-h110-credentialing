@@ -1432,3 +1432,49 @@ las dos por un motivo distinto.
   en él. Sobre blanco no tiene nada que dejar pasar.
 Política de imagen: sin cambios.
 Regla de DESIGN_RULES.md que aplica: §17.
+
+## Figuras de producto — el shot se para sobre el fondo y se sale de él (inclinado en Y)
+Fecha: 2026-09-20
+Decisión: entra el boceto del fundador, que es una tercera cosa distinta de las
+dos que veníamos discutiendo: **el fondo queda derecho y quieto, y es el shot el
+que se inclina y se sale**. No es el fondo como marco alrededor del shot (lo que
+había hecho yo), ni la figura entera inclinada.
+- El fondo (`app-shotframe__ground`) es más grande que el shot: sale 32px a la
+  izquierda de la caja de la figura y 28px arriba y abajo. Así se lee como una
+  superficie y no como un marco. El tope de la izquierda lo pone el gutter de
+  columna: 58px a 1440, así que 32 deja 26 libres contra las tarjetas.
+- El shot va corrido 64px a la derecha y girado `rotateY(7deg)` con el origen
+  en el borde izquierdo, de modo que ese borde se queda quieto y el derecho
+  viaja. Resultado a 1440: el fondo se ve 96px a la izquierda del correo, y el
+  correo sale 43px por el borde derecho del fondo.
+- **La inclinación es solo en Y, y solo por encima de 1080.** Medido el mismo
+  día: a 7° el borde cercano se dibuja a ×1,020, o sea 0,888 efectivo — sigue
+  por debajo de 1:1, que es la prueba que fija el contrato (recién cruzaría
+  pasados los ~36°). Y a diferencia de la rotación en Z, que saca a los siete
+  filetes del grid a lo largo de todo su trazo, una rotación en Y los deja
+  mucho más cerca de la horizontal. Apilada la sección, la inclinación se va:
+  322px de columna no tienen ancho que gastar en perspectiva.
+- **El fondo dejó de costar nitidez.** Como marco con padding le comía 48px al
+  lienzo y el correo caía de 0,951 a 0,871. Ahora el shot conserva el ancho
+  entero de la figura: vuelve a **0,951** a 1440, a 1,0 a 768 y a 0,847 en
+  teléfono. La profundidad salió gratis.
+- El correo lleva una sombra más profunda que el `lift` estándar (`liftOff`,
+  nueva en AppScreen): el voladizo es la afirmación y la sombra es lo que la
+  hace legible. Las escenas reciben su profundidad por prop (`depth`), que el
+  `ProductShot` pasa solo cuando hay fondo.
+- El voladizo derecho nunca supera el viewport (a 1440 el correo termina en
+  1363; a 1280 en 1234; a 1100 en 1046), así que la figura no agrega scroll
+  horizontal.
+Política de imagen: ninguna foto; una figura de producto sobre el fondo de la app.
+Regla de DESIGN_RULES.md que aplica: §3, §17.
+
+## Home — hallazgo aparte: la home tiene scroll horizontal desde el hero
+Fecha: 2026-09-20
+Decisión: no es mío y no lo toqué, pero queda anotado. A 1440 la home mide
+**1721px de ancho de documento**; `/pricing` y `/security` miden 1440 clavados.
+El que se sale es el lienzo del Stage del hero (`div.absolute.top-1/2.left-0`),
+que llega a x=1721: el shot que sangra fuera del panel no está siendo recortado
+por nadie. Viene de `fd21bc9`, cuando el hero pasó a sangrar. Medido con y sin
+la figura del correo: 1721 en los dos casos, así que la figura nueva no aporta
+nada a esto. Hay que recortarlo donde corresponda —el panel del hero— sin usar
+`overflow: hidden`, que rompería el parallax.

@@ -228,3 +228,55 @@ body {
     radial-gradient(70% 80% at 0% 0%, rgba(44, 95, 100, 0.22), transparent 70%),
     linear-gradient(180deg, #eef2f1 0%, #f1f3f1 100%);
 }
+
+/* A product figure that stands on the app's ground (2026-09-20, the founder's
+   sketch): the ground stays square to the page and the shot sits ON it,
+   rotated on Y and overhanging its top-left corner, so it reads as lifted off
+   rather than pasted into a box. The ground is inset from the figure's own box
+   on the top and left and runs a little past it on the bottom and right — that
+   difference IS the overhang, and it costs the shot no width, so the scene
+   keeps the scale it had before the ground existed.
+   The rotation is only ever on Y: measured 2026-09-20, it keeps every part
+   below 1:1 (it would cross only past ~36°) and leaves the 1px rules far
+   closer to the pixel grid than a rotation on Z, which resamples all of them
+   along their whole run. See docs/PRODUCT_SHOTS.md. */
+.app-shotframe { position: relative; perspective: 1400px; }
+/* The ground is square to the page and BIGGER than the shot: it runs a little
+   left of the figure's box and taller than it on both sides, so it reads as a
+   surface rather than a frame. The shot is pushed right and rotated on Y with
+   its right edge forward, so its left edge lands well inside the ground and
+   its right edge swings out past it. The shot keeps the figure's own width, so
+   it costs the scene nothing: 0.951 at 1440, against 0.871 when the ground was
+   padding around it.
+   The left overhang is capped by the column gutter (58px at 1440); the right
+   one runs into the page margin, so it steps down with the viewport and comes
+   off entirely once the section stacks. */
+.app-shotframe__ground {
+  position: absolute;
+  inset: -28px 0 -28px -32px;
+  border-radius: 28px;
+  box-shadow: inset 0 0 0 1px rgba(14, 42, 46, 0.06);
+  z-index: 0;
+}
+.app-shotframe__stage { position: relative; z-index: 1; }
+/* Rotated on Y, right edge forward, origin near the left so that edge stays
+   put and the right one travels. Measured 2026-09-20: every part stays below
+   1:1 (it would cross only past ~36°), and a rotation on Y leaves the 1px
+   rules far closer to the pixel grid than one on Z, which resamples all of
+   them along their whole run. See docs/PRODUCT_SHOTS.md. */
+.app-shotframe--tilt .app-shotframe__stage {
+  transform: translateX(64px) rotateY(7deg);
+  transform-origin: 0% 50%;
+}
+@media (max-width: 1279px) {
+  .app-shotframe--tilt .app-shotframe__stage { transform: translateX(36px) rotateY(6deg); }
+}
+/* Stacked, the figure has the full column and no page margin to lean into:
+   the ground pulls in and the shot goes back square. */
+@media (max-width: 1080px) {
+  .app-shotframe__ground { inset: -20px 0 -20px -20px; }
+  .app-shotframe--tilt .app-shotframe__stage { transform: none; }
+}
+@media (max-width: 640px) {
+  .app-shotframe__ground { inset: -12px 0 -12px -12px; }
+}
