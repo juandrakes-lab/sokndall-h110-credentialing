@@ -1404,3 +1404,31 @@ no es el molde.
   el teléfono ya es el caso más justo.
 Política de imagen: ninguna foto; una figura de producto sobre el fondo de la app.
 Regla de DESIGN_RULES.md que aplica: §3, §17, §18.
+
+## Figuras de producto — rotación en Z y transparencia del fondo: las dos se descartan
+Fecha: 2026-09-20
+Decisión: propuestas del fundador sobre el correo de la home; ninguna entra, y
+las dos por un motivo distinto.
+- **Rotación en Z.** Medida como se midió la inclinación 3D: recortes a 2× de
+  las mismas filas a 0°, 1,2° y 2,5°. El **texto aguanta** — el shot se dibuja
+  a 0,871, así que rotar es remuestrear y no agrandar, igual que a 7° de
+  inclinación. Lo que no aguanta es **el filete de 1px**: los separadores de
+  fila pasan de limpios a 0° a blandos y de grosor desparejo a lo largo del
+  trazo a 1,2°, y parejamente blandos a 2,5°. Este correo está construido
+  entero con filetes — uno por fila, siete — así que el daño cae justo donde la
+  figura lleva su estructura. Y los recortes son a 2×: en una pantalla a 1×,
+  como la del fundador, no hay subpíxel donde repartir el error y se ve peor.
+  La prueba queda escrita en PRODUCT_SHOTS.md: no es "nada se inclina", es
+  **una escena dibujada con filetes se queda derecha**. Una escena de tarjetas
+  y pastillas podría llevar rotación, y nunca por debajo de 2°: 1° es chico
+  para leerse como intencional y grande para que las líneas parezcan mal
+  dibujadas.
+- **Transparencia del fondo.** El fondo de la app mide **1,13:1 contra el
+  blanco de la página** (#eef1ef contra #fff). Es todo el margen que tiene para
+  decir "esto es otro material", y es lo único que separa la figura de las tres
+  tarjetas desde que volvieron. Bajarlo con transparencia lo lleva a ~1,11:1 y
+  deshace lo que acabamos de comprar. La transparencia sirve sobre un fondo de
+  color — el panel tinta del hero, donde dejar pasar el panel hunde la figura
+  en él. Sobre blanco no tiene nada que dejar pasar.
+Política de imagen: sin cambios.
+Regla de DESIGN_RULES.md que aplica: §17.
