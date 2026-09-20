@@ -1370,3 +1370,37 @@ pantallas medianas, y los cuatro cuadros leyéndose como pares).
 Política de imagen: ninguna foto; una figura de producto.
 Regla de DESIGN_RULES.md que aplica: §3 (blanco vs. gris es jerarquía), §4,
 §16.
+
+## Home — "Three things": vuelven las tarjetas y el correo se para sobre el fondo de la app
+Fecha: 2026-09-20
+Decisión: se revierte el paso anterior del mismo día (quitarle la tarjeta a las
+tres filas) y entra la solución del fundador. Tenía razón: sacarle el marco al
+contenido resolvía la jerarquía **contra el resto del sitio**, donde todo lo que
+no es texto corrido va en un cuadro. Un molde que solo funciona en una sección
+no es el molde.
+- Las tres filas vuelven a `sk-card sk-card--pad`. Se va el filete entre filas.
+  Los arreglos de la ronda anterior quedan: centrado en lugar de
+  `space-between`, quiebre a una columna en 1080 y lienzo de la escena a 588.
+- El correo se dibuja sobre **el fondo de la app** (`app-ground-flat`, que ya
+  existía en `globals.css` y que el `ProductShot` original llevaba como
+  `backdrop="ground"`, commit `fade29b`), en caja redondeada de 28px con
+  filete. Es el material que distingue una figura de una tarjeta de la página,
+  y no inventa nada: es literalmente el fondo de la herramienta.
+- **Se le saca el radial ámbar** (variante `app-ground-flat--calm`). El fondo
+  original lleva petróleo arriba a la izquierda y ámbar abajo a la derecha, y
+  eso rompe dos reglas a la vez: §17 (nunca dos colores en un degradado, nunca
+  sobre superficie clara) y §18 (el ámbar es señal — y las figuras que se paran
+  encima llevan sus propias pastillas ámbar de estado, con las que competía).
+  El lavado petróleo es la mitad que hace reconocible el fondo como el de la app.
+- La regla que queda, para las demás figuras: **una figura que es una pantalla
+  entera trae su propia sidebar y su barra superior y no necesita fondo; una
+  tarjeta suelta, un panel o un correo, sí** — una tarjeta blanca de la app
+  suelta sobre una sección blanca, al lado de tarjetas blancas de contenido, se
+  lee como una cuarta tarjeta de contenido. El hero sigue sin fondo
+  (`backdrop="none"`): se para sobre el panel tinta.
+- Costo medido: el padding del fondo le come ancho al lienzo. A 1440 el correo
+  pasa de 0,95 a **0,871**; a 768 sigue en 1,0. En teléfono el padding baja a
+  12px y aun así pasa de 0,847 a **0,784** — es la pérdida a discutir, porque
+  el teléfono ya es el caso más justo.
+Política de imagen: ninguna foto; una figura de producto sobre el fondo de la app.
+Regla de DESIGN_RULES.md que aplica: §3, §17, §18.

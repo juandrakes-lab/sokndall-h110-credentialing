@@ -4409,17 +4409,15 @@ html:has(.sk-fnav) { scroll-padding-top: 88px; }
   align-content: center;
   gap: var(--s-6);
 }
-/* A row is an icon, a title and a line, on the section's own white. The
-   hairline is the separation; a card around each one made four peers. */
+/* A row is a card again (2026-09-20, round 3): the site's rule is that
+   everything but running text sits in a box, and taking the boxes off three
+   rows to solve the hierarchy solved it against the rest of the site. What
+   tells the digest apart is its ground, not the absence of theirs. */
 .sk-layers__row {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
   align-items: start;
   gap: var(--s-4);
-}
-.sk-layers__row + .sk-layers__row {
-  padding-top: var(--s-6);
-  border-top: 1px solid var(--line);
 }
 .sk-layers__row .sk-tile { margin-top: 1px; }
 .sk-layers__rowtext { display: grid; gap: var(--s-2); }

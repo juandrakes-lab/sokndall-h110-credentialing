@@ -83,6 +83,7 @@ export default function HomePage() {
           aside={
             <ProductShot
               scene="MondayDigest"
+              backdrop="ground"
               w={600}
               h={588}
               narrow={{ scene: "NarrowDigest", w: 380, h: 408 }}

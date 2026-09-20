@@ -22,7 +22,14 @@ import * as SCENES from "@/components/app/showcase/scenes";
 // laptop too, and there the whole screen is exactly what should be shown). A
 // whole screen is unreadable on a phone, so the narrow variant is the part
 // that matters — one card, a list, a panel — at a size that can be read.
-export default function ProductShot({ scene, props = {}, w, h, narrow, label, className = "", bleed = 0 }) {
+//
+// `backdrop="ground"`: the app's own background under the shot, in a rounded
+// box with a hairline. It is what tells a figure apart from the page's own
+// cards — a loose white card of the app, dropped on a white section beside
+// white content cards, reads as a fourth content card. A figure that is a
+// whole screen carries its own sidebar and top bar and needs no ground; a
+// loose card, panel or email does. The founder's call, 2026-09-20.
+export default function ProductShot({ scene, props = {}, w, h, narrow, label, className = "", bleed = 0, backdrop = "none" }) {
   const box = useRef(null);
   const [ready, setReady] = useState(false);
   const [small, setSmall] = useState(false);
@@ -45,7 +52,14 @@ export default function ProductShot({ scene, props = {}, w, h, narrow, label, cl
   const ch = small ? narrow.h : h;
 
   return (
-    <figure ref={box} className={`app-type relative m-0 w-full ${className}`}>
+    <figure
+      ref={box}
+      className={`app-type relative m-0 w-full ${
+        backdrop === "ground"
+          ? "app-ground-flat--calm rounded-[28px] p-3 sm:p-6 ring-1 ring-ink-900/[0.06]"
+          : ""
+      } ${className}`}
+    >
       {ready && (
         <Stage
           w={cw}

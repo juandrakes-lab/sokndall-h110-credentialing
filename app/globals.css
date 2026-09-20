@@ -215,3 +215,16 @@ body {
     radial-gradient(60% 70% at 100% 100%, rgba(242, 193, 78, 0.3), transparent 70%),
     linear-gradient(180deg, #eef2f1 0%, #f3f1eb 100%);
 }
+
+/* The same ground, petrol only (2026-09-20). Behind a product figure on a
+   marketing page the amber corner breaks two marketing rules at once:
+   DESIGN_RULES §17 (never two colours in one gradient, never on a light
+   surface) and §18 (amber is signal — and the figures it sits behind carry
+   amber action badges of their own, which it then competes with). The petrol
+   wash is the half that makes the ground recognisable as the app's. */
+.app-ground-flat--calm {
+  background-color: #eef1ef;
+  background-image:
+    radial-gradient(70% 80% at 0% 0%, rgba(44, 95, 100, 0.22), transparent 70%),
+    linear-gradient(180deg, #eef2f1 0%, #f1f3f1 100%);
+}
