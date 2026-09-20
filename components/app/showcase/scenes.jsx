@@ -407,7 +407,55 @@ export function MondayDigest() {
           ["Grace Liu · Cigna Healthcare", "In review", "Overdue since Sep 15", "red"],
         ])}
         {section("Stalled 30+ days · 11", [["Samuel Park · EmblemHealth", "In review", "Stalled", "amber"]])}
+        {/* The third block, added 2026-09-20: the section's heading promises
+            three things in one place, and the email is that place — so it has
+            to carry the expiries too, not only the follow-ups. */}
+        {section("Expiring in the next 90 days · 23", [
+          ["Maya Chen · State license", "New York, expires Oct 4", "14 days", "red"],
+          ["Aisha Bello · CAQH attestation", "Due for re-attestation", "27 days", "amber"],
+        ])}
         <span className="mt-5 inline-flex h-10 items-center rounded-xl bg-brand-700 px-4 text-sm font-medium text-white">Open this week&apos;s follow-ups</span>
+      </div>
+    </div>
+  );
+}
+
+// The digest on a phone: the envelope and the first rows of each block. The
+// wide one is drawn on a 600px canvas and a phone column is ~320, which put it
+// under 0.55 — the type stops being readable well before the Stage's floor.
+export function NarrowDigest() {
+  return (
+    <div className={`absolute inset-x-0 top-0 overflow-hidden rounded-[18px] bg-white ${lift}`}>
+      <div className="flex items-start gap-3 border-b border-ink-100 bg-ink-50 px-4 py-3.5">
+        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-brand-700 text-sm font-semibold text-white">S</span>
+        <div className="min-w-0 flex-1">
+          <p className="flex items-baseline justify-between gap-2">
+            <span className="truncate text-sm font-semibold text-ink-900">Sokndall</span>
+            <span className="shrink-0 text-xs text-ink-500">Mon 9:02</span>
+          </p>
+          <p className="truncate text-xs text-ink-500">to erin.walsh@riversidepeds.com</p>
+          <p className="mt-1.5 text-sm font-semibold text-ink-900">Your week: 20 follow-ups, 23 expiring</p>
+        </div>
+      </div>
+      <div className="px-4 pb-4 pt-3.5">
+        <p className="text-lg font-bold text-ink-900">Your week in credentialing</p>
+        {[
+          ["Follow-ups this week · 20", "Olivia Grant · EmblemHealth", "In review", "Overdue since Sep 15", "red"],
+          ["Stalled 30+ days · 11", "Samuel Park · EmblemHealth", "In review", "Stalled", "amber"],
+          ["Expiring in the next 90 days · 23", "Maya Chen · State license", "New York, expires Oct 4", "14 days", "red"],
+        ].map(([head, t, d, pill, tone]) => (
+          <div key={head}>
+            <p className="mt-3.5 text-[0.6875rem] font-bold uppercase tracking-wider text-ink-500">{head}</p>
+            <div className="mt-1.5 flex items-center justify-between gap-2 border-t border-ink-100 pt-2.5">
+              <span className="min-w-0">
+                <span className="block truncate text-sm font-semibold text-ink-900">{t}</span>
+                <span className="block text-xs text-ink-500">{d}</span>
+              </span>
+              <Badge tone={tone}>{pill}</Badge>
+            </div>
+          </div>
+        ))}
+        <span className="mt-4 inline-flex h-10 items-center rounded-xl bg-brand-700 px-4 text-sm font-medium text-white">Open this week&apos;s follow-ups</span>
       </div>
     </div>
   );

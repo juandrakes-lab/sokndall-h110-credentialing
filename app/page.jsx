@@ -2,7 +2,7 @@ import Shell from "@/components/neo/Shell";
 import Faq from "@/components/neo/Faq";
 import HeroPanel from "@/components/neo/HeroPanel";
 import {
-  IconDoc, IconGrid, IconMail, IconClock,
+  IconDoc, IconMail, IconClock,
   IconSearch, IconRefresh, IconShield, IconUsers,
 } from "@/components/neo/icons";
 import LandingTemplate, {
@@ -70,19 +70,25 @@ export default function HomePage() {
           photo={PHOTOS.bindersDesk}
         />
 
-        {/* "Three things" as three cards (round 3): applications, credentials
-            and the Monday follow-up, each with its visual; "One row per state"
-            sits inside the credentials card. Every string is the copy's. */}
+{/* The three things beside the digest they arrive in (2026-09-20). The
+            icons are design's, one per row; every string is the copy's. */}
         <LayersSection
           head={LAYERS.head}
-          blocks={{
-            applications: { ...LAYERS.wide, icon: <IconClock /> },
-            credentials: { ...LAYERS.tall, icon: <IconDoc /> },
-            detail: { ...LAYERS.small2, icon: <IconGrid /> },
-            followup: { ...LAYERS.small1, icon: <IconMail /> },
-          }}
-          photo={PHOTOS.phoneDesk}
-          visual={<ProductShot scene="MondayDigest" w={560} h={560} className="sk-layers__visual" label="The Monday digest email: follow-ups this week, stalled applications, what expires" />}
+          items={[
+            { ...LAYERS.items[0], icon: <IconClock /> },
+            { ...LAYERS.items[1], icon: <IconDoc /> },
+            { ...LAYERS.items[2], icon: <IconMail /> },
+          ]}
+          closing={LAYERS.closing}
+          aside={
+            <ProductShot
+              scene="MondayDigest"
+              w={600}
+              h={780}
+              narrow={{ scene: "NarrowDigest", w: 380, h: 470 }}
+              label="The Monday digest email: follow-ups this week, stalled applications, and what expires in the next 90 days"
+            />
+          }
         />
 
         <DiagramSection

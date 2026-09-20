@@ -1302,3 +1302,38 @@ quedó chico dentro de la columna (0,5, el piso del Stage). Rediseño del hero:
   la recta igual. Queda escrito en PRODUCT_SHOTS.md con el porqué, y
   /styleguide/hero se borró.
 Regla de DESIGN_RULES.md que aplica: §5, §16, §17.
+
+## Home — "Three things, tracked in one place", recompuesta
+Fecha: 2026-09-20
+Decisión: la sección se rehace entera (pedido del fundador; copy respondió el
+2026-09-19). Antes eran tres tarjetas de tres formas distintas: una con foto de
+archivo, otra con una lista de cinco ítems y una cuarta idea en caja gris
+adentro, y la tercera con el correo colgando por fuera.
+- Ahora: a la izquierda las tres cosas como tres filas iguales (ícono, título,
+  línea); a la derecha el correo del lunes, entero y a tamaño propio. El título
+  dice "in one place" y el correo es ese lugar, así que la sección se prueba a
+  sí misma.
+- Sale la foto del hombre con el teléfono. A la home le queda una sola foto, la
+  de la sección 2. Es la sección que promete que el producto sigue tres cosas:
+  una foto de archivo juega en contra.
+- El correo suma el tercer bloque ("Expiring in the next 90 days"), para que
+  muestre las tres cosas y no solo los follow-ups. Escena `NarrowDigest` nueva
+  para teléfono: a 600 de lienzo en una columna de 322 caía a 0,54 y no se
+  leía; recortado se dibuja a 0,85.
+- Las tres filas se reparten a lo alto del correo (`space-between`), así la
+  primera y la última quedan a la altura de su cabecera y su pie.
+- Copy, según la respuesta del copywriter:
+  - Las cinco credenciales bajan a la línea de cierre de la sección, con "one
+    row per state" absorbido adentro (170 caracteres).
+  - "A multi-state panel is where a spreadsheet breaks first" se retira de la
+    home; ya vive en /credentialing-spreadsheet-template §4.
+  - Los tres títulos y los tres cuerpos no cambian.
+- Bloqueante que copy levantó y que ya no aplica: las tres líneas que dicen que
+  el producto no existe ("not a screenshot", "no product interface exists yet")
+  siguen en los data.js pero ninguna se renderiza desde que entraron los
+  product shots. Verificado en las tres páginas. Queda para copy retirarlas del
+  archivo.
+- DESIGN_RULES §2 regla 1 enmendada: el producto existe y las figuras son
+  pantallas reales; lo prohibido ahora es la pantalla inventada.
+Política de imagen: ninguna foto; una figura de producto.
+Regla de DESIGN_RULES.md que aplica: §2 regla 1 (enmendada), §13, §14, §19.

@@ -54,9 +54,17 @@ declarada, antes de usarse.
 
 ## 2. LO QUE NUNCA CAMBIA, EN NINGUNA PÁGINA
 
-1. **El producto no existe y no se simula.** Ningún mockup de interfaz, ninguna
-   captura, ningún dashboard inventado. El esquema de la matriz es de baja
-   fidelidad deliberada y lleva su nota visible de que no es una captura.
+1. ~~**El producto no existe y no se simula.**~~ **Enmendada el 20 sep 2026: el
+   producto existe.** Desde que la herramienta funciona, las figuras de las
+   landings son *product shots*: los componentes de la app, con los datos del
+   cliente demo, dibujados en HTML (`components/app/showcase/`, contrato en
+   `docs/PRODUCT_SHOTS.md`). Lo que sigue prohibido es lo mismo de antes con
+   otro nombre: **ninguna pantalla inventada**. Si algo no existe en la app, no
+   se dibuja; y ninguna cifra de una figura sale de la imaginación (los datos
+   salen del libro demo en Supabase). Los esquemas de baja fidelidad y su nota
+   de "esto no es una captura" quedaron sin uso — el copy que los acompañaba
+   sigue en los `data.js` sin renderizarse, pendiente de que copywriting lo
+   reescriba o lo retire.
 2. **Cero cifras sin fuente linkeada en la misma línea.** Nunca en nota al pie.
    Toda estimación se marca como estimación en el texto visible.
 3. **El estado nunca se comunica solo por color.** Siempre glifo + etiqueta de

@@ -52,35 +52,35 @@ export const PROBLEM = {
     "None of the three is complicated. Each one is the same thing: a date nobody was watching, or an application nobody chased.",
 };
 
+// Recomposed 2026-09-20 on copywriting's reply of 2026-09-19: the three things
+// as three rows beside the digest, which is the place they arrive in — the
+// section's own headline. The five credential names leave the second card for
+// the closing line (they are the argument, not a category — voice-and-evidence
+// §2.2) and take "one row per state" with them. "A multi-state panel is where a
+// spreadsheet breaks first" is retired here; it already lives on
+// /credentialing-spreadsheet-template §4.
 export const LAYERS = {
   head: {
     pill: "What it tracks",
     title: ["Three things, tracked", "in one place"],
     statCaption: "Alerts at 90, 60, 30, 14 and 7 days before expiry.",
   },
-  wide: {
-    title: "Enrollment applications that go quiet",
-    body: "[One record per provider per payer](/payer-enrollment-software). Info requested is the costly one: the payer never asks.",
-  },
-  tall: {
-    title: "Credentials that expire",
-    body: "Status derives itself from the expiration date, not from someone remembering.",
-    points: [
-      "State licenses and DEA",
-      "Malpractice COI",
-      "Board certification",
-      "CAQH attestation, 120 days",
-      "Medicare revalidation",
-    ],
-  },
-  small1: {
-    title: "The Monday follow-up",
-    body: "One digest a week: what expires, what is overdue, what went quiet.",
-  },
-  small2: {
-    title: "One row per state",
-    body: "A multi-state panel is where a spreadsheet breaks first.",
-  },
+  items: [
+    {
+      title: "Enrollment applications that go quiet",
+      body: "[One record per provider per payer](/payer-enrollment-software). Info requested is the costly one: the payer never asks.",
+    },
+    {
+      title: "Credentials that expire",
+      body: "Status derives itself from the expiration date, not from someone remembering.",
+    },
+    {
+      title: "The Monday follow-up",
+      body: "One digest a week: what expires, what is overdue, what went quiet.",
+    },
+  ],
+  closing:
+    "State licenses and DEA, malpractice COI, board certification, CAQH attestation every 120 days and Medicare revalidation, with one row per state a provider is licensed in.",
 };
 
 export const MATRIX = {

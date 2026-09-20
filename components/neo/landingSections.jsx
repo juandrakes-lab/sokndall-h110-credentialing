@@ -141,79 +141,47 @@ export function QuadSection({ head, blocks, imageRatio = "3:2", labels = {}, wid
 }
 
 /**
- * LayersSection — "Three things, tracked in one place", as three things.
- * Added 2026-09-12 for the home's section 3, replacing QuadSection there.
+ * LayersSection — "Three things, tracked in one place".
  *
- * The approved copy heads the section "Three things" and then supplies four
- * cards. Read against the rest of the copy, three are the things tracked —
- * enrollment applications, credentials, the Monday follow-up — and the fourth,
- * "One row per state", is a property of the second (a multi-state licence is a
- * credential). So: three cards, each carrying its own visual at its foot — the
- * applications card a photograph, the follow-up card the digest's screen
- * frame — and "One row per state" set inside the credentials card as a detail.
- * Every string is the copy's; only the grouping is a layout decision, flagged
- * to the copywriter in DESIGN_DECISIONS.md.
+ * Recomposed 2026-09-20 (the founder's review, copywriting's reply of the day
+ * before). It was three cards of three different shapes: one carrying a stock
+ * photograph, one a five-item list with a fourth idea boxed inside it, and one
+ * two lines with the digest hanging underneath. Now it is the section's own
+ * sentence, laid out: the three things on the left as three rows, and on the
+ * right the place they arrive in — the Monday digest, whole and at its own
+ * size. The heading says "in one place"; the email is that place.
  *
- * `blocks`: { applications, credentials, detail, followup } — each { title,
- * body, points?, icon? }. `photo`: the applications card's picture.
- * `screen`: the follow-up card's frame label.
+ * The photograph is gone: this is the section that claims the product tracks
+ * three things, and stock stands in the way of the product proving it.
+ *
+ * `items`: [{ title, body, icon }] — three. `aside`: the digest shot.
+ * `closing`: the line under both columns (the five credential names).
  */
-export function LayersSection({ head, blocks, photo, visual }) {
-  const { applications: a, credentials: c, detail: d, followup: f } = blocks;
+export function LayersSection({ head, items, aside, closing }) {
   return (
     <Band>
       <SectionHead {...head} />
       <div className="sk-layers">
-        <article className="sk-card sk-card--soft sk-card--pad sk-layers__card">
-          <div className="sk-layers__top">
-            {a.icon ? <span className="sk-tile">{a.icon}</span> : null}
-            <h3 className="sk-h4">{a.title}</h3>
-            <p className="sk-body">
-              <Rich text={a.body} linkClassName="sk-link" />
-            </p>
-          </div>
-          {photo ? <PhotoFrame photo={photo} ratio="4x3" className="sk-layers__visual" /> : null}
-        </article>
-
-        <article className="sk-card sk-card--pad sk-layers__card">
-          <div className="sk-layers__top">
-            {c.icon ? <span className="sk-tile">{c.icon}</span> : null}
-            <h3 className="sk-h4">{c.title}</h3>
-            <p className="sk-body">
-              <Rich text={c.body} linkClassName="sk-link" />
-            </p>
-            {c.points ? (
-              <ul className="sk-list sk-layers__list">
-                {c.points.map((pt) => (
-                  <li key={pt}>{pt}</li>
-                ))}
-              </ul>
-            ) : null}
-          </div>
-          <div className="sk-layers__detail">
-            {d.icon ? <span className="sk-tile">{d.icon}</span> : null}
-            <h3 className="sk-h4">{d.title}</h3>
-            <p className="sk-body">
-              <Rich text={d.body} linkClassName="sk-link" />
-            </p>
-          </div>
-        </article>
-
-        {/* The third column: a white card, and the product shot under it rather
-            than inside it — a screen in a tinted box reads as decoration. */}
-        <div className="sk-layers__stack">
-          <article className="sk-card sk-card--pad sk-layers__card">
-            <div className="sk-layers__top">
-              {f.icon ? <span className="sk-tile">{f.icon}</span> : null}
-              <h3 className="sk-h4">{f.title}</h3>
-              <p className="sk-body">
-                <Rich text={f.body} linkClassName="sk-link" />
-              </p>
-            </div>
-          </article>
-          {visual}
-        </div>
+        <ol className="sk-layers__list">
+          {items.map((it) => (
+            <li className="sk-card sk-card--pad sk-layers__row" key={it.title}>
+              {it.icon ? <span className="sk-tile">{it.icon}</span> : null}
+              <div className="sk-layers__rowtext">
+                <h3 className="sk-h4">{it.title}</h3>
+                <p className="sk-body">
+                  <Rich text={it.body} linkClassName="sk-link" />
+                </p>
+              </div>
+            </li>
+          ))}
+        </ol>
+        <div className="sk-layers__aside">{aside}</div>
       </div>
+      {closing ? (
+        <p className="sk-body sk-body--lg sk-closing">
+          <Rich text={closing} linkClassName="sk-link" />
+        </p>
+      ) : null}
     </Band>
   );
 }

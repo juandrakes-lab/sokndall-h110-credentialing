@@ -61,7 +61,7 @@ fed the demo client's data. This file is the contract — read it before touchin
 | Page · section | Scene (canvas) | Narrow | Shows |
 | --- | --- | --- | --- |
 | `/` hero | `HeroDashboard` 1120×700, `bleed` 660 | `NarrowDashboard` 420×540 | The dashboard **sidebar open**, bleeding off the panel's right edge: three stats, "Start here", the credentials breakdown, and the hero's two facts as app chips crossing the window's bottom edge. What the crop keeps is the left of the screen, where the nav names the six things tracked. (`HeroMatrix`, the 880 version that drew at 0.5, is gone.) |
-| `/` "Three things" third card | `MondayDigest` 560×560 | — | The weekly digest as an email: sender, recipient, subject, two sections, the CTA. Sits **under** the white card (`.sk-layers__stack`), not inside it. |
+| `/` "Three things" | `MondayDigest` 600×780 | `NarrowDigest` 380×470 | The weekly digest as an email: sender, recipient, subject, and **three** blocks — follow-ups, stalled, expiring — plus the CTA. Since 2026-09-20 it is the section's object, beside the three rows rather than under a card: the heading says "in one place" and the email is that place. The third block was added so the email carries all three things. |
 | `/` "The matrix" | `HomeMatrix` 1240×760 | `NarrowMatrix` 460×580 | The whole enrollments screen: pipeline card + 5×5 matrix. Floating: a payer request and the stalled count. |
 | `/payer-enrollment-software` statuses | `StatusPath` 1000×340 | `NarrowStatusPath` 380×560 | One application's path on the panel's own status chips, in an app card. Words from `TRACK`. |
 | same, "Two steps" | `Stages` 560×440 | — | The two stages as two app cards. Words from `STAGES`. |
