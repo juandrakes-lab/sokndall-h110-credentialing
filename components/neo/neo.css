@@ -3944,8 +3944,13 @@ html:has(.sk-fnav) { scroll-padding-top: 88px; }
 @media (max-width: 880px) {
   .sk-fnav__bar { min-height: 50px; padding-left: var(--s-4); }
 }
-/* The light header no longer carries its own bar: it starts under the float. */
-.sk-lhero__inner { padding-top: var(--s-8); }
+/* The light header no longer carries its own bar: it starts under the float.
+   Guarded: unconditional and later in the file it beat the `max-width: 880px`
+   rule that drops this to --s-7, so the smaller top padding never applied on a
+   phone. Found by the audit of 2026-09-20. */
+@media (min-width: 881px) {
+  .sk-lhero__inner { padding-top: var(--s-8); }
+}
 .sk-lhero .sk-navm { padding-top: var(--s-4); }
 
 
@@ -4092,7 +4097,13 @@ html:has(.sk-fnav) { scroll-padding-top: 88px; }
   align-items: stretch;
 }
 .sk-diagbento__points { margin-top: var(--s-2); }
-.sk-diagbento__screen { display: grid; gap: var(--s-5); align-content: start; }
+/* Centred against the ink tile, which is taller than the figure: top-aligned
+   it left the whole difference hanging under the figure (190px at 1440).
+   Stacked, there is nothing to centre against and it goes back to the top. */
+.sk-diagbento__screen { display: grid; gap: var(--s-5); align-content: center; }
+@media (max-width: 1080px) {
+  .sk-diagbento__screen { align-content: start; }
+}
 .sk-diagbento__screen .sk-matrix__grid { min-width: 0; }
 .sk-diagbento__screen .sk-matrix__legend { grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: 0; }
 .sk-diagbento .sk-glass .sk-h4 { color: #fff; }
@@ -4308,7 +4319,14 @@ html:has(.sk-fnav) { scroll-padding-top: 88px; }
 .sk-cgb .sk-cardgrid__item > * { max-width: 100%; }
 /* The matrix tile gets more of the row; the grid beside it uses the compact
    cell, which is sized for a column this wide. */
-.sk-diagbento { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); }
+/* Round 3 re-proportioned the two columns. It has to carry its own query:
+   unconditional and later in the file, it beat the `max-width: 1080px` stack
+   by source order, so the section never stacked — at 400px it was still two
+   columns of 132px and 184px, the ink tile 1966px tall and the matrix drawn at
+   the Stage's 0.5 floor and clipped. Measured 2026-09-20. */
+@media (min-width: 1081px) {
+  .sk-diagbento { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); }
+}
 
 
 /* ======================= ROUND 3 (2026-09-12) ============================
@@ -4458,7 +4476,12 @@ html:has(.sk-fnav) { scroll-padding-top: 88px; }
    aside a step smaller, so it stops out-growing the figure column; and the
    full-row yellow card set horizontally, figure left and note right, instead
    of a tall card with an empty middle. */
-.sk-figbento { grid-template-columns: minmax(0, 5.4fr) minmax(0, 6.6fr); }
+/* Its own query, like the diagbento's: unconditional and later in the file it
+   beat the `max-width: 980px` stack by source order, so the figure bento never
+   stacked at any width. Found by the audit of 2026-09-20. */
+@media (min-width: 981px) {
+  .sk-figbento { grid-template-columns: minmax(0, 5.4fr) minmax(0, 6.6fr); }
+}
 .sk-tile-ink .sk-figbento__aside { font-size: 1rem; line-height: 1.6; }
 @media (min-width: 561px) {
   .sk-figbento--3 .sk-figcard--ours {

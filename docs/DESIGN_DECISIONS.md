@@ -1582,3 +1582,38 @@ fundador ofreció las dos vías; queda a su decisión.
 Política de imagen: ninguna foto; figura de producto sin fondo (el tile tinta ya
 separa las capas, criterio del fundador).
 Regla de DESIGN_RULES.md que aplica: §3, §14; PRODUCT_SHOTS §1 y §7.
+
+## neo.css — tres media queries que nunca se aplicaban, y la auditoría que las encontró
+Fecha: 2026-09-20
+Decisión: el fundador señaló que la sección de la matriz quedaba ilegible en
+teléfono. No era diseño: **la sección nunca apilaba**. Medido a 400px, seguía
+en dos columnas de 132px y 184px, con el tile tinta de **1966px** de alto y la
+matriz dibujada al 0,50 —el piso del Stage— y recortada.
+La causa es un patrón, no un caso: `neo.css` se escribe apendeando rondas al
+final, así que una regla sin media query escrita en una ronda posterior le gana
+por orden de aparición a la media query que la ronda anterior había puesto más
+arriba. Tres casos, los tres reales:
+| Selector | Media query que no se aplicaba | La pisaba |
+|---|---|---|
+| `.sk-diagbento` | `max-width: 1080` → una columna | la proporción 5fr/7fr de la ronda 3 |
+| `.sk-figbento` | `max-width: 980` → una columna | la proporción 5.4fr/6.6fr de la ronda 3 |
+| `.sk-lhero__inner` | `max-width: 880` → `padding-top: --s-7` | `--s-8` de la ronda del header claro |
+Las tres reglas posteriores pasan a llevar su propia `min-width`. Verificado a
+400px: la matriz apila y sube de 0,50 recortada a **0,72 entera**, el tile pasa
+de 1966 a 662px de alto, el figbento de la home apila por primera vez, y el
+padding del header claro baja a 48px. A 1440 no cambia nada (5.4fr/6.6fr,
+5fr/7fr y 64px intactos).
+La auditoría que las encontró recorre el archivo con un parser de llaves y lista
+cada par (selector, propiedad) declarado dentro de una `max-width` y otra vez
+después sin condición. Quedó en cero. **Vale la pena volver a correrla al cerrar
+cada ronda**, porque la forma de trabajar del archivo reintroduce el patrón.
+Regla de DESIGN_RULES.md que aplica: §0 (capturas a 390/768/1440 — este bug solo
+aparece midiendo el ancho chico).
+
+## /payer-enrollment-software — la matriz centrada contra el tile
+Fecha: 2026-09-20
+Decisión: pedido del fundador. La figura se centra verticalmente contra el
+bloque tinta en vez de alinearse arriba: el tile mide 660 y la figura 486, y
+alineada arriba los 174px de diferencia colgaban todos abajo. Ahora quedan 87
+arriba y 87 abajo. Apilada no hay contra qué centrar y vuelve a arriba.
+Regla de DESIGN_RULES.md que aplica: §14.
