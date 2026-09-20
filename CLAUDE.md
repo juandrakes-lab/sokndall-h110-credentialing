@@ -114,8 +114,9 @@ frame for a product screen), `InkTile` (dark tile inside a light section),
 `Schematics.jsx`, and the `surface="block"` grey band. The rules they carry are
 DESIGN_RULES.md §13-§19.
 
-**Product shots replaced the schematics** — the contract is `docs/PRODUCT_SHOTS.md`, read it before touching a figure. In short: (2026-09-19, founder's call once the
-app existed).** Every former `ScreenSlot`/schematic on the landings (home hero,
+**Product shots replaced the schematics** (2026-09-19, the founder's call once
+the app existed). The contract is `docs/PRODUCT_SHOTS.md` — read it before
+touching a figure.** Every former `ScreenSlot`/schematic on the landings (home hero,
 matrix and Monday digest; the payer-enrollment status path, stages, effective
 date and matrix; the billing-company client book and report; the spreadsheet
 template's tab; /pricing's users-vs-providers) is now a `ProductShot`
