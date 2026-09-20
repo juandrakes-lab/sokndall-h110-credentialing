@@ -2,7 +2,6 @@
 
 import { useLayoutEffect, useRef, useState } from "react";
 import Stage from "@/components/app/showcase/Stage";
-import { liftOff } from "@/components/app/showcase/AppScreen";
 import * as SCENES from "@/components/app/showcase/scenes";
 
 // A product shot on a marketing page: a scene (scenes.jsx) drawn on its fixed
@@ -30,7 +29,7 @@ import * as SCENES from "@/components/app/showcase/scenes";
 // white content cards, reads as a fourth content card. A figure that is a
 // whole screen carries its own sidebar and top bar and needs no ground; a
 // loose card, panel or email does. The founder's call, 2026-09-20.
-export default function ProductShot({ scene, props = {}, w, h, narrow, label, className = "", bleed = 0, backdrop = "none", tilt = false }) {
+export default function ProductShot({ scene, props = {}, w, h, narrow, label, className = "", bleed = 0, backdrop = "none" }) {
   const box = useRef(null);
   const [ready, setReady] = useState(false);
   const [small, setSmall] = useState(false);
@@ -56,22 +55,23 @@ export default function ProductShot({ scene, props = {}, w, h, narrow, label, cl
     <figure
       ref={box}
       className={`app-type relative m-0 w-full ${
-        backdrop === "ground" ? `app-shotframe ${tilt ? "app-shotframe--tilt" : ""}` : ""
+        backdrop === "ground"
+          ? "app-ground-flat--calm rounded-[28px] p-3 sm:p-6 ring-1 ring-ink-900/[0.06]"
+          : ""
       } ${className}`}
     >
-      {backdrop === "ground" && <span aria-hidden="true" className="app-shotframe__ground app-ground-flat--calm" />}
       {ready && (
         <Stage
           w={cw}
           h={ch}
           align="center"
-          className={`relative w-full ${backdrop === "ground" ? "app-shotframe__stage" : ""}`}
+          className="relative w-full"
           fluid={!bleed || small}
           minScale={0.5}
           bleed={small ? 0 : bleed}
           label={label}
         >
-          <Chosen {...(backdrop === "ground" ? { depth: liftOff, ...props } : props)} />
+          <Chosen {...props} />
         </Stage>
       )}
     </figure>

@@ -369,7 +369,7 @@ export function NarrowMatrix() {
 }
 
 // The Monday digest, 560×560: an email as it arrives — envelope first.
-export function MondayDigest({ depth = lift }) {
+export function MondayDigest() {
   const section = (title, rows) => (
     <>
       <p className="mt-4 text-[0.6875rem] font-bold uppercase tracking-wider text-ink-500">{title}</p>
@@ -387,7 +387,7 @@ export function MondayDigest({ depth = lift }) {
     </>
   );
   return (
-    <div className={`absolute inset-x-0 top-0 overflow-hidden rounded-[18px] bg-white ${depth}`}>
+    <div className={`absolute inset-x-0 top-0 overflow-hidden rounded-[18px] bg-white ${lift}`}>
       <div className="flex items-start gap-3 border-b border-ink-100 bg-ink-50 px-5 py-4">
         <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-700 text-sm font-semibold text-white">S</span>
         <div className="min-w-0 flex-1">

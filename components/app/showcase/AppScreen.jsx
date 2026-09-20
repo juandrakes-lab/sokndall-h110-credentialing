@@ -23,10 +23,6 @@ const NAV = [
 // screen reads as lifted off the page. Cards/panels use `lift`, the small
 // indicator cards `chipLift` — nothing invents its own.
 export const lift = "shadow-[0_1px_2px_rgba(14,42,46,0.06),0_28px_56px_-18px_rgba(14,42,46,0.45)] ring-1 ring-ink-900/[0.07]";
-/* A shot lifted off its ground and overhanging it needs a deeper shadow than
-   one lying on the section's white: the overhang is the claim, the shadow is
-   what makes itreadable. 2026-09-20. */
-export const liftOff = "shadow-[0_2px_4px_rgba(14,42,46,0.07),0_10px_20px_-6px_rgba(14,42,46,0.18),0_44px_72px_-24px_rgba(14,42,46,0.50)] ring-1 ring-ink-900/[0.07]";
 export const chipLift = "shadow-[0_1px_2px_rgba(14,42,46,0.08),0_18px_36px_-14px_rgba(14,42,46,0.42)] ring-1 ring-ink-900/[0.07]";
 // The same two, for a shot standing on the ink panel (the home hero): an ink
 // shadow on ink is invisible, so on that ground the shadow is black and

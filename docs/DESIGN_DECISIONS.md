@@ -1478,3 +1478,17 @@ por nadie. Viene de `fd21bc9`, cuando el hero pasó a sangrar. Medido con y sin
 la figura del correo: 1721 en los dos casos, así que la figura nueva no aporta
 nada a esto. Hay que recortarlo donde corresponda —el panel del hero— sin usar
 `overflow: hidden`, que rompería el parallax.
+
+## Figuras de producto — se revierte la inclinación: todo derecho
+Fecha: 2026-09-20
+Decisión: el fundador revierte la entrada anterior del mismo día. La figura
+vuelve al fondo como marco con padding, derecha, sin inclinación y sin voladizo
+(estado de `eb68138`). Se retiran `app-shotframe*`, la prop `tilt`, la sombra
+`liftOff` y la prop `depth` de la escena: si no se usan, se van.
+Queda en pie, porque es lo que se aprendió midiendo y no depende de la decisión:
+- La rotación en Z rompe los filetes de 1px; la rotación en Y no (anotado en
+  PRODUCT_SHOTS.md). Si alguna vez se retoma, esa es la que sirve.
+- El fondo como marco con padding le cuesta ancho al lienzo: el correo se
+  dibuja a 0,871 a 1440 y a 0,784 en teléfono, contra 0,951 y 0,847 con el
+  fondo detrás. Es el único número que quedó abierto de esta ronda.
+Política de imagen: sin cambios.
