@@ -86,14 +86,14 @@ export const TEMPLATE_HEADING = undefined;
 export const PRICE = {
   heading: "What Sokndall costs, and what it is being compared to",
   paras: [
-    "$79, $299 and $699 a month for up to 3, 15 and 50 providers — $26.33, $19.93 and $13.98 per provider. Every plan has every feature. Fourteen-day trial, card up front, cancel from Settings before day 15.",
+    "$79, $299 and $699 a month for up to 3, 15 and 50 providers — $26.33, $19.93 and $13.98 per provider. Every plan has every feature. A 14-day trial, card up front, cancel yourself from Settings before day 15.",
   ],
 };
 
 // Button labels are not given for this page; they are page 12's approved pair.
 export const CTA = {
   body: "The same size of buyer, without the demo. The price is on the page and the trial starts when you decide it does.",
-  primary: { label: "Start the fourteen-day trial", href: "/start" },
+  primary: { label: "Start the 14-day trial", href: "/start" },
   secondary: { label: "See all three plans", href: "/pricing" },
 };
 

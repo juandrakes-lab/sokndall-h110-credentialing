@@ -167,7 +167,7 @@ export const SECTIONS_AFTER_TABLE = [
     id: "sokndall",
     heading: "Sokndall: published price, narrower product",
     paras: [
-      "$79, $299 or $699 a month for 3, 15 or 50 providers, charged per provider with users included. Self-serve signup, fourteen-day trial, cancel from Settings. Every figure on [the pricing page](/pricing) is on the page rather than behind a form. That is the entire differentiator and it is worth naming plainly, because it is a commercial decision rather than a technical achievement.",
+      "$79, $299 or $699 a month for 3, 15 or 50 providers, charged per provider with users included. Self-serve signup, 14-day trial, cancel from Settings. Every figure on [the pricing page](/pricing) is on the page rather than behind a form. That is the entire differentiator and it is worth naming plainly, because it is a commercial decision rather than a technical achievement.",
       "What it does not have: any of the four products above will do things this one will not. There is no verification against issuing boards, no portal integration, no compliance or learning module, no delegated credentialing support, and no third-party review history at all. It is also in development. A health system should buy symplr. A group that wants compliance bundled should look at MedTrainer.",
     ],
   },
@@ -178,13 +178,13 @@ export const TEMPLATE_HEADING = "Take the free tracking template before you book
 export const PRICE = {
   heading: "What Sokndall costs, and what it is being compared to",
   paras: [
-    "Three plans, published: $79, $299 and $699 a month for up to 3, 15 and 50 providers. Per provider that is $26.33, $19.93 and $13.98. Every plan has every feature, and the fourteen-day trial cancels from Settings before day 15.",
+    "Three plans, published: $79, $299 and $699 a month for up to 3, 15 and 50 providers. Per provider that is $26.33, $19.93 and $13.98. Every plan has every feature, and the 14-day trial cancels from Settings before day 15.",
   ],
 };
 
 export const CTA = {
-  body: "Fourteen-day trial, card up front, cancel yourself before day 15. Nothing on the pricing page changes after you sign up.",
-  primary: { label: "Start the fourteen-day trial", href: "/start" },
+  body: "14-day trial, card up front, cancel yourself before day 15. Nothing on the pricing page changes after you sign up.",
+  primary: { label: "Start the 14-day trial", href: "/start" },
   secondary: { label: "See the full price list", href: "/pricing" },
 };
 

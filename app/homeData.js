@@ -151,7 +151,7 @@ export const PRICING = {
     },
   ],
   note:
-    "Fourteen-day trial, card up front, cancel yourself from Settings before day 15 and nothing is charged. Full terms and the three cost anchors on [the pricing page](/pricing).",
+    "14-day trial, card up front, cancel yourself from Settings before day 15 and nothing is charged. Full terms and the three cost anchors on [the pricing page](/pricing).",
 };
 
 export const SCOPE = {
@@ -204,7 +204,7 @@ export const FAQ = [
 ];
 
 export const CLOSING = {
-  title: "Fourteen days. No call, no quote.",
+  title: "14 days. No demo call, no quote.",
   body: "Card up front, cancel yourself before day 15. The price you see here is the price on the invoice.",
   primary: { label: "Start 14-day trial", href: "/start" },
   secondary: { label: "See all three plans", href: "/pricing" },

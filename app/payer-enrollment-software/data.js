@@ -182,7 +182,7 @@ export const FAQ = [
 
 export const CLOSING = {
   title: "See the whole price list, published",
-  body: "Three plans, published, no quote process. Fourteen-day trial and you cancel yourself before day 15.",
+  body: "Three plans, published, no quote process. 14-day trial and you cancel yourself before day 15.",
   primary: { label: "See all three plans", href: "/pricing" },
   secondary: { label: "Start 14-day trial", href: "/start" },
 };

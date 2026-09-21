@@ -202,7 +202,7 @@ Plan 3 desc             (40)  ≤48                 Separate client organization
 Plan 3 feat 1           (33)  ≤46                 Up to 50 providers across clients
 Plan 3 feat 2           (29)  ≤46                 $13.98 per provider per month
 Plan 3 feat 3           (37)  ≤46                 Client data isolated from client data
-Nota de precio         (161)  ≤184                Fourteen-day trial, card up front, cancel yourself from
+Nota de precio         (161)  ≤184                14-day trial, card up front, cancel yourself from
                                                   Settings before day 15 and nothing is charged. Full
                                                   terms and the three cost anchors on the pricing page.
 ```
@@ -302,7 +302,7 @@ renderizarse así en el acordeón.
 ## Cierre y footer
 
 ```
-CTA heading             (33)  28–53               Fourteen days. No call, no quote.
+CTA heading             (32)  28–53               14 days. No demo call, no quote.
 CTA body                (97)  78–149              Card up front, cancel yourself before day 15. The price
                                                   you see here is the price on the invoice.
 Footer blurb           (121)  112–145             Sokndall tracks provider credentials and payer
@@ -386,7 +386,7 @@ Feature 3.3             (29)  ≤46                 $13.98 per provider per mont
 Feature 3.4             (37)  ≤46                 Client data isolated from client data
 
 Nota de precio         (168)  ≤184                Every plan is monthly and cancels from Settings.
-                                                  Fourteen-day trial, card up front, nothing charged
+                                                  14-day trial, card up front, nothing charged
                                                   before day 15. What the per-provider figures compare
                                                   against, below.
 ```
@@ -489,7 +489,7 @@ Q1  (42 car.)  How much does credentialing software cost?
 Q2  (39 car.)  Is there a free credentialing software?
     Not a real one. What exists is the free tier of a larger product, or a
     spreadsheet template — and this site publishes one of those, with the
-    formulas already in it. Sokndall has a fourteen-day trial rather than a
+    formulas already in it. Sokndall has a 14-day trial rather than a
     free plan, because a permanently free tier of a tracking tool tends to
     mean the tracking stops working at the moment it starts mattering.
     → 64 palabras · 350 car.
@@ -531,7 +531,7 @@ Q6  (26 car.)  What counts as a provider?
 ## Cierre
 
 ```
-CTA heading             (28)  28–53               Start the fourteen-day trial
+CTA heading             (38)  28–53               Start the 14-day trial, no call needed
 CTA body               (107)  78–149              Card up front, cancel yourself from Settings before day
                                                   15. Nothing on this page changes after you sign up.
 ```
@@ -957,7 +957,7 @@ Q5  (51 car.)  Can software submit enrollment applications for me?
 
 ```
 CTA heading             (35)  28–53               See the whole price list, published
-CTA body                (99)  78–149              Three plans, published, no quote process. Fourteen-day
+CTA body                (99)  78–149              Three plans, published, no quote process. 14-day
                                                   trial and you cancel yourself before day 15.
 ```
 
@@ -1137,7 +1137,7 @@ Q3  (53 car.)  Can I bill credentialing tracking back to my clients?
 ## Cierre
 
 ```
-CTA heading             (28)  28–53               Start the fourteen-day trial
+CTA heading             (36)  28–53               Start the 14-day trial on Billing Co
 CTA body                (98)  78–149              Card up front, cancel yourself from Settings before day
                                                   15. Full plan details on the pricing page.
 ```

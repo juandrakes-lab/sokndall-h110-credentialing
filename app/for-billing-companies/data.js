@@ -118,7 +118,7 @@ export const FAQ = [
 ];
 
 export const CLOSING = {
-  title: "Start the fourteen-day trial",
+  title: "Start the 14-day trial on Billing Co",
   body: "Card up front, cancel yourself from Settings before day 15. Full plan details on [the pricing page](/pricing).",
   primary: { label: "Start 14-day trial", href: "/start" },
 };

@@ -324,7 +324,7 @@ No verificado                 ≤204                Everything except the segmen
 H2                      (43)  ≤55                 Sokndall: published price, narrower product
 Párrafo 1                     290–390             $79, $299 or $699 a month for 3, 15 or 50 providers,
                                                   charged per provider with users included. Self-serve
-                                                  signup, fourteen-day trial, cancel from Settings. Every
+                                                  signup, 14-day trial, cancel from Settings. Every
                                                   figure on the pricing page is on the page rather than
                                                   behind a form. That is the entire differentiator and it
                                                   is worth naming plainly, because it is a commercial
@@ -355,13 +355,13 @@ Price H2                (53)  ≤55                 What Sokndall costs, and wha
 Price paragraph        (226)  200–300             Three plans, published: $79, $299 and $699 a month for
                                                   up to 3, 15 and 50 providers. Per provider that is
                                                   $26.33, $19.93 and $13.98. Every plan has every feature,
-                                                  and the fourteen-day trial cancels from Settings before
+                                                  and the 14-day trial cancels from Settings before
                                                   day 15.
 
-Product CTA body       (120)  99–188              Fourteen-day trial, card up front, cancel yourself
+Product CTA body       (120)  99–188              14-day trial, card up front, cancel yourself
                                                   before day 15. Nothing on the pricing page changes after
                                                   you sign up.
-CTA primario            (28)  ≤37                 Start the fourteen-day trial
+CTA primario            (28)  ≤37                 Start the 14-day trial
 CTA secundario          (23)  ≤56                 See the full price list
 ```
 
@@ -557,7 +557,7 @@ Criterio 3              (17)  ≤29                 First step to buy
 Unidad 3                (45)  35–62               what a buyer has to do before seeing a number
   celda 3.1             (76)  62–95               Book a demo or take a sales call. There is no self-serve
                                                   signup path at all.
-  celda 3.2             (74)  62–95               Enter a card and start. Fourteen days, cancel from
+  celda 3.2             (74)  62–95               Enter a card and start. 14 days, cancel from
                                                   Settings before day 15.
 
 Nota                   (319)  299–397             Neither model is wrong. MedTrainer sells a bundle whose
@@ -594,12 +594,12 @@ Microcopy              (116)  97–185              One email with the spreadshe
 Price H2                (53)  ≤55                 What Sokndall costs, and what it is being compared to
 Price paragraph        (202)  200–300             $79, $299 and $699 a month for up to 3, 15 and 50
                                                   providers — $26.33, $19.93 and $13.98 per provider.
-                                                  Every plan has every feature. Fourteen-day trial, card
+                                                  Every plan has every feature. 14-day trial, card
                                                   up front, cancel from Settings before day 15.
 Product CTA body       (119)  99–188              No demo required to see the price, because the price is
-                                                  already on the page. Fourteen days, and you cancel it
+                                                  already on the page. 14 days, and you cancel it
                                                   yourself.
-CTA primario            (28)  ≤37                 Start the fourteen-day trial
+CTA primario            (28)  ≤37                 Start the 14-day trial
 CTA secundario          (19)  ≤56                 See all three plans
 ```
 
@@ -759,7 +759,7 @@ Párrafo                       290–390             Multi-facility hospitals an
 Price H2                (53)  ≤55                 What Sokndall costs, and what it is being compared to
 Price paragraph        (202)  200–300             $79, $299 and $699 a month for up to 3, 15 and 50
                                                   providers — $26.33, $19.93 and $13.98 per provider.
-                                                  Every plan has every feature. Fourteen-day trial, card
+                                                  Every plan has every feature. 14-day trial, card
                                                   up front, cancel from Settings before day 15.
 Product CTA body       (110)  99–188              A different product for a different size of
                                                   organisation, with the price on the page instead of
@@ -902,7 +902,7 @@ Párrafo                       290–390             Independent medical practic
 Price H2                (53)  ≤55                 What Sokndall costs, and what it is being compared to
 Price paragraph        (202)  200–300             $79, $299 and $699 a month for up to 3, 15 and 50
                                                   providers — $26.33, $19.93 and $13.98 per provider.
-                                                  Every plan has every feature. Fourteen-day trial, card
+                                                  Every plan has every feature. 14-day trial, card
                                                   up front, cancel from Settings before day 15.
 Product CTA body       (112)  99–188              The same size of buyer, without the demo. The price is
                                                   on the page and the trial starts when you decide it

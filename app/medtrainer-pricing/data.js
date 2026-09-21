@@ -78,7 +78,7 @@ export const PURCHASE = {
       criterion: "First step to buy",
       unit: "what a buyer has to do before seeing a number",
       theirs: "Book a demo or take a sales call. There is no self-serve signup path at all.",
-      ours: "Enter a card and start. Fourteen days, cancel from Settings before day 15.",
+      ours: "Enter a card and start. 14 days, cancel from Settings before day 15.",
     },
   ],
   note:
@@ -98,13 +98,13 @@ export const TEMPLATE_HEADING = "The free credentialing tracking template, while
 export const PRICE = {
   heading: "What Sokndall costs, and what it is being compared to",
   paras: [
-    "$79, $299 and $699 a month for up to 3, 15 and 50 providers — $26.33, $19.93 and $13.98 per provider. Every plan has every feature. Fourteen-day trial, card up front, cancel from Settings before day 15.",
+    "$79, $299 and $699 a month for up to 3, 15 and 50 providers — $26.33, $19.93 and $13.98 per provider. Every plan has every feature. A 14-day trial, card up front, cancel yourself from Settings before day 15.",
   ],
 };
 
 export const CTA = {
-  body: "No demo required to see the price, because the price is already on the page. Fourteen days, and you cancel it yourself.",
-  primary: { label: "Start the fourteen-day trial", href: "/start" },
+  body: "No demo required to see the price, because the price is already on the page. 14 days, and you cancel it yourself.",
+  primary: { label: "Start the 14-day trial", href: "/start" },
   secondary: { label: "See all three plans", href: "/pricing" },
 };
 

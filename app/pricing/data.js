@@ -54,7 +54,7 @@ export const PLANS = {
     },
   ],
   note:
-    "Every plan is monthly and cancels from Settings. Billing Co includes 10 users; each one after that is $39 a month. Fourteen-day trial, card up front, nothing charged before day 15.",
+    "Every plan is monthly and cancels from Settings. Billing Co includes 10 users; each one after that is $39 a month. 14-day trial, card up front, nothing charged before day 15.",
 };
 
 // EntityChooser — copy brief of 2026-09-09 ("selector por entidad"). Under the
@@ -177,7 +177,7 @@ export const FAQ = [
   },
   {
     q: "Is there a free credentialing software?",
-    a: "Not a real one. What exists is the free tier of a larger product, or a spreadsheet template — and [this site publishes one of those](/credentialing-spreadsheet-template), with the formulas already in it. Sokndall has a fourteen-day trial rather than a free plan, because a permanently free tier of a tracking tool tends to mean the tracking stops working at the moment it starts mattering.",
+    a: "Not a real one. What exists is the free tier of a larger product, or a spreadsheet template — and [this site publishes one of those](/credentialing-spreadsheet-template), with the formulas already in it. Sokndall has a 14-day trial rather than a free plan, because a permanently free tier of a tracking tool tends to mean the tracking stops working at the moment it starts mattering.",
   },
   {
     q: "What happens if I cancel during the trial?",
@@ -200,7 +200,7 @@ export const FAQ = [
 ];
 
 export const CLOSING = {
-  title: "Start the fourteen-day trial",
+  title: "Start the 14-day trial, no call needed",
   body: "Card up front, cancel yourself from Settings before day 15. Nothing on this page changes after you sign up.",
   primary: { label: "Start 14-day trial", href: "/start" },
 };

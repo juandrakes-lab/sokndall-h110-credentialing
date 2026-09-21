@@ -1782,3 +1782,28 @@ artículo de Momentive: tabla clásica de grilla, cabecera gris, filas alternada
   salvia, luz lateral, sin personas), con el mismo tratamiento de la serie.
   Registrada como `generated: true`, sin crédito.
 Regla de DESIGN_RULES.md que aplica: §2 regla 5, §3.
+
+## Copy — "fourteen" → "14" en todo el sitio (respuesta de copy del 2026-09-21)
+Fecha: 2026-09-21
+Decisión: entra la respuesta de copywriting al pedido del mismo día. Los botones,
+el registro, la app y la facturación decían "14-day" y el copy de las páginas
+"fourteen", a veces en la misma pantalla.
+- 19 apariciones en 9 archivos de datos: 13 reemplazos directos y 6 slots con
+  texto nuevo, porque el cambio los dejaba bajo el mínimo de COPY_LIMITS:
+  - home, CTA heading: "14 days. No demo call, no quote." (32, en 28–53).
+    Recupera el "No demo call" que salió del hero el 2026-09-19;
+  - /pricing, CTA heading: "Start the 14-day trial, no call needed" (38);
+  - /for-billing-companies, CTA heading: "Start the 14-day trial on Billing Co"
+    (36). Antes los dos CTA eran idénticos;
+  - /symplr-pricing, /modio-health-pricing, /medtrainer-pricing, párrafo de
+    precio: "…A 14-day trial, card up front, cancel yourself from Settings
+    before day 15." (207, en 200–300).
+- Número en todos los casos, también al inicio de oración (criterio del
+  copywriter): la letra al inicio es una regla de prosa corrida, y acá el
+  problema a resolver era justo que el botón y el texto de al lado no coincidan.
+- **Los archivos de copy del repo no habían cambiado** (`TANDA_A` tenía 7,
+  `TANDA_B` 10): el copywriter editó sus propias copias. Se aplicaron sus mismos
+  cambios a las copias del repo, con las cuentas de caracteres corregidas, para
+  que código y copy digan lo mismo. `TANDA_C` no tenía ninguno.
+Verificado en el HTML de las seis páginas afectadas: texto nuevo presente, cero
+"fourteen".
