@@ -1807,3 +1807,24 @@ el registro, la app y la facturación decían "14-day" y el copy de las páginas
   que código y copy digan lo mismo. `TANDA_C` no tenía ninguno.
 Verificado en el HTML de las seis páginas afectadas: texto nuevo presente, cero
 "fourteen".
+
+## Relacionados — las tarjetas que llevan a una landing muestran su producto
+Fecha: 2026-09-21
+Decisión: el fundador pidió llenar las tarjetas de relacionados que apuntan a
+landings (9 tarjetas, tres destinos). Lo acordado: un recorte de la figura de
+producto de esa landing, no una foto — es la práctica habitual para una tarjeta
+que lleva a una página de producto, cuya "imagen" es el producto, y una foto de
+stock ahí promete un artículo y lleva a una página de venta.
+- `/pricing`: las tres columnas de la matriz de planes, sin la de etiquetas y
+  sin la leyenda (708×472 → 3:2 exacto). La cabecera tinta "Solo · Practice ·
+  Billing Co" se lee como precios sin leer nada más.
+- `/credentialing-spreadsheet-template`: el extremo izquierdo de la hoja, con el
+  nombre del archivo, las columnas y la fila de ejemplo.
+- `/payer-enrollment-software`: la matriz entera con su tarjeta de totales.
+- Capturados de la página en vivo a 2×, a 1344×896 (se declaran 672×448); de 20
+  a 67 KB.
+- `pageImages.js` acepta ahora entradas con solo `card`, y `headerImage()`
+  devuelve null si no hay `header`, para que una landing nunca gane un
+  encabezado fotográfico por accidente.
+Verificado: las 10 páginas editoriales tienen sus 3 tarjetas con imagen (30/30).
+Regla de DESIGN_RULES.md que aplica: §10, §19.

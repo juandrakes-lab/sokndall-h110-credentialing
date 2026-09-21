@@ -8,9 +8,12 @@
  * A route with no entry has no header photograph, and every card pointing at
  * it keeps the empty, declared 3:2 slot.
  *
- * Landing pages never appear here: there is no photography on a landing
- * (decision already taken), so a card linking to `/pricing` or to the
- * template page always shows the empty slot.
+ * Landing pages appear with a `card` only (2026-09-21, the founder): the
+ * related cards that point at a landing show a crop of that landing's own
+ * product figure, never a photograph — the usual practice for a card leading
+ * to a product page, whose "picture" is the product. The crops are taken from
+ * the live page at 2x (the plan matrix, the template sheet, the enrollment
+ * matrix). A landing never gets a `header`: it has no masthead photograph.
  *
  * Entry shape, once an image exists (see scripts/editorial-image.mjs, which
  * produces all three files from one source photograph):
@@ -37,6 +40,19 @@
  * put through the same SERIES grade. `generated: true`, and no credit.
  */
 const PAGE_IMAGES = {
+  // Landings: a card only, cropped from the page's own product figure.
+  "/pricing": {
+    alt: "The plan comparison: Solo, Practice and Billing Co side by side",
+    card: { src: "/editorial/pricing-card.webp", width: 672, height: 448 },
+  },
+  "/credentialing-spreadsheet-template": {
+    alt: "The free credentialing tracker template, open on its Credentials tab",
+    card: { src: "/editorial/credentialing-spreadsheet-template-card.webp", width: 672, height: 448 },
+  },
+  "/payer-enrollment-software": {
+    alt: "The enrollments matrix: every provider against every payer, with each application's status",
+    card: { src: "/editorial/payer-enrollment-software-card.webp", width: 672, height: 448 },
+  },
   "/behavioral-health-credentialing": {
     alt: "An empty therapy office in daylight: two sage armchairs facing each other across a small wooden table",
     header: { src: "/editorial/behavioral-health-credentialing-header.webp", width: 1600, height: 686 },
@@ -111,12 +127,12 @@ const PAGE_IMAGES = {
 
 export function headerImage(route) {
   const e = PAGE_IMAGES[route];
-  return e ? { ...e.header, alt: e.alt, credit: e.credit } : null;
+  return e?.header ? { ...e.header, alt: e.alt, credit: e.credit } : null;
 }
 
 export function cardImage(route) {
   const e = PAGE_IMAGES[route];
-  return e ? { ...e.card, alt: e.alt } : null;
+  return e?.card ? { ...e.card, alt: e.alt } : null;
 }
 
 export function ogImage(route) {
