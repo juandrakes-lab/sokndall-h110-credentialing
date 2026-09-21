@@ -300,7 +300,7 @@ export function NarrowDashboard() {
   return (
     <div className="absolute inset-x-0 top-0 flex flex-col gap-3">
       <div className="grid grid-cols-2 gap-3">
-        <StatCard accent label="Need you this week" value="31" hint="Expiring, overdue and requests." icon={ICONS.pulse} />
+        <StatCard accent onInk label="Need you this week" value="31" hint="Expiring, overdue and requests." icon={ICONS.pulse} />
         <StatCard label="Follow-ups overdue" value="18" hint="20 due this week." icon={ICONS.phone} tone="amber" />
       </div>
       <StartHereCard rows={3} floating />

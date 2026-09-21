@@ -173,11 +173,19 @@ export function SectionPill({ icon, tone = "brand", count, children, as: Tag = "
 
 // A headline number with its label: the dashboards' KPI. `href` makes the whole
 // tile a link; `meter` (0–1) draws a thin progress bar under the figure.
-export function StatCard({ label, value, suffix, hint, icon, tone = "brand", href, meter, Link, accent = false }) {
+export function StatCard({ label, value, suffix, hint, icon, tone = "brand", href, meter, Link, accent = false, onInk = false }) {
   if (accent) {
     // The one filled tile on a page: the number that frames the rest.
+    // `onInk`: the same tile standing on an ink ground (the marketing hero's
+    // phone shot). Its fill is the panel's own ink and its shadow is ink, so
+    // there it had no edge and no depth at all. One step lighter, a white
+    // hairline for the edge, and the black on-ink shadow of the showcase's
+    // depth system. The app itself never passes it. 2026-09-21.
+    const skin = onInk
+      ? "bg-brand-600 ring-1 ring-white/15 shadow-[0_2px_6px_rgba(0,0,0,0.30),0_26px_50px_-16px_rgba(0,0,0,0.70)]"
+      : "bg-brand-700 shadow-[0_1px_2px_rgba(14,42,46,0.10),0_10px_30px_-12px_rgba(14,42,46,0.55)]";
     return (
-      <div className="relative overflow-hidden rounded-2xl bg-brand-700 px-5 py-4 text-white shadow-[0_1px_2px_rgba(14,42,46,0.10),0_10px_30px_-12px_rgba(14,42,46,0.55)]">
+      <div className={`relative overflow-hidden rounded-2xl px-5 py-4 text-white ${skin}`}>
         <div aria-hidden="true" className="pointer-events-none absolute -right-10 -top-12 h-36 w-36 rounded-full" style={{ background: "radial-gradient(closest-side, rgba(242,193,78,0.35), transparent)" }} />
         <div className="relative flex items-center justify-between gap-3">
           <span className="text-sm font-medium text-white/85">{label}</span>
