@@ -74,26 +74,42 @@ const PRICE_ROWS = [
 const PRICE_NOTE =
   "Published, monthly, cancel any time, 14-day trial with a card. No demo required to see any of it.";
 
+// Drawn as the /pricing plan matrix (2026-09-21, the founder): the three plans
+// are the columns, under the ink head, with Practice lifted as it is there. The
+// plans as rows read as a list; as columns they read as what they are, three
+// plans compared. The same `.sk-pfm` classes, so it also gets the /pricing phone
+// treatment — one card per row, each under its own ink bar.
+const PLAN_HI = 1;
+const PRICE_MATRIX = [
+  { label: "Price", key: "price" },
+  { label: "Providers", key: "providers" },
+  { label: "Per provider", key: "per" },
+];
+
 export function PriceTable({ note = PRICE_NOTE }) {
   return (
     <>
-      <div className="sk-tablewrap">
-        <table className="sk-table">
+      <div className="sk-pfm sk-pfm--article">
+        <table className="sk-pfm__table">
           <thead>
             <tr>
-              <th>Plan</th>
-              <th className="sk-num">Price</th>
-              <th className="sk-num">Providers</th>
-              <th className="sk-num">Per provider</th>
+              <td className="sk-pfm__corner" />
+              {PRICE_ROWS.map((r, i) => (
+                <th scope="col" key={r.name} className={i === PLAN_HI ? "is-hi" : undefined}>
+                  {r.name}
+                </th>
+              ))}
             </tr>
           </thead>
           <tbody>
-            {PRICE_ROWS.map((r) => (
-              <tr key={r.name}>
-                <td>{r.name}</td>
-                <td className="sk-num">{r.price}</td>
-                <td className="sk-num">{r.providers}</td>
-                <td className="sk-num">{r.per}</td>
+            {PRICE_MATRIX.map((m) => (
+              <tr key={m.key}>
+                <th scope="row">{m.label}</th>
+                {PRICE_ROWS.map((r, i) => (
+                  <td key={r.name} data-label={r.name} className={i === PLAN_HI ? "is-hi" : undefined}>
+                    <span className={m.key === "providers" && !/^\d+$/.test(r[m.key]) ? "sk-pfm__w" : "sk-pfm__v"}>{r[m.key]}</span>
+                  </td>
+                ))}
               </tr>
             ))}
           </tbody>

@@ -31,11 +31,19 @@
 /*
  * FILLED 2026-09-21 from Pexels (the key works now), one graded series — see
  * the SERIES treatment in scripts/editorial-image.mjs and DESIGN_DECISIONS.md.
- * `/behavioral-health-credentialing` has no entry on purpose: Pexels had
- * nothing that fits (clinical exam rooms, or sessions with a client in frame),
- * so it goes to generation and keeps its declared slot until then.
+ * `/behavioral-health-credentialing` is the one generated image: Pexels had
+ * nothing that fits (clinical exam rooms, or sessions with a client in frame).
+ * Generated from the prompt recorded in DESIGN_DECISIONS.md (2026-09-21) and
+ * put through the same SERIES grade. `generated: true`, and no credit.
  */
 const PAGE_IMAGES = {
+  "/behavioral-health-credentialing": {
+    alt: "An empty therapy office in daylight: two sage armchairs facing each other across a small wooden table",
+    header: { src: "/editorial/behavioral-health-credentialing-header.webp", width: 1600, height: 686 },
+    card: { src: "/editorial/behavioral-health-credentialing-card.webp", width: 672, height: 448 },
+    og: "/editorial/behavioral-health-credentialing-og.jpg",
+    generated: true,
+  },
   "/caqh-reattestation": {
     alt: "A hand writing dates on a large paper desk calendar",
     header: { src: "/editorial/caqh-reattestation-header.webp", width: 1600, height: 686 },

@@ -1750,3 +1750,35 @@ diez páginas editoriales juntas.
   nombre del plan en semibold. Solo dentro de `.sk-ed`: las landings no cambian.
 Auditoría de media queries pisadas: cero.
 Regla de DESIGN_RULES.md que aplica: §19 (enmendada), §21.
+
+## Molde editorial — las tablas como tablas simples; título de vuelta; plan table como /pricing
+Fecha: 2026-09-21
+Decisión: segunda vuelta del fundador sobre el molde, con una referencia (un
+artículo de Momentive: tabla clásica de grilla, cabecera gris, filas alternadas).
+- **El título del artículo vuelve** a bold y 42px. Probado a 400/52px y
+  descartado por el fundador: un artículo, no una landing. Los H2 siguen bold.
+- **Un solo estilo de tabla para los cuatro cuadros del molde**
+  (`StatedVsObserved`, `SourcedPricingDisclosure`, `PurchaseModelCompare`,
+  `MultiVendorComparison`): marco de 1px con radio chico, filete en cada celda,
+  cabecera o columna de etiqueta en gris papel, filas alternadas en las
+  comparativas, texto de tabla a 15px. Reemplaza tanto las reglas negras de 2px
+  como el primer intento de la mañana (tarjeta con filete izquierdo), que el
+  fundador leyó igual de raro.
+- Las cabeceras de las comparativas con un competidor son **grises para los dos
+  proveedores**, nunca tinta: la tinta es el color de la marca, y pintar nuestra
+  columna inclinaría la comparación con el estilo.
+- **Teléfono:** no se copia el de la referencia, que aprieta cuatro columnas y
+  corta palabras a la mitad ("Professio / nal"). La comparativa conserva sus dos
+  columnas de proveedor bajo la cabecera y el criterio pasa a ser una franja gris
+  que cruza la fila. Verificado a 390: ninguna celda desborda, sin scroll lateral.
+- **La tabla de planes** de las comparativas toma la forma de la matriz de
+  /pricing (`.sk-pfm`): los tres planes como columnas bajo la cabecera tinta,
+  Practice resaltado. Con los planes como filas se leía como una lista y no como
+  una comparación de planes. Hereda las tarjetas con cabecera tinta de teléfono.
+  Acá la tinta sí va: es nuestra propia tabla de precios, como en /pricing.
+- El checklist de documentos baja sus reglas de 2px a 1px.
+- **`/behavioral-health-credentialing`** lleva la imagen generada (prompt
+  anotado en el chat del 2026-09-21: consultorio de terapia vacío, dos sillones
+  salvia, luz lateral, sin personas), con el mismo tratamiento de la serie.
+  Registrada como `generated: true`, sin crédito.
+Regla de DESIGN_RULES.md que aplica: §2 regla 5, §3.

@@ -2271,16 +2271,14 @@ html:has(.sokndall-neo) { overflow-x: hidden; }
 /* The masthead is as wide as both columns, but the title is not: at 1040px a
    headline runs to 120 characters a line and stops being a headline. It keeps
    its own measure and centres inside the band. */
-/* Regular weight and a step larger (2026-09-21, the founder's call, on trial):
-   the rule every other heading on the site already follows — the section H2s
-   are 400 — so the article's headline stops being the only bold display line
-   on the site. Tracking tightens with the size, as it does on .sk-h2. */
+/* Tried at regular weight and 52px on 2026-09-21 and put back: the founder
+   prefers the article headline bold, as an article, not as a landing. */
 .sk-edhead h1 {
-  font-size: clamp(2.125rem, 1.3rem + 2.7vw, 3.25rem);
-  line-height: 1.06;
-  letter-spacing: -0.034em;
-  font-weight: 400;
-  max-width: 24ch;
+  font-size: clamp(1.875rem, 1.35rem + 2.1vw, 2.625rem);
+  line-height: 1.14;
+  letter-spacing: -0.028em;
+  font-weight: 700;
+  max-width: 26ch;
   margin-inline: auto;
   margin-bottom: var(--s-4);
 }
@@ -2399,55 +2397,57 @@ html:has(.sokndall-neo) { overflow-x: hidden; }
        two lives in the evidence, not in the styling.
    The block reads as an instrument because it is ruled like a table, not
    because it is boxed like a callout. */
-/* 2026-09-21: the top and bottom rules drop from 2px to 1px. At 2px the
-   block read as a ledger dropped into the article, heavier than anything else
-   in the reading column. */
-.sk-svo { border-top: 1px solid var(--black); }
-/* `.sk-prose section > * + *` is (0,1,1) and would flatten the block's own
-   margin to the 18px paragraph step, so the standoff is qualified to win. */
+/* 2026-09-21, second pass (the founder, with a reference): a plain grid table.
+   Hairlines on every cell, the label column on paper grey, the table's own
+   caption as its head row. Simple and legible over "instrument". */
+.sk-svo {
+  border: 1px solid var(--line-strong);
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--card);
+}
 .sk-ed__prose section > .sk-svo { margin-top: clamp(24px, 2.6vw, 32px); }
 .sk-ed__prose section > .sk-svo + p { margin-top: clamp(24px, 2.6vw, 32px); }
 .sk-svo__cap {
   display: block;
-  padding: 10px 0;
+  padding: 12px 16px;
+  background: var(--paper);
   border-bottom: 1px solid var(--line-strong);
   font-weight: 600;
+  color: var(--black);
 }
 .sk-svo__row {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  gap: var(--s-2);
-  padding: var(--s-5) 0;
   border-bottom: 1px solid var(--line-strong);
 }
-.sk-svo__row:last-child { border-bottom-color: var(--black); }
-.sk-svo__lb { opacity: 0.62; }
-/* The claim is the content of the block, so it is set at the body's own size.
-   It was 15px against the article's 16: the eye stepped down on entering the
-   table, which is the opposite of the hierarchy. The source stays small. */
-.sk-svo__body p { font-size: 1rem; line-height: 1.62; }
-.sk-svo__body > * + * { margin-top: 12px; }
-/* Each observed case: its figure in mono, because the figures stack and are
-   read down the column, then the case itself in plain body copy. */
-/* The figure is the finding, so it leads the row: body face with tabular
-   figures (mono read as code in the middle of an article), semibold, and a
-   column wide enough that "90–120 days" stays on one line. It was 13px mono in
-   a 76px column, broken over two lines. */
-.sk-svo__case { display: grid; grid-template-columns: 116px minmax(0, 1fr); gap: var(--s-4); }
+.sk-svo__row:last-child { border-bottom: 0; }
+.sk-svo__lb {
+  padding: 10px 16px;
+  background: var(--paper);
+  border-bottom: 1px solid var(--line);
+  font-weight: 700;
+  color: var(--black);
+}
+.sk-svo__body { padding: 12px 16px; }
+.sk-svo__body p { font-size: 0.9375rem; line-height: 1.55; }
+.sk-svo__body > * + * { margin-top: 10px; }
+.sk-svo__case { display: grid; grid-template-columns: 108px minmax(0, 1fr); gap: var(--s-3); }
 .sk-svo__case .sk-num {
   font-family: inherit;
-  font-size: 1rem;
+  font-size: 0.9375rem;
   font-weight: 600;
-  line-height: 1.62;
-  letter-spacing: -0.01em;
+  line-height: 1.55;
   color: var(--black);
 }
 .sk-svo__case p { margin: 0; }
-.sk-svo__note { display: block; margin-top: var(--s-3); opacity: 0.62; }
+.sk-svo__note { display: block; margin-top: var(--s-3); color: var(--muted); }
 
 @media (min-width: 620px) {
-  .sk-svo__row { grid-template-columns: 96px minmax(0, 1fr); gap: var(--s-5); align-items: start; }
+  .sk-svo__row { grid-template-columns: 132px minmax(0, 1fr); }
+  .sk-svo__lb { padding: 12px 16px; border-bottom: 0; border-right: 1px solid var(--line); }
 }
+
 
 /* ---- SourcedFigure ----------------------------------------------------- */
 
@@ -2730,32 +2730,44 @@ html:has(.sokndall-neo) { overflow-x: hidden; }
    row that says "Not published" beside the thing that was checked, it reads
    as the finding it is. There is no colour anywhere in this block — the
    status is a word. */
-.sk-spd { border-top: 1px solid var(--black); }
-/* `.sk-prose section > * + *` is (0,1,1) and would flatten this to the 18px
-   paragraph step, so the standoff is qualified to win. */
+/* 2026-09-21, second pass: the same plain grid table as StatedVsObserved —
+   the status word in a paper-grey label cell, the finding and its source in
+   the body cell. */
+.sk-spd {
+  border: 1px solid var(--line-strong);
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--card);
+}
 .sk-cmp__prose section > .sk-spd,
 .sk-cmp__prose section > .sk-spd + p,
 .sk-ed__prose section > .sk-spd,
 .sk-ed__prose section > .sk-spd + p { margin-top: clamp(24px, 2.6vw, 32px); }
-
 .sk-spd__row {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  gap: var(--s-2);
-  padding: var(--s-5) 0;
   border-bottom: 1px solid var(--line-strong);
 }
-.sk-spd__row:last-child { border-bottom-color: var(--black); }
-.sk-spd__lb { opacity: 0.62; }
+.sk-spd__row:last-child { border-bottom: 0; }
+.sk-spd__lb {
+  padding: 10px 16px;
+  background: var(--paper);
+  border-bottom: 1px solid var(--line);
+  font-weight: 700;
+  color: var(--black);
+}
+.sk-spd__body { padding: 12px 16px; }
 .sk-cmp__prose .sk-spd__body p,
-.sk-ed__prose .sk-spd__body p { font-size: 1rem; line-height: 1.62; }
-.sk-spd__body > * + * { margin-top: var(--s-3); }
-.sk-spd__src { display: block; opacity: 0.68; }
-.sk-spd__est { opacity: 0.62; }
+.sk-ed__prose .sk-spd__body p { font-size: 0.9375rem; line-height: 1.55; }
+.sk-spd__body > * + * { margin-top: 6px; }
+.sk-spd__src { display: block; color: var(--muted); }
+.sk-spd__est { color: var(--muted); }
 
 @media (min-width: 620px) {
-  .sk-spd__row { grid-template-columns: 128px minmax(0, 1fr); gap: var(--s-5); align-items: start; }
+  .sk-spd__row { grid-template-columns: 148px minmax(0, 1fr); }
+  .sk-spd__lb { padding: 12px 16px; border-bottom: 0; border-right: 1px solid var(--line); }
 }
+
 
 /* ---- PurchaseModelCompare ---------------------------------------------- */
 
@@ -2767,7 +2779,19 @@ html:has(.sokndall-neo) { overflow-x: hidden; }
    an optional note.
    Neither column is highlighted, tinted or ordered first as the winner — the
    two are set identically and the reader does the comparing. */
-.sk-pmc { border-top: 2px solid var(--black); }
+/* 2026-09-21, second pass (the founder, with a reference): a plain grid table.
+   Head row on paper grey with the vendor names, hairlines on every cell, rows
+   striped. The head is grey for both vendors — ink is the brand's colour, and
+   painting our column in it would tilt a comparison with a named competitor.
+   On a phone the table keeps its two vendor columns under the same head; what
+   moves is the criterion, which becomes a strip across the top of its row, so
+   no cell is squeezed into breaking words mid-way. */
+.sk-pmc {
+  border: 1px solid var(--line-strong);
+  border-radius: 10px;
+  background: var(--card);
+  overflow: hidden;
+}
 .sk-cmp__prose section > .sk-pmc,
 .sk-cmp__prose section > .sk-pmc + p,
 .sk-ed__prose section > .sk-pmc,
@@ -2776,31 +2800,31 @@ html:has(.sokndall-neo) { overflow-x: hidden; }
 .sk-pmc__row {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  gap: var(--s-3);
-  padding: var(--s-4) 0;
   border-bottom: 1px solid var(--line-strong);
 }
-.sk-pmc__row:last-child { border-bottom-width: 2px; border-bottom-color: var(--black); }
-.sk-pmc__crit { font-weight: 600; font-size: 0.9375rem; line-height: 1.4; }
-.sk-pmc__unit { display: block; margin-top: 4px; opacity: 0.62; }
-.sk-pmc__cells { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--s-4); }
-.sk-pmc__cell { display: grid; gap: 4px; }
-/* Not `.sk-micro`: these are vendor names, and uppercasing them rewrites a
-   brand that sets its own name in lower case. Small and semibold instead. */
-.sk-pmc__who { font-size: 0.8125rem; font-weight: 600; line-height: 1.4; opacity: 0.62; }
+.sk-pmc__row:last-child { border-bottom: 0; }
+.sk-pmc__row:not(.sk-pmc__head):nth-child(odd) { background: rgba(14, 42, 46, 0.022); }
+.sk-pmc__row > :first-child { padding: 10px 14px; background: var(--paper); border-bottom: 1px solid var(--line); }
+.sk-pmc__crit { display: block; font-weight: 700; font-size: 0.9375rem; line-height: 1.4; color: var(--black); }
+.sk-pmc__unit { display: block; margin-top: 2px; color: var(--muted); }
+.sk-pmc__cells { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+.sk-pmc__cell { padding: 12px 14px; }
+.sk-pmc__cell + .sk-pmc__cell { border-left: 1px solid var(--line); }
+.sk-pmc__cell .sk-pmc__who { display: none; }
 .sk-cmp__prose .sk-pmc__cell p,
-.sk-ed__prose .sk-pmc__cell p { font-size: 0.9375rem; line-height: 1.62; }
+.sk-ed__prose .sk-pmc__cell p { font-size: 0.9375rem; line-height: 1.55; }
 
-/* Below the two-column breakpoint the vendor name rides on each cell, so the
-   header row is redundant; above it the names are the column heads and the
-   per-cell name would repeat eight times. Exactly one of the two shows. */
-.sk-pmc__head { display: none; }
+.sk-pmc__head { background: var(--paper); border-bottom: 1px solid var(--line-strong); }
+.sk-pmc__head > :first-child { display: none; }
+.sk-pmc__head .sk-pmc__who { display: block; padding: 10px 14px; font-size: 0.9375rem; font-weight: 700; color: var(--black); }
+.sk-pmc__head .sk-pmc__who + .sk-pmc__who { border-left: 1px solid var(--line); }
+
 @media (min-width: 620px) {
-  .sk-pmc__row  { grid-template-columns: 208px minmax(0, 1fr); gap: var(--s-5); align-items: start; }
-  .sk-pmc__cells { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--s-5); }
-  .sk-pmc__head { display: grid; padding-block: 0 var(--s-3); border-bottom: 1px solid var(--line-strong); }
-  .sk-pmc__head .sk-pmc__who { opacity: 1; }
-  .sk-pmc__cell .sk-pmc__who { display: none; }
+  .sk-pmc__row { grid-template-columns: 188px minmax(0, 1fr); }
+  .sk-pmc__row > :first-child { padding: 12px 16px; border-bottom: 0; border-right: 1px solid var(--line); background: none; }
+  .sk-pmc__cell { padding: 12px 16px; }
+  .sk-pmc__head > :first-child { display: block; background: var(--paper); }
+  .sk-pmc__head .sk-pmc__who { padding: 12px 16px; }
 }
 
 /* ---- MultiVendorComparison --------------------------------------------- */
@@ -2814,13 +2838,23 @@ html:has(.sokndall-neo) { overflow-x: hidden; }
    a hurried content edit. */
 .sk-mvc { margin-top: clamp(24px, 2.6vw, 32px); }
 .sk-mvc .sk-table { min-width: 720px; }
+/* The same plain grid as the other article tables (2026-09-21): paper-grey
+   head with the vendor names, hairlines on every cell, striped rows. Neutral
+   for every vendor, Sokndall included. */
+.sk-mvc .sk-tablewrap { border: 1px solid var(--line-strong); border-radius: 10px; }
 .sk-mvc thead th {
   text-transform: none;
   letter-spacing: -0.01em;
-  font-size: 0.875rem;
+  font-size: 0.9375rem;
   color: var(--black);
-  border-bottom: 2px solid var(--black);
+  background: var(--paper);
+  border-bottom: 1px solid var(--line-strong);
 }
+.sk-mvc .sk-table th,
+.sk-mvc .sk-table td { border-bottom: 1px solid var(--line); border-right: 1px solid var(--line); }
+.sk-mvc .sk-table tr > :last-child { border-right: 0; }
+.sk-mvc .sk-table tbody tr:nth-child(even) td,
+.sk-mvc .sk-table tbody tr:nth-child(even) th { background: rgba(14, 42, 46, 0.022); }
 .sk-mvc__self { display: block; font-weight: 400; opacity: 0.62; margin-top: 2px; }
 .sk-mvc th[scope="row"] {
   text-transform: none;
@@ -3027,7 +3061,7 @@ html:has(.sokndall-neo) { overflow-x: hidden; }
 /* ---- DocumentChecklist (editorial) -------------------------------------- */
 /* Ruled like StatedVsObserved, not boxed: the reading column carries no cards.
    One enumeration system — the empty square — and no number beside it. */
-.sk-chk { border-top: 2px solid var(--black); border-bottom: 2px solid var(--black); }
+.sk-chk { border-top: 1px solid var(--black); border-bottom: 1px solid var(--black); }
 .sk-ed__prose section > .sk-chk { margin-top: clamp(24px, 2.6vw, 32px); }
 .sk-ed__prose section > .sk-chk + p { margin-top: clamp(24px, 2.6vw, 32px); }
 .sk-chk__list { list-style: none; padding: 0; margin: 0; }
