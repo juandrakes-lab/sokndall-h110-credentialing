@@ -1867,3 +1867,25 @@ fragmento. Propuso una foto de Pexels o una tarjeta de marca; va la de marca:
 Política de imagen: tarjeta de marca, sin fotografía.
 Regla de DESIGN_RULES.md que aplica: §2 regla 7 (precios), §17 (degradado en
 bloque oscuro).
+
+## Relacionados — /pricing y /payer-enrollment-software llevan foto, como los artículos
+Fecha: 2026-09-21
+Decisión: el fundador rechazó el recorte de la matriz de enrollment (ilegible a
+tamaño de tarjeta; un mockup de datos no es una imagen, no ilustra ni invita a
+entrar) y la tarjeta de marca de /pricing (pedía solo el logo, y el logo se está
+redefiniendo). Error mío en la propuesta anterior: la costumbre de ilustrar una
+página de producto con el producto funciona con una pieza diseñada para ese
+tamaño, no con un recorte de una pantalla con datos. Y la mezcla de
+tratamientos funciona cuando las páginas de producto van en una sección aparte;
+acá van intercaladas en una fila de tres, y ahí pesa más tratarlas igual.
+- `/payer-enrollment-software`: un sujetapapeles con un formulario que dice
+  "Application", birome y notebook, cenital sobre mármol (Pexels, #2 de la hoja).
+  Se parece al del checklist (también un sujetapapeles): aceptado.
+- `/pricing`: billetera con tarjeta, café y notebook sobre una mesa de madera,
+  cenital (Pexels, #9). Sin terminales de pago en persona (cobramos una
+  suscripción) y sin el cliché de sostener la tarjeta frente a la pantalla.
+- La plantilla conserva su recorte: le gustó al fundador y se lee como una
+  imagen, un archivo.
+- Mismo tratamiento de la serie. Ninguna repite una foto ya usada en el sitio.
+- Queda anotada la opción de una tarjeta de logo solo para /pricing, a comparar
+  cuando el logo esté definido.

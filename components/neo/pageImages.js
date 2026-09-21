@@ -8,12 +8,12 @@
  * A route with no entry has no header photograph, and every card pointing at
  * it keeps the empty, declared 3:2 slot.
  *
- * Landing pages appear with a `card` only (2026-09-21, the founder): the
- * related cards that point at a landing show a crop of that landing's own
- * product figure, never a photograph — the usual practice for a card leading
- * to a product page, whose "picture" is the product. The crops are taken from
- * the live page at 2x (the plan matrix, the template sheet, the enrollment
- * matrix). A landing never gets a `header`: it has no masthead photograph.
+ * Landing pages appear with a `card` only. The template's card is a crop of
+ * its own sheet — a whole, recognisable object, a file. /pricing and
+ * /payer-enrollment-software take photographs like the article cards: a crop
+ * of a data screen is illegible at card size, and in a row of three the cards
+ * have to be treated alike (the founder, 2026-09-21). A landing never gets a
+ * `header`: it has no masthead photograph.
  *
  * Entry shape, once an image exists (see scripts/editorial-image.mjs, which
  * produces all three files from one source photograph):
@@ -41,21 +41,24 @@
  */
 const PAGE_IMAGES = {
   // Landings: a card only, cropped from the page's own product figure.
-  // Not a crop: the plan table cut out of its frame read as a broken capture
-  // (the founder, 2026-09-21). A brand card instead — the site's ink tile with
-  // the hero's contours, the wordmark and the three published prices. Rendered
-  // with the site's own CSS and captured at 2x; no new words.
+  // A photograph, like the article cards around it (2026-09-21, the
+  // founder): in a row of three, one solid brand card between two photos read
+  // as out of place. The table crop and the brand card were both rejected.
   "/pricing": {
-    alt: "Sokndall pricing: $79, $299 and $699 a month",
+    alt: "A wallet with a payment card beside a laptop and a cup of coffee, seen from above",
     card: { src: "/editorial/pricing-card.webp", width: 672, height: 448 },
+    credit: { photographer: "Cup of  Couple", url: "https://www.pexels.com/photo/a-wallet-and-a-cup-of-coffee-on-the-table-6633806/" },
   },
   "/credentialing-spreadsheet-template": {
     alt: "The free credentialing tracker template, open on its Credentials tab",
     card: { src: "/editorial/credentialing-spreadsheet-template-card.webp", width: 672, height: 448 },
   },
+  // A photograph too: the matrix crop was illegible at card size, and a data
+  // mockup is not a picture (the founder, 2026-09-21).
   "/payer-enrollment-software": {
-    alt: "The enrollments matrix: every provider against every payer, with each application's status",
+    alt: "A clipboard with a blank application form beside a pen and a laptop",
     card: { src: "/editorial/payer-enrollment-software-card.webp", width: 672, height: 448 },
+    credit: { photographer: "Markus Winkler", url: "https://www.pexels.com/photo/an-application-paper-on-a-clipboard-beside-pen-and-laptop-4101416/" },
   },
   "/behavioral-health-credentialing": {
     alt: "An empty therapy office in daylight: two sage armchairs facing each other across a small wooden table",
