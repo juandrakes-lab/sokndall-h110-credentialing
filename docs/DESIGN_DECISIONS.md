@@ -1828,3 +1828,23 @@ stock ahí promete un artículo y lleva a una página de venta.
   encabezado fotográfico por accidente.
 Verificado: las 10 páginas editoriales tienen sus 3 tarjetas con imagen (30/30).
 Regla de DESIGN_RULES.md que aplica: §10, §19.
+
+## Molde editorial — la barra flotante de las landings, fija también en los artículos
+Fecha: 2026-09-21
+Decisión: pedido del fundador ("los sitios lo suelen hacer"). Los artículos usaban
+una barra estática (`NavBar`) que se iba con el encabezado; la flotante
+(`FloatingNav`) vivía solo en las landings.
+- El molde editorial usa ahora la misma `FloatingNav`, fija desde el primer
+  píxel como en las páginas de producto. Va fuera de `.sk-ed`, al nivel del
+  shell como en las landings, para que el sticky dure toda la página y no solo
+  la caja del artículo. Los chips de navegación de teléfono se quedan.
+- El índice lateral se fijaba a 24px y quedaba debajo de la barra (12px arriba
+  + 56 de alto): pasa a `top: 96px`.
+- Los saltos del índice ya quedaban libres: el sitio tiene
+  `scroll-padding-top: 88px` en `html:has(.sk-fnav)`.
+Verificado en /caqh-reattestation: a 1440 con 2500px de scroll la barra sigue en
+12–68px y el índice en 96, sin superponerse; un salto del índice deja el título
+a 88px (20px debajo de la barra); a 390 la barra se mantiene y no hay scroll
+lateral.
+Regla de DESIGN_RULES.md que aplica: §7 (FloatingNav es uno de los cuatro
+componentes de cliente permitidos).

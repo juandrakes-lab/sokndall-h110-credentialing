@@ -2227,12 +2227,15 @@ html:has(.sokndall-neo) { overflow-x: hidden; }
   /* The column keeps the default `stretch` — a sticky child can only travel
      as far as its own grid area is tall, so shrinking the area to its content
      makes the contents list scroll away immediately. */
+  /* Under the floating bar since 2026-09-21: the bar is 12px from the top and
+     56px tall, so at `--s-5` the contents list slid under it. The anchors
+     already clear it (`scroll-padding-top` on `html:has(.sk-fnav)`). */
   .sk-ed__sidein {
     display: grid;
     gap: var(--s-6);
     align-content: start;
     position: sticky;
-    top: var(--s-5);
+    top: 96px;
   }
   .sk-edtoc,
   .sk-ed__rail { grid-area: auto; }

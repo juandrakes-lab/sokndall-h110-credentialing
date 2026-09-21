@@ -1,7 +1,8 @@
 import { Children, isValidElement } from "react";
 import Link from "next/link";
 
-import { NavBar, NavMobile } from "@/components/neo/Nav";
+import { NavMobile } from "@/components/neo/Nav";
+import FloatingNav from "@/components/neo/FloatingNav";
 import EmailCapture from "@/components/neo/EmailCapture";
 import Footer from "@/components/neo/Footer";
 import Faq from "@/components/neo/Faq";
@@ -145,11 +146,15 @@ export default function EditorialTemplate({
       ? [...contents, { id: "faq", label: FAQ_LABEL }]
       : contents;
 
+  // The same floating bar as the landings (2026-09-21, the founder): an
+  // article runs to eleven minutes, and the bar stays with the reader instead
+  // of scrolling away with the masthead. It sits outside `.sk-ed`, at the top
+  // level of the shell as on the landings, so `position: sticky` holds for the
+  // whole page rather than for the article's box. The phone chips stay.
   return (
+    <>
+    <FloatingNav current={current} />
     <div className="sk-ed">
-      <div className="sk-ed__bar">
-        <NavBar current={current} />
-      </div>
       <NavMobile current={current} />
 
       {/* The masthead spans the whole measure and sits above the split, so the
@@ -235,6 +240,7 @@ export default function EditorialTemplate({
 
       <Footer blurb={FOOTER_BLURB_V31} cols={FOOTER_COLS_V31} />
     </div>
+    </>
   );
 }
 
