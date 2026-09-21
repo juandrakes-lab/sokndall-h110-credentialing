@@ -1640,3 +1640,47 @@ Decisión: dos pedidos del fundador.
   muda a las celdas.
 Política de imagen: ninguna.
 Regla de DESIGN_RULES.md que aplica: §3, §0 (capturas a 390).
+
+## /for-billing-companies — el informe al cliente: el CSV pisa la tarjeta, sin fondo
+Fecha: 2026-09-20
+Decisión: pedido del fundador (no centrado, el chip lejos de la tarjeta, duda
+sobre el fondo).
+- Medido: el chip del CSV flotaba **76px debajo** de la tarjeta, en un lienzo de
+  800×660 cuyo contenido llegaba a 635. La figura era más alta que la columna de
+  texto y fijaba la altura de la fila, así que no había nada contra qué
+  centrarla. Ahora el chip pisa la esquina inferior derecha de la tarjeta por
+  30px, con la sombra de un chip que va encima (`chipOver`), y el lienzo baja a
+  530. La figura (388) queda más baja que el texto (410) y se centra: 11px
+  arriba y 11 abajo.
+- **Sin fondo**, recomendación mía, a decidir por el fundador: la figura ya se
+  dibuja a 0,731 y el padding del fondo la bajaría a ~0,67; y está al lado de
+  prosa, no de tarjetas, así que no tiene con qué confundirse — el mismo caso
+  que la figura de unidades de /pricing, que quedó sin fondo. La sensación de
+  "flotando" era el hueco de 76px, que ya no está.
+- Teléfono (`NarrowReport`): a 440 la fila de tres columnas le dejaba ~105px al
+  nombre y **"Ethan Brooks" y "Noah Fischer" truncaban**. `ReportCard compact`
+  pasa a dos columnas con el badge de credenciales debajo del nombre. Además el
+  lienzo declaraba 560 y usaba 377 (antes del cambio); queda en 500.
+Política de imagen: ninguna foto; figura de producto sin fondo.
+Regla de DESIGN_RULES.md que aplica: §14.
+
+## /credentialing-spreadsheet-template — la planilla: fondo, lienzo a medida y la versión angosta sin corte
+Fecha: 2026-09-20
+Decisión: pedido del fundador.
+- **El espacio excesivo** debajo de la figura no era margen: el lienzo de
+  `TemplateSheet` declaraba 470 y la hoja mide 326, así que había **130px de
+  lienzo vacío** antes del padding normal de sección. Pasa a 330 y el hueco
+  vuelve a ser el de cualquier otro borde de sección.
+- **Fondo**, pedido del fundador. Costo: de 0,902 a 0,866 a 1440.
+- **La versión "cortada" era un bug, no un recorte.** `NarrowSheet` tomaba
+  prestados los anchos de la versión ancha: 506px de columnas en un lienzo de
+  460, así que Status se pasaba 46px de la tarjeta y la esquina de la propia
+  tarjeta cortaba "EXPIRED" a mitad de palabra; la barra de pestañas se cortaba
+  en "Payer Enrollme…". Ahora tiene sus propios anchos (410 en total, el lienzo)
+  y las cuatro pestañas de datos, que entran. Nada se sale de la tarjeta. Con el
+  fondo se dibuja a 0,751 en teléfono.
+- Quedan truncados, con puntos suspensivos, dos encabezados ("Expiration Date",
+  "Days Left"): son los nombres reales de las columnas del archivo y es lo que
+  hace una planilla angosta. No se acortan.
+Política de imagen: ninguna foto; figura sobre el fondo de la app.
+Regla de DESIGN_RULES.md que aplica: §5, contrato de PRODUCT_SHOTS §6.

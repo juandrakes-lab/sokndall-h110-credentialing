@@ -825,31 +825,38 @@ const REPORT = [
   ["Daniel Okafor", "Pediatrics", "1 expired", "red", { approved: 4, in_review: 1, submitted: 1, not_started: 1 }],
 ];
 
-function ReportCard({ rows = 6 }) {
+// `compact` (the phone): two columns instead of three, the credential badge
+// under the provider's name. At 440 the three-column row gave the name ~105px
+// and the badge column took the rest, so "Ethan Brooks" and "Noah Fischer"
+// truncated — the one thing on the row that must not. Measured 2026-09-20.
+function ReportCard({ rows = 6, compact = false }) {
+  const grid = compact ? "grid-cols-[1.45fr_1fr]" : "grid-cols-[1.6fr_1.2fr_1.3fr]";
   return (
     <Card floating className="overflow-hidden">
       <CardHead icon={ICONS.providers} title="Providers" sub="Riverside Pediatrics PLLC · 15 providers" right={<Btn>Export CSV</Btn>} />
-      <div className="grid grid-cols-[1.6fr_1.2fr_1.3fr] gap-3 border-b border-ink-100 px-5 py-2.5 text-xs font-medium text-ink-700">
+      <div className={`grid ${grid} gap-3 border-b border-ink-100 px-5 py-2.5 text-xs font-medium text-ink-700`}>
         <span>Provider</span>
-        <span>Credentials</span>
+        {!compact && <span>Credentials</span>}
         <span>Applications</span>
       </div>
       {REPORT.slice(0, rows).map(([n, s, cred, tone, apps]) => {
         const total = Object.values(apps).reduce((a, b) => a + b, 0);
+        const badge = (
+          <Badge tone={tone} dot>
+            {cred}
+          </Badge>
+        );
         return (
-          <div key={n} className="grid grid-cols-[1.6fr_1.2fr_1.3fr] items-center gap-3 border-b border-ink-100 px-5 py-3 last:border-b-0">
-            <span className="flex min-w-0 items-center gap-2.5">
+          <div key={n} className={`grid ${grid} items-center gap-3 border-b border-ink-100 px-5 py-3 last:border-b-0`}>
+            <span className={`flex min-w-0 gap-2.5 ${compact ? "items-start" : "items-center"}`}>
               <Avatar name={n} size="sm" />
               <span className="min-w-0">
                 <span className="block truncate text-sm font-semibold text-ink-900">{n}</span>
                 <span className="block truncate text-xs text-ink-500">{s}</span>
+                {compact && <span className="mt-1.5 block">{badge}</span>}
               </span>
             </span>
-            <span>
-              <Badge tone={tone} dot>
-                {cred}
-              </Badge>
-            </span>
+            {!compact && <span>{badge}</span>}
             <span>
               <SegmentBar segments={Object.entries(apps).map(([k, v]) => ({ key: k, label: k, value: v, color: STATUS_FILL[k] }))} height={8} />
               <span className="mt-1 block text-xs text-ink-500">
@@ -870,7 +877,10 @@ export function ClientReport() {
       <div className="absolute inset-x-0 top-0">
         <ReportCard />
       </div>
-      <Chip x={380} y={555} w={400}>
+      {/* Over the card's bottom-right corner, not 76px under it: floating
+          apart, the chip read as a second object and pulled the figure's mass
+          down. 2026-09-20. */}
+      <Chip x={376} y={449} w={400} over>
         <div className="flex items-center gap-3.5 p-4">
           <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-status-active-bg text-status-active">
             <Icon d={ICONS.file} className="h-6 w-6" />
@@ -889,7 +899,7 @@ export function ClientReport() {
 export function NarrowReport() {
   return (
     <div className="absolute inset-x-0 top-0">
-      <ReportCard rows={4} />
+      <ReportCard rows={4} compact />
     </div>
   );
 }
@@ -925,7 +935,7 @@ const SHEET_ROW = {
 };
 const SHEET_TABS = ["How to use", "Dashboard", "Providers", "Credentials", "Payer Enrollment", "CAQH"];
 
-function Sheet({ cols, rows = 4 }) {
+function Sheet({ cols, rows = 4, tabs = SHEET_TABS }) {
   return (
     <div className={`absolute inset-x-0 top-0 flex flex-col overflow-hidden rounded-[18px] bg-white ${lift}`}>
       <div className="flex items-center gap-2 border-b border-ink-100 bg-ink-50 px-5 py-3">
@@ -974,7 +984,7 @@ function Sheet({ cols, rows = 4 }) {
         </tbody>
       </table>
       <div className="mt-auto flex gap-1 border-t border-ink-100 bg-ink-50 px-3 py-2">
-        {SHEET_TABS.map((t) => (
+        {tabs.map((t) => (
           <span key={t} className={`whitespace-nowrap rounded-md px-3 py-1 text-xs ${t === "Credentials" ? "bg-white font-semibold text-ink-900 shadow-[0_1px_2px_rgba(14,42,46,0.12)]" : "text-ink-500"}`}>
             {t}
           </span>
@@ -988,9 +998,22 @@ export function TemplateSheet() {
   return <Sheet cols={SHEET_COLS} rows={4} />;
 }
 
-// On a phone: the four columns that carry the point.
+// On a phone: the four columns that carry the point, sized to the canvas.
+// It used to borrow the wide widths (150+120+90+110 plus the row gutter: 506 on
+// a 460 canvas), so the Status column ran 46px past the card and the card's own
+// corner clipped "EXPIRED" mid-word — it read as a deliberate crop and was a
+// bug. The tab bar likewise ran out at "Payer Enrollme…"; it keeps the data
+// tabs, which fit. Measured 2026-09-20.
+// 36 (row gutter) + 120 + 98 + 66 + 90 = 410, the canvas: the narrower the
+// canvas the larger it draws on a phone (0.75 at 400 inside the ground).
+const NARROW_SHEET_COLS = [
+  ["Provider Name", 120],
+  ["Expiration Date", 98],
+  ["Days Left", 66, true],
+  ["Status", 90, true],
+];
 export function NarrowSheet() {
-  return <Sheet cols={SHEET_COLS.filter(([c]) => ["Provider Name", "Expiration Date", "Days Left", "Status"].includes(c))} rows={4} />;
+  return <Sheet cols={NARROW_SHEET_COLS} rows={4} tabs={["Providers", "Credentials", "Payer Enrollment", "CAQH"]} />;
 }
 
 // ---- /pricing ------------------------------------------------------------------

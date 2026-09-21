@@ -99,7 +99,7 @@ export default function ForBillingCompaniesPage() {
           head={REPORT.head}
           paras={REPORT.paras}
           closing={REPORT.closing}
-          media={<ProductShot scene="ClientReport" w={800} h={660} narrow={{ scene: "NarrowReport", w: 440, h: 560 }} label={REPORT_SCREEN} />}
+          media={<ProductShot scene="ClientReport" w={800} h={530} narrow={{ scene: "NarrowReport", w: 440, h: 500 }} label={REPORT_SCREEN} />}
         />
 
         <FigureBandSection head={ANCHOR.head} figures={ANCHOR.figures} closing={ANCHOR.closing} />
