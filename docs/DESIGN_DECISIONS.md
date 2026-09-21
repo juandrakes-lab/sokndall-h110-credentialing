@@ -1684,3 +1684,40 @@ Decisión: pedido del fundador.
   hace una planilla angosta. No se acortan.
 Política de imagen: ninguna foto; figura sobre el fondo de la app.
 Regla de DESIGN_RULES.md que aplica: §5, contrato de PRODUCT_SHOTS §6.
+
+## Fotografía — la serie de Pexels: home §2 y nueve encabezados editoriales
+Fecha: 2026-09-21
+Decisión: el fundador pidió llenar todos los huecos de imagen con Pexels y pasar
+a IA los que no encajen. La clave nueva funciona (la del 2026-09-10 era inválida).
+- **Criterio** (análisis previo, aprobado): objetos y manos antes que caras;
+  luz natural, trabajo a medio hacer; madera, papel, verdes apagados, sin el
+  azul-blanco de hospital ni colores saturados que compitan con el ámbar; sujeto
+  centrado con aire, porque de cada foto salen un 21:9 y un 3:2. La foto
+  anterior de la home (`bindersDesk`) se lee stock por la pose, no por la
+  calidad: "empleada estresada" con la mano en la frente.
+- **Proceso:** 3 búsquedas por lugar, filtro por la descripción de cada foto
+  (fuera sonrisas, poses, cámara, ambos, pacientes), hoja de contactos de 5 por
+  lugar, elección revisada por el fundador. Descartes con motivo en el chat del
+  2026-09-21 (planos de arquitectura, checklist inmobiliaria, un calendario que
+  dice "2025", billetes y factura polacos, todo lo rosa o rojo saturado).
+- **Tratamiento común:** `scripts/editorial-image.mjs` aplica ahora un paso
+  menos de saturación (`SERIES`, 0,86) a toda la serie, para que once fotos de
+  once fotógrafos se lean como un conjunto.
+- **Crédito visible (§19):** los encabezados editoriales no lo imprimían.
+  `headerImage()` devuelve ahora el crédito y `PageHeader` lo pone junto al pie
+  ("… · Photo: X / Pexels").
+- **Recortes revisados uno por uno.** Uno se rehízo: en
+  `/insurance-credentialing-for-therapists` el recorte automático ("attention")
+  metió la cara sonriendo en el 21:9, cuando la foto se eligió justamente porque
+  la cara quedaba fuera. Se recortó desde abajo (`south`). La tarjeta 3:2, más
+  alta, deja ver media cara cortada a la altura de los ojos, sin mirar a cámara.
+- **Pendientes a IA:** `/behavioral-health-credentialing`. Dos búsquedas y
+  ninguna candidata: Pexels devuelve consultorios de examen (otra especialidad) o
+  sesiones con un paciente en cuadro. Su hueco 21:9 queda declarado y vacío.
+- **Fuera de esta tanda, decididos con el fundador:** el retrato de `/about`
+  (nunca stock: sería un desconocido presentado como el fundador) y las tarjetas
+  de relacionados que llevan a landings (la costumbre del rubro es mostrar ahí
+  un recorte del producto, no una foto; queda para la tanda institucional).
+Todos los archivos WebP bajo 200 KB (el más pesado, 108 KB).
+Política de imagen: fotografía documental de Pexels con crédito visible.
+Regla de DESIGN_RULES.md que aplica: §5, §7, §19.

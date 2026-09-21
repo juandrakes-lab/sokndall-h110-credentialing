@@ -93,8 +93,21 @@ export function PageHeader({
             direction={image.direction}
             priority
           />
-          {image.caption ? (
-            <span className="sk-small sk-edhead__cap">{image.caption}</span>
+          {/* The photographer's credit is required (DESIGN_RULES §19), so it
+              prints with the caption, or alone when there is none. */}
+          {image.caption || image.credit ? (
+            <span className="sk-small sk-edhead__cap">
+              {image.caption}
+              {image.caption && image.credit ? " · " : null}
+              {image.credit ? (
+                <>
+                  Photo:{" "}
+                  <a href={image.credit.url} target="_blank" rel="noopener nofollow">
+                    {image.credit.photographer} / Pexels
+                  </a>
+                </>
+              ) : null}
+            </span>
           ) : null}
         </div>
       ) : null}

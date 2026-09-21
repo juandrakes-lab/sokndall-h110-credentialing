@@ -67,7 +67,7 @@ export default function HomePage() {
           head={PROBLEM.head}
           items={PROBLEM.items}
           closing={PROBLEM.closing}
-          photo={PHOTOS.bindersDesk}
+          photo={PHOTOS.deskPaperwork}
         />
 
 {/* The three things beside the digest they arrive in (2026-09-20). The

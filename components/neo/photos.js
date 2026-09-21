@@ -11,6 +11,18 @@
 // takes stock (DESIGN_RULES §16, §19).
 
 export const PHOTOS = {
+  // The home's section 2 since 2026-09-21. Replaces `bindersDesk`, which the
+  // founder read as stock: its subject was acting "stressed office worker"
+  // (hand to forehead). This one is the work itself, seen from above — papers,
+  // a calculator, sticky notes, hands — and nobody performs anything.
+  deskPaperwork: {
+    src: "/landing/px-desk-paperwork.webp",
+    width: 1000,
+    height: 1000,
+    alt: "A desk seen from above: printed papers, a calculator, sticky notes and a pair of hands at work",
+    photographer: "Pavel Danilyuk",
+    url: "https://www.pexels.com/photo/a-person-using-calculator-7654591/",
+  },
   formsHands: {
     src: "/landing/px-forms-hands.webp",
     width: 1600,

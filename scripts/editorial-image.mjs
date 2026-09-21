@@ -33,9 +33,15 @@ const src = /^https?:/i.test(input)
   ? Buffer.from(await (await fetch(input)).arrayBuffer())
   : fs.readFileSync(input);
 
+// One treatment for the whole series (2026-09-21): a step less saturation, so
+// eleven photographs by eleven photographers read as one set against the
+// site's petrol and paper instead of as eleven stock libraries.
+const SERIES = { saturation: 0.86 };
+const graded = () => sharp(src).modulate(SERIES);
+
 async function webp(name, width, height) {
   for (let q = 82; q >= 40; q -= 6) {
-    const buf = await sharp(src).resize(width, height, { fit: "cover", position: focus }).webp({ quality: q }).toBuffer();
+    const buf = await graded().resize(width, height, { fit: "cover", position: focus }).webp({ quality: q }).toBuffer();
     if (buf.length <= MAX) {
       fs.writeFileSync(path.join(OUT, name), buf);
       return { name, width, height, kb: Math.round(buf.length / 1024), q };
@@ -46,7 +52,7 @@ async function webp(name, width, height) {
 
 const header = await webp(`${slug}-header.webp`, 1600, 686);
 const card = await webp(`${slug}-card.webp`, 672, 448);
-const og = await sharp(src).resize(1200, 630, { fit: "cover", position: focus }).jpeg({ quality: 78 }).toBuffer();
+const og = await graded().resize(1200, 630, { fit: "cover", position: focus }).jpeg({ quality: 78 }).toBuffer();
 fs.writeFileSync(path.join(OUT, `${slug}-og.jpg`), og);
 
 console.log(JSON.stringify({ header, card, og: { kb: Math.round(og.length / 1024) } }, null, 2));
