@@ -1848,3 +1848,22 @@ a 88px (20px debajo de la barra); a 390 la barra se mantiene y no hay scroll
 lateral.
 Regla de DESIGN_RULES.md que aplica: §7 (FloatingNav es uno de los cuatro
 componentes de cliente permitidos).
+
+## Relacionados — la tarjeta de /pricing pasa a ser de marca
+Fecha: 2026-09-21
+Decisión: el fundador rechazó el recorte de la tabla de planes ("cutre", sin
+profundidad): una tabla sacada de su marco se lee como una captura cortada por
+error. La plantilla funciona porque es un objeto completo; la tabla era un
+fragmento. Propuso una foto de Pexels o una tarjeta de marca; va la de marca:
+- Una foto de "cuentas" repetiría la de /modio-health-pricing, y en las páginas
+  de comparación la tarjeta de precios comparte fila con symplr, Modio y
+  MedTrainer: cuatro fotos de papel y calculadora juntas.
+- La tarjeta de marca dice "esta es nuestra página", que es lo que es /pricing,
+  y la tinta ya es el color de nuestros precios.
+- Contenido: el tile tinta del sitio con las curvas de nivel del hero y su
+  brillo, el logo, la palabra "Pricing" (la de la navegación) y las tres cifras
+  publicadas. Ninguna frase nueva. Armada con el CSS real sobre /pricing y
+  capturada a 2× (24 KB).
+Política de imagen: tarjeta de marca, sin fotografía.
+Regla de DESIGN_RULES.md que aplica: §2 regla 7 (precios), §17 (degradado en
+bloque oscuro).

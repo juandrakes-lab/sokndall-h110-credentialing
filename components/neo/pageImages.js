@@ -41,8 +41,12 @@
  */
 const PAGE_IMAGES = {
   // Landings: a card only, cropped from the page's own product figure.
+  // Not a crop: the plan table cut out of its frame read as a broken capture
+  // (the founder, 2026-09-21). A brand card instead — the site's ink tile with
+  // the hero's contours, the wordmark and the three published prices. Rendered
+  // with the site's own CSS and captured at 2x; no new words.
   "/pricing": {
-    alt: "The plan comparison: Solo, Practice and Billing Co side by side",
+    alt: "Sokndall pricing: $79, $299 and $699 a month",
     card: { src: "/editorial/pricing-card.webp", width: 672, height: 448 },
   },
   "/credentialing-spreadsheet-template": {
