@@ -1264,6 +1264,16 @@ html:has(.sokndall-neo) { overflow-x: hidden; }
 .sk-table td { color: var(--black); line-height: 1.55; }
 .sk-table tr:last-child td { border-bottom: 0; }
 .sk-tablewrap { overflow-x: auto; border: var(--hairline) solid var(--line); border-radius: var(--r-card); }
+/* Inside an article (2026-09-21): figures in the body face with tabular
+   numerals, not mono — "$79/mo" and "50 across clients" set in a code face read
+   as a readout pasted into prose. Figure columns align right, where numbers are
+   compared; the first column, the row's name, is the one in weight. */
+.sk-ed .sk-table { font-size: 0.9375rem; }
+.sk-ed .sk-table th { font-weight: 600; }
+.sk-ed .sk-table .sk-num { font-family: inherit; letter-spacing: 0; }
+.sk-ed .sk-table th.sk-num,
+.sk-ed .sk-table td.sk-num { text-align: right; }
+.sk-ed .sk-table tbody td:first-child { font-weight: 600; }
 
 /* ============================ HOME: HERO CARDS =========================== */
 
@@ -2261,12 +2271,16 @@ html:has(.sokndall-neo) { overflow-x: hidden; }
 /* The masthead is as wide as both columns, but the title is not: at 1040px a
    headline runs to 120 characters a line and stops being a headline. It keeps
    its own measure and centres inside the band. */
+/* Regular weight and a step larger (2026-09-21, the founder's call, on trial):
+   the rule every other heading on the site already follows — the section H2s
+   are 400 — so the article's headline stops being the only bold display line
+   on the site. Tracking tightens with the size, as it does on .sk-h2. */
 .sk-edhead h1 {
-  font-size: clamp(1.875rem, 1.35rem + 2.1vw, 2.625rem);
-  line-height: 1.14;
-  letter-spacing: -0.028em;
-  font-weight: 700;
-  max-width: 26ch;
+  font-size: clamp(2.125rem, 1.3rem + 2.7vw, 3.25rem);
+  line-height: 1.06;
+  letter-spacing: -0.034em;
+  font-weight: 400;
+  max-width: 24ch;
   margin-inline: auto;
   margin-bottom: var(--s-4);
 }
@@ -2385,7 +2399,10 @@ html:has(.sokndall-neo) { overflow-x: hidden; }
        two lives in the evidence, not in the styling.
    The block reads as an instrument because it is ruled like a table, not
    because it is boxed like a callout. */
-.sk-svo { border-top: 2px solid var(--black); }
+/* 2026-09-21: the top and bottom rules drop from 2px to 1px. At 2px the
+   block read as a ledger dropped into the article, heavier than anything else
+   in the reading column. */
+.sk-svo { border-top: 1px solid var(--black); }
 /* `.sk-prose section > * + *` is (0,1,1) and would flatten the block's own
    margin to the 18px paragraph step, so the standoff is qualified to win. */
 .sk-ed__prose section > .sk-svo { margin-top: clamp(24px, 2.6vw, 32px); }
@@ -2400,17 +2417,31 @@ html:has(.sokndall-neo) { overflow-x: hidden; }
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   gap: var(--s-2);
-  padding: var(--s-4) 0;
+  padding: var(--s-5) 0;
   border-bottom: 1px solid var(--line-strong);
 }
-.sk-svo__row:last-child { border-bottom-width: 2px; border-bottom-color: var(--black); }
+.sk-svo__row:last-child { border-bottom-color: var(--black); }
 .sk-svo__lb { opacity: 0.62; }
-.sk-svo__body p { font-size: 0.9375rem; line-height: 1.62; }
+/* The claim is the content of the block, so it is set at the body's own size.
+   It was 15px against the article's 16: the eye stepped down on entering the
+   table, which is the opposite of the hierarchy. The source stays small. */
+.sk-svo__body p { font-size: 1rem; line-height: 1.62; }
 .sk-svo__body > * + * { margin-top: 12px; }
 /* Each observed case: its figure in mono, because the figures stack and are
    read down the column, then the case itself in plain body copy. */
-.sk-svo__case { display: grid; grid-template-columns: 76px minmax(0, 1fr); gap: var(--s-3); }
-.sk-svo__case .sk-num { font-size: 0.8125rem; padding-top: 2px; }
+/* The figure is the finding, so it leads the row: body face with tabular
+   figures (mono read as code in the middle of an article), semibold, and a
+   column wide enough that "90–120 days" stays on one line. It was 13px mono in
+   a 76px column, broken over two lines. */
+.sk-svo__case { display: grid; grid-template-columns: 116px minmax(0, 1fr); gap: var(--s-4); }
+.sk-svo__case .sk-num {
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.62;
+  letter-spacing: -0.01em;
+  color: var(--black);
+}
 .sk-svo__case p { margin: 0; }
 .sk-svo__note { display: block; margin-top: var(--s-3); opacity: 0.62; }
 
@@ -2699,7 +2730,7 @@ html:has(.sokndall-neo) { overflow-x: hidden; }
    row that says "Not published" beside the thing that was checked, it reads
    as the finding it is. There is no colour anywhere in this block — the
    status is a word. */
-.sk-spd { border-top: 2px solid var(--black); }
+.sk-spd { border-top: 1px solid var(--black); }
 /* `.sk-prose section > * + *` is (0,1,1) and would flatten this to the 18px
    paragraph step, so the standoff is qualified to win. */
 .sk-cmp__prose section > .sk-spd,
@@ -2711,13 +2742,13 @@ html:has(.sokndall-neo) { overflow-x: hidden; }
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   gap: var(--s-2);
-  padding: var(--s-4) 0;
+  padding: var(--s-5) 0;
   border-bottom: 1px solid var(--line-strong);
 }
-.sk-spd__row:last-child { border-bottom-width: 2px; border-bottom-color: var(--black); }
+.sk-spd__row:last-child { border-bottom-color: var(--black); }
 .sk-spd__lb { opacity: 0.62; }
 .sk-cmp__prose .sk-spd__body p,
-.sk-ed__prose .sk-spd__body p { font-size: 0.9375rem; line-height: 1.62; }
+.sk-ed__prose .sk-spd__body p { font-size: 1rem; line-height: 1.62; }
 .sk-spd__body > * + * { margin-top: var(--s-3); }
 .sk-spd__src { display: block; opacity: 0.68; }
 .sk-spd__est { opacity: 0.62; }

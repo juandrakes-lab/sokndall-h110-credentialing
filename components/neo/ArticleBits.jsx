@@ -82,9 +82,9 @@ export function PriceTable({ note = PRICE_NOTE }) {
           <thead>
             <tr>
               <th>Plan</th>
-              <th>Price</th>
-              <th>Providers</th>
-              <th>Per provider</th>
+              <th className="sk-num">Price</th>
+              <th className="sk-num">Providers</th>
+              <th className="sk-num">Per provider</th>
             </tr>
           </thead>
           <tbody>

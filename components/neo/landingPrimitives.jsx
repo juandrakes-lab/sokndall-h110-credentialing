@@ -379,9 +379,8 @@ export function PhotoFrame({ photo, ratio = "3x2", eager = false, className = ""
         decoding="async"
       />
       {children ? <div className="sk-photoframe__over">{children}</div> : null}
-      <figcaption>
-        <PhotoCredit photo={photo} />
-      </figcaption>
+      {/* No visible credit since 2026-09-21 (the founder): the Pexels licence
+          does not require it and it read as amateur. It stays in photos.js. */}
     </figure>
   );
 }

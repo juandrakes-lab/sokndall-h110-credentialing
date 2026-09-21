@@ -1721,3 +1721,32 @@ a IA los que no encajen. La clave nueva funciona (la del 2026-09-10 era inválid
 Todos los archivos WebP bajo 200 KB (el más pesado, 108 KB).
 Política de imagen: fotografía documental de Pexels con crédito visible.
 Regla de DESIGN_RULES.md que aplica: §5, §7, §19.
+
+## Molde editorial — título, tablas de lectura y créditos de foto
+Fecha: 2026-09-21
+Decisión: cuatro pedidos del fundador. Todos son del molde, así que llegan a las
+diez páginas editoriales juntas.
+- **Sin crédito de foto visible.** La licencia de Pexels no lo exige y la línea
+  "Photo: X / Pexels" se leía amateur. §19 enmendada. El crédito sigue
+  registrado en `photos.js` y `pageImages.js`. (De paso: un fotógrafo de Pexels
+  tiene de nombre una URL, así que la línea salía "Photo: https://kaboompics.com/
+  / Pexels".)
+- **Título del artículo en peso regular y más grande** (a prueba): 42px bold →
+  hasta 52px, peso 400, tracking -0,034em, `max-width` 24ch. Es la regla que ya
+  siguen los H2 de sección. Sigue entrando en 3 líneas.
+- **Las dos tablas de lectura** (`StatedVsObserved`, `SourcedPricingDisclosure`):
+  - la afirmación de cada fila iba a **15px contra los 16 del cuerpo**: el ojo
+    bajaba un escalón al entrar a la tabla, al revés de la jerarquía. Pasa a
+    16px; la fuente sigue chica y gris;
+  - los filetes de arriba y abajo pasan de 2px a 1px: a 2 el bloque se leía como
+    un libro contable, más pesado que cualquier otra cosa de la columna;
+  - un poco más de aire por fila (`--s-4` → `--s-5`);
+  - la cifra observada ("90 to 120 days") iba en **mono a 13px partida en dos
+    líneas**. Pasa a la letra del cuerpo con cifras tabulares, semibold, en una
+    columna de 116px, y con guión (§21, `RangeText`): "90–120 days".
+- **La tabla de precios dentro de un artículo:** sin mono ("$79/mo" y "50 across
+  clients" en letra de código se leían como una salida de terminal pegada en la
+  prosa), las columnas de cifras alineadas a la derecha, donde se comparan, y el
+  nombre del plan en semibold. Solo dentro de `.sk-ed`: las landings no cambian.
+Auditoría de media queries pisadas: cero.
+Regla de DESIGN_RULES.md que aplica: §19 (enmendada), §21.

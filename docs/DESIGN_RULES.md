@@ -371,8 +371,13 @@ ninguna parte" de TOKENS.md.
 el hero de la home y los huecos de imagen que el fundador definió en la home
 (no los `ScreenSlot`, que son para pantallas del producto y nunca llevan stock).
 Fuente: Pexels, vía `lib/pexels.js` del lado del servidor; archivos en
-`public/landing/` como WebP < 200 KB; crédito del fotógrafo visible junto a la
-imagen. Dirección de §5 sin cambios: documental, nadie mirando a cámara.
+`public/landing/` como WebP < 200 KB. Dirección de §5 sin cambios: documental,
+nadie mirando a cámara.
+~~Crédito del fotógrafo visible junto a la imagen.~~ **Enmendada el 21 sep
+2026 (fundador): sin crédito visible.** La licencia de Pexels no lo exige, y una
+línea "Photo: X / Pexels" bajo una foto de encabezado se lee amateur. El
+crédito (fotógrafo y página de la foto) sigue registrado en `photos.js` y
+`pageImages.js`, para saber siempre de dónde salió cada imagen.
 
 ## 20. LAS MARCAS DE LA MARCA VAN EN EL COLOR PRINCIPAL
 

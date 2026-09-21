@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import Photo from "@/components/neo/Photo";
+import { RangeText } from "@/components/neo/landingPrimitives";
 import { pageKind } from "@/components/neo/pageKinds";
 import { cardImage } from "@/components/neo/pageImages";
 
@@ -93,21 +94,11 @@ export function PageHeader({
             direction={image.direction}
             priority
           />
-          {/* The photographer's credit is required (DESIGN_RULES §19), so it
-              prints with the caption, or alone when there is none. */}
-          {image.caption || image.credit ? (
-            <span className="sk-small sk-edhead__cap">
-              {image.caption}
-              {image.caption && image.credit ? " · " : null}
-              {image.credit ? (
-                <>
-                  Photo:{" "}
-                  <a href={image.credit.url} target="_blank" rel="noopener nofollow">
-                    {image.credit.photographer} / Pexels
-                  </a>
-                </>
-              ) : null}
-            </span>
+          {/* No visible photo credit (the founder, 2026-09-21): the Pexels
+              licence does not require it, and a credit line under a header
+              photograph reads as amateur. The credit stays in pageImages.js. */}
+          {image.caption ? (
+            <span className="sk-small sk-edhead__cap">{image.caption}</span>
           ) : null}
         </div>
       ) : null}
@@ -207,7 +198,11 @@ export function StatedVsObserved({ caption, stated, statedSource, observed = [],
         <div className="sk-svo__body">
           {observed.map((o) => (
             <div className="sk-svo__case" key={o.text}>
-              <span className="sk-num">{o.figure}</span>
+              {/* A display figure, so an interval takes the en dash (§21); the
+                  copy keeps "to", which RangeText leaves for screen readers. */}
+              <span className="sk-num">
+                <RangeText text={o.figure} />
+              </span>
               <p>{o.text}</p>
             </div>
           ))}
