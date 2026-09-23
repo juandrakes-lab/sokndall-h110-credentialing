@@ -38,6 +38,10 @@ export default function Footer({ blurb = DEFAULT_BLURB, cols = FOOTER_COLS }) {
 
       <div className="sk-footer__bottom">
         <span>© {new Date().getFullYear()} Sokndall. All rights reserved.</span>
+        <span className="sk-footer__legal">
+          <Link href="/terms">Terms</Link>
+          <Link href="/privacy">Privacy</Link>
+        </span>
         <span>No patient data. No PHI. No BAA to negotiate.</span>
       </div>
       </div>

@@ -24,6 +24,9 @@ export const metadata = pageMeta({
 // 300-600 band. The copy is authoritative and was not cut to fit; the section
 // that pushes it over is the one the brief calls the most important on the
 // page.
+//
+// The portrait slot was removed on 2026-09-22: no photograph of the founder
+// will be published, and an empty reserved frame is worse than no frame.
 export default function AboutPage() {
   return (
     <Shell>
@@ -36,14 +39,6 @@ export default function AboutPage() {
             dateLabel="Updated"
           />
         }
-        portrait={{
-          ratio: "4 / 5",
-          alt: "The founder at the desk where Sokndall is built",
-          direction:
-            "A real photograph, never stock: the founder, or the actual desk this is built on. Available light, work visibly in progress, nobody posed and nobody smiling into the camera. No team, no boardroom, no handshake — the page says one person runs this, and the picture cannot contradict it.",
-          caption:
-            "Slot reserved at 4:5. It ships empty until a real photograph exists; a stock image here would contradict the page.",
-        }}
       >
         <ProseSection id="what" heading="What this is">
           <p>

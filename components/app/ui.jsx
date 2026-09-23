@@ -401,6 +401,7 @@ export const ICONS = {
   arrowRight: "M5 12h14M13 6l6 6-6 6",
   chevronDown: "M6 9l6 6 6-6",
   chevronRight: "M9 6l6 6-6 6",
+  help: "M12 21a9 9 0 100-18 9 9 0 000 18z M9.6 9.2a2.5 2.5 0 014.9.8c0 1.7-2.5 2-2.5 3.5 M12 17h.01",
   download: "M12 4v12M7 11l5 5 5-5M4 20h16",
   switch: "M8 9l4-4 4 4M16 15l-4 4-4-4",
   logout: "M15 17l5-5-5-5M20 12H9M12 21H6a2 2 0 01-2-2V5a2 2 0 012-2h6",

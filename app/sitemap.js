@@ -1,8 +1,9 @@
 import { SITE_URL } from "@/lib/seo";
 
 // Every indexable marketing URL: the fifteen pages of the v3.1 map
-// (H110_ARQUITECTURA_v3.1.md §4) plus the two permanent pages that exist.
-// /terms and /privacy are excluded until they have real content. No app routes.
+// (H110_ARQUITECTURA_v3.1.md §4) plus the permanent pages: /about, /security
+// and, since 2026-09-22, the two legal pages now that they carry real text.
+// No app routes.
 //
 // Deliberately absent, because v3.1 removed them: /credentialing-tracking-
 // software, /credential-expiration-tracking, /dea-renewal-tracking, the
@@ -26,6 +27,8 @@ const ROUTES = [
   "/credentialing-services-for-therapists",
   "/about",
   "/security",
+  "/terms",
+  "/privacy",
 ];
 
 export default function sitemap() {

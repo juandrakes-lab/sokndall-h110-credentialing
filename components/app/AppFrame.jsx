@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState, useTransition } from "react";
 import { switchClient } from "@/lib/client-actions";
 import AppSearch from "@/components/app/AppSearch";
+import HelpLink from "@/components/app/HelpLink";
 import ScrollLock from "@/components/app/ScrollLock";
 import SubmitButton from "@/components/app/SubmitButton";
 import { ICONS, Icon, NAV_COOKIE, PersonPhoto } from "@/components/app/ui";
@@ -259,6 +260,7 @@ export default function AppFrame({
   trial,
   signOut,
   owner = false,
+  help,
 }) {
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(initialCollapsed);
@@ -362,6 +364,7 @@ export default function AppFrame({
               {MANAGE.map((item) => (
                 <ToolLink key={item.href} href={item.href} label={item.label} icon={item.icon} pathname={pathname} />
               ))}
+              {help && <HelpLink help={help} />}
               <div className="ml-1.5">
                 <NewMenu owner={owner} multi={multi} />
               </div>
@@ -427,6 +430,11 @@ export default function AppFrame({
                       </Link>
                     </li>
                   ))}
+                  {help && (
+                    <li>
+                      <HelpLink help={help} variant="row" onDone={() => setSheet(null)} />
+                    </li>
+                  )}
                 </ul>
                 <div className="mt-3 border-t border-ink-100 pt-3">
                   <p className="px-3 text-sm font-semibold text-ink-900">{displayName || email}</p>

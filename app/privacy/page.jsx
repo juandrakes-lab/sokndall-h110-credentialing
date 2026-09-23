@@ -1,11 +1,12 @@
 import LegalPage from "@/components/neo/LegalPage";
+import { pageMeta } from "@/lib/seo";
 import { PRIVACY } from "@/lib/legal";
 
-// Not indexed while the text is a draft (lib/legal.js); switch to pageMeta once final.
-export const metadata = {
+export const metadata = pageMeta({
   title: "Privacy Policy — Sokndall",
-  robots: { index: PRIVACY.final, follow: PRIVACY.final },
-};
+  description: "What Sokndall collects, who processes it, how long it is kept, and how to export or delete it. No patient data, and no advertising use of what you enter.",
+  path: "/privacy",
+});
 
 export default function Page() {
   return <LegalPage doc={PRIVACY} />;

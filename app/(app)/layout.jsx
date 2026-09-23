@@ -4,6 +4,7 @@ import { getAppContext } from "@/lib/org";
 import { cookies } from "next/headers";
 import AppFrame from "@/components/app/AppFrame";
 import { NAV_COOKIE } from "@/components/app/ui";
+import { PLANS } from "@/lib/plans";
 import { fontVars } from "@/components/app/fonts";
 import { weekEndISO } from "@/lib/enrollments";
 import { accountAccess } from "@/lib/billing";
@@ -80,6 +81,11 @@ export default async function AppLayout({ children }) {
         trial={access.state === "trial" ? access.message : null}
         signOut={signOut}
         owner={role === "owner"}
+        help={{
+          org: org.name,
+          plan: PLANS[org.plan]?.label ?? org.plan,
+          client: multiClient ? client?.name ?? null : null,
+        }}
         banner={
           banner && (
             <div
