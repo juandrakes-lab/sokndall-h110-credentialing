@@ -18,6 +18,12 @@ export default function Footer({ blurb = FOOTER_BLURB_V31, cols = FOOTER_COLS_V3
           <Link href={TRIAL_HREF} className="sk-btn sk-btn--primary sk-btn--sm sk-footer__btn">
             Start free trial
           </Link>
+          {/* Its own line rather than a clause inside the blurb (copy brief
+              2026-09-22): the address is looked for when the reader has
+              stopped reading, and the blurb is measured at four lines. */}
+          <p className="sk-small sk-footer__support">
+            Questions? <a href="mailto:support@sokndall.com">support@sokndall.com</a>. Written support only.
+          </p>
         </div>
 
         {cols.map((col) => (

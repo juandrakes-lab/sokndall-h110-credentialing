@@ -55,6 +55,14 @@ export const PLANS = {
   ],
   note:
     "Every plan is monthly and cancels from Settings. Billing Co includes 10 users; each one after that is $39 a month. 14-day trial, card up front, nothing charged before day 15.",
+  // Copy brief 2026-09-22: under the three plans, not inside the Billing Co
+  // card — the reader still choosing between Practice and Billing Co is the one
+  // who needs it. Never a response-time promise (founder, 2026-09-22), and the
+  // policy comes before what it rules out, so it reads as policy and not as an
+  // apology. "multi-client setup" rather than the plan name: a multi-TIN group
+  // does not recognise itself in "Billing Co".
+  ask:
+    "Questions about multi-client setup before you buy? Email [support@sokndall.com](mailto:support@sokndall.com). Support is written only — no call to book, no calendar link.",
 };
 
 // EntityChooser — copy brief of 2026-09-09 ("selector por entidad"). Under the

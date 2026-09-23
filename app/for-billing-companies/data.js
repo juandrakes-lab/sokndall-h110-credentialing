@@ -119,7 +119,10 @@ export const FAQ = [
 
 export const CLOSING = {
   title: "Start the 14-day trial on Billing Co",
-  body: "Card up front, cancel yourself from Settings before day 15. Full plan details on [the pricing page](/pricing).",
+  // The written-support line reaches this page too (founder, 2026-09-22): same
+  // buyer as /pricing, same doubt, and until now the page offered no way out
+  // other than buying. The six editorial pages keep their own close unchanged.
+  body: "Card up front, cancel yourself from Settings before day 15. Full plan details on [the pricing page](/pricing). Questions about multi-client setup before you buy? Email [support@sokndall.com](mailto:support@sokndall.com). Support is written only — no call to book, no calendar link.",
   primary: { label: "Start 14-day trial", href: "/start" },
 };
 

@@ -1155,6 +1155,8 @@ html:has(.sokndall-neo) { overflow-x: hidden; }
 .sk-footer .sk-small { color: var(--muted-dark); }
 .sk-footer__blurb { max-width: 30ch; }
 .sk-footer__btn { justify-self: start; margin-top: var(--s-1); }
+.sk-footer__support { max-width: 30ch; margin-top: var(--s-3); }
+.sk-footer__support a { color: #fff; text-decoration: underline; text-underline-offset: 3px; }
 .sk-footer__bottom {
   display: flex;
   flex-wrap: wrap;
@@ -3836,6 +3838,16 @@ html:has(.sokndall-neo) { overflow-x: hidden; }
 .sk-pricehead { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--s-5); text-align: left; }
 .sk-pricehead__t { text-align: center; }
 .sk-pricehead .sk-plans__note { text-align: center; margin-top: 0; }
+/* The written-support line under the plans: same measure and centring as the
+   note it follows, set apart by a rule rather than by a box, which would read
+   as a fourth card. */
+.sk-pricehead .sk-plans__ask {
+  text-align: center;
+  margin: 0;
+  padding-top: var(--s-4);
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+}
 .sk-lhero .sk-list li::before { background: var(--accent); }
 .sk-lhero .sk-list li { color: var(--black); }
 

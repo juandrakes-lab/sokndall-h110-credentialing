@@ -52,6 +52,11 @@ export default function PricingPage() {
               <p className="sk-small sk-plans__note">
                 <Rich text={PLANS.note} linkClassName="sk-link" />
               </p>
+              {/* Written support offered where someone is still choosing a
+                  plan, not inside one card (copy brief 2026-09-22). */}
+              <p className="sk-small sk-plans__ask">
+                <Rich text={PLANS.ask} linkClassName="sk-link" />
+              </p>
               {/* What changes between the plans, straight under them and not
                   as a section of its own (founder, 2026-09-12): the list gives
                   the price, the table what the price buys. The security line
