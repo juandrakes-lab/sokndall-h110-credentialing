@@ -3,7 +3,9 @@ import Footer from "@/components/neo/Footer";
 import Photo from "@/components/neo/Photo";
 
 /**
- * InstitutionalTemplate — /security and /about, and nothing else.
+ * InstitutionalTemplate — /security and /about, and /terms and /privacy through
+ * LegalPage (`variant="legal"`: longer documents, so their sections are
+ * numbered and ruled to stay scannable without a contents sidebar).
  *
  * Both pages answer an objection a buyer has before they will start a trial:
  * "what data does this hold, and do I need a security review" and "who am I
@@ -28,9 +30,9 @@ import Photo from "@/components/neo/Photo";
  * at a declared 4:5 crop, so the brief travels with the layout instead of
  * living in a separate document.
  */
-export default function InstitutionalTemplate({ current, header, portrait, children }) {
+export default function InstitutionalTemplate({ current, header, portrait, variant, children }) {
   return (
-    <div className="sk-inst">
+    <div className={variant ? `sk-inst sk-inst--${variant}` : "sk-inst"}>
       {/* The nav keeps its own 1200px measure rather than being re-parented
           onto this page's 36rem column, the way the editorial template
           re-parents it: at 656px the four links and the CTA wrap onto two

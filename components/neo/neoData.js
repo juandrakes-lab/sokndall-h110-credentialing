@@ -9,44 +9,10 @@ export const NAV_LINKS = [
   { label: "Pricing", href: "/pricing" },
 ];
 
-export const FOOTER_COLS = [
-  {
-    heading: "Product",
-    links: [
-      { label: "Payer enrollment", href: "/payer-enrollment-software" },
-      { label: "Pricing", href: "/pricing" },
-      { label: "For billing companies", href: "/for-billing-companies" },
-    ],
-  },
-  {
-    heading: "Compare",
-    links: [
-      { label: "symplr pricing", href: "/symplr-pricing" },
-      { label: "Modio Health pricing", href: "/modio-health-pricing" },
-      { label: "MedTrainer pricing", href: "/medtrainer-pricing" },
-    ],
-  },
-  {
-    heading: "Guides",
-    links: [
-      { label: "Free spreadsheet template", href: "/credentialing-spreadsheet-template" },
-    ],
-  },
-  {
-    heading: "Company",
-    links: [
-      { label: "About", href: "/about" },
-      { label: "Security", href: "/security" },
-      { label: "Sign in", href: "/login" },
-    ],
-  },
-];
-
 // ---- v3.1 footer (2026-09-10) ----------------------------------------------
 //
-// The fifteen pages of the v3.1 map pass these to `Footer`; `/about` and
-// `/security` are out of scope for this run and keep the defaults above
-// untouched until their own pass. The blurb is the approved line from
+// Footer's defaults, so every page renders the same footer; the pre-v3.1
+// columns (a "Guides" column with one link) were removed 2026-09-22. The blurb is the approved line from
 // H110_COPY_TANDA_A_LANDING.md ("Cierre y footer"), which also retires the
 // "3 to 30 providers" claim — v3.1 sizes the product at 1 to 50.
 export const FOOTER_BLURB_V31 =

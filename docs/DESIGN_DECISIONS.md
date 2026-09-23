@@ -1936,3 +1936,24 @@ Decisión: a pedido del fundador, el sidebar plegado de la app (y su maqueta en
 tile era herencia de la "S" en un cuadrado; la K tiene silueta propia y no lo
 necesita. Los avatares del correo en las maquetas conservan el círculo, porque
 ahí el círculo es el avatar.
+
+## Institucionales — /terms y /privacy legibles de corrido; un solo pie para todo el sitio
+Fecha: 2026-09-22
+Decisión: el molde institucional conserva su columna de 36rem, una sola columna
+centrada, sin barra lateral y sin CTA. Para los dos documentos legales (unas
+1.800 palabras cada uno) `LegalPage` le pasa `variant="legal"` y se suma, solo
+ahí:
+- Secciones numeradas con contadores CSS (el texto no cambia), el número
+  colgando para que un título partido en dos líneas no vuelva debajo de él, y
+  cada sección separada por un filete y más aire (unos 80px en total, antes 44px).
+- "In short": más aire debajo y la etiqueta en tinta y negrita; el recuadro ya
+  se leía como prefacio.
+- La atribución de Basecamp: `.sk-prose p` la pisaba a 16px en negro, como un
+  párrafo más; ahora es una nota al pie de 13px al 62%, bajo un filete.
+- La fecha de vigencia: 14px, la fecha en negrita y pegada a su etiqueta (el
+  gap de 14px del meta editorial las separaba).
+- Las listas del cuerpo no tenían viñetas ni aire (el reset de neo): usan
+  `.sk-list`, llevada al tamaño del cuerpo.
+Pie: `Footer` pasa a tener por defecto el pie v3.1; Editorial y Landing dejan
+de pasarlo y se borró el pie viejo de `neoData` (la columna "Guides" con un solo
+enlace). Las cuatro institucionales y una guía sirven hoy el mismo HTML de pie.

@@ -1,15 +1,11 @@
 import Link from "next/link";
-import { FOOTER_COLS, TRIAL_HREF } from "@/components/neo/neoData";
+import { FOOTER_BLURB_V31, FOOTER_COLS_V31, TRIAL_HREF } from "@/components/neo/neoData";
 import Logo from "@/components/brand/Logo";
 
-const DEFAULT_BLURB =
-  "Credential expiry and payer enrollment tracking for practices with 3 to 30 providers. Published pricing. No demo required.";
-
-// `blurb` and `cols` default to the pre-v3.1 values, which is what `/about`
-// and `/security` still render: those two pages are out of scope for the
-// 2026-09-10 run and are left exactly as they were. The v3.1 templates pass
-// FOOTER_BLURB_V31 / FOOTER_COLS_V31 from neoData.
-export default function Footer({ blurb = DEFAULT_BLURB, cols = FOOTER_COLS }) {
+// One footer for every page: the v3.1 blurb and columns are the default, so a
+// new template gets the current footer without passing anything (2026-09-22;
+// the pre-v3.1 default had left the institutional pages on the old one).
+export default function Footer({ blurb = FOOTER_BLURB_V31, cols = FOOTER_COLS_V31 }) {
   return (
     <footer className="sk-footer">
       <div className="sk-wrap">

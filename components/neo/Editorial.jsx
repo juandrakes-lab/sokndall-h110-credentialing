@@ -9,7 +9,6 @@ import Faq from "@/components/neo/Faq";
 import TableOfContents from "@/components/neo/EditorialToc";
 import { PriceTable } from "@/components/neo/ArticleBits";
 import Rich from "@/components/neo/rich";
-import { FOOTER_BLURB_V31, FOOTER_COLS_V31 } from "@/components/neo/neoData";
 
 // The structural label of the FAQ section, and of its entry in the contents
 // list. It is the template's, not a page's: no copy file supplies one.
@@ -66,7 +65,7 @@ const FAQ_LABEL = "Frequently asked questions";
  *     second-to-last section — "after the problem is explained, before the
  *     closing section" (DESIGN_RULES.md §9) — where the article's closing
  *     section is its declared limit. The default keeps the old 75% rule.
- *   - The footer is the v3.1 footer (FOOTER_BLURB_V31 / FOOTER_COLS_V31).
+ *   - The footer is the v3.1 footer, Footer's default.
  */
 export default function EditorialTemplate({
   variant = "editorial",
@@ -238,7 +237,7 @@ export default function EditorialTemplate({
         ) : null}
       </div>
 
-      <Footer blurb={FOOTER_BLURB_V31} cols={FOOTER_COLS_V31} />
+      <Footer />
     </div>
     </>
   );

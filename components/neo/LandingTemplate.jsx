@@ -1,7 +1,6 @@
 import Footer from "@/components/neo/Footer";
 import HeroPanel from "@/components/neo/HeroPanel";
 import FloatingNav from "@/components/neo/FloatingNav";
-import { FOOTER_BLURB_V31, FOOTER_COLS_V31 } from "@/components/neo/neoData";
 
 /**
  * LandingTemplate — the five product and commercial pages of the v3.1 map:
@@ -67,7 +66,7 @@ export default function LandingTemplate({ current, hero, heroSlot, navReveal = f
 
       {children}
 
-      <Footer blurb={FOOTER_BLURB_V31} cols={FOOTER_COLS_V31} />
+      <Footer />
     </>
   );
 }

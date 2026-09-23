@@ -13,7 +13,7 @@ function Blocks({ body }) {
     typeof block === "string" ? (
       <p key={i}>{block}</p>
     ) : (
-      <ul key={i}>
+      <ul key={i} className="sk-list">
         {block.list.map((item) => (
           <li key={item}>{item}</li>
         ))}
@@ -26,6 +26,7 @@ export default function LegalPage({ doc }) {
   return (
     <Shell>
       <InstitutionalTemplate
+        variant="legal"
         header={
           <PageHeader
             title={doc.title}
@@ -53,7 +54,7 @@ export default function LegalPage({ doc }) {
             {doc.final && s.body ? (
               <Blocks body={s.body} />
             ) : (
-              <ul>
+              <ul className="sk-list">
                 {s.covers.map((c) => (
                   <li key={c}>{c}</li>
                 ))}
