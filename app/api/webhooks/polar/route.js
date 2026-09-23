@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { validateEvent, WebhookVerificationError } from "@polar-sh/sdk/webhooks";
+import { verifyEvent, WebhookVerificationError } from "@/lib/polar-webhook";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { applySubscription } from "@/lib/polar-sync";
 
@@ -18,7 +18,7 @@ export async function POST(request) {
 
   let event;
   try {
-    event = validateEvent(body, headers, process.env.POLAR_WEBHOOK_SECRET);
+    event = verifyEvent(body, headers, process.env.POLAR_WEBHOOK_SECRET);
   } catch (err) {
     if (err instanceof WebhookVerificationError) {
       return NextResponse.json({ error: "Invalid signature" }, { status: 403 });
