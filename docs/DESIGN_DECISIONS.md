@@ -1928,3 +1928,11 @@ Implementación:
   Supabase y la planilla de Drive (archivos en `public/brand/`).
 Regla de DESIGN_RULES.md que aplica: §2 regla 4 (sin ámbar: el logo es de un
 solo color, tinta o blanco).
+
+## Marca — sidebar plegado: la K sola, en tinta, sin el cuadro
+Fecha: 2026-09-22
+Decisión: a pedido del fundador, el sidebar plegado de la app (y su maqueta en
+`AppScreen`) muestra el símbolo a 20px en `brand-700`, sin el tile tinta. El
+tile era herencia de la "S" en un cuadrado; la K tiene silueta propia y no lo
+necesita. Los avatares del correo en las maquetas conservan el círculo, porque
+ahí el círculo es el avatar.

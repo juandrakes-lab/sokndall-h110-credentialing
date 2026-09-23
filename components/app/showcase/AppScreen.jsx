@@ -50,7 +50,7 @@ export default function AppScreen({ x = 0, y = 0, w, h, active = "dashboard", co
       <aside className={`flex shrink-0 flex-col gap-1 px-3 pb-4 pt-4 ${collapsed ? "w-[76px] items-center" : "w-56"}`}>
         <div className={`flex items-center gap-2.5 ${collapsed ? "" : "pl-2"}`}>
           {collapsed ? (
-            <span className="flex h-8 w-8 items-center justify-center rounded-[10px] bg-brand-700 text-white"><Logo variant="symbol" small title="" className="h-4 w-4" /></span>
+            <span className="flex h-8 w-8 items-center justify-center text-brand-700"><Logo variant="symbol" title="" className="h-5 w-auto" /></span>
           ) : (
             <Logo title="" className="h-[13px] w-auto text-brand-700" />
           )}

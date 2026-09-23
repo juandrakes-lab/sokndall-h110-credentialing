@@ -283,7 +283,7 @@ export default function AppFrame({
       <div className={`flex items-center ${folded ? "flex-col gap-3" : "justify-between gap-2 pl-2"}`}>
         <Link href="/dashboard" className="flex items-center gap-2.5" title="Sokndall">
           {folded ? (
-            <span className="flex h-8 w-8 items-center justify-center rounded-[10px] bg-brand-700 text-white"><Logo variant="symbol" small title="" className="h-4 w-4" /></span>
+            <span className="flex h-8 w-8 items-center justify-center text-brand-700"><Logo variant="symbol" title="" className="h-5 w-auto" /></span>
           ) : (
             <Logo className="h-[13px] w-auto text-brand-700" />
           )}
