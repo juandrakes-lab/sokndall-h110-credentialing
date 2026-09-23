@@ -136,15 +136,3 @@ export function IconLock(p) {
     </svg>
   );
 }
-
-// Three stacked bars, the middle one offset — a panel of providers with one
-// row out of line.
-export function Wordmark(p) {
-  return (
-    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" {...p}>
-      <rect x="2" y="4.5" width="20" height="3.6" rx="1.8" />
-      <rect x="6.5" y="10.2" width="15.5" height="3.6" rx="1.8" opacity="0.55" />
-      <rect x="2" y="15.9" width="20" height="3.6" rx="1.8" />
-    </svg>
-  );
-}

@@ -5,7 +5,7 @@ import Link from "next/link";
 
 import { NAV_LINKS } from "@/components/neo/neoData";
 import NavAccess from "@/components/neo/NavAccess";
-import { Wordmark } from "@/components/neo/icons";
+import Logo from "@/components/brand/Logo";
 
 /**
  * FloatingNav — the nav bar that stays with the reader. Added 2026-09-11.
@@ -55,8 +55,7 @@ export default function FloatingNav({ current, reveal = false }) {
     <div className={`sk-fnav${reveal ? " sk-fnav--reveal" : ""}${shown ? " is-shown" : ""}`} {...hiddenProps}>
       <header className="sk-fnav__bar">
         <Link href="/" className="sk-nav__brand">
-          <Wordmark className="sk-nav__mark" />
-          sokndall
+          <Logo className="sk-nav__logo" />
         </Link>
         <nav className="sk-nav__links" aria-label="Main, floating">
           {NAV_LINKS.map((l) => (

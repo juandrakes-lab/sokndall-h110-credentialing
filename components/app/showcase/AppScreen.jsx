@@ -9,6 +9,7 @@
 
 import { ICONS, Icon, PersonPhoto } from "@/components/app/ui";
 import { PEOPLE } from "@/components/app/showcase/parts";
+import Logo from "@/components/brand/Logo";
 
 const NAV = [
   ["dashboard", "Dashboard", ICONS.dashboard],
@@ -48,8 +49,11 @@ export default function AppScreen({ x = 0, y = 0, w, h, active = "dashboard", co
     <div className={`app-ground-flat absolute flex overflow-hidden rounded-[18px] ${onInk ? liftOnInk : lift}`} style={{ left: x, top: y, width: w, height: h }}>
       <aside className={`flex shrink-0 flex-col gap-1 px-3 pb-4 pt-4 ${collapsed ? "w-[76px] items-center" : "w-56"}`}>
         <div className={`flex items-center gap-2.5 ${collapsed ? "" : "pl-2"}`}>
-          <span className="flex h-8 w-8 items-center justify-center rounded-[10px] bg-brand-700 text-[0.9375rem] font-semibold text-white">S</span>
-          {!collapsed && <span className="text-[1.0625rem] font-semibold tracking-tight text-ink-900">Sokndall</span>}
+          {collapsed ? (
+            <span className="flex h-8 w-8 items-center justify-center rounded-[10px] bg-brand-700 text-white"><Logo variant="symbol" small title="" className="h-4 w-4" /></span>
+          ) : (
+            <Logo title="" className="h-[13px] w-auto text-brand-700" />
+          )}
         </div>
         {!collapsed && (
           <div className="mt-3 flex items-center gap-2.5 rounded-xl px-3 py-2">

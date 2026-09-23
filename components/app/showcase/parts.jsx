@@ -6,6 +6,7 @@
 // the app. Server-safe: no hooks.
 
 import { Avatar, IconTile, ICONS, Icon, cardClass } from "@/components/app/ui";
+import Logo from "@/components/brand/Logo";
 
 // Pexels, cropped to 160px squares in public/app/people/.
 export const PEOPLE = {
@@ -50,7 +51,7 @@ export function AppWindow({ x, y, w, h, nav = "dashboard", tilt = -8, children }
       </div>
       <div className="flex h-[calc(100%-2.75rem)]">
         <div className="flex w-14 shrink-0 flex-col items-center gap-2 pt-4" style={{ background: "linear-gradient(180deg, rgba(44,95,100,0.16), rgba(242,193,78,0.18))" }}>
-          <span className="mb-2 flex h-7 w-7 items-center justify-center rounded-lg bg-brand-700 text-xs font-semibold text-white">S</span>
+          <span className="mb-2 flex h-7 w-7 items-center justify-center rounded-lg bg-brand-700 text-white"><Logo variant="symbol" small title="" className="h-3.5 w-3.5" /></span>
           {items.map((k) => (
             <span key={k} className={`flex h-8 w-8 items-center justify-center rounded-lg ${k === nav ? "bg-white text-ink-900 shadow-[0_1px_2px_rgba(14,42,46,0.12)]" : "text-ink-700"}`}>
               <Icon d={ICONS[k]} className="h-4 w-4" />

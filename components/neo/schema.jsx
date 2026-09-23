@@ -42,6 +42,7 @@ export function organizationSchema() {
     "@type": "Organization",
     name: SITE_NAME,
     url: `${SITE_URL}/`,
+    logo: `${SITE_URL}/brand/sokndall-logo-512.png`,
   };
 }
 

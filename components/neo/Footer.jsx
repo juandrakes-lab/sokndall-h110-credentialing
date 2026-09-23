@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { FOOTER_COLS, TRIAL_HREF } from "@/components/neo/neoData";
-import { Wordmark } from "@/components/neo/icons";
+import Logo from "@/components/brand/Logo";
 
 const DEFAULT_BLURB =
   "Credential expiry and payer enrollment tracking for practices with 3 to 30 providers. Published pricing. No demo required.";
@@ -16,8 +16,7 @@ export default function Footer({ blurb = DEFAULT_BLURB, cols = FOOTER_COLS }) {
       <div className="sk-footer__top">
         <div className="sk-footer__col">
           <Link href="/" className="sk-nav__brand">
-            <Wordmark className="sk-nav__mark" />
-            sokndall
+            <Logo className="sk-nav__logo" />
           </Link>
           <p className="sk-small sk-footer__blurb">{blurb}</p>
           <Link href={TRIAL_HREF} className="sk-btn sk-btn--primary sk-btn--sm sk-footer__btn">

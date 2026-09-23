@@ -458,11 +458,14 @@ html:has(.sokndall-neo) { overflow-x: hidden; }
   font-size: 1.0625rem;
   font-weight: 800;
   letter-spacing: -0.03em;
-  color: var(--black);
+  color: var(--ink);
   padding-right: 22px;
   flex: none;
 }
-.sk-nav__mark { width: 19px; height: 19px; flex: none; color: var(--blue); }
+/* The logo (components/brand/Logo.jsx) takes the brand's colour: ink on light,
+   white on the dark bar and the footer through the rules below. 15px keeps
+   its cap height level with the 17px wordmark it replaced (2026-09-22). */
+.sk-nav__logo { height: 15px; width: auto; flex: none; display: block; }
 .sk-nav__links {
   display: flex;
   align-items: center;
@@ -493,7 +496,6 @@ html:has(.sokndall-neo) { overflow-x: hidden; }
 /* The dark bar: the nav sitting on the ink hero band. */
 .sk-nav--dark { padding-block: var(--s-5); }
 .sokndall-neo .sk-nav--dark .sk-nav__brand { color: #fff; }
-.sk-nav--dark .sk-nav__mark { color: #fff; }
 
 /* The light bar: every page whose first block is not the ink band. */
 .sk-nav--light {
@@ -1150,7 +1152,6 @@ html:has(.sokndall-neo) { overflow-x: hidden; }
 .sk-footer__col a { font-size: 0.8125rem; color: var(--muted-dark); }
 .sk-footer__col a:hover { color: #fff; }
 .sokndall-neo .sk-footer .sk-nav__brand { color: #fff; }
-.sk-footer .sk-nav__mark { color: #fff; }
 .sk-footer .sk-small { color: var(--muted-dark); }
 .sk-footer__blurb { max-width: 30ch; }
 .sk-footer__btn { justify-self: start; margin-top: var(--s-1); }
@@ -3555,7 +3556,7 @@ html:has(.sokndall-neo) { overflow-x: hidden; }
 .sk-hero__notch::before { top: 0; left: 100%; }
 .sk-hero__notch::after { top: 100%; left: 0; }
 .sokndall-neo .sk-hero__notch .sk-nav__brand { color: var(--black); padding-right: 0; }
-.sk-hero__notch .sk-nav__mark { color: var(--ink); }
+.sk-hero__notch .sk-nav__logo { color: var(--ink); }
 .sk-hero__navrow {
   flex: 1;
   display: flex;
@@ -3639,7 +3640,7 @@ html:has(.sokndall-neo) { overflow-x: hidden; }
 }
 .sk-nav--plain { padding-block: var(--s-5); }
 .sokndall-neo .sk-nav--plain .sk-nav__brand { color: var(--black); }
-.sk-nav--plain .sk-nav__mark { color: var(--ink); }
+.sk-nav--plain .sk-nav__logo { color: var(--ink); }
 .sk-nav--plain .sk-nav__links a { color: var(--black); opacity: 0.72; }
 .sk-nav--plain .sk-nav__links a:hover,
 .sk-nav--plain .sk-nav__links a[aria-current="page"] { color: var(--black); opacity: 1; }
@@ -3992,7 +3993,7 @@ html:has(.sokndall-neo) { overflow-x: hidden; }
   color: var(--black);
 }
 .sokndall-neo .sk-fnav .sk-nav__brand { color: var(--black); padding-right: var(--s-3); }
-.sk-fnav .sk-nav__mark { color: var(--ink); }
+.sk-fnav .sk-nav__logo { color: var(--ink); }
 .sk-fnav .sk-nav__links a { color: var(--black); opacity: 0.7; }
 .sk-fnav .sk-nav__links a:hover,
 .sk-fnav .sk-nav__links a[aria-current="page"] { color: var(--black); opacity: 1; }

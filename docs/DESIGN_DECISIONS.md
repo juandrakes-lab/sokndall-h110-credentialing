@@ -1889,3 +1889,42 @@ acá van intercaladas en una fila de tres, y ahí pesa más tratarlas igual.
 - Mismo tratamiento de la serie. Ninguna repite una foto ya usada en el sitio.
 - Queda anotada la opción de una tarjeta de logo solo para /pricing, a comparar
   cuando el logo esté definido.
+
+## Marca — el logo oficial: SOKNDALL con un visto en la K
+Fecha: 2026-09-22
+Decisión: imagotipo. El logotipo SOKNDALL en mayúscula, grotesca seminegrita,
+con un visto integrado en los brazos de la K; el símbolo es esa K sola. Reemplaza
+al ícono de tres barras + "sokndall", que se leía como un botón de menú.
+Cómo se llegó (para no repetir caminos):
+- Símbolos geométricos redondeados: "parecen emojis". El carácter tiene que salir
+  del nombre, no de formas básicas.
+- Tanda de ChatGPT: siete de ocho eran solo el nombre, genérico.
+- "S" inclinada, S en círculo o cuadrado, disco con S calada: vistas en otras
+  marcas; el trazo fino no aguanta 16px; el disco pesaba mucho más que un nombre
+  liviano y dejaba un píxel suelto a 16px.
+- Octógono (sello) con S o con visto: rechazado por el fundador (y se acerca al
+  cartel de PARE).
+- Etiqueta con visto calado: se lee como etiqueta de precio.
+- Lo que funcionó: logotipo con letras intervenidas (referencia MING: el visto
+  vive dentro de una letra). Claude Design lo dibujó. Primera versión: la K en
+  tres piezas se leía "SOIVNDALL" y el símbolo a 16px eran fragmentos; la K pasó
+  a ser una pieza conectada y se descartó la versión con profundidad (parecía un
+  registro corrido).
+Implementación:
+- Un solo componente, `components/brand/Logo.jsx` (`currentColor`, sin estilos
+  propios, así lo usan la piel neo y la app Tailwind sin cruzarse). Variantes:
+  logotipo y símbolo; el símbolo tiene un master de 16px dibujado en la grilla.
+- Marketing: barra, barra flotante y footer (`.sk-nav__logo`, 15px de alto).
+  Se borró `Wordmark` de `components/neo/icons.jsx`.
+- App: sidebar (logotipo desplegado, símbolo en el tile tinta plegado), barra de
+  teléfono, login/registro/onboarding (`AuthShell`) y las maquetas de producto,
+  incluido el avatar del correo.
+- `app/icon.svg` (favicon), `app/apple-icon.png`, `app/opengraph-image.png`
+  (logotipo blanco sobre tinta; también es el default de `lib/seo.js` en lugar
+  de hub-hero), el `logo` del schema Organization (PNG de 512) y el encabezado
+  de los correos (PNG 2×, porque los clientes de correo no muestran SVG).
+- Fuentes en `public/brand/`, tal como las exportó Claude Design.
+- Quedan del lado del fundador: el checkout de Polar, los correos de acceso de
+  Supabase y la planilla de Drive (archivos en `public/brand/`).
+Regla de DESIGN_RULES.md que aplica: §2 regla 4 (sin ámbar: el logo es de un
+solo color, tinta o blanco).

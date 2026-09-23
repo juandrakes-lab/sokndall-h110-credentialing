@@ -16,6 +16,7 @@ import { Avatar, Badge, ICONS, Icon, IconTile, PersonPhoto, Ring, STATUS_FILL, S
 import { ENROLLMENT_STATUS_LABELS } from "@/lib/enrollments";
 import { CHIP, PEOPLE } from "@/components/app/showcase/parts";
 import AppScreen, { Chip, chipLift, lift } from "@/components/app/showcase/AppScreen";
+import Logo from "@/components/brand/Logo";
 
 // ---- data --------------------------------------------------------------------
 
@@ -389,7 +390,7 @@ export function MondayDigest() {
   return (
     <div className={`absolute inset-x-0 top-0 overflow-hidden rounded-[18px] bg-white ${lift}`}>
       <div className="flex items-start gap-3 border-b border-ink-100 bg-ink-50 px-5 py-4">
-        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-700 text-sm font-semibold text-white">S</span>
+        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-700 text-white"><Logo variant="symbol" small title="" className="h-4 w-4" /></span>
         <div className="min-w-0 flex-1">
           <p className="flex items-baseline justify-between gap-2">
             <span className="truncate text-sm font-semibold text-ink-900">Sokndall</span>
@@ -427,7 +428,7 @@ export function NarrowDigest() {
   return (
     <div className={`absolute inset-x-0 top-0 overflow-hidden rounded-[18px] bg-white ${lift}`}>
       <div className="flex items-start gap-3 border-b border-ink-100 bg-ink-50 px-4 py-3.5">
-        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-brand-700 text-sm font-semibold text-white">S</span>
+        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-brand-700 text-white"><Logo variant="symbol" small title="" className="h-4 w-4" /></span>
         <div className="min-w-0 flex-1">
           <p className="flex items-baseline justify-between gap-2">
             <span className="truncate text-sm font-semibold text-ink-900">Sokndall</span>

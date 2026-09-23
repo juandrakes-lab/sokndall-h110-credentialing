@@ -8,6 +8,7 @@ import AppSearch from "@/components/app/AppSearch";
 import ScrollLock from "@/components/app/ScrollLock";
 import SubmitButton from "@/components/app/SubmitButton";
 import { ICONS, Icon, NAV_COOKIE, PersonPhoto } from "@/components/app/ui";
+import Logo from "@/components/brand/Logo";
 
 // Alcance §5, grouped: the day-to-day work first, then the account's plumbing.
 const WORK = [
@@ -281,8 +282,11 @@ export default function AppFrame({
     <div className="flex h-full flex-col gap-1 px-3 pb-4 pt-4">
       <div className={`flex items-center ${folded ? "flex-col gap-3" : "justify-between gap-2 pl-2"}`}>
         <Link href="/dashboard" className="flex items-center gap-2.5" title="Sokndall">
-          <span className="flex h-8 w-8 items-center justify-center rounded-[10px] bg-brand-700 text-[0.9375rem] font-semibold text-white">S</span>
-          {!folded && <span className="text-[1.0625rem] font-semibold tracking-tight text-ink-900">Sokndall</span>}
+          {folded ? (
+            <span className="flex h-8 w-8 items-center justify-center rounded-[10px] bg-brand-700 text-white"><Logo variant="symbol" small title="" className="h-4 w-4" /></span>
+          ) : (
+            <Logo className="h-[13px] w-auto text-brand-700" />
+          )}
         </Link>
         <button
           type="button"
@@ -326,7 +330,7 @@ export default function AppFrame({
           {/* Top bar: search on a laptop; on a phone the workspace and a search button. */}
           <div className="sticky top-0 z-30 flex h-16 items-center gap-3 border-b border-ink-900/[0.06] bg-canvas px-4 sm:px-6 lg:rounded-t-[1.5rem] lg:px-8">
             <div className="flex min-w-0 flex-1 items-center gap-3 lg:max-w-2xl">
-              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] bg-brand-700 text-sm font-semibold text-white lg:hidden">S</span>
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] bg-brand-700 text-white lg:hidden"><Logo variant="symbol" small title="" className="h-4 w-4" /></span>
               <div className="hidden min-w-0 flex-1 lg:block">
                 <AppSearch showClients={multi} indexKey={activeClientId ?? "one"} />
               </div>

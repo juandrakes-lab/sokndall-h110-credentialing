@@ -1,13 +1,12 @@
 import Link from "next/link";
 import { NAV_LINKS } from "@/components/neo/neoData";
-import { Wordmark } from "@/components/neo/icons";
+import Logo from "@/components/brand/Logo";
 import NavAccess from "@/components/neo/NavAccess";
 
 export function Brand() {
   return (
     <Link href="/" className="sk-nav__brand">
-      <Wordmark className="sk-nav__mark" />
-      sokndall
+      <Logo className="sk-nav__logo" />
     </Link>
   );
 }

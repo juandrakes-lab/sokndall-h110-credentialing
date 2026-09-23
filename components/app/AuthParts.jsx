@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useId, useRef, useState } from "react";
 import { inputClass } from "@/components/app/ui";
 import AuthStories from "@/components/app/AuthStories";
+import Logo from "@/components/brand/Logo";
 
 // The frame every access screen shares — sign up, log in, forgot/reset
 // password, choosing a plan, an invitation. The form on the app ground; on
@@ -16,9 +17,8 @@ export function AuthShell({ title, subtitle, children, footer, eyebrow, step, wi
   return (
     <main className={`app-ground app-type grid min-h-screen lg:gap-4 lg:p-4 ${panel ? "lg:grid-cols-[minmax(0,1fr)_minmax(0,1.08fr)]" : ""}`}>
       <div className="flex min-h-screen flex-col px-5 py-6 sm:px-10 lg:min-h-[calc(100vh-2rem)] lg:py-4">
-        <Link href="/" className="flex w-fit items-center gap-2.5 text-lg font-semibold tracking-tight text-ink-900">
-          <span className="flex h-9 w-9 items-center justify-center rounded-[11px] bg-brand-700 text-base font-semibold text-white">S</span>
-          Sokndall
+        <Link href="/" className="flex w-fit items-center py-2 text-brand-700">
+          <Logo className="h-[15px] w-auto" />
         </Link>
 
         <div className={`mx-auto flex w-full flex-1 flex-col justify-center py-10 ${wide ? (panel ? "max-w-3xl" : "max-w-5xl") : "max-w-[400px]"}`}>
