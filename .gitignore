@@ -5,3 +5,6 @@ out
 .env.local
 .vercel
 npm-debug.log*
+
+# The production preview's own build directory (see .claude/run-app-v3-prod.cmd).
+.next-prod

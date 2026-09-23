@@ -14,6 +14,13 @@ npm start        # serve a production build
 
 No test suite exists yet — there is no `test` script and no test framework installed.
 
+**The production preview builds into `.next-prod`, not `.next`** (2026-09-22):
+`next.config.mjs` reads `NEXT_DIST_DIR`, and `.claude/run-app-v3-prod.cmd`
+sets it and builds once if that directory is empty. That is what lets a
+production preview and another chat's `next dev` share this worktree. A plain
+`npm run build` still writes `.next` — run it with `NEXT_DIST_DIR=.next-prod`
+when a dev server is up, or not at all.
+
 **Never run `npm run build` while `npm run dev` is also running against this repo.** `next build` overwrites the `.next` directory a live `next dev` server is reading from, and the already-loaded page in the browser breaks with `Cannot find module './996.js'` or `__webpack_modules__[moduleId] is not a function` — it looks exactly like a code bug but isn't. If it happens: stop the dev server, `rm -rf .next`, restart. Sessions in this environment sometimes have another chat's dev server already bound to port 3000 sharing the same `.next` — check for that before assuming a build failure is real.
 
 Testing the two Vercel Cron routes locally requires the bearer token: `curl -H "Authorization: Bearer $CRON_SECRET" http://localhost:3000/api/cron/weekly-digest` (and `/api/cron/expiration-alerts`). `scripts/setup-polar.mjs`, `scripts/register-webhook.mjs`, and `scripts/test-webhook.mjs` are one-off/verification scripts, not part of the regular dev loop — see the README's Setup section before touching billing.

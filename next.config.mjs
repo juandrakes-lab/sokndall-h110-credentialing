@@ -1,5 +1,12 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Two chats share this worktree, and a `next build` overwrites the .next a
+  // running `next dev` is reading from — the failure that looks like a code
+  // bug ("Cannot find module './996.js'"). NEXT_DIST_DIR lets the production
+  // server build and serve from its own directory (.claude/run-app-v3-prod.cmd
+  // sets .next-prod), so dev and prod stop colliding.
+  distDir: process.env.NEXT_DIST_DIR || ".next",
+
   // forbidden() → a real 403 for the Billing Co–only routes (alcance §4.3).
   experimental: { authInterrupts: true },
 
