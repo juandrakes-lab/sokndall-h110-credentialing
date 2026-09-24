@@ -2,6 +2,7 @@ import "./globals.css";
 
 import { JsonLd, organizationSchema } from "@/components/neo/schema";
 import { fontVars } from "@/components/app/fonts";
+import SiteAnalytics from "@/components/SiteAnalytics";
 
 export const metadata = {
   metadataBase: new URL("https://sokndall.com"),
@@ -17,6 +18,7 @@ export default function RootLayout({ children }) {
             costs nothing on the prerender. */}
         <JsonLd data={organizationSchema()} />
         {children}
+        <SiteAnalytics />
       </body>
     </html>
   );
