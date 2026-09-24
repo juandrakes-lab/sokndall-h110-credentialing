@@ -23,10 +23,10 @@
  * not passed in. Updated 2026-09-10 to the v3.1 wording: "Your email", and the
  * microcopy ending "at any time".
  *
- * `action` is where the form posts. It is "#" today — there is no backend, and
- * the component acknowledges locally — so wiring it to Resend is a one-line
- * change in this file. `href` is where a text link about the template points,
- * for the pages that link to it in prose rather than showing the box.
+ * The form posts to the `requestTemplate` Server Action
+ * (lib/template-lead-actions.js), which stores the address and emails the
+ * template through Resend. `href` is where a text link about the template
+ * points, for the pages that link to it in prose rather than showing the box.
  */
 export const TEMPLATE_CTA = {
   heading: "Get the free credentialing template",
@@ -34,7 +34,6 @@ export const TEMPLATE_CTA = {
   buttonLabel: "Email me the template",
   microcopy:
     "One email with the spreadsheet. A few things about credentialing after that, and one click unsubscribes at any time.",
-  action: "#",
   href: "/credentialing-spreadsheet-template",
   /** Anchor text wherever a page links to the template instead of showing the
    *  box. Descriptive, never "download it here" (on-page-seo.md §6). */

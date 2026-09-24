@@ -1,8 +1,9 @@
 "use client";
 
-import { useId, useState } from "react";
+import { useActionState, useEffect, useId, useState } from "react";
 
 import { TEMPLATE_CTA } from "@/components/neo/templateCta";
+import { requestTemplate } from "@/lib/template-lead-actions";
 
 /**
  * EmailCapture — the downloadable-template box.
@@ -23,29 +24,41 @@ import { TEMPLATE_CTA } from "@/components/neo/templateCta";
  * and `heading={null}` drops it where the surrounding block already says what
  * the box is — the template page's hero.
  *
- * Client only for the submitted state. The heading, the label, the button and
+ * Client only for the form states. The heading, the label, the button and
  * the microcopy are all in the server HTML.
  *
- * No backend yet: `action` posts nowhere and the submit handler shows the
- * acknowledgement locally. Wiring it to Resend is a separate piece of work.
+ * Posts to the `requestTemplate` Server Action, which stores the address and
+ * emails the template through Resend. "Sent" only appears once Resend has
+ * accepted the email; a failure says so. The page path, UTM parameters and
+ * referrer ride along in hidden fields so the leads can be read by page and
+ * source (template_funnel_weekly).
  */
 export default function EmailCapture({ heading = TEMPLATE_CTA.heading, id }) {
-  const [done, setDone] = useState(false);
+  const [state, formAction, pending] = useActionState(requestTemplate, null);
+  const [origin, setOrigin] = useState({});
   const uid = useId();
   const inputId = `${uid}-email`;
 
+  useEffect(() => {
+    const q = new URLSearchParams(window.location.search);
+    setOrigin({
+      source_path: window.location.pathname,
+      utm_source: q.get("utm_source") ?? "",
+      utm_medium: q.get("utm_medium") ?? "",
+      utm_campaign: q.get("utm_campaign") ?? "",
+      referrer: document.referrer && !document.referrer.startsWith(window.location.origin) ? document.referrer : "",
+    });
+  }, []);
+
+  const sent = state?.status === "sent";
+
   return (
-    <form
-      className="sk-ec"
-      id={id}
-      action={TEMPLATE_CTA.action}
-      method="post"
-      onSubmit={(e) => {
-        e.preventDefault();
-        setDone(true);
-      }}
-    >
+    <form className="sk-ec" id={id} action={formAction}>
       {heading ? <p className="sk-ec__t">{heading}</p> : null}
+
+      {Object.entries(origin).map(([name, value]) => (
+        <input key={name} type="hidden" name={name} value={value} />
+      ))}
 
       <div className="sk-ec__f">
         <label className="sk-small" htmlFor={inputId}>
@@ -59,19 +72,32 @@ export default function EmailCapture({ heading = TEMPLATE_CTA.heading, id }) {
           required
           autoComplete="email"
           placeholder="you@practice.com"
+          disabled={pending}
         />
-        <button type="submit" className="sk-btn sk-btn--primary sk-btn--sm sk-ec__btn">
-          {TEMPLATE_CTA.buttonLabel}
+        <button
+          type="submit"
+          className="sk-btn sk-btn--primary sk-btn--sm sk-ec__btn"
+          disabled={pending}
+          aria-busy={pending}
+        >
+          {pending ? "Sending…" : TEMPLATE_CTA.buttonLabel}
         </button>
       </div>
 
       <p className="sk-small sk-ec__micro">{TEMPLATE_CTA.microcopy}</p>
 
-      {done ? (
-        <p className="sk-small sk-ec__done" role="status">
-          Sent. Check your inbox for the file.
-        </p>
-      ) : null}
+      <div aria-live="polite">
+        {!pending && sent ? (
+          <p className="sk-small sk-ec__done" role="status">
+            Sent. Check your inbox for the template (and the spam folder, the first time).
+          </p>
+        ) : null}
+        {!pending && state?.status === "error" ? (
+          <p className="sk-small sk-ec__err" role="alert">
+            {state.message}
+          </p>
+        ) : null}
+      </div>
     </form>
   );
 }

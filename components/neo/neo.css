@@ -2572,6 +2572,10 @@ html:has(.sokndall-neo) { overflow-x: hidden; }
 .sk-ec__btn { width: 100%; justify-content: center; white-space: normal; text-align: center; }
 .sk-ec__micro { opacity: 0.68; }
 .sk-ec__done { font-weight: 600; }
+/* A failed send is "needs action", the one signal amber carries (--warn),
+   as a rule beside the line rather than amber text, which is too light to read. */
+.sk-ec__err { font-weight: 600; border-left: 3px solid var(--warn); padding-left: 8px; }
+.sk-ec__btn:disabled { opacity: 0.7; cursor: progress; }
 
 
 /* ---- pieces borrowed from the article template -------------------------- */
