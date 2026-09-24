@@ -11,7 +11,7 @@ const day = (iso) => (iso ? formatDate(new Date(iso).toISOString().slice(0, 10))
 
 // Owner only (alcance §4.3): plan, trial or renewal date, plan changes, and the
 // Polar portal for card, invoices and cancellation.
-export default function BillingCard({ org, providersUsed, requestedPlan, resubscribed }) {
+export default function BillingCard({ org, providersUsed, requestedPlan, resubscribed, planError }) {
   const access = accountAccess(org);
   const current = PLANS[org.plan];
   const target = PLANS[requestedPlan];
@@ -63,6 +63,12 @@ export default function BillingCard({ org, providersUsed, requestedPlan, resubsc
               late={`Polar hasn't confirmed the change to ${target.label} yet. Reload this page in a minute; if nothing changed, check the billing portal.`}
             />
           )}
+          {planError && (
+            <p className="mt-2 text-sm text-status-expired">
+              Polar didn&apos;t accept the plan change, and nothing was changed. Try again in a minute; if it keeps
+              happening, use the help button and we&apos;ll sort it out.
+            </p>
+          )}
           {target && requestedPlan === org.plan && (
             <p className="mt-2 text-sm text-status-active">
               Done — you&apos;re now on {target.label}. Your new limits apply right away.
@@ -89,6 +95,13 @@ export default function BillingCard({ org, providersUsed, requestedPlan, resubsc
             <span className="text-sm text-ink-500">Everything you had is still here and becomes editable again.</span>
           </form>
         ) : target && requestedPlan !== org.plan ? null : (
+          <div className="flex flex-col gap-3">
+          {org.cancel_at_period_end && (
+            <p className="text-sm text-ink-500">
+              Choosing a plan below also undoes your cancellation: the subscription carries on instead of ending on{" "}
+              {day(org.current_period_end)}.
+            </p>
+          )}
           <div className="grid gap-3 sm:grid-cols-2">
             {PLAN_ORDER.filter((k) => k !== org.plan).map((key) => {
               const plan = PLANS[key];
@@ -115,6 +128,7 @@ export default function BillingCard({ org, providersUsed, requestedPlan, resubsc
                 </form>
               );
             })}
+          </div>
           </div>
         )}
       </div>

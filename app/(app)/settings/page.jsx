@@ -48,7 +48,7 @@ export default async function SettingsPage({ searchParams }) {
     { key: "alerts", label: "Alerts & rules" },
     { key: "you", label: "Your profile" },
   ];
-  const wanted = sp.plan_change || sp.resubscribed === "1" ? "billing" : sp.tab;
+  const wanted = sp.plan_change || sp.plan_error || sp.resubscribed === "1" ? "billing" : sp.tab;
   const tab = TABS.some((t) => t.key === wanted) ? wanted : "practice";
 
   const [used, { data: log }, { data: directory }, { data: access }, { data: invitations }] = await Promise.all([
@@ -161,7 +161,7 @@ export default async function SettingsPage({ searchParams }) {
           </Section>
 
           <Section title="Plan & billing" description="Change plan, update the card or cancel. Invoices live in the Polar portal.">
-            <BillingCard org={org} providersUsed={used} requestedPlan={sp.plan_change} resubscribed={sp.resubscribed === "1"} />
+            <BillingCard org={org} providersUsed={used} requestedPlan={sp.plan_change} resubscribed={sp.resubscribed === "1"} planError={sp.plan_error === "1"} />
           </Section>
 
           {owner && (
