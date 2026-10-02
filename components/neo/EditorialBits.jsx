@@ -54,6 +54,7 @@ export function PageHeader({
   as: As = "h1",
   title,
   standfirst,
+  note,
   category,
   categoryHref,
   date,
@@ -67,6 +68,14 @@ export function PageHeader({
     <header className="sk-edhead">
       <As>{title}</As>
       {standfirst ? <p className="sk-edhead__sub">{standfirst}</p> : null}
+      {/* A one-line aside under the standfirst, for the reader who came for
+          something the page deliberately isn't (a login, say): plain small
+          text, links via rich.jsx, no box or button. */}
+      {note ? (
+        <p className="sk-small sk-edhead__note">
+          <Rich text={note} />
+        </p>
+      ) : null}
 
       <div className="sk-edhead__meta sk-small">
         {category ? (

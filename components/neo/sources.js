@@ -73,6 +73,12 @@ const SOURCES = {
     href: "https://www.behavehealth.com/",
     pending: true,
   },
+  // The Provider Data Portal sign-in, as linked from DataSpring's own
+  // "For Clinicians" page (dataspring.com/clinicians, checked 2026-10-02).
+  caqhPortal: {
+    label: "CAQH Provider Data Portal",
+    href: "https://proview.caqh.org/Login/Index",
+  },
   contractingProviders: {
     label: "Contracting Providers",
     href: "https://contractingproviders.com/",

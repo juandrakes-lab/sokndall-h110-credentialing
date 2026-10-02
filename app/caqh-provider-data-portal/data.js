@@ -15,6 +15,10 @@ export const HEADER = {
   title: "CAQH is now DataSpring, and almost nothing about your own profile actually changed",
   standfirst:
     "The parent organisation rebranded in June 2026 and the portal was renamed. Your CAQH ID, your login, your documents, your payer authorisations and your attestation schedule all carried over untouched. Here is what did change.",
+  // Most visits come from people searching for the login (playbook paso 2,
+  // 2026-10-02). The page still doesn't compete for it (exclusiones.md §4);
+  // it just shows the way out, so they don't bounce back to the results.
+  note: "Looking for the login? The portal is at the same address as before: [proview.caqh.org](src:caqhPortal). Your existing username and password still work.",
   category: "Guide",
   date: "2026-09-08",
   readingTime: "10 min read",

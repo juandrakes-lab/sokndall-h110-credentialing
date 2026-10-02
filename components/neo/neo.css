@@ -2289,6 +2289,8 @@ html:has(.sokndall-neo) { overflow-x: hidden; }
   margin-bottom: var(--s-4);
 }
 .sk-edhead__sub { font-size: 1.0625rem; line-height: 1.6; max-width: 54ch; margin-inline: auto; }
+.sk-edhead__note { max-width: 54ch; margin-inline: auto; margin-top: var(--s-3); }
+.sk-edhead__note a { text-decoration: underline; }
 
 /* Category, date, reading time. A row of facts about the document, so it is
    set as one line of small type rather than as three chips. */

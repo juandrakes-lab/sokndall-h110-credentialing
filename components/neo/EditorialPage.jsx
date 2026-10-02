@@ -59,6 +59,7 @@ export default function EditorialPage({ route, data, variant = "editorial", chil
           <PageHeader
             title={HEADER.title}
             standfirst={HEADER.standfirst}
+            note={HEADER.note}
             category={HEADER.category}
             date={HEADER.date}
             dateLabel=""

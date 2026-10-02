@@ -7,9 +7,9 @@
 // (BRIEF_COPY.md §4, as applied by the copy file).
 
 export const META = {
-  title: "Credentialing Spreadsheet Template, Free | Sokndall",
+  title: "Credentialing Checklist & Spreadsheet Template, Free (Excel, Sheets)",
   description:
-    "A free credentialing spreadsheet template with the formulas already in it: providers, credentials, payer enrollment, CAQH and a dashboard. No account.",
+    "A free credentialing checklist and tracker in one spreadsheet: every provider's licenses, DEA, malpractice and CAQH dates, plus payer enrollment, with the formulas already in it. Excel or Google Sheets, no account.",
 };
 
 export const HERO = {
@@ -92,6 +92,12 @@ export const FAQ = [
   {
     q: "Does the template work in Excel and Google Sheets?",
     a: "Both. The formulas are limited to functions that behave the same in each, so nothing breaks when you upload the file to Drive or download it back out again. Conditional formatting carries across as well. There is no macro, no script and no add-on, which is deliberate: an IT department will not have to approve anything.",
+  },
+  {
+    // Checked against the template's Credentials tab (type dropdown and the
+    // red EXPIRED / "Due in 30 days" status) on 2026-10-02.
+    q: "Can I use it as a provider credentialing checklist?",
+    a: "Yes. The Credentials tab lists, for each provider, every item a payer or facility checks: state license, DEA, controlled substance registration, malpractice, board certification, CAQH attestation and Medicare/Medicaid revalidation, each with its expiry date and a status that turns red when it's due. That is the checklist, kept current instead of re-built for every new provider.",
   },
   {
     q: "When does a spreadsheet stop being enough?",
