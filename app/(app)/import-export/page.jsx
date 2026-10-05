@@ -17,6 +17,19 @@ export default function ImportExportPage() {
     <div className="flex flex-col gap-8">
       <PageHeader title="Import / Export" description="Bring your spreadsheet in, or take any list out as CSV." />
 
+      <Card className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <CardHeader
+          icon={ICONS.importExport}
+          title="Using the free Sokndall template? Upload it as is."
+          description="All four tabs in one go: providers, credentials, CAQH and payer enrollment, with your last follow-ups."
+        />
+        <div className="px-5 pb-4 sm:py-4">
+          <Link href="/import-export/template" className={`${buttonClass("primary")} shrink-0`}>
+            Import the template
+          </Link>
+        </div>
+      </Card>
+
       <div className="grid gap-6 md:grid-cols-2">
         <Card className="flex flex-col">
           <CardHeader icon={ICONS.providers} title="Import providers" description="One row per provider. Each NPI is checked against the NPI Registry." />

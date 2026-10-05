@@ -8,7 +8,9 @@ const nextConfig = {
   distDir: process.env.NEXT_DIST_DIR || ".next",
 
   // forbidden() → a real 403 for the Billing Co–only routes (alcance §4.3).
-  experimental: { authInterrupts: true },
+  // serverActions.bodySizeLimit: the template importer takes an .xlsx of up
+  // to 5 MB through a Server Action (default limit is 1 MB).
+  experimental: { authInterrupts: true, serverActions: { bodySizeLimit: "6mb" } },
 
   // Dev only: keep Next's "N" badge off the app sidebar's account button.
   devIndicators: { position: "bottom-right" },
