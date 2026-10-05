@@ -46,6 +46,8 @@ export default function EmailCapture({ heading = TEMPLATE_CTA.heading, id }) {
       utm_source: q.get("utm_source") ?? "",
       utm_medium: q.get("utm_medium") ?? "",
       utm_campaign: q.get("utm_campaign") ?? "",
+      utm_term: q.get("utm_term") ?? "",
+      utm_content: q.get("utm_content") ?? "",
       referrer: document.referrer && !document.referrer.startsWith(window.location.origin) ? document.referrer : "",
     });
   }, []);

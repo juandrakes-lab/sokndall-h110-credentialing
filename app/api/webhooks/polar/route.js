@@ -1,4 +1,5 @@
-import { NextResponse } from "next/server";
+import { NextResponse, after } from "next/server";
+import { sendTrialStartEmails } from "@/lib/trial-emails";
 import { verifyEvent, WebhookVerificationError } from "@/lib/polar-webhook";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { applySubscription } from "@/lib/polar-sync";
@@ -48,9 +49,13 @@ export async function POST(request) {
   }
 
   try {
-    await applySubscription(admin, event.data, event.type);
+    const orgId = await applySubscription(admin, event.data, event.type);
 
     await admin.from("cred_polar_events").update({ processed_at: new Date().toISOString() }).eq("id", deliveryId);
+    // Welcome to the owner + "new trial" notice to hello@, after the response:
+    // the webhook never waits on them, and they can't fail it. Claimed in
+    // cred_notification_log, so later subscription.* events send nothing.
+    if (orgId) after(() => sendTrialStartEmails(admin, orgId));
     return NextResponse.json({ received: true });
   } catch (err) {
     // Forget the delivery so Polar's retry is processed, not skipped.
