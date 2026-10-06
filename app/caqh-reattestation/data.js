@@ -9,7 +9,7 @@
 export const META = {
   title: "CAQH Reattestation: How Often (Every 120 Days) and What Happens If You Miss It",
   description:
-    "CAQH reattestation is required every 120 days whether or not anything changed. Nothing breaks visibly when it lapses, which is what makes it expensive.",
+    "CAQH re-attestation (reattestation) is required every 120 days whether or not anything changed. Nothing breaks visibly when it lapses, which is what makes it expensive.",
 };
 
 export const HEADER = {
