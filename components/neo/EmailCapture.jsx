@@ -91,7 +91,7 @@ export default function EmailCapture({ heading = TEMPLATE_CTA.heading, id }) {
       <div aria-live="polite">
         {!pending && sent ? (
           <p className="sk-small sk-ec__done" role="status">
-            Sent. Check your inbox for the template (and the spam folder, the first time).
+            Sent. It comes from Juan at hello@sokndall.com. Check your inbox (and the spam folder, the first time).
           </p>
         ) : null}
         {!pending && state?.status === "error" ? (

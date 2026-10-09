@@ -13,7 +13,7 @@ import { createClient } from "@supabase/supabase-js";
 
 export const dynamic = "force-dynamic";
 
-const STEPS = new Set(["e3", "e3b"]);
+const STEPS = new Set(["e3", "e3b", "e5", "e6", "e7", "e8", "e9", "e10"]);
 const BOTS = /bot|crawl|spider|preview|scan|safelinks|proofpoint|mimecast|barracuda|slack|facebookexternalhit/i;
 
 const destination = (step) =>
