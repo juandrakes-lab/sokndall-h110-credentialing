@@ -7,7 +7,7 @@
 // (BRIEF_COPY.md §4, as applied by the copy file).
 
 export const META = {
-  title: "Free Credentialing Spreadsheet Template (Excel, Google Sheets) | Sokndall",
+  title: "Free Credentialing Spreadsheet Template (Excel & Sheets)",
   description:
     "A free credentialing checklist and tracker in one spreadsheet: every provider's licenses, DEA, malpractice and CAQH dates, plus payer enrollment, with the formulas already in it. Excel or Google Sheets, no account.",
 };

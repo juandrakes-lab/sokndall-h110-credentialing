@@ -7,7 +7,7 @@
 // rename itself is explained.
 
 export const META = {
-  title: "CAQH Reattestation: How Often (Every 120 Days) and What Happens If You Miss It",
+  title: "CAQH Reattestation: Every 120 Days, and What If You Miss It",
   description:
     "CAQH re-attestation (reattestation) is required every 120 days whether or not anything changed. Nothing breaks visibly when it lapses, which is what makes it expensive.",
 };

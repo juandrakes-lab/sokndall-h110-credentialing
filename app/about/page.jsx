@@ -4,7 +4,7 @@ import { PageHeader, ProseSection } from "@/components/neo/EditorialBits";
 import { pageMeta } from "@/lib/seo";
 
 export const metadata = pageMeta({
-  title: "About — Sokndall",
+  title: "About Sokndall: Who Builds It and Why — Sokndall",
   description:
     "Credentialing and payer enrollment tracking software for medical practices and billing companies with 1 to 50 providers.",
   path: "/about",

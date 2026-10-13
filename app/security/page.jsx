@@ -4,7 +4,7 @@ import { PageHeader, ProseSection } from "@/components/neo/EditorialBits";
 import { pageMeta } from "@/lib/seo";
 
 export const metadata = pageMeta({
-  title: "Security — Sokndall",
+  title: "Security at Sokndall: No Patient Data, How Data Is Handled",
   description:
     "Sokndall holds provider credentials and payer enrollment records. It does not hold PHI, which removes most of what usually stands between you and starting.",
   path: "/security",
