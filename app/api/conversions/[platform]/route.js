@@ -5,7 +5,7 @@ import { clickedLeads, googleCsv, microsoftCsv } from "@/lib/offline-conversions
 
 // The scheduled uploads: Google Ads and Microsoft Ads fetch these once a day
 // (Conversions › Uploads › Schedules) and count each row as a "Template lead".
-// /api/conversions/google.csv and /api/conversions/microsoft.csv.
+// /api/conversions/google-leads.csv (and google.csv) and /api/conversions/microsoft.csv.
 //
 // HTTP Basic auth with CONVERSIONS_FEED_USER / CONVERSIONS_FEED_PASSWORD —
 // the scheme both platforms' scheduled uploads speak. Like the cron routes,
@@ -13,7 +13,10 @@ import { clickedLeads, googleCsv, microsoftCsv } from "@/lib/offline-conversions
 // is allowed here. Only click ids and timestamps leave; never an email.
 export const dynamic = "force-dynamic";
 
-const FILES = { "google.csv": googleCsv, "microsoft.csv": microsoftCsv };
+// google-leads.csv is what Google's Data Manager is pointed at: it keeps the
+// columns it first read from a URL, and google.csv was first read in the
+// older layout with a "Parameters" line on top.
+const FILES = { "google.csv": googleCsv, "google-leads.csv": googleCsv, "microsoft.csv": microsoftCsv };
 
 function authorized(request) {
   const user = process.env.CONVERSIONS_FEED_USER;
