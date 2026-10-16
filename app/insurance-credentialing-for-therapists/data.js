@@ -7,7 +7,7 @@
 import { source } from "@/components/neo/editorialRender";
 
 export const META = {
-  title: "Therapist Insurance Credentialing: How Long Paneling Takes",
+  title: "Insurance Credentialing for Therapists: Paneling Timeline",
   description:
     "How long paneling actually takes, how to tell whether a panel is closed before you apply, and why the effective date is the only date that lets you bill.",
 };
