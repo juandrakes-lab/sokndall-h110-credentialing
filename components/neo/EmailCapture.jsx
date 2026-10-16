@@ -3,7 +3,23 @@
 import { useActionState, useEffect, useId, useState } from "react";
 
 import { TEMPLATE_CTA } from "@/components/neo/templateCta";
+import { ATTRIBUTION_COOKIE } from "@/lib/attribution";
 import { requestTemplate } from "@/lib/template-lead-actions";
+
+const CLICK_ID = /^[A-Za-z0-9_-]{1,200}$/;
+
+// The ad click id (gclid / msclkid): from this page's address, or else from
+// the campaign cookie SiteAnalytics wrote on the page the visitor landed on,
+// so it survives a click through to another page. No cookie of its own.
+function clickIds(q) {
+  let saved = {};
+  try {
+    const raw = document.cookie.split("; ").find((c) => c.startsWith(`${ATTRIBUTION_COOKIE}=`));
+    if (raw) saved = JSON.parse(decodeURIComponent(raw.slice(ATTRIBUTION_COOKIE.length + 1))) ?? {};
+  } catch {}
+  const pick = (key) => [q.get(key), saved[key]].find((v) => typeof v === "string" && CLICK_ID.test(v)) ?? "";
+  return { gclid: pick("gclid"), msclkid: pick("msclkid") };
+}
 
 /**
  * EmailCapture — the downloadable-template box.
@@ -29,9 +45,10 @@ import { requestTemplate } from "@/lib/template-lead-actions";
  *
  * Posts to the `requestTemplate` Server Action, which stores the address and
  * emails the template through Resend. "Sent" only appears once Resend has
- * accepted the email; a failure says so. The page path, UTM parameters and
- * referrer ride along in hidden fields so the leads can be read by page and
- * source (template_funnel_weekly).
+ * accepted the email; a failure says so. The page path, UTM parameters,
+ * referrer and ad click id ride along in hidden fields so the leads can be
+ * read by page and source (template_funnel_weekly) and counted back on the ad
+ * platforms (scripts/export-offline-conversions.mjs).
  */
 export default function EmailCapture({ heading = TEMPLATE_CTA.heading, id }) {
   const [state, formAction, pending] = useActionState(requestTemplate, null);
@@ -49,6 +66,7 @@ export default function EmailCapture({ heading = TEMPLATE_CTA.heading, id }) {
       utm_term: q.get("utm_term") ?? "",
       utm_content: q.get("utm_content") ?? "",
       referrer: document.referrer && !document.referrer.startsWith(window.location.origin) ? document.referrer : "",
+      ...clickIds(q),
     });
   }, []);
 
