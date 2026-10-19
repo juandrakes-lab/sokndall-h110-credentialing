@@ -1,6 +1,7 @@
 import Link from "next/link";
 import HeaderActions from "@/components/app/HeaderActions";
 import { getAppContext } from "@/lib/org";
+import { accountAccess } from "@/lib/billing";
 import { daysUntil } from "@/lib/credentials";
 import {
   ENROLLMENT_STATUS_LABELS,
@@ -13,6 +14,7 @@ import {
 } from "@/lib/enrollments";
 import { Avatar, Card, EmptyState, ICONS, Icon, PIPELINE_ORDER, PageHeader, STATUS_FILL, SectionPill, SegmentBar, buttonClass } from "@/components/app/ui";
 import EnrollmentPanel from "./EnrollmentPanel";
+import { MatrixCell, MatrixSelection } from "./MatrixSelection";
 
 // Cells read like the app's status badges: a soft fill and a small shadow, no
 // outline — except an empty cell, which stays a dashed placeholder.
@@ -30,7 +32,8 @@ const CHIP = {
 export default async function EnrollmentsPage({ searchParams }) {
   const sp = await searchParams;
   const open = parseCellKey(sp.open);
-  const { supabase } = await getAppContext();
+  const { supabase, org } = await getAppContext();
+  const readOnly = !accountAccess(org).writable;
 
   const [{ data: providers }, { data: payerRows }, { data: enrollments }] = await Promise.all([
     supabase.from("cred_providers").select("id, first_name, last_name, specialty").eq("status", "active").order("last_name"),
@@ -114,6 +117,7 @@ export default async function EnrollmentsPage({ searchParams }) {
         </ul>
       </Card>
 
+      <MatrixSelection readOnly={readOnly}>
       <Card className="overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full border-separate border-spacing-0 text-sm">
@@ -152,9 +156,9 @@ export default async function EnrollmentsPage({ searchParams }) {
                     const selected = open && cellKey(open.providerId, open.payerId) === key;
                     return (
                       <td key={payer.id} className={`border-b border-ink-100 px-2 py-2 ${selected ? "bg-brand-50" : ""}`}>
-                        <Link
+                        <MatrixCell
                           href={`/enrollments?open=${key}`}
-                          scroll={false}
+                          cellKey={key}
                           className={`flex items-center justify-between gap-1 rounded-lg px-2.5 py-1.5 text-xs font-medium transition hover:ring-2 hover:ring-brand-100 ${CHIP[status]}`}
                         >
                           <span className="truncate">{ENROLLMENT_STATUS_LABELS[status]}</span>
@@ -162,7 +166,7 @@ export default async function EnrollmentsPage({ searchParams }) {
                             {due && <span className="h-2 w-2 rounded-full bg-red-600" aria-label="Follow-up due" />}
                             {stalled && <Icon d={ICONS.pause} className="h-3.5 w-3.5 text-amber-600" strokeWidth={2.2} />}
                           </span>
-                        </Link>
+                        </MatrixCell>
                       </td>
                     );
                   })}
@@ -172,6 +176,7 @@ export default async function EnrollmentsPage({ searchParams }) {
           </table>
         </div>
       </Card>
+      </MatrixSelection>
 
       <div className="flex flex-wrap gap-x-6 gap-y-2 text-xs text-ink-700">
         <span className="flex items-center gap-1.5">

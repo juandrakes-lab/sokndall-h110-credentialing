@@ -1,7 +1,9 @@
 import Link from "next/link";
 import { Avatar, Badge, STATUS_FILL } from "@/components/app/ui";
-import { formatDate } from "@/lib/credentials";
-import { CHANNEL_LABELS, ENROLLMENT_STATUS_LABELS, cellKey, followUpLabel, stalledDays } from "@/lib/enrollments";
+import { formatDate, todayISO } from "@/lib/credentials";
+import { logFollowUp } from "@/app/(app)/enrollments/actions";
+import QuickLog from "@/components/app/QuickLog";
+import { CHANNEL_LABELS, ENROLLMENT_STATUS_LABELS, cellKey, followUpLabel, proposedFollowUp, stalledDays } from "@/lib/enrollments";
 
 function withOpen(basePath, params, key) {
   const next = new URLSearchParams(params);
@@ -13,7 +15,7 @@ function withOpen(basePath, params, key) {
 // three weights: who and which payer; where it stands and when we last
 // called, small; how late it is, on the right. The call notes live in the
 // side panel each row opens.
-export default function FollowUpList({ items, lastContact, directory, basePath, params = {}, mode = "queue" }) {
+export default function FollowUpList({ items, lastContact, directory, basePath, params = {}, mode = "queue", quickLog = false }) {
   const owner = directory.find((d) => d.role === "owner");
   const firstName = (name) => String(name ?? "").split(/[\s@]/)[0];
   const who = (id) => (id ? directory.find((d) => d.user_id === id)?.name ?? "Former member" : owner?.name ?? "Owner");
@@ -26,11 +28,11 @@ export default function FollowUpList({ items, lastContact, directory, basePath, 
         const fu = e.next_follow_up_date ? followUpLabel(e.next_follow_up_date) : null;
         const stalled = stalledDays(e);
         return (
-          <li key={e.id}>
+          <li key={e.id} className={quickLog ? "flex flex-wrap items-center gap-x-2 pr-5" : undefined}>
             <Link
               href={withOpen(basePath, params, cellKey(e.provider_id, e.payer_id))}
               scroll={false}
-              className="flex items-center gap-3 px-5 py-3 transition-colors hover:bg-ink-50/70"
+              className={`flex items-center gap-3 px-5 py-3 transition-colors hover:bg-ink-50/70 ${quickLog ? "min-w-0 flex-1" : ""}`}
             >
               <Avatar name={`${e.provider.first_name} ${e.provider.last_name}`} />
               <div className="min-w-0 flex-1">
@@ -63,6 +65,16 @@ export default function FollowUpList({ items, lastContact, directory, basePath, 
                 {mode === "requests" && <Badge tone="amber">{e.pending_request ? "Waiting on you" : "Request not written down"}</Badge>}
               </div>
             </Link>
+            {quickLog && (
+              <div className="flex justify-end pb-3 pl-5 sm:pb-0 sm:pl-0 [&:has(form)]:basis-full [&:has(form)]:pb-3 [&:has(form)]:pl-5">
+                <QuickLog
+                  action={logFollowUp.bind(null, e.provider_id, e.payer_id)}
+                  today={todayISO()}
+                  proposed={proposedFollowUp()}
+                  label={`${e.provider.first_name} ${e.provider.last_name}, ${e.payer.name}`}
+                />
+              </div>
+            )}
           </li>
         );
       })}

@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { getAppContext } from "@/lib/org";
 import { todayISO } from "@/lib/credentials";
-import { ENROLLMENT_STATUSES, IN_FLIGHT, proposedFollowUp } from "@/lib/enrollments";
+import { ENROLLMENT_STATUSES, IN_FLIGHT, parseCellKey, proposedFollowUp } from "@/lib/enrollments";
 import { REVALIDATION_CHOICES, detailsErrors, followUpErrors, requestErrors } from "@/lib/enrollment-rules";
 
 function text(formData, key) {
@@ -44,6 +44,12 @@ export async function setEnrollmentStatus(providerId, payerId, formData) {
   if (!ENROLLMENT_STATUSES.includes(status)) return;
 
   const { supabase } = await getAppContext();
+  const error = await applyStatus(supabase, providerId, payerId, status);
+  if (error) throw new Error(error.message);
+  refresh();
+}
+
+async function applyStatus(supabase, providerId, payerId, status) {
   const { data: enrollment } = await supabase
     .from("cred_enrollments")
     .select("id, submitted_date, next_follow_up_date")
@@ -60,8 +66,28 @@ export async function setEnrollmentStatus(providerId, payerId, formData) {
   const { error } = enrollment
     ? await supabase.from("cred_enrollments").update(patch).eq("id", enrollment.id)
     : await supabase.from("cred_enrollments").insert({ provider_id: providerId, payer_id: payerId, ...patch });
-  if (error) throw new Error(error.message);
+  return error;
+}
+
+// Several matrix cells at once (pedido 2026-10-19, función 3): the same
+// change, with the same conveniences, applied cell by cell — each one is
+// still its own entry in that application's history. "Info requested" isn't
+// offered here: it needs what the payer asked for, written on each one.
+const BULK_MAX = 100;
+export async function setStatusForCells(cellKeys, status) {
+  if (!ENROLLMENT_STATUSES.includes(status) || status === "info_requested") return { error: "Choose a status." };
+  const cells = (Array.isArray(cellKeys) ? cellKeys : []).slice(0, BULK_MAX).map(parseCellKey).filter(Boolean);
+  if (!cells.length) return { error: "Select at least one cell." };
+  const { supabase } = await getAppContext();
+  let done = 0;
+  const failed = [];
+  for (const { providerId, payerId } of cells) {
+    const error = await applyStatus(supabase, providerId, payerId, status);
+    if (error) failed.push(error.message);
+    else done += 1;
+  }
   refresh();
+  return failed.length ? { done, error: `${failed.length} of ${cells.length} couldn't be changed (${failed[0]}).` } : { done };
 }
 
 // Record a contact with the payer and set when to chase next (alcance §3.6–3.7).

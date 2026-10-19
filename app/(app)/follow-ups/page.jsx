@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getAppContext } from "@/lib/org";
+import { accountAccess } from "@/lib/billing";
 import { loadFollowUps } from "@/lib/follow-ups";
 import { daysUntil, formatDate } from "@/lib/credentials";
 import { parseCellKey, weekEndISO } from "@/lib/enrollments";
@@ -14,7 +15,8 @@ export default async function FollowUpsPage({ searchParams }) {
   const sp = await searchParams;
   const open = parseCellKey(sp.open);
   const mine = sp.mine === "1";
-  const { supabase, user, role } = await getAppContext();
+  const { supabase, user, role, org } = await getAppContext();
+  const writable = accountAccess(org).writable;
   const data = await loadFollowUps(supabase);
   const { lastContact, directory } = data;
 
@@ -106,7 +108,7 @@ export default async function FollowUpsPage({ searchParams }) {
               {g.note && <p className="text-sm text-ink-500">{g.note}</p>}
             </div>
             <Card className="overflow-hidden">
-              <FollowUpList items={g.items} lastContact={lastContact} directory={directory} basePath={listPath} params={listParams} />
+              <FollowUpList items={g.items} lastContact={lastContact} directory={directory} basePath={listPath} params={listParams} quickLog={writable} />
             </Card>
           </section>
         ))
