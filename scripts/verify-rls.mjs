@@ -510,6 +510,65 @@ async function main() {
       .insert({ practice_id: practice2.id, first_name: "Sneaky", last_name: "Member" });
     check("Restricted member cannot write into the other client", !!insErr, insErr?.message);
 
+    // --- Client status reports (función 1) ---------------------------------
+    {
+      const { createHash: h } = await import("node:crypto");
+      const sha = (t) => h("sha256").update(t).digest("hex");
+      const snap = { version: 1, client_name: "x", summary: {}, providers: [], expirations: [] };
+      const anon = createClient(URL_, ANON, opts);
+
+      const { data: own, error: ownErr } = await m.client.from("cred_reports").insert({ client_org_id: B.clientId, data: snap }).select("id, org_id, created_by").single();
+      check("A limited member can generate a report of their client", !ownErr && own?.org_id === B.orgId && own?.created_by === m.id, ownErr?.message);
+      const { error: otherErr } = await m.client.from("cred_reports").insert({ client_org_id: client2.id, data: snap });
+      check("A limited member can't generate a report of a client they can't reach", !!otherErr, otherErr?.message);
+      const { error: foreignErr } = await m.client.from("cred_reports").insert({ client_org_id: A.clientId, data: snap });
+      check("Nobody can generate a report of another account's client", !!foreignErr, foreignErr?.message);
+
+      const { data: ownerRep } = await b.client.from("cred_reports").insert({ client_org_id: client2.id, data: { ...snap, client_name: "two" } }).select("id").single();
+      const { data: mSees } = await m.client.from("cred_reports").select("id");
+      check("A limited member doesn't see reports of the other client", !(mSees ?? []).some((r) => r.id === ownerRep?.id) && (mSees ?? []).some((r) => r.id === own?.id));
+      const { data: aSees } = await a.client.from("cred_reports").select("id");
+      check("Another account sees none of these reports", (aSees ?? []).length === 0);
+      const { data: anonSees } = await anon.from("cred_reports").select("id");
+      check("Anonymous visitors can't read the reports table", (anonSees ?? []).length === 0);
+
+      const { error: tamper } = await m.client.from("cred_reports").update({ data: { forged: true } }).eq("id", own.id);
+      const { data: after } = await admin.from("cred_reports").select("data").eq("id", own.id).single();
+      check("A report's content can't be changed after it's generated", !!tamper || !after.data.forged, tamper?.message);
+
+      const token = `tok-${run}-${Math.random().toString(36).slice(2)}-abcdefghijklmnop`;
+      const { error: shareErr } = await m.client.from("cred_reports")
+        .update({ share_token_hash: sha(token), share_expires_at: new Date(Date.now() + 7 * 86400000).toISOString() }).eq("id", own.id);
+      check("A member can share a report of their client", !shareErr, shareErr?.message);
+      const { data: viaLink } = await anon.rpc("cred_shared_report", { p_token: token });
+      check("The read-only link shows that report, signed out", viaLink?.length === 1 && viaLink[0].data.client_name === "x");
+      const { data: wrongTok } = await anon.rpc("cred_shared_report", { p_token: token + "x" });
+      check("Any other token shows nothing", (wrongTok ?? []).length === 0);
+      const { data: anonAfter } = await anon.from("cred_reports").select("id");
+      check("A link gives no way to read other reports or clients", (anonAfter ?? []).length === 0);
+
+      const { error: longErr } = await m.client.from("cred_reports")
+        .update({ share_token_hash: sha(token + "2"), share_expires_at: new Date(Date.now() + 200 * 86400000).toISOString() }).eq("id", own.id);
+      check("A link can't last more than 90 days", !!longErr && /SHARE_EXPIRY_INVALID/.test(longErr.message), longErr?.message);
+
+      await m.client.from("cred_reports").update({ share_revoked_at: new Date().toISOString() }).eq("id", own.id);
+      const { data: revoked } = await anon.rpc("cred_shared_report", { p_token: token });
+      check("A revoked link stops working", (revoked ?? []).length === 0);
+
+      const token2 = `tok2-${run}-${Math.random().toString(36).slice(2)}-abcdefghijklmnop`;
+      await m.client.from("cred_reports").update({ share_token_hash: sha(token2), share_expires_at: new Date(Date.now() + 86400000).toISOString() }).eq("id", own.id);
+      const { data: live2 } = await anon.rpc("cred_shared_report", { p_token: token2 });
+      await admin.from("cred_reports").update({ share_expires_at: new Date(Date.now() - 1000).toISOString() }).eq("id", own.id);
+      const { data: expired } = await anon.rpc("cred_shared_report", { p_token: token2 });
+      check("A new link works, and stops once it expires", live2?.length === 1 && (expired ?? []).length === 0);
+      const { data: oldAgain } = await anon.rpc("cred_shared_report", { p_token: token });
+      check("Replacing a link kills the old one", (oldAgain ?? []).length === 0);
+
+      const { error: mDelOther } = await m.client.from("cred_reports").delete().eq("id", ownerRep.id);
+      const { data: stillThere } = await admin.from("cred_reports").select("id").eq("id", ownerRep.id);
+      check("A limited member can't delete the other client's report", !mDelOther && stillThere?.length === 1);
+    }
+
     const { data: bSeen } = await b.client.from("cred_providers").select("id");
     check("The owner sees every client", (bSeen ?? []).some((r) => r.id === provider2.id) && bSeen.some((r) => r.id === B.providerId));
 

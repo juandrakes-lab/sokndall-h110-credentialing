@@ -17,6 +17,7 @@ const WORK = [
   { href: "/follow-ups", label: "Follow-ups", icon: ICONS.followUps, countKey: "followUps", bottom: true },
   { href: "/providers", label: "Providers", icon: ICONS.providers, bottom: true },
   { href: "/enrollments", label: "Enrollments", icon: ICONS.enrollments, bottom: true },
+  { href: "/reports", label: "Reports", icon: ICONS.file },
   { href: "/documents", label: "Documents", icon: ICONS.documents },
 ];
 const MANAGE = [
