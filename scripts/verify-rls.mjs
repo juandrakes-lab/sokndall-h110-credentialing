@@ -569,6 +569,77 @@ async function main() {
       check("A limited member can't delete the other client's report", !mDelOther && stillThere?.length === 1);
     }
 
+    // --- Provider upload links (función 2) ----------------------------------
+    {
+      const { createHash: h } = await import("node:crypto");
+      const sha = (t) => h("sha256").update(t).digest("hex");
+      const anon = createClient(URL_, ANON, opts);
+      const soon = () => new Date(Date.now() + 7 * 86400000).toISOString();
+      const tok = `up-${run}-${Math.random().toString(36).slice(2)}-abcdefghijklmnopqrst`;
+
+      const { data: link, error: linkErr } = await m.client.from("cred_upload_links").insert({ provider_id: B.providerId, token_hash: sha(tok), expires_at: soon() }).select("id, org_id, client_org_id").single();
+      check("A member can create an upload link for a provider of their client", !linkErr && link?.client_org_id === B.clientId, linkErr?.message);
+      const { error: otherLink } = await m.client.from("cred_upload_links").insert({ provider_id: provider2.id, token_hash: sha(tok + "o"), expires_at: soon() });
+      check("…but not for a provider of a client they can't reach", !!otherLink, otherLink?.message);
+      const { error: longLink } = await m.client.from("cred_upload_links").insert({ provider_id: B.providerId, token_hash: sha(tok + "l"), expires_at: new Date(Date.now() + 40 * 86400000).toISOString() });
+      check("An upload link can't last more than 30 days", !!longLink && /UPLOAD_LINK_EXPIRY_INVALID/.test(longLink.message), longLink?.message);
+
+      const { data: info } = await anon.rpc("cred_upload_link_info", { p_token: tok });
+      check("The upload page shows only who the link is for", info?.length === 1 && Object.keys(info[0]).sort().join() === "client_name,expires_at,provider_first_name");
+      const { data: anonLinks } = await anon.from("cred_upload_links").select("id");
+      const { data: anonSubs } = await anon.from("cred_document_submissions").select("id");
+      const { data: anonDocs } = await anon.from("cred_documents").select("id");
+      check("A token-holder can't list links, uploads or documents", (anonLinks ?? []).length === 0 && (anonSubs ?? []).length === 0 && (anonDocs ?? []).length === 0);
+      const { data: anonFiles } = await anon.storage.from("cred-documents").list(`${B.orgId}/${B.clientId}/${B.providerId}`);
+      check("…nor list the provider's stored files", (anonFiles ?? []).length === 0);
+      const { error: anonAuth } = await anon.rpc("cred_upload_authorize", { p_token: tok, p_file_name: "a.pdf", p_size: 100, p_mime: "application/pdf" });
+      const { error: userAuth } = await m.client.rpc("cred_upload_authorize", { p_token: tok, p_file_name: "a.pdf", p_size: 100, p_mime: "application/pdf" });
+      check("Only the server can start an upload", !!anonAuth && !!userAuth);
+
+      const auth = (over = {}) => admin.rpc("cred_upload_authorize", { p_token: tok, p_file_name: "a.pdf", p_size: 1000, p_mime: "application/pdf", ...over });
+      const { error: big } = await auth({ p_size: 11 * 1024 * 1024 });
+      check("An upload over 10 MB is refused", /UPLOAD_TOO_LARGE/.test(big?.message ?? ""), big?.message);
+      const { error: exe } = await auth({ p_mime: "application/x-msdownload", p_file_name: "a.exe" });
+      check("A file type /documents doesn't take is refused", /UPLOAD_TYPE/.test(exe?.message ?? ""), exe?.message);
+      const { data: ok1, error: ok1Err } = await auth();
+      check("A valid upload is authorized into quarantine", !ok1Err && /^quarantine\//.test(ok1?.[0]?.quarantine_path ?? ""), ok1Err?.message);
+
+      // A pending submission, as the server records it after the scan.
+      const subPath = `${B.orgId}/${B.clientId}/${B.providerId}/submitted-${run}-w9.pdf`;
+      await admin.storage.from("cred-documents").upload(subPath, new Blob(["%PDF-1.4 test"], { type: "application/pdf" }), { contentType: "application/pdf" });
+      const { data: subId, error: recErr } = await admin.rpc("cred_upload_record", { p_token: tok, p_storage_path: subPath, p_category: "w9", p_file_name: "w9.pdf" });
+      check("A clean upload is recorded as pending review", !recErr && !!subId, recErr?.message);
+      const { error: wrongPath } = await admin.rpc("cred_upload_record", { p_token: tok, p_storage_path: `${B.orgId}/${client2.id}/${provider2.id}/submitted-x.pdf`, p_category: "w9", p_file_name: "x.pdf" });
+      check("A link can't record a file under another provider", /UPLOAD_PATH/.test(wrongPath?.message ?? ""), wrongPath?.message);
+      const { data: docsBefore } = await admin.from("cred_documents").select("id").eq("storage_path", subPath);
+      check("A pending upload isn't in the provider's documents", (docsBefore ?? []).length === 0);
+      const { error: subIns } = await m.client.from("cred_document_submissions").insert({ org_id: B.orgId, client_org_id: B.clientId, provider_id: B.providerId, category: "w9", file_name: "x", storage_path: "x", size_bytes: 1 });
+      check("Signed-in users can't fake a submission", !!subIns, subIns?.message);
+
+      const { error: aReview } = await a.client.rpc("cred_review_submission", { p_id: subId, p_accept: true });
+      check("Another account can't review the upload", /NOT_FOUND/.test(aReview?.message ?? ""), aReview?.message);
+      const { error: acceptErr } = await m.client.rpc("cred_review_submission", { p_id: subId, p_accept: true, p_category: "w9" });
+      const { data: docsAfter } = await admin.from("cred_documents").select("id, uploaded_by").eq("storage_path", subPath);
+      check("Accepting puts it in the provider's documents, by the reviewer", !acceptErr && docsAfter?.length === 1 && docsAfter[0].uploaded_by === m.id, acceptErr?.message);
+      const { error: twice } = await m.client.rpc("cred_review_submission", { p_id: subId, p_accept: true });
+      check("An upload can be reviewed only once", !!twice);
+
+      for (let i = 0; i < 9; i++) await auth();
+      const { error: limited } = await auth();
+      check("The 11th upload in an hour is refused", /UPLOAD_RATE_LIMITED/.test(limited?.message ?? ""), limited?.message);
+
+      await m.client.from("cred_upload_links").update({ revoked_at: new Date().toISOString() }).eq("id", link.id);
+      const { data: infoRevoked } = await anon.rpc("cred_upload_link_info", { p_token: tok });
+      const { error: authRevoked } = await auth();
+      check("A revoked upload link stops working", (infoRevoked ?? []).length === 0 && /UPLOAD_LINK_INVALID/.test(authRevoked?.message ?? ""), authRevoked?.message);
+
+      const tok2 = tok + "-2";
+      const { data: link2 } = await b.client.from("cred_upload_links").insert({ provider_id: B.providerId, token_hash: sha(tok2), expires_at: soon() }).select("id").single();
+      await admin.from("cred_upload_links").update({ expires_at: new Date(Date.now() - 1000).toISOString() }).eq("id", link2.id);
+      const { data: infoExp } = await anon.rpc("cred_upload_link_info", { p_token: tok2 });
+      check("An expired upload link stops working", (infoExp ?? []).length === 0);
+    }
+
     const { data: bSeen } = await b.client.from("cred_providers").select("id");
     check("The owner sees every client", (bSeen ?? []).some((r) => r.id === provider2.id) && bSeen.some((r) => r.id === B.providerId));
 

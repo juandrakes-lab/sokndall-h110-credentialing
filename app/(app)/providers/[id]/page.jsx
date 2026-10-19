@@ -20,6 +20,7 @@ import DataCheck from "@/components/app/DataCheck";
 import ChecklistCard from "@/components/app/ChecklistCard";
 import DocumentList from "@/components/app/DocumentList";
 import DocumentUploader from "@/components/app/DocumentUploader";
+import ProviderUploadLinks from "./ProviderUploadLinks";
 import { checklistFor } from "@/lib/checklist";
 import { ENROLLMENT_STATUS_LABELS, ENROLLMENT_STATUS_TONES, PAYER_SELECT, cellKey, resolvePayer, sortPayers } from "@/lib/enrollments";
 import { accountAccess } from "@/lib/billing";
@@ -298,6 +299,7 @@ export default async function ProviderPage({ params, searchParams }) {
                   />
                 </Disclosure>
               )}
+              <ProviderUploadLinks provider={provider} readOnly={readOnly} />
               <Card>
                 <CardHeader title="Documents" icon={ICONS.documents} description="License copies, certificates, W-9, CV — attached to this provider." />
                 <DocumentList documents={documents} readOnly={readOnly} emptyText="No documents yet. Upload the license, W-9, malpractice certificate and CV." />

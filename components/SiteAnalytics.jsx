@@ -18,7 +18,7 @@ import { ATTRIBUTION_COOKIE, ATTRIBUTION_KEYS, ATTRIBUTION_MAX_AGE } from "@/lib
 // (lib/billing-actions.js startTrial) and the new account keeps it.
 const APP_PREFIXES = [
   "/dashboard", "/providers", "/enrollments", "/follow-ups", "/documents",
-  "/settings", "/clients", "/import-export", "/export", "/reports", "/report", "/shared",
+  "/settings", "/clients", "/import-export", "/export", "/reports", "/report", "/shared", "/upload",
   "/onboarding", "/welcome", "/start", "/invite", "/auth",
   "/forgot-password", "/reset-password", "/styleguide", "/unsubscribe",
 ];
