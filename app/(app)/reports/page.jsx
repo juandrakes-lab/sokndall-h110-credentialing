@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { getAppContext } from "@/lib/org";
 import { formatGeneratedAt, shareState } from "@/lib/reports";
-import { Badge, Card, CardHeader, EmptyState, ICONS, PageHeader, buttonClass } from "@/components/app/ui";
+import { Badge, Card, EmptyState, ICONS, PageHeader, SectionPill, buttonClass } from "@/components/app/ui";
 import SubmitButton from "@/components/app/SubmitButton";
 import { createShareLink, deleteReport, generateReport, revokeShareLink } from "./actions";
 import ShareLinkForm from "./ShareLinkForm";
@@ -46,12 +46,14 @@ export default async function ReportsPage() {
         }
       />
 
-      <Card>
-        <CardHeader
-          title="Active read-only links"
-          description="Anyone with one of these links can see that one report, and nothing else in Sokndall. Revoke a link to turn it off right away."
-          icon={ICONS.shield}
-        />
+      <section className="flex flex-col gap-3">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <SectionPill icon={ICONS.shield} tone={live.length ? "brand" : "neutral"} count={live.length}>
+            Active read-only links
+          </SectionPill>
+          <p className="text-sm text-ink-500">Each one shows that one report, nothing else. Revoke to turn it off right away.</p>
+        </div>
+      <Card className="overflow-hidden">
         {live.length === 0 ? (
           <p className="px-5 py-5 text-sm text-ink-500">No active links.</p>
         ) : (
@@ -72,9 +74,16 @@ export default async function ReportsPage() {
           </ul>
         )}
       </Card>
+      </section>
 
-      <Card>
-        <CardHeader title="Generated reports" description="Each one is frozen at the moment it was generated." icon={ICONS.file} />
+      <section className="flex flex-col gap-3">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <SectionPill icon={ICONS.file} tone="brand" count={list.length}>
+            Generated reports
+          </SectionPill>
+          <p className="text-sm text-ink-500">Each one is frozen at the moment it was generated.</p>
+        </div>
+      <Card className="overflow-hidden">
         {list.length === 0 ? (
           <EmptyState title="No reports yet" description="Generate one to see the current status of every application, ready to print or share." />
         ) : (
@@ -110,6 +119,7 @@ export default async function ReportsPage() {
           </ul>
         )}
       </Card>
+      </section>
     </div>
   );
 }

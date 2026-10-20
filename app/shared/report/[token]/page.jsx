@@ -34,7 +34,7 @@ export default async function SharedReportPage({ params }) {
     <div className={`${fontVars} min-h-screen bg-ink-50 print:bg-white`}>
       <div className="mx-auto flex max-w-[60rem] flex-wrap items-center justify-between gap-3 px-8 py-4 print:hidden">
         <p className="text-xs text-ink-500">Read-only link · available until {formatGeneratedAt(report.expires_at)}</p>
-        <PrintButton />
+        <PrintButton fileName={`Credentialing status - ${report.data.client_name} - ${report.data.as_of}`} />
       </div>
       <div className="pb-12 print:pb-0">
         <div className="mx-auto max-w-[60rem] rounded-2xl shadow-[0_1px_3px_rgba(14,42,46,0.08)] print:shadow-none">

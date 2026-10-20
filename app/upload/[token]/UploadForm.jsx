@@ -57,7 +57,7 @@ export default function UploadForm({ token }) {
               </li>
             ))}
           </ul>
-          <p className="mt-1 text-xs text-ink-700">You can send another one below.</p>
+          <p className="mt-2 text-xs text-ink-700">Need to send another one? Pick it below. If that was everything, you&apos;re done: you can close this page. The team will review your files.</p>
         </div>
       )}
       <form onSubmit={submit} className="flex flex-col gap-4">
@@ -70,13 +70,22 @@ export default function UploadForm({ token }) {
             ))}
           </select>
         </Field>
-        <Field label="File (PDF, JPG, PNG, HEIC or Word, up to 10 MB)" htmlFor="up-file">
-          <input id="up-file" type="file" accept={ACCEPT_ATTR} onChange={(e) => setFile(e.target.files?.[0] ?? null)} disabled={busy} className="text-sm" />
-        </Field>
+        <div className="flex flex-col gap-2">
+          <span className="text-sm font-medium text-ink-900">File</span>
+          <label
+            htmlFor="up-file"
+            className={`flex cursor-pointer flex-col items-center gap-1 rounded-xl border-2 border-dashed px-4 py-6 text-center transition ${file ? "border-brand-500 bg-brand-50" : "border-ink-200 bg-white hover:border-brand-500 hover:bg-brand-50/50"} ${busy ? "pointer-events-none opacity-60" : ""}`}
+          >
+            <span className={buttonClass("secondary", "sm")}>{file ? "Choose a different file" : "Choose a file"}</span>
+            <span className="text-sm text-ink-900">{file ? file.name : "No file chosen yet"}</span>
+            <span className="text-xs text-ink-500">PDF, JPG, PNG, HEIC or Word, up to 10 MB</span>
+          </label>
+          <input id="up-file" type="file" accept={ACCEPT_ATTR} onChange={(e) => setFile(e.target.files?.[0] ?? null)} disabled={busy} className="sr-only" />
+        </div>
         {error && <p className="text-sm text-status-expired" role="alert">{error}</p>}
-        <button type="submit" disabled={busy} aria-busy={busy} className={`${buttonClass("primary")} inline-flex items-center justify-center gap-2 disabled:opacity-60`}>
+        <button type="submit" disabled={busy || !file} aria-busy={busy} className={`${buttonClass("primary")} inline-flex items-center justify-center gap-2 disabled:cursor-not-allowed disabled:opacity-60`}>
           {busy && <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-current border-t-transparent" aria-hidden="true" />}
-          {step ?? "Send document"}
+          {step ?? (file ? "Send document" : "Choose a file to send")}
         </button>
       </form>
     </div>

@@ -29,7 +29,7 @@ export default async function ReportPage({ params }) {
           <Link href="/reports" className={buttonClass("secondary", "sm")}>
             Share a read-only link
           </Link>
-          <PrintButton />
+          <PrintButton fileName={`Credentialing status - ${report.data.client_name} - ${report.data.as_of}`} />
         </div>
       </div>
       <div className="pb-12 print:pb-0">
