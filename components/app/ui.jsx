@@ -171,6 +171,24 @@ export function SectionPill({ icon, tone = "brand", count, children, as: Tag = "
   );
 }
 
+// A list of separate items (rows): its heading sits outside the card, as on
+// Follow-ups and Reports. A card that is one object (a form, a checklist, a
+// profile) keeps its heading inside (CardHeader).
+export function ListSection({ icon, title, count, tone = "brand", note, actions, children }) {
+  return (
+    <section className="flex flex-col gap-3">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <SectionPill icon={icon} tone={tone} count={count}>
+          {title}
+        </SectionPill>
+        {note && <p className="text-sm text-ink-500">{note}</p>}
+        {actions}
+      </div>
+      <Card className="overflow-hidden">{children}</Card>
+    </section>
+  );
+}
+
 // A headline number with its label: the dashboards' KPI. `href` makes the whole
 // tile a link; `meter` (0–1) draws a thin progress bar under the figure.
 export function StatCard({ label, value, suffix, hint, icon, tone = "brand", href, meter, Link, accent = false, onInk = false }) {

@@ -57,7 +57,7 @@ export function PreviewButton({ action }) {
     <button
       type="button"
       disabled={busy}
-      className={buttonClass("ghost", "sm")}
+      className={buttonClass("secondary", "sm")}
       onClick={async () => {
         setBusy(true);
         const r = await action();

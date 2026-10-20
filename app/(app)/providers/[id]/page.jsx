@@ -13,6 +13,7 @@ import {
   PageHeader,
   Ring,
   Tabs,
+  ListSection,
   buttonClass,
 } from "@/components/app/ui";
 import Disclosure from "@/components/app/Disclosure";
@@ -209,12 +210,7 @@ export default async function ProviderPage({ params, searchParams }) {
                   />
                 </Disclosure>
               )}
-              <Card>
-                <CardHeader
-                  title="Credentials"
-                  icon={ICONS.shield}
-                  description="Status is worked out from each expiration date — never set by hand."
-                />
+              <ListSection title="Credentials" icon={ICONS.shield} count={sorted.length} note="Status is worked out from each expiration date, never set by hand.">
                 {sorted.length === 0 ? (
                   <p className="px-5 py-6 text-sm text-ink-500">
                     No credentials yet. Add the provider&apos;s license, DEA, malpractice policy, board certification and CAQH attestation.
@@ -236,17 +232,12 @@ export default async function ProviderPage({ params, searchParams }) {
                     ))}
                   </ul>
                 )}
-              </Card>
+              </ListSection>
             </>
           )}
 
           {tab === "applications" && (
-            <Card>
-              <CardHeader
-                title="Applications"
-                icon={ICONS.enrollments}
-                description="One row per payer on your list. Open one to change its status or log a call."
-              />
+            <ListSection title="Applications" icon={ICONS.enrollments} count={payers.length} note="One row per payer on your list. Open one to change its status or log a call.">
               {payers.length === 0 ? (
                 <p className="px-5 py-6 text-sm text-ink-500">
                   No payers on your list yet.{" "}
@@ -286,7 +277,7 @@ export default async function ProviderPage({ params, searchParams }) {
                   })}
                 </ul>
               )}
-            </Card>
+            </ListSection>
           )}
 
           {tab === "documents" && (
@@ -300,10 +291,9 @@ export default async function ProviderPage({ params, searchParams }) {
                 </Disclosure>
               )}
               <ProviderUploadLinks provider={provider} readOnly={readOnly} />
-              <Card>
-                <CardHeader title="Documents" icon={ICONS.documents} description="License copies, certificates, W-9, CV — attached to this provider." />
+              <ListSection title="Documents" icon={ICONS.documents} count={documents.length} note="License copies, certificates, W-9, CV, attached to this provider.">
                 <DocumentList documents={documents} readOnly={readOnly} emptyText="No documents yet. Upload the license, W-9, malpractice certificate and CV." />
-              </Card>
+              </ListSection>
             </>
           )}
 

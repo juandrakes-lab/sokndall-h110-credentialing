@@ -2,7 +2,8 @@ import { getAppContext } from "@/lib/org";
 import { DOCUMENT_CATEGORIES, formatBytes } from "@/lib/documents";
 import { formatGeneratedAt } from "@/lib/reports";
 import { scannerConfigured } from "@/lib/malware";
-import { Badge, Card, CardHeader, ICONS, buttonClass, inputClass } from "@/components/app/ui";
+import { Badge, ICONS, ListSection, buttonClass, inputClass } from "@/components/app/ui";
+import AutoRefresh from "@/components/app/AutoRefresh";
 import SubmitButton from "@/components/app/SubmitButton";
 import { createUploadLink, previewSubmission, revokeUploadLink, reviewSubmission } from "./upload-link-actions";
 import { PreviewButton, UploadLinkForm } from "./UploadLinkForm";
@@ -26,17 +27,18 @@ export default async function ProviderUploadLinks({ provider, readOnly }) {
   return (
     <>
       {(pending ?? []).length > 0 && (
-        <Card className="ring-1 ring-inset ring-status-expiring/30">
-          <CardHeader
-            title={`Uploaded by ${provider.first_name}, waiting for review`}
-            icon={ICONS.upload}
-            description="Check each file, then add it to the provider's documents or discard it. Until then it isn't in the documents list."
-          />
+        <ListSection
+          title={`Uploaded by ${provider.first_name}, waiting for review`}
+          icon={ICONS.upload}
+          tone="amber"
+          count={pending.length}
+          note="Check each file, then add it to the documents or discard it."
+        >
           <ul className="divide-y divide-ink-100">
             {pending.map((s) => (
-              <li key={s.id} className="flex flex-col gap-2 px-5 py-3 sm:flex-row sm:items-center sm:justify-between">
+              <li key={s.id} className="flex flex-col gap-3 px-5 py-4">
                 <div className="min-w-0">
-                  <p className="truncate text-sm font-semibold text-ink-900">{s.file_name}</p>
+                  <p className="break-all text-sm font-semibold text-ink-900">{s.file_name}</p>
                   <p className="text-xs text-ink-500">
                     {DOCUMENT_CATEGORIES[s.category]} · {formatBytes(s.size_bytes)} · {formatGeneratedAt(s.submitted_at)}
                   </p>
@@ -68,21 +70,22 @@ export default async function ProviderUploadLinks({ provider, readOnly }) {
               </li>
             ))}
           </ul>
-        </Card>
+        </ListSection>
       )}
 
-      <Card>
-        <CardHeader
-          title={`Let ${provider.first_name} upload their own documents`}
-          icon={ICONS.shield}
-          description="A link for this provider only. It lets them upload files, never see or list anything; it expires, and you can turn it off. Every file is checked for malware and waits for your review."
-        />
+      {live.length > 0 && <AutoRefresh />}
+      <ListSection
+        title="Upload links"
+        icon={ICONS.shield}
+        count={live.length}
+        note={`Let ${provider.first_name} upload their own files: upload only, expires, revocable, checked for malware.`}
+      >
         <div className="flex flex-col gap-4 px-5 py-4">
           {!readOnly && enabled && <UploadLinkForm action={createUploadLink.bind(null, provider.id)} firstName={provider.first_name} />}
           {live.length > 0 && (
-            <ul className="flex flex-col gap-2">
+            <ul className="flex flex-col divide-y divide-ink-100 border-t border-ink-100 pt-1">
               {live.map((l) => (
-                <li key={l.id} className="flex flex-wrap items-center justify-between gap-2 rounded-xl bg-ink-50 px-3 py-2 text-sm">
+                <li key={l.id} className="flex flex-wrap items-center justify-between gap-2 py-1 text-sm">
                   <span>
                     <Badge tone="green">Active</Badge>
                     <span className="ml-2 text-ink-700">
@@ -99,7 +102,7 @@ export default async function ProviderUploadLinks({ provider, readOnly }) {
             </ul>
           )}
         </div>
-      </Card>
+      </ListSection>
     </>
   );
 }
