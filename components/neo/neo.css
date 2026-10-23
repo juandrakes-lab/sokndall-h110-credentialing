@@ -5082,3 +5082,39 @@ html:has(.sk-fnav) { scroll-padding-top: 88px; }
 .sk-legal__credit a { text-decoration: underline; text-underline-offset: 3px; }
 .sk-footer__legal { display: inline-flex; gap: var(--s-4); }
 .sk-footer__legal a { text-decoration: underline; text-underline-offset: 3px; }
+
+/* ---- CAQH reattestation calculator (/caqh-reattestation) ---------------- */
+/* A tool inside the reading column: the email-capture card's surface and
+   inputs, no CTA. Single-column grids carry minmax(0, 1fr) (CLAUDE.md). */
+.sk-calc {
+  margin-top: var(--s-4);
+  background: var(--paper);
+  border-radius: var(--r-card);
+  box-shadow: var(--sh-grey);
+  padding: 20px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--s-3);
+}
+.sk-calc__f { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--s-3); }
+@media (min-width: 640px) { .sk-calc__f { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } }
+.sk-calc__fld { display: grid; grid-template-columns: minmax(0, 1fr); gap: 6px; }
+.sk-calc__lb { font-weight: 600; }
+.sk-calc__in { font-size: 0.9375rem; }
+.sk-calc__in:focus-visible, .sk-calc__ics:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+.sk-calc__out { display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; }
+.sk-calc__out:empty { display: none; }
+.sk-calc__due { font-size: 1.0625rem; }
+.sk-calc__mark { display: inline-block; border-radius: var(--r-pill); padding: 2px 10px; font-size: 0.8125rem; font-weight: 700; }
+.sk-calc__mark--ok { background: var(--ok-bg); color: var(--ok); }
+.sk-calc__mark--warn { background: var(--warn-bg); color: var(--black); }
+.sk-calc__mark--stop { background: var(--stop); color: var(--black); }
+.sk-calc__err { font-weight: 600; border-left: 3px solid var(--warn); padding-left: 8px; }
+.sk-calc__next { margin: 0; }
+.sk-calc__ics { justify-self: start; }
+.sk-calc__note { opacity: 0.68; }
+/* The download is an action on this page, not a link away: a plain outlined
+   button, without the ghost variant's text-link treatment and arrow. */
+.sk-calc .sk-calc__ics { background: var(--card); border: 1px solid var(--line-strong); border-radius: var(--r-btn); padding: 9px 14px; text-decoration: none; box-shadow: none; }
+.sk-calc .sk-calc__ics::after, .sk-calc .sk-calc__ics::before { content: none; display: none; }
+.sk-calc .sk-calc__ics:hover { background: var(--tint); }

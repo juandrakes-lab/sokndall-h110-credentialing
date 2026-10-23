@@ -190,3 +190,15 @@ the same server actions directly.
   is linked to Polar via `customerExternalId = organizations.id` at
   checkout time (see `lib/plans.js` for the plan → Polar product ID map),
   so the webhook never needs a separate lookup table.
+
+## IndexNow
+
+After every deploy that changes a marketing page, tell Bing (and the other IndexNow engines) which pages changed. Google doesn't use IndexNow; request reindexing in Search Console instead.
+
+```bash
+MSYS_NO_PATHCONV=1 node scripts/indexnow.mjs /pricing /about
+MSYS_NO_PATHCONV=1 node scripts/indexnow.mjs --all   # every URL in sokndall.com/sitemap.xml
+```
+
+In Git Bash on Windows, **prefix `MSYS_NO_PATHCONV=1`**: without it Git Bash turns `/` and `/pricing` into Windows paths and the API answers `422 InvalidRequestParameters`. The key lives in `public/34a25cdc6f22625e7d2614d3c2c942f0.txt`; changing it means changing both.
+

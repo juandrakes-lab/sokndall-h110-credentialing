@@ -1,6 +1,7 @@
 import { ProseSection, SourcedFigure, StatedVsObserved, DocumentChecklist } from "@/components/neo/EditorialBits";
 import SOURCES from "@/components/neo/sources";
 import Rich from "@/components/neo/rich";
+import CaqhCalculator from "@/components/neo/CaqhCalculator";
 
 /**
  * Maps a page's section data onto the editorial pieces, so every article of
@@ -14,6 +15,7 @@ import Rich from "@/components/neo/rich";
  *   after?:    [string]                        // paragraphs after an svo/checklist
  *   figures?:  [{ value, source, label }]      // several SourcedFigure slots, as a list
  *   unverified?: string                        // the comparison's "No verificado" slot
+ *   tool?: "caqh-calculator"                   // an interactive tool after the paragraphs
  * }
  *
  * `unverified` prints behind the structural label "Not verified", the same
@@ -35,9 +37,10 @@ export function source(key, label) {
 }
 
 export function EditorialSection({ section }) {
-  const { id, heading, paras, figure, figures, svo, checklist, after, unverified } = section;
+  const { id, heading, paras, figure, figures, svo, checklist, after, unverified, tool } = section;
   return (
     <ProseSection id={id} heading={heading} paras={paras}>
+      {tool === "caqh-calculator" ? <CaqhCalculator /> : null}
       {checklist ? <DocumentChecklist {...checklist} /> : null}
       {svo ? <StatedVsObserved {...svo} /> : null}
       {(after || []).map((p, i) => (

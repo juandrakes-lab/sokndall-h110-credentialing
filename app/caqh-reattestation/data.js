@@ -25,6 +25,7 @@ export const HEADER = {
 
 export const CONTENTS = [
   { id: "how-often", label: "How often reattestation is required" },
+  { id: "calculator", label: "Calculate your next date" },
   { id: "not-the-same", label: "Attestation is not reattestation" },
   { id: "invisible", label: "Why a lapse is invisible" },
   { id: "documents", label: "Expired documents block attestation" },
@@ -41,6 +42,14 @@ export const SECTIONS = [
       "Every 120 days, without exception, whether or not anything in the profile has changed. Six independent sources agree on the figure and none of them records an exemption for an unchanged profile. The cycle is triggered by the date of your last attestation, so it moves every time you attest, and it does not reset when you edit a field without attesting.",
     ],
     figure: { value: "every 120 days", source: "drCredentialing", label: "DrCredentialing, 2026" },
+  },
+  {
+    id: "calculator",
+    heading: "Calculate your next reattestation date",
+    paras: [
+      "Enter the date you last attested. The next deadline is 120 days later, and it moves every time you attest, so the date only stays right if you recalculate after each attestation.",
+    ],
+    tool: "caqh-calculator",
   },
   {
     id: "not-the-same",
