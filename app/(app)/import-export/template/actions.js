@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { getAppContext, providerCount } from "@/lib/org";
 import { fetchNppes } from "@/lib/nppes";
 import { providerErrors } from "@/lib/provider-rules";
+import { taxonomyError } from "@/lib/validation";
 import { credentialErrors } from "@/lib/credential-rules";
 import { snapshotFromLookup } from "@/lib/consistency";
 import { CREDENTIAL_FIELDS, CREDENTIAL_TYPES, todayISO } from "@/lib/credentials";
@@ -99,6 +100,14 @@ export async function importTemplate(_prev, formData) {
       problems.push(`Providers, row ${p.line} (${p.first_name} ${p.last_name}): ${issues[first]}`);
       continue;
     }
+    // A taxonomy that isn't a valid code doesn't hold the provider back: it
+    // goes to notes as written.
+    const badTaxonomy = p.taxonomy_code && taxonomyError(p.taxonomy_code);
+    if (badTaxonomy) {
+      problems.push(`Providers, row ${p.line} (${p.first_name} ${p.last_name}): taxonomy "${p.taxonomy_code}" — ${badTaxonomy} It was kept in notes.`);
+      p.notes = [p.notes, `Taxonomy: ${p.taxonomy_code}`].filter(Boolean).join("\n");
+      p.taxonomy_code = null;
+    }
     toInsert.push(p);
   }
 
@@ -124,6 +133,7 @@ export async function importTemplate(_prev, formData) {
       last_name: p.last_name,
       npi: p.npi,
       specialty: p.specialty,
+      taxonomy_code: p.taxonomy_code ?? null,
       start_date: p.start_date ?? todayISO(),
       status: p.status,
       notes: p.notes,
