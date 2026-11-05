@@ -76,7 +76,19 @@ export default function BillingCard({ org, providersUsed, requestedPlan, resubsc
           )}
         </div>
 
-        {!org.polar_subscription_id ? (
+        {!org.polar_subscription_id && org.trial_ends_at ? (
+          <form action={resubscribe} className="flex flex-wrap items-center gap-3">
+            <input type="hidden" name="plan" value={org.plan} />
+            <SubmitButton className={buttonClass("primary")} pendingLabel="Opening the payment step…">
+              {access.writable ? "Add a card" : `Add a card and continue ($${current.price}/month)`}
+            </SubmitButton>
+            <span className="text-sm text-ink-500">
+              {access.writable
+                ? `Nothing is charged now. The first charge of $${current.price} is on ${day(org.trial_ends_at)}, then monthly.`
+                : `You're charged $${current.price} now, then monthly. Everything you had becomes editable again.`}
+            </span>
+          </form>
+        ) : !org.polar_subscription_id ? (
           <form action={resubscribe} className="flex flex-wrap items-center gap-3">
             <input type="hidden" name="plan" value={org.plan} />
             <SubmitButton className={buttonClass("primary")}>
