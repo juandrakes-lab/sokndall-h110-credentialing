@@ -10,6 +10,7 @@ import { weekEndISO } from "@/lib/enrollments";
 import { accountAccess } from "@/lib/billing";
 import { signOut } from "./actions";
 import SubmitButton from "@/components/app/SubmitButton";
+import AccessMessage from "@/components/app/AccessMessage";
 
 // The entire authenticated app is per-user and behind a redirect — never index it.
 export const metadata = {
@@ -52,7 +53,8 @@ export default async function AppLayout({ children }) {
   const banner =
     access.state === "trial" || access.state === "active"
       ? null
-      : { tone: access.writable ? "amber" : "red", text: access.message };
+      : { tone: access.writable ? "amber" : "red", text: <AccessMessage access={access} /> };
+  const cardless = access.state === "cardless_trial" || access.state === "cardless_ended";
 
   const [cookieStore, { count: followUps }] = await Promise.all([
     cookies(),
@@ -100,7 +102,7 @@ export default async function AppLayout({ children }) {
                 <span>{banner.text}</span>
                 {role === "owner" && (
                   <Link href="/settings?tab=billing" className="font-medium underline">
-                    {access.writable ? "Billing" : "Choose a plan"}
+                    {cardless ? "Add a card" : access.writable ? "Billing" : "Choose a plan"}
                   </Link>
                 )}
               </div>

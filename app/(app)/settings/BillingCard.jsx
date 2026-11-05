@@ -6,6 +6,8 @@ import { changePlan, openBillingPortal, resubscribe } from "@/lib/billing-action
 import RefreshUntilConfirmed from "./RefreshUntilConfirmed";
 import { EXTRA_USER_PRICE, INCLUDED_USERS, monthlyPrice } from "@/lib/seats";
 import SubmitButton from "@/components/app/SubmitButton";
+import AccessMessage from "@/components/app/AccessMessage";
+import LocalDateTime from "@/components/app/LocalDateTime";
 
 const day = (iso) => (iso ? formatDate(new Date(iso).toISOString().slice(0, 10)) : null);
 
@@ -45,7 +47,7 @@ export default function BillingCard({ org, providersUsed, requestedPlan, resubsc
             </p>
           )}
           <p className="mt-0.5 text-sm text-ink-500">
-            {access.message ??
+            {access.message ? <AccessMessage access={access} /> :
               (org.current_period_end ? `Renews on ${day(org.current_period_end)}.` : "Active.")}
           </p>
           {linkPending && (
@@ -83,9 +85,15 @@ export default function BillingCard({ org, providersUsed, requestedPlan, resubsc
               {access.writable ? "Add a card" : `Add a card and continue ($${current.price}/month)`}
             </SubmitButton>
             <span className="text-sm text-ink-500">
-              {access.writable
-                ? `Nothing is charged now. The first charge of $${current.price} is on ${day(org.trial_ends_at)}, then monthly.`
-                : `You're charged $${current.price} now, then monthly. Everything you had becomes editable again.`}
+              {access.writable ? (
+                <>
+                  Nothing is charged now. The first charge of ${current.price} is when the trial ends (
+                  <LocalDateTime iso={org.trial_ends_at} />
+                  ), then monthly.
+                </>
+              ) : (
+                `You're charged $${current.price} now, then monthly. Everything you had becomes editable again.`
+              )}
             </span>
           </form>
         ) : !org.polar_subscription_id ? (

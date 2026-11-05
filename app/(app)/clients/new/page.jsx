@@ -6,6 +6,7 @@ import { accountAccess } from "@/lib/billing";
 import { Card, PageHeader } from "@/components/app/ui";
 import PracticeForm from "@/components/app/PracticeForm";
 import ReadOnlyNotice from "@/components/app/ReadOnlyNotice";
+import AccessMessage from "@/components/app/AccessMessage";
 
 export const metadata = { title: "Add client — Sokndall" };
 
@@ -31,7 +32,7 @@ export default async function NewClientPage() {
           <PracticeForm action={addClient} submitLabel="Add client" />
         </Card>
       ) : (
-        <ReadOnlyNotice text={accountAccess(org).message} owner />
+        <ReadOnlyNotice text={<AccessMessage access={accountAccess(org)} />} owner />
       )}
     </div>
   );
