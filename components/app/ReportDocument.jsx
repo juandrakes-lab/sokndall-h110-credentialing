@@ -162,6 +162,12 @@ export default function ReportDocument({ data, generatedAt, shared = false }) {
                       <td className={td}>{a.payer}</td>
                       <td className={`${td} font-semibold ${TONE[a.status] ?? ""}`}>
                         {a.status_label}
+                        {/* Reports made before this field existed simply don't show it. */}
+                        {a.days_in_status != null && (
+                          <span className="block text-xs font-normal tabular-nums text-ink-700">
+                            {a.days_in_status === 0 ? "since today" : `${a.days_in_status} day${a.days_in_status === 1 ? "" : "s"} in this status`}
+                          </span>
+                        )}
                         {a.payer_request && <span className="block text-xs font-normal text-ink-700">Payer asked for: {a.payer_request}</span>}
                       </td>
                       <td className={`${td} tabular-nums`}>{formatDate(a.submitted)}</td>

@@ -3,7 +3,7 @@ import { Avatar, Badge, STATUS_FILL } from "@/components/app/ui";
 import { formatDate, todayISO } from "@/lib/credentials";
 import { logFollowUp } from "@/app/(app)/enrollments/actions";
 import QuickLog from "@/components/app/QuickLog";
-import { CHANNEL_LABELS, ENROLLMENT_STATUS_LABELS, cellKey, followUpLabel, proposedFollowUp, stalledDays } from "@/lib/enrollments";
+import { CHANNEL_LABELS, ENROLLMENT_STATUS_LABELS, cellKey, daysInStatus, daysShort, followUpLabel, proposedFollowUp, stalledDays } from "@/lib/enrollments";
 
 function withOpen(basePath, params, key) {
   const next = new URLSearchParams(params);
@@ -27,6 +27,7 @@ export default function FollowUpList({ items, lastContact, directory, basePath, 
         const last = lastContact.get(e.id);
         const fu = e.next_follow_up_date ? followUpLabel(e.next_follow_up_date) : null;
         const stalled = stalledDays(e);
+        const inStatus = daysInStatus(e);
         return (
           <li key={e.id} className={quickLog ? "flex flex-wrap items-center gap-x-2 pr-5" : undefined}>
             <Link
@@ -48,7 +49,10 @@ export default function FollowUpList({ items, lastContact, directory, basePath, 
                 </p>
                 <p className="mt-0.5 flex min-w-0 items-center gap-1.5 text-xs text-ink-500">
                   <span className="h-1.5 w-1.5 shrink-0 rounded-full" style={{ background: STATUS_FILL[e.status] }} aria-hidden="true" />
-                  <span className="shrink-0 font-medium text-ink-700">{ENROLLMENT_STATUS_LABELS[e.status]}</span>
+                  <span className="shrink-0 font-medium text-ink-700">
+                    {ENROLLMENT_STATUS_LABELS[e.status]}
+                    {inStatus !== null && <span className="font-normal tabular-nums"> · {daysShort(inStatus)}</span>}
+                  </span>
                   <span className="truncate">
                     {" · "}
                     {last ? `Last ${CHANNEL_LABELS[last.channel].toLowerCase()} ${formatDate(last.contact_date)}` : "No contact yet"}

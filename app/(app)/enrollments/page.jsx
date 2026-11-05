@@ -10,6 +10,8 @@ import {
   parseCellKey,
   resolvePayer,
   sortPayers,
+  daysInStatus,
+  daysShort,
   stalledDays,
 } from "@/lib/enrollments";
 import { Avatar, Card, EmptyState, ICONS, Icon, PIPELINE_ORDER, PageHeader, STATUS_FILL, SectionPill, SegmentBar, buttonClass } from "@/components/app/ui";
@@ -152,6 +154,7 @@ export default async function EnrollmentsPage({ searchParams }) {
                     const e = byCell.get(key);
                     const status = e?.status ?? "not_started";
                     const stalled = e ? stalledDays(e) : null;
+                    const inStatus = e ? daysInStatus(e) : null;
                     const due = e?.next_follow_up_date && daysUntil(e.next_follow_up_date) <= 0;
                     const selected = open && cellKey(open.providerId, open.payerId) === key;
                     return (
@@ -163,6 +166,11 @@ export default async function EnrollmentsPage({ searchParams }) {
                         >
                           <span className="truncate">{ENROLLMENT_STATUS_LABELS[status]}</span>
                           <span className="flex shrink-0 items-center gap-1">
+                            {inStatus !== null && (
+                              <span className="font-normal tabular-nums opacity-70" title={`${inStatus} days in this status`}>
+                                {daysShort(inStatus)}
+                              </span>
+                            )}
                             {due && <span className="h-2 w-2 rounded-full bg-red-600" aria-label="Follow-up due" />}
                             {stalled && <Icon d={ICONS.pause} className="h-3.5 w-3.5 text-amber-600" strokeWidth={2.2} />}
                           </span>
@@ -184,6 +192,9 @@ export default async function EnrollmentsPage({ searchParams }) {
         </span>
         <span className="flex items-center gap-1.5">
           <Icon d={ICONS.pause} className="h-3.5 w-3.5 text-amber-600" strokeWidth={2.2} /> Stalled: no status change in 30+ days
+        </span>
+        <span className="flex items-center gap-1.5">
+          <span className="font-medium tabular-nums">18 d</span> Days in the current status, while it&apos;s with the payer
         </span>
       </div>
 

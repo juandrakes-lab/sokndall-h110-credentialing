@@ -10,6 +10,7 @@ import {
   PAYER_TYPE_LABELS,
   proposedFollowUp,
   resolvePayer,
+  daysInStatus,
   stalledDays,
 } from "@/lib/enrollments";
 import { Badge, Card, ICONS, Icon, buttonClass } from "@/components/app/ui";
@@ -60,6 +61,7 @@ export default async function EnrollmentPanel({ providerId, payerId, closeHref }
   const owner = directory.find((m) => m.role === "owner");
   const status = enrollment?.status ?? "not_started";
   const stalled = enrollment ? stalledDays(enrollment) : null;
+  const inStatus = enrollment ? daysInStatus(enrollment) : null;
 
   const timeline = [
     ...(events ?? []).map((e) => ({ kind: "status", at: e.created_at, ...e })),
@@ -89,7 +91,15 @@ export default async function EnrollmentPanel({ providerId, payerId, closeHref }
             </h2>
             <div className="mt-1 flex flex-wrap items-center gap-2">
               <Badge tone={ENROLLMENT_STATUS_TONES[status]}>{ENROLLMENT_STATUS_LABELS[status]}</Badge>
-              {stalled && <Badge tone="amber">Stalled · no status change in {stalled} days</Badge>}
+              {stalled ? (
+                <Badge tone="amber">Stalled · no status change in {stalled} days</Badge>
+              ) : (
+                inStatus !== null && (
+                  <span className="text-xs text-ink-500">
+                    {inStatus === 0 ? "Changed to this status today" : `${inStatus} day${inStatus === 1 ? "" : "s"} in this status`}
+                  </span>
+                )
+              )}
               {enrollment?.next_follow_up_date && (
                 <span className="text-xs text-ink-500">Next follow-up {formatDate(enrollment.next_follow_up_date)}</span>
               )}
