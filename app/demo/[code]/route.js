@@ -9,14 +9,42 @@ import { DEMO_HOURS, DEMO_KEEP_DAYS, DEMO_UNOPENED_DAYS, JUAN_EMAIL, demoEmail, 
 // that uses the service role (decision 2026-11-08): it can only ever open an
 // account that has a cred_demos row — sample data, never a real customer — and
 // only while that demo is live. The code is stored hashed.
+//
+// Opening is a POST. Opening the link (GET) only shows a page with an "Open
+// the demo" button: link-preview bots (LinkedIn, Slack, email scanners) fetch
+// links on their own, and a GET that opened the demo would start its 72 h and
+// tell Juan it was opened before the lead ever saw it. Bots read pages; they
+// don't press buttons.
 export const dynamic = "force-dynamic";
 
 const DAY = 86400000;
 
-export async function GET(request, { params }) {
+const page = (code) => `<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Your Sokndall demo</title>
+<meta property="og:title" content="Your Sokndall demo">
+<meta property="og:description" content="A credentialing and payer-enrollment workspace loaded with sample data, yours for 3 days from when you open it.">
+<meta property="og:image" content="https://sokndall.com/opengraph-image.png">
+<style>body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;font-family:Arial,Helvetica,sans-serif;background:#f3f5f4;color:#0e2a2e;padding:20px;box-sizing:border-box}
+main{max-width:420px;text-align:center}h1{font-size:22px;margin:18px 0 8px}p{font-size:15px;line-height:1.5;color:#45605f;margin:0 0 8px}
+button{margin-top:18px;border:0;border-radius:999px;background:#0e4a52;color:#fff;font-size:15px;font-weight:600;padding:12px 26px;cursor:pointer}</style></head>
+<body><main><p style="font-weight:700;color:#0e4a52;letter-spacing:.02em">SOKNDALL</p>
+<h1>Your demo is ready</h1>
+<p>A workspace loaded with a sample billing firm: clients, providers, payer applications and follow-ups.</p>
+<p>It's yours for 3 days from when you open it. No password, no card.</p>
+<form method="post" action="/demo/${encodeURIComponent(code)}"><button type="submit">Open the demo</button></form>
+</main></body></html>`;
+
+export async function GET(_request, { params }) {
+  const { code } = await params;
+  return new Response(page(code), { headers: { "content-type": "text/html; charset=utf-8", "x-robots-tag": "noindex, nofollow", "cache-control": "no-store" } });
+}
+
+export async function POST(request, { params }) {
   const { code } = await params;
   const origin = new URL(request.url).origin;
-  const ended = (why) => NextResponse.redirect(`${origin}/demo-ended?why=${why}`);
+  const ended = (why) => NextResponse.redirect(`${origin}/demo-ended?why=${why}`, 303);
 
   const admin = createAdminClient();
   const { data: demo } = await admin.from("cred_demos").select("*").eq("link_hash", hashDemoCode(code)).maybeSingle();
@@ -66,5 +94,5 @@ export async function GET(request, { params }) {
 
   await admin.from("cred_demo_activity").insert({ org_id: opened.org_id, kind: "open" });
   await admin.from("cred_demos").update({ last_seen_at: new Date().toISOString() }).eq("org_id", opened.org_id);
-  return NextResponse.redirect(`${origin}/dashboard`);
+  return NextResponse.redirect(`${origin}/dashboard`, 303);
 }
