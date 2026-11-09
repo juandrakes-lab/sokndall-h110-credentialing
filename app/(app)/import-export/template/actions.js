@@ -1,5 +1,8 @@
 "use server";
 
+import { DEMO_ACTION_ERROR } from "@/lib/demo";
+
+
 import { revalidatePath } from "next/cache";
 import { getAppContext, providerCount } from "@/lib/org";
 import { fetchNppes } from "@/lib/nppes";
@@ -51,6 +54,7 @@ function guessPayerType(name) {
 }
 
 export async function importTemplate(_prev, formData) {
+  if ((await getAppContext()).org?.demo) return { error: DEMO_ACTION_ERROR };
   const file = formData.get("file");
   if (!file || typeof file === "string" || !file.size) return { error: "Choose the template file first." };
   if (file.size > MAX_TEMPLATE_BYTES) return { error: "That file is over 5 MB. The template is far smaller — check it's the right file." };

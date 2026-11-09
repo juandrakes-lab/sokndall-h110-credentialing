@@ -1,5 +1,7 @@
 "use server";
 
+import { DEMO_ACTION_ERROR } from "@/lib/demo";
+
 import { createHash, randomBytes } from "node:crypto";
 import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
@@ -18,6 +20,7 @@ async function siteOrigin() {
 }
 
 export async function createUploadLink(providerId, _prev, formData) {
+  if ((await getAppContext()).org?.demo) return { error: DEMO_ACTION_ERROR };
   const days = Number(formData.get("days"));
   if (![3, 7, 14].includes(days)) return { error: "Choose how long the link lasts." };
   const { supabase } = await getAppContext();

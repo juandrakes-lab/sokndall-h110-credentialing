@@ -202,3 +202,22 @@ MSYS_NO_PATHCONV=1 node scripts/indexnow.mjs --all   # every URL in sokndall.com
 
 In Git Bash on Windows, **prefix `MSYS_NO_PATHCONV=1`**: without it Git Bash turns `/` and `/pricing` into Windows paths and the API answers `422 InvalidRequestParameters`. The key lives in `public/34a25cdc6f22625e7d2614d3c2c942f0.txt`; changing it means changing both.
 
+
+## Demo accounts
+
+A ready-made account a lead can use for 72 hours with no card and no password (pedido 2026-11-08):
+
+```
+node scripts/demo.mjs create "Lead Name" "Firm Name"   # prints the link to send
+node scripts/demo.mjs list
+node scripts/demo.mjs extend "Firm Name"               # +72 h, once
+node scripts/demo.mjs revoke "Firm Name"               # the link stops working
+node scripts/demo.mjs delete "Firm Name"               # deletes it now
+```
+
+- Sample firm "Northline Billing Group": 4 clients, 20 providers, 7 payers, fictitious data only (`@example.com`, made-up NPIs). Never touches Polar.
+- `/demo/<code>` signs the visitor in (the one route besides crons and the webhook that uses the service role, limited to accounts with a `cred_demos` row). The link works 7 days until first opened; then 72 h; then read-only 7 days; then the daily cron deletes it with its user.
+- Locked in a demo (screen, server action and database): imports, documents, upload links, invitations, billing, deleting the account, more than 3 new providers. Reports are stamped DEMO and their links expire with the demo.
+- Prepared moments relative to the first open: day 1 an application stalls, day 2 a payer asks for a document (`cred_demo_tick`), day 3 a CAQH re-attestation enters the 30-day alert. Emailed only if the visitor opts in (Settings › Alerts).
+- Activity log (`cred_demo_activity`, demos only, announced in the demo bar): sections visited, locked features tapped, email left, "Load my real data". hello@ gets "{Firm} opened its demo", a summary when it ends, and the "load my real data" request.
+- Demos are excluded from alerts, the weekly digest and the trial emails.

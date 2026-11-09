@@ -4,6 +4,7 @@ import { PAYER_SELECT, resolvePayer } from "@/lib/enrollments";
 import { PLANS } from "@/lib/plans";
 import { Card, CardHeader, ICONS, PageHeader, StatCard, StatRow, buttonClass, inputClass } from "@/components/app/ui";
 import Disclosure from "@/components/app/Disclosure";
+import DemoLocked from "@/components/app/DemoLocked";
 import DocumentList from "@/components/app/DocumentList";
 import DocumentUploader from "@/components/app/DocumentUploader";
 import SubmitButton from "@/components/app/SubmitButton";
@@ -68,9 +69,15 @@ export default async function DocumentsPage({ searchParams }) {
         />
       </StatRow>
 
-      <Disclosure label="Upload a document" title="Upload a document" icon={ICONS.upload} variant="primary" className="self-start" defaultOpen={sp.upload === "1"}>
-        <DocumentUploader providers={providers ?? []} compact />
-      </Disclosure>
+      {org.demo ? (
+        <div className="self-start">
+          <DemoLocked feature="documents" label="Upload a document" variant="primary" />
+        </div>
+      ) : (
+        <Disclosure label="Upload a document" title="Upload a document" icon={ICONS.upload} variant="primary" className="self-start" defaultOpen={sp.upload === "1"}>
+          <DocumentUploader providers={providers ?? []} compact />
+        </Disclosure>
+      )}
 
       <Card className="overflow-hidden">
         <CardHeader

@@ -47,6 +47,11 @@ export default function ReportDocument({ data, generatedAt, shared = false }) {
   return (
     <article className="report-doc mx-auto w-full max-w-[60rem] bg-white px-8 py-10 text-[0.875rem] text-ink-900 print:max-w-none print:px-0 print:py-0">
       <header className="border-b-2 border-brand-700 pb-5">
+        {data.demo && (
+          <p className="mb-2 inline-flex rounded-md bg-status-expiring-bg px-2.5 py-1 text-xs font-semibold uppercase tracking-[0.08em] text-status-expiring">
+            Demo · sample data, not a real practice
+          </p>
+        )}
         <p className="text-xs font-semibold uppercase tracking-[0.08em] text-brand-600">Credentialing status report</p>
         <h1 className="mt-1 text-2xl font-semibold tracking-tight">{data.client_name}</h1>
         {data.practice_name && data.practice_name !== data.client_name && <p className="text-sm text-ink-500">{data.practice_name}</p>}

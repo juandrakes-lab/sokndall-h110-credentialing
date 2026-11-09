@@ -11,6 +11,9 @@ import { accountAccess } from "@/lib/billing";
 import { signOut } from "./actions";
 import SubmitButton from "@/components/app/SubmitButton";
 import AccessMessage from "@/components/app/AccessMessage";
+import DemoBar from "@/components/app/DemoBar";
+import { DEMO_EVENTS, demoEmail, demoSteps, tickDemo } from "@/lib/demo";
+import { sendEmail } from "@/lib/resend";
 
 // The entire authenticated app is per-user and behind a redirect — never index it.
 export const metadata = {
@@ -37,7 +40,7 @@ function NoClients({ email }) {
 }
 
 export default async function AppLayout({ children }) {
-  const { supabase, user, org, role, practice, clients, client, multiClient } = await getAppContext();
+  const { supabase, supabaseAll, user, org, role, practice, clients, client, multiClient } = await getAppContext();
 
   if (!user) redirect("/login");
   // A login without an account chooses a plan first; an account without its
@@ -55,6 +58,26 @@ export default async function AppLayout({ children }) {
       ? null
       : { tone: access.writable ? "amber" : "red", text: <AccessMessage access={access} /> };
   const cardless = access.state === "cardless_trial" || access.state === "cardless_ended";
+
+  // A demo account: its own bar instead of the billing banner, the prepared
+  // moments applied as they come due, and their emails if the visitor opted in.
+  let demoBar = null;
+  if (org.demo) {
+    const open = access.state === "demo";
+    const due = open ? await tickDemo(supabaseAll) : [];
+    if (due.length && org.demo.contact_email) {
+      for (const key of due) {
+        const e = DEMO_EVENTS[key];
+        if (!e) continue;
+        await sendEmail({
+          to: org.demo.contact_email,
+          ...demoEmail(`Sokndall demo: ${e.title.toLowerCase()}`, [e.body, `Open the demo from the link you were sent to see it.`, "Juan", "Sokndall"]),
+        }).catch(() => {});
+      }
+    }
+    const demo = { ...org.demo, events_done: [...(org.demo.events_done ?? []), ...due] };
+    demoBar = <DemoBar demo={demo} open={open} steps={open ? await demoSteps(supabaseAll, { ...demo, org_id: org.id }) : null} />;
+  }
 
   const [cookieStore, { count: followUps }] = await Promise.all([
     cookies(),
@@ -89,7 +112,8 @@ export default async function AppLayout({ children }) {
           client: multiClient ? client?.name ?? null : null,
         }}
         banner={
-          banner && (
+          demoBar ??
+          (banner && (
             <div
               role="status"
               className={`border-b px-4 py-3 text-sm sm:px-8 ${
@@ -107,7 +131,7 @@ export default async function AppLayout({ children }) {
                 )}
               </div>
             </div>
-          )
+          ))
         }
       >
         {children}

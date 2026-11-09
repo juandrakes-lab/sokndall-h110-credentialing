@@ -13,9 +13,11 @@ import { SHARE_DAYS, buildReportSnapshot } from "@/lib/reports";
 // can reach — the active client, which getAppContext already limits to theirs.
 
 export async function generateReport() {
-  const { supabase, client, practice } = await getAppContext();
+  const { supabase, client, practice, org } = await getAppContext();
   if (!client) throw new Error("No client is open.");
   const data = await buildReportSnapshot(supabase, { client, practice });
+  // A demo's report says so on its face, link included (lib/demo.js).
+  if (org?.demo) data.demo = true;
   const { data: row, error } = await supabase.from("cred_reports").insert({ client_org_id: client.id, data }).select("id").single();
   if (error) throw new Error(error.message);
   revalidatePath("/reports");
@@ -35,13 +37,15 @@ async function siteOrigin() {
 export async function createShareLink(reportId, _prev, formData) {
   const days = Number(formData.get("days"));
   if (!SHARE_DAYS.includes(days)) return { error: "Choose how long the link lasts." };
-  const { supabase } = await getAppContext();
+  const { supabase, org } = await getAppContext();
   const token = randomBytes(32).toString("base64url");
+  // A demo's link never outlives the demo.
+  const until = Math.min(Date.now() + days * 86400000, org?.demo?.expires_at ? new Date(org.demo.expires_at).getTime() : Infinity);
   const { error } = await supabase
     .from("cred_reports")
     .update({
       share_token_hash: createHash("sha256").update(token).digest("hex"),
-      share_expires_at: new Date(Date.now() + days * 86400000).toISOString(),
+      share_expires_at: new Date(until).toISOString(),
     })
     .eq("id", reportId)
     .select("id")

@@ -3,6 +3,7 @@ import { DOCUMENT_CATEGORIES, formatBytes } from "@/lib/documents";
 import { formatGeneratedAt } from "@/lib/reports";
 import { scannerConfigured } from "@/lib/malware";
 import { Badge, ICONS, ListSection, buttonClass, inputClass } from "@/components/app/ui";
+import DemoLocked from "@/components/app/DemoLocked";
 import AutoRefresh from "@/components/app/AutoRefresh";
 import SubmitButton from "@/components/app/SubmitButton";
 import { createUploadLink, previewSubmission, revokeUploadLink, reviewSubmission } from "./upload-link-actions";
@@ -14,7 +15,7 @@ import { PreviewButton, UploadLinkForm } from "./UploadLinkForm";
 // Nothing uploaded this way reaches the provider's documents until someone
 // here accepts it.
 export default async function ProviderUploadLinks({ provider, readOnly }) {
-  const { supabase } = await getAppContext();
+  const { supabase, org } = await getAppContext();
   const [{ data: links }, { data: pending }] = await Promise.all([
     supabase.from("cred_upload_links").select("id, created_at, expires_at, revoked_at").eq("provider_id", provider.id).order("created_at", { ascending: false }),
     supabase.from("cred_document_submissions").select("id, category, file_name, size_bytes, submitted_at").eq("provider_id", provider.id).eq("status", "pending").order("submitted_at"),
@@ -81,7 +82,8 @@ export default async function ProviderUploadLinks({ provider, readOnly }) {
         note={`Let ${provider.first_name} upload their own files: upload only, expires, revocable, checked for malware.`}
       >
         <div className="flex flex-col gap-4 px-5 py-4">
-          {!readOnly && enabled && <UploadLinkForm action={createUploadLink.bind(null, provider.id)} firstName={provider.first_name} />}
+          {!readOnly && enabled && org.demo && <DemoLocked feature="upload_link" label="Create an upload link" />}
+          {!readOnly && enabled && !org.demo && <UploadLinkForm action={createUploadLink.bind(null, provider.id)} firstName={provider.first_name} />}
           {live.length > 0 && (
             <ul className="flex flex-col divide-y divide-ink-100 border-t border-ink-100 pt-1">
               {live.map((l) => (

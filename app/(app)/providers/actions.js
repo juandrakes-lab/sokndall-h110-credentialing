@@ -71,6 +71,7 @@ export async function createProvider(_prev, formData) {
   if (error) {
     // The database is what enforces the plan limit (alcance §4.3).
     if (error.message.includes("PROVIDER_LIMIT_REACHED")) return { limit: true };
+    if (error.message.includes("DEMO_PROVIDER_LIMIT")) return { error: "The demo lets you add up to 3 providers of your own. Load your real data to add the rest." };
     return { error: `Couldn't save the provider: ${error.message}` };
   }
 

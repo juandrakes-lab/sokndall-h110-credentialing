@@ -20,6 +20,7 @@ const APP_PREFIXES = [
   "/start",
   "/welcome",
   "/invite",
+  "/real-data",
 ];
 
 function isAppPath(pathname) {
@@ -71,6 +72,7 @@ export const config = {
   matcher: [
     "/",
     "/dashboard/:path*",
+    "/real-data/:path*",
     "/clients/:path*",
     "/providers/:path*",
     "/follow-ups/:path*",

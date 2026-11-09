@@ -1,5 +1,7 @@
 "use server";
 
+import { DEMO_ACTION_ERROR } from "@/lib/demo";
+
 import { createHash, randomBytes } from "node:crypto";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
@@ -59,6 +61,7 @@ async function shrinkSeats(supabase, org) {
 // answers `waitingForSeat` — the form then waits for the new limit to land
 // (webhook or /api/billing/sync) and submits itself again.
 export async function inviteMember(_prev, formData) {
+  if ((await getAppContext()).org?.demo) return { error: DEMO_ACTION_ERROR };
   const { supabase, org, role, user, clients } = await getAppContext();
   if (role !== "owner") return { error: "Only the account owner can invite people." };
 

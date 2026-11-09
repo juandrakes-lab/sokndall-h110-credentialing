@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { Card, CardHeader, ICONS, PageHeader, buttonClass } from "@/components/app/ui";
+import { getAppContext } from "@/lib/org";
+import DemoLocked from "@/components/app/DemoLocked";
 
 const EXPORTS = [
   ["providers", "Providers", "Every provider with NPI, CAQH ID, specialty and data-check result."],
@@ -12,7 +14,17 @@ const EXPORTS = [
   ["payers", "Payers", "The payers on your list and their revalidation cycles."],
 ];
 
-export default function ImportExportPage() {
+export default async function ImportExportPage() {
+  const { org } = await getAppContext();
+  // A demo shows the imports but doesn't run them (lib/demo.js).
+  const go = (href, label, variant) =>
+    org?.demo ? (
+      <DemoLocked feature="import" label={label} variant={variant} />
+    ) : (
+      <Link href={href} className={`${buttonClass(variant)} shrink-0`}>
+        {label}
+      </Link>
+    );
   return (
     <div className="flex flex-col gap-8">
       <PageHeader title="Import / Export" description="Bring your spreadsheet in, or take any list out as CSV." />
@@ -24,9 +36,7 @@ export default function ImportExportPage() {
           description="All four tabs in one go: providers, credentials, CAQH and payer enrollment, with your last follow-ups."
         />
         <div className="px-5 pb-4 sm:py-4">
-          <Link href="/import-export/template" className={`${buttonClass("primary")} shrink-0`}>
-            Import the template
-          </Link>
+          {go("/import-export/template", "Import the template", "primary")}
         </div>
       </Card>
 
@@ -34,17 +44,13 @@ export default function ImportExportPage() {
         <Card className="flex flex-col">
           <CardHeader icon={ICONS.providers} title="Import providers" description="One row per provider. Each NPI is checked against the NPI Registry." />
           <div className="mt-auto px-5 py-4">
-            <Link href="/import-export/providers" className={buttonClass("primary")}>
-              Import providers
-            </Link>
+          {go("/import-export/providers", "Import providers", "primary")}
           </div>
         </Card>
         <Card className="flex flex-col">
           <CardHeader icon={ICONS.shield} title="Import credentials" description="One row per license, DEA, policy, board certification or CAQH attestation. Import providers first." />
           <div className="mt-auto px-5 py-4">
-            <Link href="/import-export/credentials" className={buttonClass("secondary")}>
-              Import credentials
-            </Link>
+          {go("/import-export/credentials", "Import credentials", "secondary")}
           </div>
         </Card>
       </div>

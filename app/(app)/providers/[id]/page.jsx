@@ -17,6 +17,7 @@ import {
   buttonClass,
 } from "@/components/app/ui";
 import Disclosure from "@/components/app/Disclosure";
+import DemoLocked from "@/components/app/DemoLocked";
 import DataCheck from "@/components/app/DataCheck";
 import ChecklistCard from "@/components/app/ChecklistCard";
 import DocumentList from "@/components/app/DocumentList";
@@ -282,7 +283,12 @@ export default async function ProviderPage({ params, searchParams }) {
 
           {tab === "documents" && (
             <>
-              {!readOnly && (
+              {!readOnly && org.demo && (
+                <div className="self-start">
+                  <DemoLocked feature="documents" label="Upload a document" />
+                </div>
+              )}
+              {!readOnly && !org.demo && (
                 <Disclosure label="Upload a document" title="Upload a document" icon={ICONS.upload} className="self-start">
                   <DocumentUploader
                     providerId={id}

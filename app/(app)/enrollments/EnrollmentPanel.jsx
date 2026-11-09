@@ -15,6 +15,7 @@ import {
 } from "@/lib/enrollments";
 import { Badge, Card, ICONS, Icon, buttonClass } from "@/components/app/ui";
 import Disclosure from "@/components/app/Disclosure";
+import DemoLocked from "@/components/app/DemoLocked";
 import ScrollLock from "@/components/app/ScrollLock";
 import DocumentList from "@/components/app/DocumentList";
 import DocumentUploader from "@/components/app/DocumentUploader";
@@ -32,7 +33,7 @@ function when(iso) {
 // Side panel for one provider × payer cell (alcance §3.13): change status,
 // log a follow-up, set the next one — without leaving the page behind it.
 export default async function EnrollmentPanel({ providerId, payerId, closeHref }) {
-  const { supabase, user } = await getAppContext();
+  const { supabase, user, org } = await getAppContext();
 
   const [{ data: provider }, { data: payerRow }, { data: enrollment }, { data: members }, { data: credentials }, { data: documents }, { data: writable }] =
     await Promise.all([
@@ -232,7 +233,11 @@ export default async function EnrollmentPanel({ providerId, payerId, closeHref }
             <div className="-mx-5 rounded-lg">
               <DocumentList documents={enrollmentDocs} readOnly={readOnly} emptyText="Nothing attached to this application yet." />
             </div>
-            {readOnly ? null : enrollment ? (
+            {readOnly ? null : enrollment && org?.demo ? (
+              <div className="mt-3">
+                <DemoLocked feature="documents" label="Attach a document" />
+              </div>
+            ) : enrollment ? (
               <div className="mt-3">
                 <Disclosure label="Attach a document" title="Attach a document" icon={ICONS.upload} className="self-start">
                   <DocumentUploader key={enrollment.id} providerId={providerId} enrollmentId={enrollment.id} defaultCategory="contract" />

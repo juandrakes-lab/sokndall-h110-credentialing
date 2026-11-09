@@ -1,4 +1,5 @@
 import { Badge, Card, CardHeader, buttonClass, PersonPhoto } from "@/components/app/ui";
+import DemoLocked from "@/components/app/DemoLocked";
 import { formatDate } from "@/lib/credentials";
 import { PLANS } from "@/lib/plans";
 import { EXTRA_USER_PRICE, INCLUDED_USERS, monthlyPrice } from "@/lib/seats";
@@ -102,7 +103,7 @@ export default function TeamCard({ org, members, invitations, writable, clients,
             Every seat on your plan is taken or invited. Billing Co includes 10 users, and more at ${EXTRA_USER_PRICE}/month each.
           </p>
         ) : (
-          <InviteForm action={inviteMember} seatReady={seatReady} disabled={!writable} clients={clients} />
+          org.demo ? <DemoLocked feature="invite" label="Invite a teammate" /> : <InviteForm action={inviteMember} seatReady={seatReady} disabled={!writable} clients={clients} />
         )}
       </div>
     </Card>

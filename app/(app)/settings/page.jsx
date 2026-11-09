@@ -4,6 +4,8 @@ import { practiceIssues } from "@/lib/consistency";
 import { PLANS } from "@/lib/plans";
 import { recheckPracticeNppes, savePractice } from "@/lib/practice-actions";
 import { Card, CardHeader, ICONS, PageHeader, StatCard, StatRow, Tabs } from "@/components/app/ui";
+import DemoLocked from "@/components/app/DemoLocked";
+import DemoEmailForm from "@/components/app/DemoEmailForm";
 import DataCheck from "@/components/app/DataCheck";
 import PracticeForm from "@/components/app/PracticeForm";
 import { updateAlertDays, updateOrganization, updateProfile } from "./actions";
@@ -161,7 +163,16 @@ export default async function SettingsPage({ searchParams }) {
           </Section>
 
           <Section title="Plan & billing" description="Change plan, update the card or cancel. Invoices live in the Polar portal.">
-            <BillingCard org={org} providersUsed={used} requestedPlan={sp.plan_change} resubscribed={sp.resubscribed === "1"} planError={sp.plan_error === "1"} />
+            {org.demo ? (
+              <Card>
+                <div className="flex flex-wrap items-center justify-between gap-3 px-5 py-5">
+                  <p className="text-sm text-ink-700">This is a demo account: no plan, no card, nothing to bill.</p>
+                  <DemoLocked feature="billing" label="Change plan" />
+                </div>
+              </Card>
+            ) : (
+              <BillingCard org={org} providersUsed={used} requestedPlan={sp.plan_change} resubscribed={sp.resubscribed === "1"} planError={sp.plan_error === "1"} />
+            )}
           </Section>
 
           {owner && (
@@ -169,7 +180,7 @@ export default async function SettingsPage({ searchParams }) {
               <Card className="ring-status-expired/25">
                 <CardHeader title="Delete account" icon={ICONS.alert} divider={false} />
                 <div className="px-5 pb-6">
-                  <DeleteAccountForm action={deleteAccount} orgName={org.name} />
+                  {org.demo ? <DemoLocked feature="delete" label="Delete account" /> : <DeleteAccountForm action={deleteAccount} orgName={org.name} />}
                 </div>
               </Card>
             </Section>
@@ -185,6 +196,11 @@ export default async function SettingsPage({ searchParams }) {
           >
             <Card>
               <div className="flex flex-col gap-5 px-5 py-6">
+                {org.demo && (
+                  <div className="rounded-xl bg-brand-50 px-4 py-4">
+                    <DemoEmailForm email={org.demo.contact_email ?? ""} />
+                  </div>
+                )}
                 <AlertDaysForm action={updateAlertDays} initial={org.alert_days.join(", ")} canEdit={owner} />
                 {owner && (
                   <div className="flex flex-wrap gap-x-5 gap-y-2 text-sm">

@@ -1,5 +1,8 @@
 "use server";
 
+import { DEMO_ACTION_ERROR } from "@/lib/demo";
+
+
 import { revalidatePath } from "next/cache";
 import { getAppContext, providerCount } from "@/lib/org";
 import { fetchNppes } from "@/lib/nppes";
@@ -38,6 +41,7 @@ async function pool(items, limit, fn) {
 const line = (i) => `Row ${i + 2}`;
 
 export async function importProviders(rows) {
+  if ((await getAppContext()).org?.demo) return { error: DEMO_ACTION_ERROR };
   const { supabase, org, practice } = await getAppContext();
 
   const { data: existing } = await supabase.from("cred_providers").select("npi").not("npi", "is", null);
@@ -119,6 +123,7 @@ export async function importProviders(rows) {
 }
 
 export async function importCredentials(rows) {
+  if ((await getAppContext()).org?.demo) return { error: DEMO_ACTION_ERROR };
   const { supabase } = await getAppContext();
   const { data: providers } = await supabase.from("cred_providers").select("id, first_name, last_name, npi");
 
