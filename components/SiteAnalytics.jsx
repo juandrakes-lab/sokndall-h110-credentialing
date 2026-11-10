@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { Analytics } from "@vercel/analytics/next";
-import { ATTRIBUTION_COOKIE, ATTRIBUTION_KEYS, ATTRIBUTION_MAX_AGE } from "@/lib/attribution";
+import { ATTRIBUTION_COOKIE, ATTRIBUTION_KEYS, ATTRIBUTION_MAX_AGE, REFERRAL_CODE, REFERRAL_COOKIE, REFERRAL_MAX_AGE, readCookie, writeCookie } from "@/lib/attribution";
 
 // Public pages only: Vercel Web Analytics, and the campaign cookie.
 //
@@ -36,12 +36,23 @@ function rememberCampaign() {
   document.cookie = `${ATTRIBUTION_COOKIE}=${encodeURIComponent(JSON.stringify(tags))}; Max-Age=${ATTRIBUTION_MAX_AGE}; Path=/; SameSite=Lax${secure}`;
 }
 
+// A partner's link (?ref=<code>): kept 90 days, and the first code this
+// browser saw is never replaced by a later one.
+function rememberReferral() {
+  const code = new URLSearchParams(window.location.search).get("ref")?.trim().toLowerCase();
+  if (!code || !REFERRAL_CODE.test(code) || readCookie(REFERRAL_COOKIE)) return;
+  writeCookie(REFERRAL_COOKIE, code, REFERRAL_MAX_AGE);
+}
+
 export default function SiteAnalytics() {
   const pathname = usePathname() ?? "/";
   const inApp = APP_PREFIXES.some((p) => pathname === p || pathname.startsWith(`${p}/`));
 
   useEffect(() => {
-    if (!inApp) rememberCampaign();
+    if (!inApp) {
+      rememberCampaign();
+      rememberReferral();
+    }
   }, [pathname, inApp]);
 
   return inApp ? null : <Analytics />;

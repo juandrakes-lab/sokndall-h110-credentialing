@@ -1,13 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { Suspense, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { buttonClass, inputClass } from "@/components/app/ui";
 import { PLANS } from "@/lib/plans";
 import SubmitButton from "@/components/app/SubmitButton";
 import { emailError } from "@/lib/validation";
+import { REFERRAL_COOKIE, REFERRAL_MAX_AGE, REFERRAL_NOTE_COOKIE, readCookie, writeCookie } from "@/lib/attribution";
 import { TERMS_VERSION, passwordChecks } from "@/lib/password-rules";
 import { AuthField, AuthShell, Captcha, Divider, GoogleButton, PasswordChecklist, PasswordInput, captchaRequired, safeNext } from "@/components/app/AuthParts";
 
@@ -47,6 +48,15 @@ function Signup() {
   const [error, setError] = useState(null);
   const [sentTo, setSentTo] = useState(null);
   const [loading, setLoading] = useState(false);
+  // Came through a partner's link: the question would only repeat it.
+  const [referred, setReferred] = useState(true);
+  const [note, setNote] = useState("");
+  useEffect(() => {
+    setReferred(Boolean(readCookie(REFERRAL_COOKIE)));
+  }, []);
+  const keepNote = () => {
+    if (note.trim()) writeCookie(REFERRAL_NOTE_COOKIE, note.trim().slice(0, 300), REFERRAL_MAX_AGE);
+  };
 
   const errors = signupErrors(v);
   const show = (f) => (attempted || touched[f] ? errors[f] : null);
@@ -56,6 +66,7 @@ function Signup() {
 
   async function google() {
     setError(null);
+    keepNote();
     const { error } = await supabase.auth.signInWithOAuth({ provider: "google", options: { redirectTo: callback } });
     if (error) setError("Google sign-up isn't available right now. Use your email instead.");
   }
@@ -74,13 +85,14 @@ function Signup() {
       return;
     }
     setLoading(true);
+    keepNote();
     const { data, error } = await supabase.auth.signUp({
       email: v.email.trim().toLowerCase(),
       password: v.password,
       options: {
         emailRedirectTo: callback,
         captchaToken: captcha ?? undefined,
-        data: { first_name: v.first_name.trim(), last_name: v.last_name.trim(), full_name: `${v.first_name.trim()} ${v.last_name.trim()}`, terms_version: TERMS_VERSION, terms_accepted_at: new Date().toISOString() },
+        data: { first_name: v.first_name.trim(), last_name: v.last_name.trim(), full_name: `${v.first_name.trim()} ${v.last_name.trim()}`, terms_version: TERMS_VERSION, terms_accepted_at: new Date().toISOString(), ...(note.trim() ? { referral_note: note.trim().slice(0, 300) } : {}) },
       },
     });
     setLoading(false);
@@ -179,6 +191,11 @@ function Signup() {
           <PasswordInput id="su-password" value={v.password} onChange={set("password")} onBlur={blur("password")} autoComplete="new-password" />
         </AuthField>
         <PasswordChecklist checks={checks} />
+        {!joining && !referred && (
+          <AuthField id="su-referral" label="Did someone recommend Sokndall? (optional)">
+            <input id="su-referral" value={note} onChange={(e) => setNote(e.target.value)} maxLength={300} placeholder="Their name or company" className={inputClass} />
+          </AuthField>
+        )}
         <div className="flex flex-col gap-1">
           <label className="flex items-start gap-2 text-sm text-ink-700">
             <input id="su-terms" type="checkbox" checked={v.terms} onChange={set("terms")} className="mt-0.5 h-4 w-4 accent-brand-700" />
