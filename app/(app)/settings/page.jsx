@@ -1,3 +1,7 @@
+import ExtraProvidersCard from "./ExtraProvidersCard";
+import { EXTRA, extraOf } from "@/lib/extra-providers-rules";
+import { createPolarClient } from "@/lib/polar";
+import { monthlyPrice } from "@/lib/seats";
 import { seatsInUse } from "@/lib/seats";
 import Link from "next/link";
 import { getAppContext, providerCount } from "@/lib/org";
@@ -66,6 +70,12 @@ export default async function SettingsPage({ searchParams }) {
   const seatChange =
     owner && org.plan === "billing_co" && org.user_limit > 10 && org.polar_subscription_id
       ? await pendingSeatChange(org.polar_subscription_id).catch(() => null)
+      : null;
+  // Practice: its seats are providers; Polar knows the period and any
+  // decrease waiting for renewal.
+  const practiceSub =
+    owner && org.plan === "practice" && org.polar_subscription_id && tab === "billing"
+      ? await createPolarClient().subscriptions.get({ id: org.polar_subscription_id }).catch(() => null)
       : null;
   const clientIdsOf = new Map((access ?? []).map((m) => [m.user_id, m.client_ids]));
   const members = (directory ?? []).map((m) => ({ ...m, client_ids: clientIdsOf.get(m.user_id) ?? null }));
@@ -172,7 +182,24 @@ export default async function SettingsPage({ searchParams }) {
                 </div>
               </Card>
             ) : (
-              <BillingCard org={org} providersUsed={used} usage={{ providers: used, users: seatsInUse(directory ?? [], invitations ?? []), clients: clients.length }} requestedPlan={sp.plan_change} resubscribed={sp.resubscribed === "1"} planError={sp.plan_error === "1"} />
+              <BillingCard
+                extras={
+                  EXTRA[org.plan] && org.polar_subscription_id ? (
+                    <ExtraProvidersCard
+                      plan={org.plan}
+                      planPrice={PLANS[org.plan].price}
+                      otherMonthly={org.plan === "billing_co" ? monthlyPrice(org.user_limit) - PLANS.billing_co.price : 0}
+                      current={extraOf(org)}
+                      used={used}
+                      peak={org.extra_providers_peak ?? 0}
+                      periodStart={practiceSub?.currentPeriodStart?.toISOString?.() ?? null}
+                      periodEnd={org.current_period_end}
+                      trialing={org.subscription_status === "trialing"}
+                      pending={practiceSub?.pendingUpdate?.seats ?? null}
+                    />
+                  ) : null
+                }
+                org={org} providersUsed={used} usage={{ providers: used, users: seatsInUse(directory ?? [], invitations ?? []), clients: clients.length }} requestedPlan={sp.plan_change} resubscribed={sp.resubscribed === "1"} planError={sp.plan_error === "1"} />
             )}
           </Section>
 

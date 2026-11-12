@@ -98,7 +98,7 @@ export const ANCHOR = {
 export const ARCHITECTURE = {
   head: { pill: "Practice and Billing Co", title: ["The same", "structure, sized", "to the firm"] },
   paras: [
-    "Small firms start on Practice: up to 15 providers and 3 users, $299 a month. Billing Co is for firms with more than 15 providers or more than 3 users: up to 50 providers and 10 users, $699 a month. The multi-client structure is the same on both — the isolation is built into how the data is stored, not switched on afterwards. Only Solo holds a single practice.",
+    "Small firms start on Practice: up to 15 providers and 3 users, $299 a month. Billing Co is for firms with more than 15 providers or more than 3 users: up to 50 providers and 10 users, $699 a month. The multi-client structure is the same on both — the isolation is built into how the data is stored, not switched on afterwards. Only Solo holds a single practice. Both plans take extra providers: $25 a month each on Practice, up to 30, and $15 a month each beyond 50 on Billing Co, billed on the next invoice.",
   ],
 };
 

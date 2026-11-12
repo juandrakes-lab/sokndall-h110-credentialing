@@ -54,7 +54,7 @@ export const PLANS = {
     },
   ],
   note:
-    "Every plan is monthly and cancels from Settings. Billing Co includes 10 users; each one after that is $39 a month. 14-day trial, card up front, nothing charged before day 15.",
+    "Need more than 15? Add providers at $25/month each, up to 30. On Billing Co, providers beyond 50 are $15/month each, billed on the next invoice. Every plan is monthly and cancels from Settings. Billing Co includes 10 users; each one after that is $39 a month. 14-day trial, card up front, nothing charged before day 15.",
   // Copy brief 2026-09-22: under the three plans, not inside the Billing Co
   // card — the reader still choosing between Practice and Billing Co is the one
   // who needs it. Never a response-time promise (founder, 2026-09-22), and the
@@ -242,7 +242,10 @@ export const MATRIX = {
   first: [{ label: "Separate tax IDs", cells: ["One", "No limit", "No limit"] }],
   // Brief 2026-09-09 (anchors): after "Users included". "Not available" is
   // printed as text, never an empty cell or a dash (DESIGN_RULES §2 regla 3).
-  afterUsers: [{ label: "Additional users", cells: ["Not available", "Not available", "$39 a month each"] }],
+  afterUsers: [
+    { label: "Additional users", cells: ["Not available", "Not available", "$39 a month each"] },
+    { label: "Additional providers", cells: ["Not available", "$25 a month each, up to 30", "$15 a month each"] },
+  ],
   rows: [
     { label: "Separate client organizations", cells: ["Not included", "Included", "Included"] },
     { label: "Aggregate and scoped client views", cells: ["Not included", "Included", "Included"] },

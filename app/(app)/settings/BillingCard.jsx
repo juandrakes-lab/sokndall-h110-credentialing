@@ -9,11 +9,17 @@ import SubmitButton from "@/components/app/SubmitButton";
 import AccessMessage from "@/components/app/AccessMessage";
 import LocalDateTime from "@/components/app/LocalDateTime";
 
+// The plan with what is billed every month in advance: Practice's extra
+// providers, Billing Co's extra users. (Billing Co's extra providers are
+// billed after the month, shown apart.)
+const monthlyTotal = (org) =>
+  org.plan === "billing_co" ? monthlyPrice(org.user_limit) : org.plan === "practice" ? PLANS.practice.price + Math.max(0, org.provider_limit - 15) * 25 : PLANS[org.plan].price;
+
 const day = (iso) => (iso ? formatDate(new Date(iso).toISOString().slice(0, 10)) : null);
 
 // Owner only (alcance §4.3): plan, trial or renewal date, plan changes, and the
 // Polar portal for card, invoices and cancellation.
-export default function BillingCard({ org, providersUsed, usage, requestedPlan, resubscribed, planError }) {
+export default function BillingCard({ extras, org, providersUsed, usage, requestedPlan, resubscribed, planError }) {
   const access = accountAccess(org);
   const current = PLANS[org.plan];
   const target = PLANS[requestedPlan];
@@ -38,8 +44,18 @@ export default function BillingCard({ org, providersUsed, usage, requestedPlan, 
       <div className="flex flex-col gap-5 px-5 py-5">
         <div>
           <p className="text-base font-semibold text-ink-900">
-            {current.label} · ${org.plan === "billing_co" ? monthlyPrice(org.user_limit) : current.price}/month
+            {current.label} · ${monthlyTotal(org)}/month
           </p>
+          {org.plan === "practice" && org.provider_limit > 15 && (
+            <p className="text-xs text-ink-500">
+              ${current.price} + {org.provider_limit - 15} extra provider{org.provider_limit - 15 === 1 ? "" : "s"} × $25
+            </p>
+          )}
+          {org.plan === "billing_co" && org.extra_providers > 0 && (
+            <p className="text-xs text-ink-500">
+              Plus {org.extra_providers} extra provider{org.extra_providers === 1 ? "" : "s"} × $15, billed on the next invoice.
+            </p>
+          )}
           {org.plan === "billing_co" && org.user_limit > INCLUDED_USERS && (
             <p className="text-xs text-ink-500">
               ${current.price} + {org.user_limit - INCLUDED_USERS} additional user{org.user_limit - INCLUDED_USERS === 1 ? "" : "s"} × $
@@ -77,6 +93,8 @@ export default function BillingCard({ org, providersUsed, usage, requestedPlan, 
             </p>
           )}
         </div>
+
+        {access.state !== "ended" && extras}
 
         {!org.polar_subscription_id && org.trial_ends_at ? (
           <form action={resubscribe} className="flex flex-wrap items-center gap-3">
