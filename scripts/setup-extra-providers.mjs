@@ -40,20 +40,28 @@ const keep = (prices) => prices.filter((p) => !p.isArchived).map((p) => ({ id: p
 // .env.local holds the sandbox product ids; in production the products are
 // found by their exact names (the Polar organization is shared with other
 // projects, so nothing else is touched).
-async function productId(envKey, name) {
+async function productId(envKey, name, plan, price, needsSeat) {
   if (server !== "production" && env[envKey]) return env[envKey];
   const hits = [];
   for await (const page of await polar.products.list({ query: name, isArchived: false, limit: 100 })) {
-    hits.push(...page.result.items.filter((p) => p.name === name));
+    hits.push(
+      ...page.result.items.filter(
+        (p) =>
+          p.name === name &&
+          p.metadata?.plan === plan &&
+          p.prices.some((x) => x.amountType === "fixed" && x.priceAmount === price && !x.isArchived) &&
+          (!needsSeat || p.prices.some((x) => x.amountType === "seat_based" && !x.isArchived)),
+      ),
+    );
   }
-  if (hits.length !== 1) throw new Error(`expected one product named "${name}", found ${hits.length}`);
+  if (hits.length !== 1) throw new Error(`expected one live "${name}" at $${price / 100}, found ${hits.length}: ${hits.map((h) => h.id).join(", ")}`);
   return hits[0].id;
 }
 
 async function main() {
   console.log(`Polar ${server}`);
-  env.POLAR_PRODUCT_PRACTICE = await productId("POLAR_PRODUCT_PRACTICE", "Sokndall Practice");
-  env.POLAR_PRODUCT_BILLING_CO = await productId("POLAR_PRODUCT_BILLING_CO", "Sokndall Billing Co");
+  env.POLAR_PRODUCT_PRACTICE = await productId("POLAR_PRODUCT_PRACTICE", "Sokndall Practice", "practice", 29900, false);
+  env.POLAR_PRODUCT_BILLING_CO = await productId("POLAR_PRODUCT_BILLING_CO", "Sokndall Billing Co", "billing_co", 69900, true);
   console.log(`Practice ${env.POLAR_PRODUCT_PRACTICE}, Billing Co ${env.POLAR_PRODUCT_BILLING_CO}`);
   const m = await meter();
   console.log(`meter: ${m.id}`);
