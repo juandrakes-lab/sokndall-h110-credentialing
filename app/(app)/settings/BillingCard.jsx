@@ -1,5 +1,5 @@
 import { Card, CardHeader, buttonClass } from "@/components/app/ui";
-import { PLANS, PLAN_ORDER } from "@/lib/plans";
+import { PLANS, PLAN_ORDER, downgradeBlockers } from "@/lib/plans";
 import { accountAccess } from "@/lib/billing";
 import { formatDate } from "@/lib/credentials";
 import { changePlan, openBillingPortal, resubscribe } from "@/lib/billing-actions";
@@ -13,7 +13,7 @@ const day = (iso) => (iso ? formatDate(new Date(iso).toISOString().slice(0, 10))
 
 // Owner only (alcance §4.3): plan, trial or renewal date, plan changes, and the
 // Polar portal for card, invoices and cancellation.
-export default function BillingCard({ org, providersUsed, requestedPlan, resubscribed, planError }) {
+export default function BillingCard({ org, providersUsed, usage, requestedPlan, resubscribed, planError }) {
   const access = accountAccess(org);
   const current = PLANS[org.plan];
   const target = PLANS[requestedPlan];
@@ -126,7 +126,7 @@ export default function BillingCard({ org, providersUsed, requestedPlan, resubsc
             {PLAN_ORDER.filter((k) => k !== org.plan).map((key) => {
               const plan = PLANS[key];
               const upgrade = PLAN_ORDER.indexOf(key) > PLAN_ORDER.indexOf(org.plan);
-              const overLimit = Math.max(0, providersUsed - plan.providerLimit);
+              const blockers = upgrade ? [] : downgradeBlockers(key, usage);
               return (
                 <form key={key} action={changePlan} className="flex flex-col gap-2 rounded-lg border border-ink-200 p-4">
                   <input type="hidden" name="plan" value={key} />
@@ -136,13 +136,18 @@ export default function BillingCard({ org, providersUsed, requestedPlan, resubsc
                   <p className="text-xs text-ink-500">
                     Up to {plan.providerLimit} providers · {plan.userLimit} user{plan.userLimit === 1 ? "" : "s"}{plan.extraUserPrice ? ` (+$${plan.extraUserPrice}/month each after)` : ""} · {plan.storageLabel}
                   </p>
-                  {!upgrade && overLimit > 0 && (
-                    <p className="text-xs text-status-expiring">
-                      You have {providersUsed} providers: the {overLimit} added most recently would become read-only until
-                      you delete some or upgrade again. Nothing is deleted.
-                    </p>
+                  {blockers.length > 0 && (
+                    <div className="text-xs text-status-expiring">
+                      <p className="font-medium">Before switching to {plan.label}:</p>
+                      <ul className="mt-0.5 list-disc pl-4">
+                        {blockers.map((b) => (
+                          <li key={b}>{b}</li>
+                        ))}
+                      </ul>
+                      <p className="mt-0.5 text-ink-500">We never delete anything for you. Once these are done, the switch is available here.</p>
+                    </div>
                   )}
-                  <SubmitButton className={`${buttonClass(upgrade ? "primary" : "secondary", "sm")} mt-auto self-start`}>
+                  <SubmitButton disabled={blockers.length > 0} className={`${buttonClass(upgrade ? "primary" : "secondary", "sm")} mt-auto self-start disabled:cursor-not-allowed disabled:opacity-50`}>
                     {upgrade ? `Upgrade to ${plan.label}` : `Switch to ${plan.label}`}
                   </SubmitButton>
                 </form>

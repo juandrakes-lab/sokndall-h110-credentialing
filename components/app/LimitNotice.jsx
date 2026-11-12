@@ -17,12 +17,18 @@ export default async function LimitNotice({ org }) {
         <p className="font-medium">
           Your {plan.label} plan includes {org.provider_limit} providers, and all {org.provider_limit} are in use.
         </p>
-        {next && (
-          <p className="mt-0.5 text-ink-700">
-            {next.label} holds up to {next.providerLimit} providers for ${next.price}/month (${next.perProvider} per provider).
-            {role !== "owner" && " The account owner can upgrade."}
-          </p>
-        )}
+        <ul className="mt-1 flex flex-col gap-0.5 text-ink-700">
+          <li>
+            Free a seat: mark a provider you no longer credential as <span className="font-medium">Inactive</span> on their
+            page. Their history stays.
+          </li>
+          {next && (
+            <li>
+              Move to {next.label}: up to {next.providerLimit} providers and {next.userLimit} users for ${next.price}/month
+              (${next.perProvider} per provider).{role !== "owner" && " The account owner can change the plan."}
+            </li>
+          )}
+        </ul>
       </div>
       {next && role === "owner" && (
         <Link href="/settings?tab=billing" className={`${buttonClass("primary", "sm")} shrink-0`}>

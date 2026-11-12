@@ -27,7 +27,7 @@ export default async function OnboardingPage() {
       wide
       step={finishing ? undefined : 3}
       title={finishing ? "Finish setting up this client" : billingCo ? "Add your first client" : "Set up your practice"}
-      subtitle={`${billingCo ? "Each client is a practice you credential for. Start with one — you can add the rest from Clients. " : ""}Payers match these details against the NPI Registry and the IRS on every application. Enter the group NPI first and check it — Sokndall fills in the rest from the registry.`}
+      subtitle={`${billingCo ? "Each client is a practice you credential for. Start with one — you can add the rest from Clients. " : org.plan === "practice" ? "Start with your practice. If you credential for more than one, add the others from Clients later. " : ""}Payers match these details against the NPI Registry and the IRS on every application. Enter the group NPI first and check it — Sokndall fills in the rest from the registry.`}
     >
       <div className="mt-8">
         <PracticeForm action={savePractice} submitLabel="Save and open my dashboard" />

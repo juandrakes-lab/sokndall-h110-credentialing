@@ -56,7 +56,7 @@ export default function SecurityPage() {
 
         <ProseSection id="protection" heading="How it is protected">
           <p>
-            Data is isolated by organization at the database level &mdash; a Billing Co
+            Data is isolated by organization at the database level &mdash; a Practice or Billing Co
             client&rsquo;s records are not reachable from another client&rsquo;s login, enforced the
             same way regardless of plan. Encryption in transit is standard for the entire stack.
             Documents are stored with the same per-organization isolation as everything else, capped

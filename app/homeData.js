@@ -137,8 +137,8 @@ export const PRICING = {
       name: "Practice",
       highlighted: true,
       tag: "Most complete for a group practice",
-      desc: "A group with one person handling this",
-      features: ["Up to 15 providers", "$19.93 per provider per month"],
+      desc: "A group, or several practices, run by up to three people",
+      features: ["Up to 15 providers", "One practice or several", "$19.93 per provider per month"],
     },
     {
       name: "Billing Co",

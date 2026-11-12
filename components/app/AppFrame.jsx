@@ -24,7 +24,7 @@ const MANAGE = [
   { href: "/import-export", label: "Import / Export", icon: ICONS.importExport },
   { href: "/settings", label: "Settings", icon: ICONS.settings },
 ];
-// Billing Co only: the panel across all clients.
+// Practice and Billing Co: the panel across all clients.
 const CLIENTS = { href: "/clients", label: "Clients", icon: ICONS.clients };
 
 const isOn = (pathname, href) => pathname === href || pathname.startsWith(href + "/");

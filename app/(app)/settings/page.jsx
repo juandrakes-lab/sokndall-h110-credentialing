@@ -1,3 +1,4 @@
+import { seatsInUse } from "@/lib/seats";
 import Link from "next/link";
 import { getAppContext, providerCount } from "@/lib/org";
 import { practiceIssues } from "@/lib/consistency";
@@ -125,7 +126,7 @@ export default async function SettingsPage({ searchParams }) {
       )}
 
       {tab === "team" && owner && (
-        <Section title="Team" description="Who can sign in, and — on Billing Co — which clients each person can open.">
+        <Section title="Team" description="Who can sign in, and — on Practice and Billing Co — which clients each person can open.">
           <TeamCard
             org={org}
             members={members}
@@ -171,7 +172,7 @@ export default async function SettingsPage({ searchParams }) {
                 </div>
               </Card>
             ) : (
-              <BillingCard org={org} providersUsed={used} requestedPlan={sp.plan_change} resubscribed={sp.resubscribed === "1"} planError={sp.plan_error === "1"} />
+              <BillingCard org={org} providersUsed={used} usage={{ providers: used, users: seatsInUse(directory ?? [], invitations ?? []), clients: clients.length }} requestedPlan={sp.plan_change} resubscribed={sp.resubscribed === "1"} planError={sp.plan_error === "1"} />
             )}
           </Section>
 

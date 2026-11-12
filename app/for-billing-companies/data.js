@@ -15,7 +15,7 @@ export const HERO = {
   eyebrow: "For billing companies",
   title: ["Six clients,", "not six sheets"],
   sub:
-    "Separate client organizations, isolated data, one login, one weekly view across all of them. $699 a month for up to 50 providers across your book.",
+    "Separate client organizations, isolated data, one login, one weekly view across all of them. Small firms start on Practice at $299 a month; Billing Co is $699 for up to 50 providers across your book.",
   strip: [
     "Data isolated per client",
     "Switch clients without logging out",
@@ -96,16 +96,16 @@ export const ANCHOR = {
 };
 
 export const ARCHITECTURE = {
-  head: { pill: "Billing Co plan", title: ["A different", "architecture, not", "a bigger number"] },
+  head: { pill: "Practice and Billing Co", title: ["The same", "structure, sized", "to the firm"] },
   paras: [
-    "Every feature in the smaller plans is here. What is different is the multi-client structure, and it is not available on Solo or Practice — the isolation is built into how the data is stored, not switched on afterwards.",
+    "Small firms start on Practice: up to 15 providers and 3 users, $299 a month. Billing Co is for firms with more than 15 providers or more than 3 users: up to 50 providers and 10 users, $699 a month. The multi-client structure is the same on both — the isolation is built into how the data is stored, not switched on afterwards. Only Solo holds a single practice.",
   ],
 };
 
 export const FAQ = [
   {
     q: "Can one account manage credentialing for multiple clients?",
-    a: "Yes, and that is what the Billing Co plan is for. Each client is a separate organization inside one login, with its own providers, payer records, follow-up logs and documents. You move between them without logging out. The aggregate view answers what needs attention this week across every client at once, which is the thing six separate spreadsheets cannot do at all.",
+    a: "Yes, on Practice and on Billing Co. Practice covers up to 15 providers and 3 users; Billing Co is for firms beyond that. Each client is a separate organization inside one login, with its own providers, payer records, follow-up logs and documents. You move between them without logging out. The aggregate view answers what needs attention this week across every client at once, which is the thing six separate spreadsheets cannot do at all.",
   },
   {
     q: "How is client data separated between practices?",
@@ -118,7 +118,7 @@ export const FAQ = [
 ];
 
 export const CLOSING = {
-  title: "Start the 14-day trial on Billing Co",
+  title: "Start the 14-day trial on Practice or Billing Co",
   // The written-support line reaches this page too (founder, 2026-09-22): same
   // buyer as /pricing, same doubt, and until now the page offered no way out
   // other than buying. The six editorial pages keep their own close unchanged.

@@ -1,5 +1,6 @@
 "use server";
 
+import { isMultiClient } from "@/lib/plans";
 import { DEMO_ACTION_ERROR } from "@/lib/demo";
 
 import { createHash, randomBytes } from "node:crypto";
@@ -19,10 +20,10 @@ async function origin() {
     : `${h.get("x-forwarded-proto") ?? "http"}://${h.get("host")}`;
 }
 
-// Billing Co: which clients a person can work on (alcance §4.4). null = all,
+// Practice and Billing Co: which clients a person can work on (alcance §4.4). null = all,
 // including clients added later. The database re-checks every id.
 function readClientAccess(formData, org, clients) {
-  if (org.plan !== "billing_co" || formData.get("access") !== "some") return { clientIds: null };
+  if (!isMultiClient(org.plan) || formData.get("access") !== "some") return { clientIds: null };
   const known = new Set(clients.map((c) => c.id));
   const clientIds = formData.getAll("client_ids").map(String).filter((id) => known.has(id));
   if (!clientIds.length) return { fieldErrors: { client_ids: "Choose at least one client, or give access to all of them." } };

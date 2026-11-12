@@ -17,7 +17,7 @@ export const HERO = {
   eyebrow: "Pricing",
   title: ["No quote to get.", "No call to book."],
   sub:
-    "Three plans, three prices, no quote process. Every plan has every feature. The difference is how many providers you track, and whether you track them for your own practice or for clients.",
+    "Three plans, three prices, no quote process. Every plan has every feature. The difference is how many providers you track and how many people sign in.",
 };
 
 export const PLANS = {
@@ -36,8 +36,8 @@ export const PLANS = {
       name: "Practice",
       highlighted: true,
       tag: "Most complete for a group practice",
-      desc: "A group with one person handling this",
-      features: ["Up to 15 providers, up to 3 users", "$19.93 per provider per month", "Everything in Solo"],
+      desc: "A group, or several practices, run by up to three people",
+      features: ["Up to 15 providers, up to 3 users", "One practice or several, each kept apart", "$19.93 per provider per month", "Everything in Solo"],
     },
     {
       name: "Billing Co",
@@ -76,15 +76,16 @@ export const PLANS = {
 export const ENTITY = {
   pill: "Start with one question",
   // Authored lines for the section-size heading (≤21 per line).
-  title: ["How many separate", "tax IDs do you need", "to keep apart?"],
+  title: ["How many providers", "and people will", "be on it?"],
   lead:
-    "That answer picks your plan faster than counting providers does. Solo and Practice are built for one practice; Billing Co is the only one that keeps entities apart.",
+    "That answer picks your plan. Practice and Billing Co both keep separate practices and tax IDs apart; what changes between them is capacity.",
   options: [
-    { label: "One practice, one tax ID", body: "Solo or Practice. Choose on provider count: up to 3, or up to 15." },
-    { label: "More than one tax ID", body: "Billing Co, even at six providers. No other plan separates entities." },
+    { label: "Up to 3 providers, one person", body: "Solo. One practice, one tax ID." },
+    { label: "Up to 15 providers, up to 3 people", body: "Practice, for one practice or several, each on its own tax ID." },
+    { label: "More than 15 providers or 3 people", body: "Billing Co: up to 50 providers and 10 users, and more users at $39 a month each." },
   ],
   closing:
-    "Solo and Practice hold one practice. If you run an ASC on its own tax ID, or grew by acquisition and each site bills under a different one, that is more than one entity.",
+    "Solo holds one practice. Practice and Billing Co hold several, and count providers across all of them: an ASC on its own tax ID, or sites acquired under different ones, fit either plan.",
 };
 
 // COPY_LIMITS: ≤21 per authored H2 line. Line 4 is 22 — one over. Kept as
@@ -232,19 +233,19 @@ export const MATRIX = {
     pill: "Plan comparison",
     title: ["What changes between", "the three plans"],
     note:
-      "Three plans, one product. What changes is how many providers you track and whether you track them for clients.",
+      "Three plans, one product. What changes is how many providers you track and how many people sign in.",
   },
   plans: ["Solo", "Practice", "Billing Co"],
   // Brief 2026-09-09 (entity chooser), cell 0.3 corrected by copy on
   // 2026-09-14 ("Several" → "No limit"): the first row, above "Providers
   // tracked" — the decision axis; below, the table reads as a size ladder.
-  first: [{ label: "Separate tax IDs", cells: ["One", "One", "No limit"] }],
+  first: [{ label: "Separate tax IDs", cells: ["One", "No limit", "No limit"] }],
   // Brief 2026-09-09 (anchors): after "Users included". "Not available" is
   // printed as text, never an empty cell or a dash (DESIGN_RULES §2 regla 3).
   afterUsers: [{ label: "Additional users", cells: ["Not available", "Not available", "$39 a month each"] }],
   rows: [
-    { label: "Separate client organizations", cells: ["Not included", "Not included", "Included"] },
-    { label: "Aggregate and scoped client views", cells: ["Not included", "Not included", "Included"] },
+    { label: "Separate client organizations", cells: ["Not included", "Included", "Included"] },
+    { label: "Aggregate and scoped client views", cells: ["Not included", "Included", "Included"] },
     { label: "Every tracking feature", cells: ["Included", "Included", "Included"] },
   ],
   // Caption rewritten by copywriting on 2026-09-14 against the seven rows
@@ -254,7 +255,7 @@ export const MATRIX = {
   // scale, or parity. If a different capability enters the table, it stops
   // being true and copy has to hear about it.
   caption:
-    "One capability changes between plans, and it is keeping separate tax IDs apart. The other rows are scale, or identical in all three columns.",
+    "Solo keeps one practice; Practice and Billing Co keep several apart. The other rows are scale, or identical in all three columns.",
   // The security line, stated as a fact rather than as an answer to SOC 2
   // (the brief's reasoning). No badge, shield or seal may be added beside it:
   // that would imply an accreditation that does not exist (DESIGN_RULES §2
