@@ -37,8 +37,24 @@ async function meter() {
 
 const keep = (prices) => prices.filter((p) => !p.isArchived).map((p) => ({ id: p.id }));
 
+// .env.local holds the sandbox product ids; in production the products are
+// found by their exact names (the Polar organization is shared with other
+// projects, so nothing else is touched).
+async function productId(envKey, name) {
+  if (server !== "production" && env[envKey]) return env[envKey];
+  const hits = [];
+  for await (const page of await polar.products.list({ query: name, isArchived: false, limit: 100 })) {
+    hits.push(...page.result.items.filter((p) => p.name === name));
+  }
+  if (hits.length !== 1) throw new Error(`expected one product named "${name}", found ${hits.length}`);
+  return hits[0].id;
+}
+
 async function main() {
   console.log(`Polar ${server}`);
+  env.POLAR_PRODUCT_PRACTICE = await productId("POLAR_PRODUCT_PRACTICE", "Sokndall Practice");
+  env.POLAR_PRODUCT_BILLING_CO = await productId("POLAR_PRODUCT_BILLING_CO", "Sokndall Billing Co");
+  console.log(`Practice ${env.POLAR_PRODUCT_PRACTICE}, Billing Co ${env.POLAR_PRODUCT_BILLING_CO}`);
   const m = await meter();
   console.log(`meter: ${m.id}`);
 
