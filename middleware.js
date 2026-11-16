@@ -6,6 +6,7 @@ import { updateSession } from "@/lib/supabase/middleware";
 // static and must never trigger an auth round-trip on a crawl or a cache hit.
 const APP_PREFIXES = [
   "/dashboard",
+  "/home",
   "/clients",
   "/providers",
   "/follow-ups",
@@ -44,7 +45,7 @@ export async function middleware(request) {
       .some((c) => c.name.includes("-auth-token"));
     if (hasAuthCookie) {
       const url = request.nextUrl.clone();
-      url.pathname = "/dashboard";
+      url.pathname = "/home";
       return NextResponse.redirect(url);
     }
     return NextResponse.next();
@@ -72,6 +73,7 @@ export const config = {
   matcher: [
     "/",
     "/dashboard/:path*",
+    "/home",
     "/real-data/:path*",
     "/clients/:path*",
     "/providers/:path*",

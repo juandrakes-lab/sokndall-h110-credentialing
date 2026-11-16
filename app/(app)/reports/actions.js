@@ -69,3 +69,26 @@ export async function deleteReport(reportId) {
   revalidatePath("/reports");
 }
 
+
+// Live link (pedido 2026-11-16, punto 2): one per client, always current, no
+// expiry. Shown once; a new one replaces the old. The database checks the
+// person can work on this client and that the account is writable.
+export async function createLiveLink(_prev) {
+  const { supabase, client } = await getAppContext();
+  if (!client) return { error: "No client is open." };
+  const token = randomBytes(32).toString("base64url");
+  const { error } = await supabase.rpc("cred_create_live_link", {
+    p_client_org_id: client.id,
+    p_token_hash: createHash("sha256").update(token).digest("hex"),
+  });
+  if (error) return { error: error.message.replace(/^[A-Z_]+: /, "") };
+  revalidatePath("/reports");
+  return { url: `${await siteOrigin()}/status/${token}` };
+}
+
+export async function revokeLiveLink() {
+  const { supabase, client } = await getAppContext();
+  const { error } = await supabase.rpc("cred_revoke_live_link", { p_client_org_id: client.id });
+  if (error) throw new Error(error.message);
+  revalidatePath("/reports");
+}

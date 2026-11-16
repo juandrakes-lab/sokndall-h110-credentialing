@@ -94,5 +94,5 @@ export async function POST(request, { params }) {
 
   await admin.from("cred_demo_activity").insert({ org_id: opened.org_id, kind: "open" });
   await admin.from("cred_demos").update({ last_seen_at: new Date().toISOString() }).eq("org_id", opened.org_id);
-  return NextResponse.redirect(`${origin}/dashboard`, 303);
+  return NextResponse.redirect(`${origin}/home`, 303);
 }

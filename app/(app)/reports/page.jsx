@@ -3,7 +3,8 @@ import { getAppContext } from "@/lib/org";
 import { formatGeneratedAt, shareState } from "@/lib/reports";
 import { Badge, Card, EmptyState, ICONS, PageHeader, SectionPill, buttonClass } from "@/components/app/ui";
 import SubmitButton from "@/components/app/SubmitButton";
-import { createShareLink, deleteReport, generateReport, revokeShareLink } from "./actions";
+import { createLiveLink, createShareLink, deleteReport, generateReport, revokeLiveLink, revokeShareLink } from "./actions";
+import LiveLinkCard from "./LiveLinkCard";
 import ShareLinkForm from "./ShareLinkForm";
 
 export const metadata = { title: "Reports — Sokndall" };
@@ -27,6 +28,15 @@ export default async function ReportsPage() {
     .order("generated_at", { ascending: false })
     .limit(50);
   const { data: directory } = await supabase.rpc("cred_org_directory");
+  const { data: liveRow } = await supabase
+    .from("cred_live_links")
+    .select("created_at, last_viewed_at")
+    .eq("client_org_id", client.id)
+    .is("revoked_at", null)
+    .maybeSingle();
+  const liveLink = liveRow
+    ? { since: formatGeneratedAt(liveRow.created_at), lastViewed: liveRow.last_viewed_at ? formatGeneratedAt(liveRow.last_viewed_at) : null }
+    : null;
   const who = (id) => (directory ?? []).find((d) => d.user_id === id)?.name ?? "Former member";
 
   const list = reports ?? [];
@@ -48,8 +58,20 @@ export default async function ReportsPage() {
 
       <section className="flex flex-col gap-3">
         <div className="flex flex-wrap items-center justify-between gap-2">
+          <SectionPill icon={ICONS.shield} tone={liveLink ? "brand" : "neutral"}>
+            Live link
+          </SectionPill>
+          <p className="text-sm text-ink-500">Always current. The frozen reports below stay for invoices and emails.</p>
+        </div>
+        <Card className="overflow-hidden">
+          <LiveLinkCard clientName={multiClient ? client.name : "your practice"} link={liveLink} createAction={createLiveLink} revokeAction={revokeLiveLink} />
+        </Card>
+      </section>
+
+      <section className="flex flex-col gap-3">
+        <div className="flex flex-wrap items-center justify-between gap-2">
           <SectionPill icon={ICONS.shield} tone={live.length ? "brand" : "neutral"} count={live.length}>
-            Active read-only links
+            Active snapshot links
           </SectionPill>
           <p className="text-sm text-ink-500">Each one shows that one report, nothing else. Revoke to turn it off right away.</p>
         </div>

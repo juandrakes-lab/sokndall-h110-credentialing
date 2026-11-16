@@ -20,7 +20,7 @@ const APP_PREFIXES = [
   "/dashboard", "/providers", "/enrollments", "/follow-ups", "/documents",
   "/settings", "/clients", "/import-export", "/export", "/reports", "/report", "/shared", "/upload",
   "/onboarding", "/welcome", "/start", "/invite", "/auth",
-  "/forgot-password", "/reset-password", "/styleguide", "/unsubscribe",
+  "/forgot-password", "/reset-password", "/styleguide", "/unsubscribe", "/status",
 ];
 
 function rememberCampaign() {

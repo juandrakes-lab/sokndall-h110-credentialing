@@ -275,16 +275,22 @@ export default function AppFrame({
     document.cookie = `${NAV_COOKIE}=${next ? "collapsed" : "open"}; path=/; max-age=31536000; samesite=lax`;
   }
 
-  const work = showClients ? [WORK[0], CLIENTS, ...WORK.slice(1)] : WORK;
+  const multi = clients.length > 1;
+  // Two clients or more: the view across all of them leads, in the sidebar and
+  // in the phone bar (pedido 2026-11-16) — Enrollments moves behind More there.
+  const work = !showClients
+    ? WORK
+    : multi
+      ? [{ ...CLIENTS, label: "All clients", bottom: true }, ...WORK.map((i) => (i.href === "/enrollments" ? { ...i, bottom: false } : i))]
+      : [WORK[0], CLIENTS, ...WORK.slice(1)];
   const everything = [...work, ...MANAGE];
   const bottomItems = work.filter((i) => i.bottom);
   const moreItems = everything.filter((i) => !i.bottom);
-  const multi = clients.length > 1;
 
   const sidebar = (folded) => (
     <div className="flex h-full flex-col gap-1 px-3 pb-4 pt-4">
       <div className={`flex items-center ${folded ? "flex-col gap-3" : "justify-between gap-2 pl-2"}`}>
-        <Link href="/dashboard" className="flex items-center gap-2.5" title="Sokndall">
+        <Link href="/home" className="flex items-center gap-2.5" title="Sokndall">
           {folded ? (
             <span className="flex h-8 w-8 items-center justify-center text-brand-700"><Logo variant="symbol" title="" className="h-5 w-auto" /></span>
           ) : (

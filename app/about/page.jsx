@@ -67,26 +67,12 @@ export default function AboutPage() {
           </p>
         </ProseSection>
 
-        <ProseSection
-          id="niche"
-          heading="How this niche got chosen, since that is a fair thing to ask"
-        >
+        <ProseSection id="niche" heading="Who builds it">
           <p>
-            Sokndall was not built around a hunch or a personal story in healthcare. It came out of
-            a systematic process of testing market niches against a hard bar: an idea only survives
-            if there is evidence someone is already spending money solving the exact problem &mdash;
-            a charge, a prepaid engagement, a signed letter of intent. Interest, waitlists, and
-            upvotes do not count. Several other candidates were tested and rejected before this one,
-            for reasons that had nothing to do with how interesting they sounded &mdash; one because
-            the real bottleneck was human and organizational, not something software fixes; another
-            because a mature, inexpensive tool already solved it well.
-          </p>
-          <p>
-            Credentialing and payer enrollment tracking survived that bar because of a specific kind
-            of evidence: freelancers on Upwork billing tens of thousands of dollars and thousands of
-            hours doing exactly this work for practices, manually, on an ongoing basis. That is not
-            a complaint. That is proof someone is already paying, in volume, for a problem a small
-            piece of software can meaningfully help with.
+            I&rsquo;m Juan Cortez. I build and support Sokndall myself from Panama City. I&rsquo;m a
+            developer, not a credentialer: everything in the product came from conversations with
+            people who do this work every day, and I keep changing it as they tell me what&rsquo;s
+            missing.
           </p>
         </ProseSection>
 

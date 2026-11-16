@@ -66,7 +66,7 @@ export default async function ClientsPage({ searchParams }) {
   return (
     <div className="flex flex-col gap-6">
       <PageHeader
-        title="Clients"
+        title={clients.length > 1 ? "All clients" : "Clients"}
         description={
           queue.length
             ? `${plural(queue.length, "application needs", "applications need")} follow-up this week across ${plural(withWork, "client", "clients")}.`

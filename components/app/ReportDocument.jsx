@@ -39,7 +39,7 @@ function needsAttention(data) {
   return out.sort((x, y) => x.rank - y.rank);
 }
 
-export default function ReportDocument({ data, generatedAt, shared = false }) {
+export default function ReportDocument({ data, generatedAt, shared = false, live = false }) {
   const s = data.summary;
   const count = (status) => s.by_status?.find((b) => b.status === status)?.count ?? 0;
   const attention = needsAttention(data);
@@ -56,10 +56,12 @@ export default function ReportDocument({ data, generatedAt, shared = false }) {
         <h1 className="mt-1 text-2xl font-semibold tracking-tight">{data.client_name}</h1>
         {data.practice_name && data.practice_name !== data.client_name && <p className="text-sm text-ink-500">{data.practice_name}</p>}
         <p className="mt-3 inline-flex rounded-md bg-brand-50 px-2.5 py-1 text-sm font-semibold text-brand-700 print:bg-transparent print:px-0">
-          Generated {formatGeneratedAt(generatedAt)}
+          {live ? "Current status as of" : "Generated"} {formatGeneratedAt(generatedAt)}
         </p>
         <p className="mt-2 text-xs text-ink-500">
-          {shared
+          {live
+            ? "Live: this page shows the current status every time it is opened. Reload it for the latest."
+            : shared
             ? "A snapshot taken at the time above. It does not update: ask your credentialing team for a new one to see the current status."
             : "A snapshot of this moment. It does not change when the data changes; generate a new one for the current status."}
         </p>

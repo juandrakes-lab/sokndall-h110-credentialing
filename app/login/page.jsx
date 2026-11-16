@@ -22,7 +22,7 @@ function Login() {
   const router = useRouter();
   const params = useSearchParams();
   const supabase = createClient();
-  const next = safeNext(params.get("next")) ?? "/dashboard";
+  const next = safeNext(params.get("next")) ?? "/home";
 
   const [email, setEmail] = useState(params.get("email") ?? "");
   const [password, setPassword] = useState("");

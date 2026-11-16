@@ -13,7 +13,7 @@ async function accept(token) {
   const supabase = await createClient();
   const { error } = await supabase.rpc("cred_accept_invitation", { p_token: token });
   if (error) redirect(`/invite/${token}?error=${encodeURIComponent(error.message.split(":")[0])}`);
-  redirect("/dashboard");
+  redirect("/home");
 }
 
 const ERRORS = {

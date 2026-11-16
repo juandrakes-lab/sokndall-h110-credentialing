@@ -9,7 +9,7 @@ export async function GET(request) {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get("code");
   const next = searchParams.get("next");
-  const target = next && next.startsWith("/") && !next.startsWith("//") ? next : "/dashboard";
+  const target = next && next.startsWith("/") && !next.startsWith("//") ? next : "/home";
 
   if (searchParams.get("error")) return NextResponse.redirect(`${origin}/login?error=link`);
 
