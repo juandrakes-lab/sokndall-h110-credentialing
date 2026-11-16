@@ -10,6 +10,8 @@ import { Card, CardHeader, ICONS, PageHeader, StatCard, buttonClass } from "@/co
 import SubmitButton from "@/components/app/SubmitButton";
 import ExportClientButton from "@/components/app/ExportClientButton";
 import { DeleteClientForm, RestoreClientForm } from "./ClientLifecycleForms";
+import DemoGuide from "@/components/app/DemoGuide";
+import { proposedFollowUp } from "@/lib/enrollments";
 
 export const metadata = { title: "Clients — Sokndall" };
 
@@ -30,7 +32,7 @@ export default async function ClientsPage({ searchParams }) {
 
   const soon = addDays(todayISO(), 30);
   // supabaseAll never reads archived clients (RLS), so neither do these totals.
-  const [{ queue, stalled }, expirations, { data: providers }, { data: deletions }, archivedCounts] = await Promise.all([
+  const [{ queue, stalled, requests }, expirations, { data: providers }, { data: deletions }, archivedCounts] = await Promise.all([
     loadFollowUps(supabaseAll),
     loadExpirations(supabaseAll),
     supabaseAll.from("cred_providers").select("client_org_id").eq("status", "active"),
@@ -63,8 +65,38 @@ export default async function ClientsPage({ searchParams }) {
   };
   const withWork = new Set(queue.map((e) => e.provider.client_org_id)).size;
 
+  // A demo's first session (pedido 2026-11-16): the three things that need
+  // the visitor this week — a payer request, the longest-stalled application,
+  // the nearest expiration — and the two guided steps. Until skipped.
+  const demo = org.demo;
+  const demoOpen = demo && !demo.revoked_at && demo.expires_at && new Date(demo.expires_at) > new Date();
+  let guide = null;
+  if (demoOpen && demo.guide_state !== "skipped") {
+    const clientName = (id) => clients.find((c) => c.id === id)?.name ?? "";
+    const who = (p) => `${p.first_name} ${p.last_name}`;
+    const req = requests[0];
+    const st = stalled[0];
+    const exp = [...expirations].sort((a, b) => a.date.localeCompare(b.date)).find((x) => x.date >= todayISO()) ?? expirations[0];
+    const items = [
+      req && { kind: "request", title: "A payer is waiting on you", detail: `${req.payer.name} asked for ${req.pending_request ?? "a document"} (${who(req.provider)})`, client: clientName(req.provider.client_org_id) },
+      st && { kind: "stalled", title: "An application is stuck", detail: `${who(st.provider)} with ${st.payer.name}, no status change in ${Math.round((Date.now() - new Date(st.status_changed_at)) / 86400000)} days`, client: clientName(st.provider.client_org_id) },
+      exp && { kind: "expiring", title: exp.date < todayISO() ? "A credential has expired" : "A credential expires soon", detail: `${exp.who}'s ${exp.kind}, ${exp.date < todayISO() ? "expired" : "expires"} ${formatDate(exp.date)}`, client: clientName(exp.provider.client_org_id) },
+    ].filter(Boolean);
+    guide = (
+      <DemoGuide
+        state={demo.guide_state}
+        clientsCount={clients.length}
+        items={items}
+        stalled={st ? { enrollmentId: st.id, clientId: st.provider.client_org_id, client: clientName(st.provider.client_org_id) } : null}
+        today={todayISO()}
+        proposed={proposedFollowUp()}
+      />
+    );
+  }
+
   return (
     <div className="flex flex-col gap-6">
+      {guide}
       <PageHeader
         title={clients.length > 1 ? "All clients" : "Clients"}
         description={
@@ -99,7 +131,7 @@ export default async function ClientsPage({ searchParams }) {
 
       <div className="-mx-4 flex snap-x snap-mandatory scroll-px-4 gap-3 overflow-x-auto px-4 pb-4 -mb-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:mx-0 sm:grid sm:grid-cols-4 sm:gap-4 sm:mb-0 sm:overflow-visible sm:px-0 sm:pb-0 [&>*]:w-[70%] [&>*]:shrink-0 [&>*]:snap-start sm:[&>*]:w-auto">
         <StatCard label="Follow-ups this week" value={queue.length} icon={ICONS.phone} />
-        <StatCard label="Stalled 30+ days" value={stalled.length} icon={ICONS.pause} tone={stalled.length ? "amber" : "green"} />
+        <StatCard label="Stalled" value={stalled.length} icon={ICONS.pause} tone={stalled.length ? "amber" : "green"} />
         <StatCard label="Expiring in 30 days" value={[...byClient.expiring.values()].reduce((a, b) => a + b, 0)} icon={ICONS.calendar} tone="amber" />
         <StatCard label="Expired" value={[...byClient.expired.values()].reduce((a, b) => a + b, 0)} icon={ICONS.alert} tone="red" />
       </div>

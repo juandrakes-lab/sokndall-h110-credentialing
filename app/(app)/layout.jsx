@@ -12,7 +12,7 @@ import { signOut } from "./actions";
 import SubmitButton from "@/components/app/SubmitButton";
 import AccessMessage from "@/components/app/AccessMessage";
 import DemoBar from "@/components/app/DemoBar";
-import { DEMO_EVENTS, demoEmail, demoSteps, tickDemo } from "@/lib/demo";
+import { DEMO_EVENTS, demoEmail, tickDemo } from "@/lib/demo";
 import { sendEmail } from "@/lib/resend";
 
 // The entire authenticated app is per-user and behind a redirect — never index it.
@@ -76,7 +76,24 @@ export default async function AppLayout({ children }) {
       }
     }
     const demo = { ...org.demo, events_done: [...(org.demo.events_done ?? []), ...due] };
-    demoBar = <DemoBar demo={demo} open={open} steps={open ? await demoSteps(supabaseAll, { ...demo, org_id: org.id }) : null} />;
+    // "Since your last visit" (pedido 2026-11-16): what changed after the
+    // previous session ended — payer requests that arrived and applications
+    // that crossed the 30 days, both read from the sample data itself.
+    let since = null;
+    if (open && demo.prev_seen_at) {
+      const prev = new Date(demo.prev_seen_at);
+      const [{ count: requests }, { count: stalled }] = await Promise.all([
+        supabaseAll.from("cred_enrollments").select("id", { count: "exact", head: true }).eq("status", "info_requested").gt("pending_request_at", prev.toISOString()),
+        supabaseAll
+          .from("cred_enrollments")
+          .select("id", { count: "exact", head: true })
+          .in("status", ["submitted", "in_review", "info_requested"])
+          .gt("status_changed_at", new Date(prev.getTime() - 30 * 86400000).toISOString())
+          .lte("status_changed_at", new Date(Date.now() - 30 * 86400000).toISOString()),
+      ]);
+      since = { requests: requests ?? 0, stalled: stalled ?? 0 };
+    }
+    demoBar = <DemoBar demo={demo} open={open} since={since} />;
   }
 
   const [cookieStore, { count: followUps }] = await Promise.all([

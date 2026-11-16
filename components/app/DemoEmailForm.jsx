@@ -11,7 +11,7 @@ export default function DemoEmailForm({ email }) {
   return (
     <form action={action} className="flex flex-col gap-3">
       <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-900">
-        Get this demo&apos;s alerts by email for 3 days?
+        Get this demo&apos;s alerts by email while it lasts?
         <input name="email" type="email" defaultValue={email} placeholder="you@yourfirm.com" className={inputClass} autoComplete="email" />
       </label>
       <p className="text-xs text-ink-500">Only for this demo&apos;s alerts. If you later load your real data, we use it for your account.</p>

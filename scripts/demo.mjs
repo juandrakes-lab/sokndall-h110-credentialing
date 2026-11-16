@@ -49,7 +49,7 @@ async function main() {
   if (cmd === "extend") {
     const d = await findDemo(args[0]);
     if (d.extended) throw new Error("This demo was already extended once.");
-    if (!d.expires_at) throw new Error("Not opened yet: nothing to extend (the 72 h start at the first open).");
+    if (!d.expires_at) throw new Error("Not opened yet: nothing to extend (the 7 days start at the first open).");
     const base = Math.max(Date.now(), new Date(d.expires_at).getTime());
     await must(db.from("cred_demos").update({ expires_at: new Date(base + 72 * 3600000).toISOString(), extended: true, summary_sent_at: null }).eq("org_id", d.org_id));
     console.log(`Extended: ${d.firm} now ends ${new Date(base + 72 * 3600000).toUTCString()}.`);
@@ -177,7 +177,7 @@ async function main() {
     org_id: ORG, firm, lead_name: leadName, link_hash: createHash("sha256").update(code).digest("hex"), seeded_at: new Date().toISOString(),
   }));
   console.log(`Demo for ${firm} (${leadName}) is ready.`);
-  console.log(`Link (valid 7 days until first opened, then 72 h): ${ORIGIN}/demo/${code}`);
+  console.log(`Link (valid 7 days until first opened, then 7 days): ${ORIGIN}/demo/${code}`);
   console.log(`Org id: ${ORG}`);
 
 }

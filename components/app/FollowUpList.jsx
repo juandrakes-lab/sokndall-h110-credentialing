@@ -26,7 +26,7 @@ export default function FollowUpList({ items, lastContact, directory, basePath, 
       {items.map((e) => {
         const last = lastContact.get(e.id);
         const fu = e.next_follow_up_date ? followUpLabel(e.next_follow_up_date) : null;
-        const stalled = stalledDays(e);
+        const stalled = stalledDays(e, e.payer);
         const inStatus = daysInStatus(e);
         return (
           <li key={e.id} className={quickLog ? "flex flex-wrap items-center gap-x-2 pr-5" : undefined}>

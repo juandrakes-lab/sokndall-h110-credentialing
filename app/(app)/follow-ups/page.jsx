@@ -69,7 +69,7 @@ export default async function FollowUpsPage({ searchParams }) {
       <StatRow>
         <StatCard label="Payer requests" value={requests.length} icon={ICONS.alert} tone={requests.length ? "amber" : "green"} hint={requests.length ? "Payers waiting on you." : "No payer is waiting on you."} />
         <StatCard label="Overdue" value={overdue.length} icon={ICONS.phone} tone={overdue.length ? "red" : "green"} hint={overdue.length ? "Call these first." : "Nothing is late."} />
-        <StatCard label="Stalled" value={stalled.length} icon={ICONS.pause} tone={stalled.length ? "amber" : "green"} hint="With the payer, no status change in 30+ days." />
+        <StatCard label="Stalled" value={stalled.length} icon={ICONS.pause} tone={stalled.length ? "amber" : "green"} hint="With the payer past its stalled threshold (30 days unless you set another per payer)." />
       </StatRow>
 
       {requests.length > 0 && (

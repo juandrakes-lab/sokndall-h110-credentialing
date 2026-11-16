@@ -61,7 +61,7 @@ export default async function EnrollmentPanel({ providerId, payerId, closeHref }
   const nameOf = (id) => directory.find((m) => m.user_id === id)?.name ?? "Former member";
   const owner = directory.find((m) => m.role === "owner");
   const status = enrollment?.status ?? "not_started";
-  const stalled = enrollment ? stalledDays(enrollment) : null;
+  const stalled = enrollment ? stalledDays(enrollment, payer) : null;
   const inStatus = enrollment ? daysInStatus(enrollment) : null;
 
   const timeline = [

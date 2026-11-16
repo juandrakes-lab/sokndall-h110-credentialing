@@ -6,8 +6,12 @@ import { DEMO_EVENTS } from "@/lib/demo";
 // The demo account's bar, on every screen: whose demo it is, the time left,
 // the three guided steps, the latest prepared moment, and the way out —
 // "Load my real data".
-export default function DemoBar({ demo, steps, open }) {
-  const done = steps?.filter((s) => s.done).length ?? 0;
+export default function DemoBar({ demo, open, since }) {
+  const guideStep = demo.guide_state === "step2" ? 2 : !demo.guide_state || demo.guide_state === "step1" ? 1 : null;
+  const sinceParts = [
+    since?.requests && `${since.requests} payer request${since.requests === 1 ? "" : "s"}`,
+    since?.stalled && `${since.stalled} application${since.stalled === 1 ? "" : "s"} stalled`,
+  ].filter(Boolean);
   const latest = [...(demo.events_done ?? [])].reverse().map((k) => DEMO_EVENTS[k]).find(Boolean);
   return (
     <div role="status" className="border-b border-brand-700/15 bg-brand-50 px-4 py-3 text-sm text-ink-900 sm:px-8">
@@ -29,28 +33,24 @@ export default function DemoBar({ demo, steps, open }) {
             </span>
           </p>
           <Link href="/real-data" className="shrink-0 rounded-full bg-brand-700 px-4 py-1.5 text-sm font-semibold text-white hover:bg-brand-600">
-            Load my real data
+            Load my real data (we do it for you)
           </Link>
         </div>
-        {open && steps && (
-          <ol className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-ink-700" aria-label={`Guided steps, ${done} of 3 done`}>
-            <li className="font-medium">Try it · {done}/3</li>
-            {steps.map((s, i) => (
-              <li key={s.key}>
-                <Link href={s.href} className={s.done ? "text-status-active line-through decoration-1" : "underline"}>
-                  {s.done ? "✓" : `${i + 1}.`} {s.label}
-                </Link>
-              </li>
-            ))}
-            {done === 3 && (
-              <li className="font-medium text-ink-900">
-                That&apos;s how it looks with sample data. Want it with yours?{" "}
-                <Link href="/real-data" className="underline">
-                  Load my real data
-                </Link>
-              </li>
-            )}
-          </ol>
+        {open && sinceParts.length > 0 && (
+          <p className="text-xs text-ink-900">
+            <span className="font-semibold">Since your last visit:</span> {sinceParts.join(", ")}.{" "}
+            <Link href="/follow-ups" className="underline">
+              See them
+            </Link>
+          </p>
+        )}
+        {open && guideStep && (
+          <p className="text-xs text-ink-700">
+            Getting started · {guideStep} of 2 ·{" "}
+            <Link href="/clients" className="underline">
+              Continue
+            </Link>
+          </p>
         )}
         {open && latest && (
           <p className="text-xs text-ink-700">

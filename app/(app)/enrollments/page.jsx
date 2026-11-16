@@ -153,7 +153,7 @@ export default async function EnrollmentsPage({ searchParams }) {
                     const key = cellKey(provider.id, payer.id);
                     const e = byCell.get(key);
                     const status = e?.status ?? "not_started";
-                    const stalled = e ? stalledDays(e) : null;
+                    const stalled = e ? stalledDays(e, payer) : null;
                     const inStatus = e ? daysInStatus(e) : null;
                     const due = e?.next_follow_up_date && daysUntil(e.next_follow_up_date) <= 0;
                     const selected = open && cellKey(open.providerId, open.payerId) === key;

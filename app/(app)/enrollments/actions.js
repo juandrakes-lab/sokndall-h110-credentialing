@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { getAppContext } from "@/lib/org";
 import { todayISO } from "@/lib/credentials";
-import { ENROLLMENT_STATUSES, IN_FLIGHT, parseCellKey, proposedFollowUp } from "@/lib/enrollments";
+import { ENROLLMENT_STATUSES, IN_FLIGHT, STALLED_AFTER_DAYS, STALL_CHOICES, parseCellKey, proposedFollowUp } from "@/lib/enrollments";
 import { REVALIDATION_CHOICES, detailsErrors, followUpErrors, requestErrors } from "@/lib/enrollment-rules";
 
 function text(formData, key) {
@@ -277,6 +277,21 @@ export async function removePayer(payerId) {
   if (count) return;
 
   const { error } = await supabase.from("cred_payers_org").delete().eq("id", payerId);
+  if (error) throw new Error(error.message);
+  revalidatePath("/enrollments/payers");
+  refresh();
+}
+
+// "Stalled" per payer (2026-11-16): how many days with the payer before an
+// application counts as stalled. 30 is the default and is stored as null.
+export async function setPayerStall(payerId, formData) {
+  const { supabase } = await getAppContext();
+  const days = Number(formData.get("days"));
+  if (!STALL_CHOICES.includes(days)) return;
+  const { error } = await supabase
+    .from("cred_payers_org")
+    .update({ stalled_after_days: days === STALLED_AFTER_DAYS ? null : days })
+    .eq("id", payerId);
   if (error) throw new Error(error.message);
   revalidatePath("/enrollments/payers");
   refresh();

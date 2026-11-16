@@ -12,7 +12,7 @@ import { DEMO_HOURS, DEMO_KEEP_DAYS, DEMO_UNOPENED_DAYS, JUAN_EMAIL, demoEmail, 
 //
 // Opening is a POST. Opening the link (GET) only shows a page with an "Open
 // the demo" button: link-preview bots (LinkedIn, Slack, email scanners) fetch
-// links on their own, and a GET that opened the demo would start its 72 h and
+// links on their own, and a GET that opened the demo would start its 7 days and
 // tell Juan it was opened before the lead ever saw it. Bots read pages; they
 // don't press buttons.
 export const dynamic = "force-dynamic";
@@ -24,7 +24,7 @@ const page = (code) => `<!doctype html>
 <meta name="robots" content="noindex, nofollow">
 <title>Your Sokndall demo</title>
 <meta property="og:title" content="Your Sokndall demo">
-<meta property="og:description" content="A credentialing and payer-enrollment workspace loaded with sample data, yours for 3 days from when you open it.">
+<meta property="og:description" content="A credentialing and payer-enrollment workspace loaded with sample data, yours for 7 days from when you open it.">
 <meta property="og:image" content="https://sokndall.com/opengraph-image.png">
 <style>body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;font-family:Arial,Helvetica,sans-serif;background:#f3f5f4;color:#0e2a2e;padding:20px;box-sizing:border-box}
 main{max-width:420px;text-align:center}h1{font-size:22px;margin:18px 0 8px}p{font-size:15px;line-height:1.5;color:#45605f;margin:0 0 8px}
@@ -32,7 +32,7 @@ button{margin-top:18px;border:0;border-radius:999px;background:#0e4a52;color:#ff
 <body><main><p style="font-weight:700;color:#0e4a52;letter-spacing:.02em">SOKNDALL</p>
 <h1>Your demo is ready</h1>
 <p>A workspace loaded with a sample billing firm: clients, providers, payer applications and follow-ups.</p>
-<p>It's yours for 3 days from when you open it. No password, no card.</p>
+<p>It's yours for 7 days from when you open it. No password, no card.</p>
 <form method="post" action="/demo/${encodeURIComponent(code)}"><button type="submit">Open the demo</button></form>
 </main></body></html>`;
 

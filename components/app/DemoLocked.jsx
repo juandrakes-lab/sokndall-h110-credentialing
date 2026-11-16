@@ -39,7 +39,7 @@ export default function DemoLocked({ feature, label, variant = "secondary", size
             </p>
             <div className="mt-5 flex flex-wrap gap-3">
               <Link href="/real-data" className={buttonClass("primary")}>
-                Load my real data
+                Load my real data (we do it for you)
               </Link>
               <button type="button" className={buttonClass("secondary")} onClick={() => setOpen(false)}>
                 Keep exploring

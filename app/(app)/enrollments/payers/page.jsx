@@ -2,7 +2,8 @@ import Link from "next/link";
 import { getAppContext } from "@/lib/org";
 import { PAYER_SELECT, PAYER_TYPE_LABELS, resolvePayer, sortPayers } from "@/lib/enrollments";
 import { Badge, Card, CardHeader, PageHeader, buttonClass } from "@/components/app/ui";
-import { addCatalogPayers, addOwnPayer, removePayer } from "../actions";
+import { addCatalogPayers, addOwnPayer, removePayer, setPayerStall } from "../actions";
+import StallSelect from "./StallSelect";
 import { CatalogPicker, OwnPayerForm } from "./PayerPickers";
 import SubmitButton from "@/components/app/SubmitButton";
 
@@ -65,6 +66,9 @@ export default async function PayersPage() {
                       {PAYER_TYPE_LABELS[p.payer_type]} · revalidates every {p.revalidation_months} months
                       {!p.fromCatalog && " · your own payer"}
                     </p>
+                    <div className="mt-1">
+                      <StallSelect action={setPayerStall.bind(null, p.id)} value={p.stalled_after_days} />
+                    </div>
                   </div>
                   {count > 0 ? (
                     <span className="flex items-center gap-2" title="A payer with applications can't be removed — their history would go with it.">
