@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { getAppContext } from "@/lib/org";
 import { todayISO } from "@/lib/credentials";
-import { ENROLLMENT_STATUSES, IN_FLIGHT, STALLED_AFTER_DAYS, STALL_CHOICES, parseCellKey, proposedFollowUp } from "@/lib/enrollments";
+import { CADENCE_CHOICES, ENROLLMENT_STATUSES, IN_FLIGHT, STALLED_AFTER_DAYS, STALL_CHOICES, parseCellKey, proposedFollowUp } from "@/lib/enrollments";
 import { REVALIDATION_CHOICES, detailsErrors, followUpErrors, requestErrors } from "@/lib/enrollment-rules";
 
 function text(formData, key) {
@@ -59,7 +59,11 @@ async function applyStatus(supabase, providerId, payerId, status) {
 
   const patch = { status };
   if (status === "submitted" && !enrollment?.submitted_date) patch.submitted_date = todayISO();
-  if (IN_FLIGHT.includes(status) && !enrollment?.next_follow_up_date) patch.next_follow_up_date = proposedFollowUp();
+  if (IN_FLIGHT.includes(status) && !enrollment?.next_follow_up_date) {
+    // The payer's own rhythm, when set (B1): first chase N days after submitting.
+    const { data: payerRow } = await supabase.from("cred_payers_org").select("follow_up_every_days").eq("id", payerId).maybeSingle();
+    patch.next_follow_up_date = proposedFollowUp(payerRow);
+  }
 
   // First touch on an empty cell: create it straight in the chosen status, so
   // the history reads "Opened as Submitted" rather than two entries.
@@ -294,5 +298,31 @@ export async function setPayerStall(payerId, formData) {
     .eq("id", payerId);
   if (error) throw new Error(error.message);
   revalidatePath("/enrollments/payers");
+  refresh();
+}
+
+// "Follow up every N days" per payer (2026-11-17, B1). Empty = no rhythm.
+export async function setPayerCadence(payerId, formData) {
+  const { supabase } = await getAppContext();
+  const raw = formData.get("days")?.toString() ?? "";
+  const days = raw ? Number(raw) : null;
+  if (days !== null && !CADENCE_CHOICES.includes(days)) return;
+  const { error } = await supabase.from("cred_payers_org").update({ follow_up_every_days: days }).eq("id", payerId);
+  if (error) throw new Error(error.message);
+  revalidatePath("/enrollments/payers");
+  refresh();
+}
+
+// "Ready to bill" checks on an approved application (2026-11-17, C4).
+export async function setBillingCheck(providerId, payerId, field, value) {
+  if (!["effective_confirmed", "linked_to_group"].includes(field)) return;
+  const { supabase } = await getAppContext();
+  const { error } = await supabase
+    .from("cred_enrollments")
+    .update({ [field]: Boolean(value) })
+    .eq("provider_id", providerId)
+    .eq("payer_id", payerId)
+    .eq("status", "approved");
+  if (error) throw new Error(error.message);
   refresh();
 }

@@ -1,3 +1,5 @@
+import WorkflowOptions from "./WorkflowOptions";
+import { saveWorkflowOptions } from "./workflow-actions";
 import ExtraProvidersCard from "./ExtraProvidersCard";
 import { EXTRA, extraOf } from "@/lib/extra-providers-rules";
 import { createPolarClient } from "@/lib/polar";
@@ -240,6 +242,14 @@ export default async function SettingsPage({ searchParams }) {
                     </Link>
                   </div>
                 )}
+              </div>
+            </Card>
+          </Section>
+
+          <Section title="Workflow" description="Two optional steps for how applications are tracked. Off, nothing changes.">
+            <Card>
+              <div className="px-5 py-6">
+                <WorkflowOptions action={saveWorkflowOptions} atRiskDays={org.at_risk_days ?? 30} readyToBill={Boolean(org.ready_to_bill_step)} canEdit={owner} />
               </div>
             </Card>
           </Section>

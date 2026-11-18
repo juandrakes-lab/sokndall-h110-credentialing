@@ -1,3 +1,4 @@
+import { atRisk, atRiskLabel } from "@/lib/at-risk";
 import Link from "next/link";
 import HeaderActions from "@/components/app/HeaderActions";
 import { getAppContext } from "@/lib/org";
@@ -34,14 +35,19 @@ const CHIP = {
 export default async function EnrollmentsPage({ searchParams }) {
   const sp = await searchParams;
   const open = parseCellKey(sp.open);
-  const { supabase, org } = await getAppContext();
+  const { supabase, org, role } = await getAppContext();
   const readOnly = !accountAccess(org).writable;
 
   const [{ data: providers }, { data: payerRows }, { data: enrollments }] = await Promise.all([
-    supabase.from("cred_providers").select("id, first_name, last_name, specialty").eq("status", "active").order("last_name"),
+    supabase.from("cred_providers").select("id, first_name, last_name, specialty, go_live_date").eq("status", "active").order("last_name"),
     supabase.from("cred_payers_org").select(PAYER_SELECT),
-    supabase.from("cred_enrollments").select("id, provider_id, payer_id, status, next_follow_up_date, status_changed_at"),
+    supabase.from("cred_enrollments").select("id, provider_id, payer_id, status, next_follow_up_date, status_changed_at, assigned_user_id, effective_confirmed, linked_to_group"),
   ]);
+  // "Team member" (pedido 2026-11-17, A2), for the owner: the cells assigned
+  // to one person — or to nobody — stay bright, the rest fade.
+  const { data: directory } = role === "owner" ? await supabase.rpc("cred_org_directory") : { data: [] };
+  const member = role === "owner" && sp.member && (sp.member === "unassigned" || (directory ?? []).some((d) => d.user_id === sp.member)) ? sp.member : null;
+  const theirs = (e) => (member === "unassigned" ? !e?.assigned_user_id : e?.assigned_user_id === member);
 
   const payers = sortPayers((payerRows ?? []).map(resolvePayer));
   const byCell = new Map((enrollments ?? []).map((e) => [cellKey(e.provider_id, e.payer_id), e]));
@@ -98,9 +104,30 @@ export default async function EnrollmentsPage({ searchParams }) {
           <SectionPill icon={ICONS.pulse} count={total}>
             Where every application stands
           </SectionPill>
-          <p className="text-sm text-ink-500">
-            {providers.length} provider{providers.length === 1 ? "" : "s"} × {payers.length} payer{payers.length === 1 ? "" : "s"}
-          </p>
+          <div className="flex flex-wrap items-center gap-3">
+            {(directory ?? []).length > 1 && (
+              <form action="/enrollments" className="flex items-center gap-2 text-sm">
+                <label htmlFor="mx-member" className="text-ink-700">
+                  Team member
+                </label>
+                <select id="mx-member" name="member" defaultValue={member ?? ""} className="rounded-md border border-ink-200 bg-white px-2 py-1 text-sm">
+                  <option value="">Everyone</option>
+                  {directory.map((d) => (
+                    <option key={d.user_id} value={d.user_id}>
+                      {d.name}
+                    </option>
+                  ))}
+                  <option value="unassigned">Unassigned</option>
+                </select>
+                <button type="submit" className={buttonClass("secondary", "sm")}>
+                  Show
+                </button>
+              </form>
+            )}
+            <p className="text-sm text-ink-500">
+              {providers.length} provider{providers.length === 1 ? "" : "s"} × {payers.length} payer{payers.length === 1 ? "" : "s"}
+            </p>
+          </div>
         </div>
         <SegmentBar
           height={14}
@@ -146,6 +173,14 @@ export default async function EnrollmentsPage({ searchParams }) {
                           {provider.last_name}, {provider.first_name}
                         </Link>
                         {provider.specialty && <div className="truncate text-xs text-ink-500">{provider.specialty}</div>}
+                        {(() => {
+                          const risk = atRisk(provider, enrollments ?? [], org.at_risk_days ?? 30);
+                          return risk ? (
+                            <div className="mt-0.5 inline-flex rounded bg-status-expired-bg px-1.5 py-0.5 text-[0.6875rem] font-semibold text-status-expired" title={atRiskLabel(risk)}>
+                              At risk
+                            </div>
+                          ) : null;
+                        })()}
                       </div>
                     </div>
                   </th>
@@ -158,13 +193,19 @@ export default async function EnrollmentsPage({ searchParams }) {
                     const due = e?.next_follow_up_date && daysUntil(e.next_follow_up_date) <= 0;
                     const selected = open && cellKey(open.providerId, open.payerId) === key;
                     return (
-                      <td key={payer.id} className={`border-b border-ink-100 px-2 py-2 ${selected ? "bg-brand-50" : ""}`}>
+                      <td key={payer.id} className={`border-b border-ink-100 px-2 py-2 ${selected ? "bg-brand-50" : ""} ${member && !(e && theirs(e)) ? "opacity-25" : ""}`}>
                         <MatrixCell
                           href={`/enrollments?open=${key}`}
                           cellKey={key}
                           className={`flex items-center justify-between gap-1 rounded-lg px-2.5 py-1.5 text-xs font-medium transition hover:ring-2 hover:ring-brand-100 ${CHIP[status]}`}
                         >
-                          <span className="truncate">{ENROLLMENT_STATUS_LABELS[status]}</span>
+                          <span className="truncate">
+                            {status === "approved" && org.ready_to_bill_step
+                              ? e?.effective_confirmed && e?.linked_to_group
+                                ? "Ready to bill"
+                                : "Approved · not ready"
+                              : ENROLLMENT_STATUS_LABELS[status]}
+                          </span>
                           <span className="flex shrink-0 items-center gap-1">
                             {inStatus !== null && (
                               <span className="font-normal tabular-nums opacity-70" title={`${inStatus} days in this status`}>
@@ -191,7 +232,7 @@ export default async function EnrollmentsPage({ searchParams }) {
           <span className="h-2 w-2 rounded-full bg-red-600" aria-hidden="true" /> Follow-up due today or overdue
         </span>
         <span className="flex items-center gap-1.5">
-          <Icon d={ICONS.pause} className="h-3.5 w-3.5 text-amber-600" strokeWidth={2.2} /> Stalled: no status change in 30+ days
+          <Icon d={ICONS.pause} className="h-3.5 w-3.5 text-amber-600" strokeWidth={2.2} /> Stalled: no status change past the payer&apos;s threshold (30 days unless set)
         </span>
         <span className="flex items-center gap-1.5">
           <span className="font-medium tabular-nums">18 d</span> Days in the current status, while it&apos;s with the payer

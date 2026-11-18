@@ -2,7 +2,8 @@ import Link from "next/link";
 import { getAppContext } from "@/lib/org";
 import { PAYER_SELECT, PAYER_TYPE_LABELS, resolvePayer, sortPayers } from "@/lib/enrollments";
 import { Badge, Card, CardHeader, PageHeader, buttonClass } from "@/components/app/ui";
-import { addCatalogPayers, addOwnPayer, removePayer, setPayerStall } from "../actions";
+import { addCatalogPayers, addOwnPayer, removePayer, setPayerCadence, setPayerStall } from "../actions";
+import { CADENCE_CHOICES } from "@/lib/enrollments";
 import StallSelect from "./StallSelect";
 import { CatalogPicker, OwnPayerForm } from "./PayerPickers";
 import SubmitButton from "@/components/app/SubmitButton";
@@ -66,7 +67,8 @@ export default async function PayersPage() {
                       {PAYER_TYPE_LABELS[p.payer_type]} · revalidates every {p.revalidation_months} months
                       {!p.fromCatalog && " · your own payer"}
                     </p>
-                    <div className="mt-1">
+                    <div className="mt-1 flex flex-wrap gap-x-4 gap-y-1">
+                      <StallSelect action={setPayerCadence.bind(null, p.id)} value={p.follow_up_every_days} choices={CADENCE_CHOICES} label="Follow up every" none="— (set by hand)" />
                       <StallSelect action={setPayerStall.bind(null, p.id)} value={p.stalled_after_days} />
                     </div>
                   </div>

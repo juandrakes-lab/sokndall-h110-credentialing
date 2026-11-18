@@ -21,6 +21,7 @@ const EMPTY = {
   email: "",
   phone: "",
   start_date: "",
+  go_live_date: "",
   status: "active",
   notes: "",
 };
@@ -103,6 +104,9 @@ export default function ProviderForm({ action, initial, submitLabel, cancelHref,
         </Field>
         <Field label="Start date" htmlFor="start_date" hint="When the provider joined the practice." error={errorFor("start_date")}>
           <input id="start_date" name="start_date" type="date" value={values.start_date} onChange={bind("start_date")} className={inputClass} />
+        </Field>
+        <Field label="Scheduled to start (optional)" htmlFor="go_live_date" hint="First day seeing patients. An application not approved close to it shows as At risk." error={errorFor("go_live_date")}>
+          <input id="go_live_date" name="go_live_date" type="date" value={values.go_live_date} onChange={bind("go_live_date")} className={inputClass} />
         </Field>
       </fieldset>
 

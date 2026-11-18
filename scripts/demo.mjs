@@ -5,6 +5,9 @@
 //   node scripts/demo.mjs extend <firm or org id>           → +72 h, once
 //   node scripts/demo.mjs revoke <firm or org id>           → the link stops working now
 //   node scripts/demo.mjs delete <firm or org id>           → deletes it now
+//   node scripts/demo.mjs team <firm or org id>             → adds the sample team (new demos have it)
+//   node scripts/demo.mjs load <firm or org id> <file.csv|.xlsx> [--client "Name"] [--replace "Client name"]
+//                                                          → a prospect's own list as a client of the demo
 //
 // The demo is a fictitious billing firm — "Northline Billing Group": 4 clients,
 // 20 providers, 7 payers, applications in every state, follow-ups and
@@ -14,6 +17,7 @@
 import { readFileSync } from "node:fs";
 import { createHash, randomBytes } from "node:crypto";
 import { createClient } from "@supabase/supabase-js";
+import { addTeam, loadList } from "./demo-team-and-load.mjs";
 
 const env = Object.fromEntries(
   readFileSync(new URL("../.env.local", import.meta.url), "utf8")
@@ -63,9 +67,46 @@ async function main() {
     return;
   }
 
+  if (cmd === "team" && args[0] === "all") {
+    // Every demo still to be opened or still open, once each.
+    const demos = await must(db.from("cred_demos").select("org_id, firm, first_opened_at, expires_at, revoked_at"));
+    const live = demos.filter((d) => !d.revoked_at && (!d.expires_at || new Date(d.expires_at) > new Date()));
+    let done = 0;
+    for (const d of live) {
+      const members = await must(db.from("cred_org_members").select("user_id").eq("org_id", d.org_id).eq("role", "member"));
+      if (members.length) continue;
+      await addTeam(db, d.org_id);
+      done++;
+    }
+    console.log(`Team added to ${done} of ${live.length} live or unopened demos (the rest already had it).`);
+    return;
+  }
+
+  if (cmd === "team") {
+    const d = await findDemo(args[0]);
+    const r = await addTeam(db, d.org_id);
+    console.log(`Team added to ${d.firm}: ${r.teammates} teammates, ${r.assigned} applications assigned.`);
+    return;
+  }
+
+  if (cmd === "load") {
+    const d = await findDemo(args[0]);
+    const file = args[1];
+    if (!file) throw new Error("Give the file: load <firm> <file.csv|.xlsx>");
+    const opt = (flag) => { const i = args.indexOf(flag); return i > -1 ? args[i + 1] : undefined; };
+    const r = await loadList(db, d.org_id, file, { clientName: opt("--client"), replace: opt("--replace") });
+    console.log(`Loaded into ${d.firm}: client "${r.client}" · ${r.providers} providers · ${r.payers} payers · ${r.applications} applications.`);
+    console.log(`Columns read: ${Object.entries(r.columns).map(([k, i]) => `${k}=#${i + 1}`).join(", ")}`);
+    return;
+  }
+
   if (cmd === "delete") {
     const d = await findDemo(args[0]);
     const org = await must(db.from("cred_organizations").select("owner_user_id").eq("id", d.org_id).single());
+    // The sample teammates first (their logins are the demo's too).
+    for (const m of await must(db.from("cred_org_members").select("user_id").eq("org_id", d.org_id).eq("role", "member"))) {
+      await db.auth.admin.deleteUser(m.user_id);
+    }
     const { error } = await db.auth.admin.deleteUser(org.owner_user_id);
     if (error) throw error;
     console.log(`Deleted: ${d.firm} and all its sample data.`);
@@ -176,6 +217,7 @@ async function main() {
   await must(db.from("cred_demos").insert({
     org_id: ORG, firm, lead_name: leadName, link_hash: createHash("sha256").update(code).digest("hex"), seeded_at: new Date().toISOString(),
   }));
+  await addTeam(db, ORG);
   console.log(`Demo for ${firm} (${leadName}) is ready.`);
   console.log(`Link (valid 7 days until first opened, then 7 days): ${ORIGIN}/demo/${code}`);
   console.log(`Org id: ${ORG}`);

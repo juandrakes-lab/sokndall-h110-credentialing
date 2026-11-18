@@ -15,7 +15,9 @@ function withOpen(basePath, params, key) {
 // three weights: who and which payer; where it stands and when we last
 // called, small; how late it is, on the right. The call notes live in the
 // side panel each row opens.
-export default function FollowUpList({ items, lastContact, directory, basePath, params = {}, mode = "queue", quickLog = false }) {
+// `clientName(e)`: the all-clients view names each row's client; `hrefFor(e)`
+// then opens it through /follow-ups/open, which switches to that client.
+export default function FollowUpList({ items, lastContact, directory, basePath, params = {}, mode = "queue", quickLog = false, clientName, hrefFor }) {
   const owner = directory.find((d) => d.role === "owner");
   const firstName = (name) => String(name ?? "").split(/[\s@]/)[0];
   const who = (id) => (id ? directory.find((d) => d.user_id === id)?.name ?? "Former member" : owner?.name ?? "Owner");
@@ -31,7 +33,7 @@ export default function FollowUpList({ items, lastContact, directory, basePath, 
         return (
           <li key={e.id} className={quickLog ? "flex flex-wrap items-center gap-x-2 pr-5" : undefined}>
             <Link
-              href={withOpen(basePath, params, cellKey(e.provider_id, e.payer_id))}
+              href={hrefFor ? hrefFor(e) : withOpen(basePath, params, cellKey(e.provider_id, e.payer_id))}
               scroll={false}
               className={`flex items-center gap-3 px-5 py-3 transition-colors hover:bg-ink-50/70 ${quickLog ? "min-w-0 flex-1" : ""}`}
             >
@@ -45,6 +47,7 @@ export default function FollowUpList({ items, lastContact, directory, basePath, 
                   <span className="block text-sm text-ink-700 sm:inline">
                     <span className="hidden sm:inline"> · </span>
                     {e.payer.name}
+                    {clientName && <span className="text-ink-500"> · {clientName(e)}</span>}
                   </span>
                 </p>
                 <p className="mt-0.5 flex min-w-0 items-center gap-1.5 text-xs text-ink-500">
@@ -74,7 +77,7 @@ export default function FollowUpList({ items, lastContact, directory, basePath, 
                 <QuickLog
                   action={logFollowUp.bind(null, e.provider_id, e.payer_id)}
                   today={todayISO()}
-                  proposed={proposedFollowUp()}
+                  proposed={proposedFollowUp(e.payer)}
                   label={`${e.provider.first_name} ${e.provider.last_name}, ${e.payer.name}`}
                 />
               </div>

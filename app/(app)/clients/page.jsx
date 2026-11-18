@@ -1,3 +1,5 @@
+import { atRisk } from "@/lib/at-risk";
+import { checklistFor } from "@/lib/checklist";
 import Link from "next/link";
 import { forbidden } from "next/navigation";
 import { getAppContext } from "@/lib/org";
@@ -35,7 +37,7 @@ export default async function ClientsPage({ searchParams }) {
   const [{ queue, stalled, requests }, expirations, { data: providers }, { data: deletions }, archivedCounts] = await Promise.all([
     loadFollowUps(supabaseAll),
     loadExpirations(supabaseAll),
-    supabaseAll.from("cred_providers").select("client_org_id").eq("status", "active"),
+    supabaseAll.from("cred_providers").select("id, client_org_id, npi, nppes_data, go_live_date").eq("status", "active"),
     owner
       ? supabaseAll.from("cred_client_deletions").select("client_name, deleted_at, deleted_by").order("deleted_at", { ascending: false })
       : Promise.resolve({ data: [] }),
@@ -65,6 +67,28 @@ export default async function ClientsPage({ searchParams }) {
   };
   const withWork = new Set(queue.map((e) => e.provider.client_org_id)).size;
 
+  // At risk (C3) and how complete each client's file is (C2), per client.
+  const ids = (providers ?? []).map((p) => p.id);
+  const [{ data: enrollmentRows }, { data: credRows }, { data: docRows }] = ids.length
+    ? await Promise.all([
+        supabaseAll.from("cred_enrollments").select("provider_id, status").in("provider_id", ids),
+        supabaseAll.from("cred_credentials").select("provider_id, type, expiration_date, renewed_at").in("provider_id", ids),
+        supabaseAll.from("cred_documents").select("provider_id, category, created_at").in("provider_id", ids),
+      ])
+    : [{ data: [] }, { data: [] }, { data: [] }];
+  const riskBy = new Map();
+  const doneBy = new Map();
+  for (const p of providers ?? []) {
+    if (atRisk(p, enrollmentRows ?? [], org.at_risk_days ?? 30)) riskBy.set(p.client_org_id, (riskBy.get(p.client_org_id) ?? 0) + 1);
+    const items = checklistFor(p, (credRows ?? []).filter((c) => c.provider_id === p.id), (docRows ?? []).filter((d) => d.provider_id === p.id));
+    const t = doneBy.get(p.client_org_id) ?? { done: 0, all: 0 };
+    doneBy.set(p.client_org_id, { done: t.done + items.filter((i) => i.done).length, all: t.all + items.length });
+  }
+  const pct = (id) => {
+    const t = doneBy.get(id);
+    return t?.all ? Math.round((100 * t.done) / t.all) : null;
+  };
+
   // A demo's first session (pedido 2026-11-16): the three things that need
   // the visitor this week — a payer request, the longest-stalled application,
   // the nearest expiration — and the two guided steps. Until skipped.
@@ -89,7 +113,7 @@ export default async function ClientsPage({ searchParams }) {
         items={items}
         stalled={st ? { enrollmentId: st.id, clientId: st.provider.client_org_id, client: clientName(st.provider.client_org_id) } : null}
         today={todayISO()}
-        proposed={proposedFollowUp()}
+        proposed={proposedFollowUp(st?.payer)}
       />
     );
   }
@@ -147,6 +171,7 @@ export default async function ClientsPage({ searchParams }) {
                 <th className="px-5 py-3 text-right font-medium">Stalled</th>
                 <th className="px-5 py-3 text-right font-medium">Expiring (30 days)</th>
                 <th className="px-5 py-3 text-right font-medium">Expired</th>
+                <th className="px-5 py-3 text-right font-medium">File complete</th>
                 <th className="px-5 py-3" />
               </tr>
             </thead>
@@ -156,6 +181,11 @@ export default async function ClientsPage({ searchParams }) {
                   <td className="px-5 py-3 font-medium text-ink-900">
                     {c.name}
                     {c.id === active?.id && <span className="ml-2 text-xs font-normal text-ink-500">Open now</span>}
+                    {riskBy.get(c.id) > 0 && (
+                      <span className="ml-2 rounded bg-status-expired-bg px-1.5 py-0.5 text-[0.6875rem] font-semibold text-status-expired">
+                        {riskBy.get(c.id)} at risk
+                      </span>
+                    )}
                   </td>
                   <td className="px-5 py-3 text-right tabular-nums text-ink-700">{byClient.providers.get(c.id) ?? 0}</td>
                   <td className="px-5 py-3 text-right">
@@ -170,6 +200,7 @@ export default async function ClientsPage({ searchParams }) {
                   <td className="px-5 py-3 text-right">
                     <Count value={byClient.expired.get(c.id) ?? 0} tone="font-semibold text-status-expired" />
                   </td>
+                  <td className="px-5 py-3 text-right tabular-nums text-ink-700">{pct(c.id) === null ? "—" : `${pct(c.id)}%`}</td>
                   <td className="px-5 py-3 text-right">
                     <div className="flex items-center justify-end gap-3">
                       <form action={openClient}>

@@ -20,7 +20,8 @@ import ScrollLock from "@/components/app/ScrollLock";
 import DocumentList from "@/components/app/DocumentList";
 import DocumentUploader from "@/components/app/DocumentUploader";
 import { checklistFor } from "@/lib/checklist";
-import { deleteCommunication, logFollowUp, markInfoRequested, resolveRequest, setEnrollmentStatus, updateEnrollmentDetails } from "./actions";
+import { deleteCommunication, logFollowUp, markInfoRequested, resolveRequest, setBillingCheck, setEnrollmentStatus, updateEnrollmentDetails } from "./actions";
+import ReadyToBill from "./ReadyToBill";
 import { DetailsForm, FollowUpForm, RequestForm } from "./EnrollmentForms";
 import StatusPicker from "./StatusPicker";
 import SubmitButton from "@/components/app/SubmitButton";
@@ -112,6 +113,14 @@ export default async function EnrollmentPanel({ providerId, payerId, closeHref }
         </header>
 
         <div className="flex flex-col gap-8 px-6 py-6">
+          {status === "approved" && org.ready_to_bill_step && (
+            <ReadyToBill
+              effective={Boolean(enrollment?.effective_confirmed)}
+              linked={Boolean(enrollment?.linked_to_group)}
+              action={setBillingCheck.bind(null, providerId, payerId)}
+              readOnly={readOnly}
+            />
+          )}
           {status === "info_requested" && (
             <section className="rounded-2xl bg-status-expiring-bg px-5 py-4 ring-1 ring-inset ring-status-expiring/25">
               {enrollment?.pending_request ? (
@@ -186,7 +195,7 @@ export default async function EnrollmentPanel({ providerId, payerId, closeHref }
               className="self-start"
               defaultOpen={Boolean(enrollment.next_follow_up_date) && daysUntil(enrollment.next_follow_up_date) <= 0}
             >
-              <FollowUpForm key={`${providerId}.${payerId}`} action={logFollowUp.bind(null, providerId, payerId)} today={todayISO()} proposed={proposedFollowUp()} />
+              <FollowUpForm key={`${providerId}.${payerId}`} action={logFollowUp.bind(null, providerId, payerId)} today={todayISO()} proposed={proposedFollowUp(payer)} />
             </Disclosure>
           )}
 

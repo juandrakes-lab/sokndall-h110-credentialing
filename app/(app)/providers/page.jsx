@@ -85,6 +85,7 @@ export default async function ProvidersPage() {
         actions={
           <HeaderActions
             secondary={[
+              { label: "File checklist", href: "/providers/checklist" },
               { label: "Export CSV", href: "/export/providers", download: true },
               ...(writable ? [{ label: "Import CSV", href: "/import-export/providers", icon: ICONS.upload }] : []),
             ]}

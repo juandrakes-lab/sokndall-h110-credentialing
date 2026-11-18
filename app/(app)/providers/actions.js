@@ -27,6 +27,7 @@ function readProvider(formData) {
     // Stored as the 10 digits; shown as (555) 201-4433.
     phone: text(formData, "phone")?.replace(/\D/g, "").replace(/^1(\d{10})$/, "$1") || null,
     start_date: text(formData, "start_date"),
+    go_live_date: text(formData, "go_live_date"),
     notes: text(formData, "notes"),
   };
 }
@@ -61,6 +62,7 @@ export async function createProvider(_prev, formData) {
   if (Object.keys(fieldErrors).length) return { fieldErrors };
 
   if (!values.start_date) delete values.start_date;
+  if (!values.go_live_date) values.go_live_date = null;
 
   const { data, error } = await supabase
     .from("cred_providers")
@@ -89,6 +91,7 @@ export async function updateProvider(providerId, _prev, formData) {
 
   values.status = formData.get("status") === "inactive" ? "inactive" : "active";
   if (!values.start_date) delete values.start_date;
+  if (!values.go_live_date) values.go_live_date = null;
 
   const { data: current } = await supabase
     .from("cred_providers")
